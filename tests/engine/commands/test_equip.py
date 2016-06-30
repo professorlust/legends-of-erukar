@@ -19,7 +19,7 @@ class EquipTests(unittest.TestCase):
 
         self.assertTrue(w in p.inventory)
         self.assertEqual(p.weapon, w)
-        self.assertEqual(Equip.equipped_weapon.format('Generic Sword'), result)
+        self.assertEqual(Equip.equipped_weapon.format('Sword'), result)
 
     def test_equip_armor(self):
         p = Player()
