@@ -9,7 +9,7 @@ class Inventory(Command):
         char = self.find_player().character
         header = self.get_header(char)
 
-        items = '\n'.join([Inventory.item.format(i, char.inventory[i].describe())\
+        items = '\n'.join([Inventory.item.format(i, char.inventory[i].on_inspect())\
             for i in range(0, len(char.inventory))])
 
         return header + '\n' + items

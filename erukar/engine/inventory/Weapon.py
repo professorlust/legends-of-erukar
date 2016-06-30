@@ -8,3 +8,9 @@ class Weapon(Item):
 
     def roll(self):
         return super().roll(self.damage)
+
+    def describe(self):
+        return self.name
+
+    def on_inspect(self):
+        return '{0} ({1})'.format(self.name, self.damage).strip()
