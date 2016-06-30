@@ -1,3 +1,24 @@
-from .Sword import Sword
+from .Axe import Axe
+from .Bow import Bow
+from .CrossBow import CrossBow
+from .Halberd import Halberd
+from .Mace import Mace
+from .Maul import Maul
+from .MorningStar import MorningStar
+from .Rapier import Rapier
+from .Spear import Spear
+from .Staff import Staff
+from .Wand import Wand
 
-__all__ = ["Sword"]
+__all__ = [
+    "Axe",
+    "Bow",
+    "CrossBow",
+    "Halberd",
+    "Mace",
+    "Maul",
+    "MorningStar",
+    "Rapier",
+    "Spear",
+    "Staff",
+    "Wand"]
