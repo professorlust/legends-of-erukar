@@ -3,8 +3,7 @@ from erukar.engine.model.Containable import Containable
 class Container(Containable):
     def __init__(self, aliases, broad_results, inspect_results):
         super().__init__(aliases, broad_results, inspect_results)
-        self.aliases = aliases
-        self.description = inspect_results
+        self.description = broad_results
 
     def on_open(self, sender):
         return "Opened a chest"
@@ -16,4 +15,4 @@ class Container(Containable):
         return Containable.describe(self)
 
     def on_inspect(self, *_):
-        return Containable.describe(self)
+        return Containable.on_inspect(self)

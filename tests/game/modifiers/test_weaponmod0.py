@@ -7,7 +7,7 @@ class WeaponModTests(unittest.TestCase):
         mod = WeaponMod()
         mod.modify(w)
 
-        self.assertEqual(w.damage, '1d6')
+        self.assertEqual(w.damage_range, (0, 1))
 
     def test_apply_to_item_does_not_apply(self):
         i = Item()

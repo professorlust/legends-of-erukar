@@ -19,8 +19,8 @@ class FactoryBaseTests(unittest.TestCase):
 
     def test_create_one(self):
         g = FactoryBase()
-        generation_parameters = {'damage': '10d10'}
+        generation_parameters = {'damage_range': (0, 5)}
         result = g.create_one(FactoryBaseTests.generated_class, generation_parameters)
 
         self.assertIsNotNone(result)
-        self.assertEqual(result.damage, '10d10')
+        self.assertEqual(result.damage_range, (0, 5))
