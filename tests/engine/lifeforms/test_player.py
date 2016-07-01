@@ -44,4 +44,4 @@ class PlayerTests(unittest.TestCase):
 
         self.assertIn(attack_roll, range(1,21))
         self.assertEqual(armor_class, 10)
-        self.assertIn(damage, range(1,7))
+        self.assertIn(damage, range(0,22))
