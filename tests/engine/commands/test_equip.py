@@ -37,7 +37,6 @@ class EquipTests(unittest.TestCase):
         e.sender_uid = p.uid
         e.data = data_store
         result = e.execute('plate mail')
-        print(result)
 
         self.assertTrue(a in p.inventory)
         self.assertEqual(p.armor, a)
