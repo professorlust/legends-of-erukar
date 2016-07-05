@@ -5,4 +5,3 @@ class Rusty(WeaponMod):
     Probability = 5
     def apply_to(self, weapon):
         weapon.name = "Rusty " + weapon.name
-        weapon.damage += "-1"

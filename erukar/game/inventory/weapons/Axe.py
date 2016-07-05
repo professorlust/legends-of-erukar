@@ -1,9 +1,18 @@
 from erukar.engine.inventory.Weapon import Weapon
+import numpy as np
 
 class Axe(Weapon):
     Probability = 1
     BaseName = "Axe"
 
-    def __init__(self):
-        super().__init__(Axe.BaseName)
-        self.damage = '1d6'
+    # Damage
+    DamageRange = (4, 8)
+    DamageType = "hacking"
+    DamageModifier = "strength"
+
+    # Distribution
+    Distribution = np.random.exponential
+    Scale = 2
+    Size = 2
+    DistributionProperties = (Scale, Size)
+

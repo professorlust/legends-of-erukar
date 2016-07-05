@@ -5,4 +5,3 @@ class Electric(WeaponMod):
     Probability = 1
     def apply_to(self, weapon):
         weapon.name += " of Lightning"
-        weapon.damage += "+2"

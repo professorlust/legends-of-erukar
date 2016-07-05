@@ -1,9 +1,19 @@
 from erukar.engine.inventory.Weapon import Weapon
+import numpy as np
 
 class Bow(Weapon):
-    Probability = 1
+    Probability = 100
     BaseName = "Bow"
 
-    def __init__(self):
-        super().__init__(Bow.BaseName)
-        self.damage = '1d6'
+    # Damage
+    DamageRange = (1, 5)
+    DamageType = "piercing"
+    DamageModifier = "dexterity"
+
+    # Distribution
+    Distribution = np.random.gamma
+    Shape = 2
+    Scale = 2
+    Size = 2
+    DistributionProperties = (Shape, Scale, Size)
+

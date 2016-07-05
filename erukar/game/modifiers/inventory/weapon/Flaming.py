@@ -5,4 +5,3 @@ class Flaming(WeaponMod):
     Probability = 1
     def apply_to(self, weapon):
         weapon.name += " of the Flames"
-        weapon.damage += "+2"

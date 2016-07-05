@@ -5,4 +5,3 @@ class Bane(WeaponMod):
     Probability = 1
     def apply_to(self, weapon):
         weapon.name = weapon.name + ", Bane of ___"
-        weapon.damage += "+3"
