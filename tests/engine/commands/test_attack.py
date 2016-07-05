@@ -1,4 +1,5 @@
 from erukar import *
+import numpy as np
 import unittest
 
 class AttackTests(unittest.TestCase):
@@ -83,6 +84,7 @@ class AttackTests(unittest.TestCase):
         p.define_stats({ 'strength': 2 })
         p.uid = 'Bob'
         p.weapon = Weapon()
+        p.weapon.damages = [Damage('slashing',(10,12),'',(np.random.uniform, (0,1)))]
 
         c = Lifeform()
         c.health = 1

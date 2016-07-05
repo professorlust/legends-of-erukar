@@ -5,4 +5,3 @@ class Broken(WeaponMod):
     Probability = 2
     def apply_to(self, weapon):
         weapon.name = "Broken " + weapon.name
-        weapon.damage += "-2"

@@ -19,11 +19,15 @@ class Attack(Command):
     def adjudicate_attack(self, character, target):
         '''Used to actually resolve an attack roll made between a character and target'''
         target_name = target.get_name()
-        attack_roll, armor_class, damage = character.attack(target)
+        attack_roll, armor_class, damages = character.attack(target)
         if attack_roll <= armor_class:
             return Attack.unsuccessful.format(attack_roll, target_name)
 
-        attack_string = Attack.successful.format(attack_roll, target_name, damage)
+        damage = sum([x[0] for x in damages])
+        damage_descriptions = ', '.join(["{0} {1}".format(x[0], x[1]) for x in damages])
+
+        attack_string = Attack.successful.format(attack_roll, target_name,
+                                                 damage_descriptions)
         target.take_damage(damage)
         if hasattr(target, 'afflictions'):
             if 'dying' in target.afflictions:

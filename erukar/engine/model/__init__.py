@@ -1,9 +1,10 @@
-from erukar.engine.model.Command import Command
-from erukar.engine.model.Containable import Containable
-from erukar.engine.model.Direction import Direction
-from erukar.engine.model.Interactible import Interactible
-from erukar.engine.model.Modifier import Modifier
-from erukar.engine.model.PlayerNode import PlayerNode
-from erukar.engine.model.RpgEntity import RpgEntity
+from .Command import Command
+from .Containable import Containable
+from .Damage import Damage
+from .Direction import Direction
+from .Interactible import Interactible
+from .Modifier import Modifier
+from .PlayerNode import PlayerNode
+from .RpgEntity import RpgEntity
 
-__all__ = ["Command", "Containable", "Direction", "Interactible", "Modifier", "PlayerNode", "RpgEntity"]
+__all__ = ["Command", "Containable", "Damage", "Direction", "Interactible", "Modifier", "PlayerNode", "RpgEntity"]

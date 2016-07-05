@@ -1,7 +1,7 @@
 from erukar.game.modifiers.RoomModifier import RoomModifier
 from erukar.engine.environment.Surface import Surface
 
-class StoneCeilings(RoomModifier):
+class StoneCeiling(RoomModifier):
     Probability = 3
 
     def apply_to(self, room):

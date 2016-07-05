@@ -52,7 +52,7 @@ class Lifeform(RpgEntity):
             return [0, armor_class, 0]
 
         attack_roll = self.roll(self.skill_roll_string(Lifeform.attack_roll_attribute))
-        damage = self.weapon.roll() + self.get(Lifeform.attack_damage_attribute)
+        damage = self.weapon.roll(self)
 
         return [attack_roll, armor_class, damage]
 
