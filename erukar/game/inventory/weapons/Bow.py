@@ -13,7 +13,6 @@ class Bow(Weapon):
     # Distribution
     Distribution = np.random.gamma
     Shape = 2
-    Scale = 2
-    Size = 2
-    DistributionProperties = (Shape, Scale, Size)
+    Scale = 0.25
+    DistributionProperties = (Shape, Scale)
 

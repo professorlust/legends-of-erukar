@@ -13,6 +13,6 @@ class Axe(Weapon):
     # Distribution
     Distribution = np.random.exponential
     Scale = 2
-    Size = 2
+    Size = 1
     DistributionProperties = (Scale, Size)
 
