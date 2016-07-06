@@ -24,6 +24,9 @@ class Lifeform(RpgEntity):
         for stat in [stat for stat in stats if hasattr(self, stat)]:
             setattr(self, stat, stats[stat])
 
+    def turn_modifier(self):
+        return 20 - self.dexterity
+
     def define_level(self, level):
         '''Set this lifeform's level and defined the health appropriately'''
         self.level = level
