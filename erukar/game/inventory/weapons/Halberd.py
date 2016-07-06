@@ -6,7 +6,7 @@ class Halberd(Weapon):
     BaseName = "Halberd"
 
     # Damage
-    DamageRange = (3, 6)
+    DamageRange = [3, 6]
     DamageType = "slashing"
     DamageModifier = "strength"
 

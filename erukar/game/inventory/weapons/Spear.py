@@ -1,9 +1,15 @@
 from erukar.engine.inventory.Weapon import Weapon
+import numpy as np
 
 class Spear(Weapon):
-    Probability = 1
+    Probability = 100
     BaseName = "Spear"
 
-    def __init__(self):
-        super().__init__(Spear.BaseName)
-        self.damage = '1d6'
+    # Damage
+    DamageRange = [2, 6]
+    DamageType = "bludgeoning"
+    DamageModifier = "strength"
+
+    # Distribution
+    Distribution = np.random.uniform
+    DistributionProperties = ()

@@ -7,4 +7,4 @@ class Electric(WeaponMod):
     Probability = 1
     def apply_to(self, weapon):
         weapon.name += " of Lightning"
-        weapon.damages.append(Damage("Electric", (1,4), "", (np.random.uniform, (0,1))))
+        weapon.damages.append(Damage("Electric", [1,4], "", (np.random.uniform, (0,1))))

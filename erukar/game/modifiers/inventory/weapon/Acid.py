@@ -7,4 +7,4 @@ class Acid(WeaponMod):
     Probability = 1
     def apply_to(self, weapon):
         weapon.name = "Acid " + weapon.name
-        weapon.damages.append(Damage("Acid", (1,4), "", (np.random.uniform, (0,1))))
+        weapon.damages.append(Damage("Acid", [1,4], "", (np.random.uniform, (0,1))))

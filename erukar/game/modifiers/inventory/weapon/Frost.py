@@ -7,4 +7,4 @@ class Frost(WeaponMod):
     Probability = 1
     def apply_to(self, weapon):
         weapon.name = "Frosted " + weapon.name
-        weapon.damages.append(Damage("Cold", (1,4), "", (np.random.uniform, (0,1))))
+        weapon.damages.append(Damage("Cold", [1,4], "", (np.random.uniform, (0,1))))

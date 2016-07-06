@@ -6,7 +6,7 @@ class Axe(Weapon):
     BaseName = "Axe"
 
     # Damage
-    DamageRange = (4, 8)
+    DamageRange = [4, 8]
     DamageType = "hacking"
     DamageModifier = "strength"
 

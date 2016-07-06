@@ -5,7 +5,7 @@ import numpy as np
 class Weapon(Item):
     BaseName = "Weapon"
 
-    DamageRange = (1,2)
+    DamageRange = [1, 2]
     DamageType = "ambiguous"
     DamageModifier = ""
 
@@ -16,7 +16,7 @@ class Weapon(Item):
         if name == "":
             name = self.BaseName
         super().__init__("weapon", name)
-        self.damages = [Damage(self.DamageType,  self.DamageRange, self.DamageModifier, (self.Distribution, self.DistributionProperties))]
+        self.damages = [Damage(self.DamageType, list(self.DamageRange), self.DamageModifier, (self.Distribution, self.DistributionProperties))]
 
     def roll(self, attacker):
         return [(d.roll(attacker), d.name) for d in self.damages]

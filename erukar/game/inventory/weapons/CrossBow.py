@@ -6,14 +6,13 @@ class CrossBow(Weapon):
     BaseName = "CrossBow"
 
     # Damage
-    DamageRange = (1, 4)
+    DamageRange = [1, 4]
     DamageType = "piercing"
     DamageModifier = "dexterity"
 
     # Distribution
     Distribution = np.random.gamma
     Shape = 2
-    Scale = 2
-    Size = 1
-    DistributionProperties = (Shape, Scale, Size)
+    Scale = 0.25
+    DistributionProperties = (Shape, Scale)
 

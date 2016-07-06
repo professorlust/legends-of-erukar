@@ -1,9 +1,15 @@
 from erukar.engine.inventory.Weapon import Weapon
+import numpy as np
 
 class MorningStar(Weapon):
     Probability = 1
     BaseName = "MorningStar"
 
-    def __init__(self):
-        super().__init__(MorningStar.BaseName)
-        self.damage = '1d6'
+    # Damage
+    DamageRange = [2, 6]
+    DamageType = "bludgeoning"
+    DamageModifier = "strength"
+
+    # Distribution
+    Distribution = np.random.uniform
+    DistributionProperties = ()
