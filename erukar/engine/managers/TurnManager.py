@@ -29,10 +29,20 @@ class TurnManager(Manager):
         return next_player
 
     def execute_turn(self):
-        player = self.next()
+        lifeform = self.next()
+        if isinstance(lifeform, erukar.engine.model.PlayerNode):
+            return self.do_player_turn(lifeform)
+        return self.do_npc_turn(lifeform)
+
+    def do_player_turn(self, player):
+        pass
         # inform the player that it's his turn
         # if this is the only player, don't bother sending a message 
-        # wait for TurnWaitCount
+        # wait for TurnWaitTime
+        # Execute player's most recent command
+
+    def do_npc_turn(self, npc):
+        pass
 
     def turn_order_generator(self, current_turn_count=0):
         '''

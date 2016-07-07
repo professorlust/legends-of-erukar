@@ -1,6 +1,7 @@
-from erukar.engine.factories.DungeonGenerator import DungeonGenerator
-from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
-from erukar.engine.factories.FactoryBase import FactoryBase
-from erukar.engine.factories.RandomizedEntityFactory import RandomizedEntityFactory
+from .DungeonGenerator import DungeonGenerator
+from .ModuleDecorator import ModuleDecorator
+from .ProbablisticGenerator import ProbablisticGenerator
+from .FactoryBase import FactoryBase
+from .RandomizedEntityFactory import RandomizedEntityFactory
 
-__all__ = ["DungeonGenerator", "ProbablisticGenerator", "FactoryBase", "RandomizedEntityFactory"]
+__all__ = ["DungeonGenerator", "ModuleDecorator", "ProbablisticGenerator", "FactoryBase", "RandomizedEntityFactory"]

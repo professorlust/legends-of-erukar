@@ -1,9 +1,8 @@
-from erukar.engine import ProbablisticGenerator
-from erukar.game.modifiers.room import *
+from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
 import sys, inspect
 
-class RoomDecorator(ProbablisticGenerator):
-    def __init__(self, module):
+class ModuleDecorator(ProbablisticGenerator):
+    def __init__(self, module, generation_parameters):
         super().__init__()
 
         self.decoration_module = sys.modules[module]

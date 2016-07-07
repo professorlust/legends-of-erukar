@@ -1,6 +1,6 @@
 from erukar.game.modifiers.RoomModifier import RoomModifier
 from erukar.engine.environment import *
-from erukar.game.decorators.RoomDecorator import RoomDecorator
+from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random
 
 class Table(RoomModifier):
@@ -53,7 +53,7 @@ class Table(RoomModifier):
         top = Container(aliases=[Table.top_alias_base.format(self.material)],\
             broad_results='',\
             inspect_results=table_top_condition)
-        r = RoomDecorator('erukar.game.inventory')
+        r = ModuleDecorator('erukar.game.inventory', None)
         addition = r.create_one()
         top.add(addition)
         room.add(top)
