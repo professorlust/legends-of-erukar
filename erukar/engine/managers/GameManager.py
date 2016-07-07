@@ -1,6 +1,5 @@
-class GameManager:
-    def __init__(self):
-        self.players = []
+from erukar.engine.model.Manager import Manager
 
-    def subscribe(self, player):
-        self.players.append(player)
+class GameManager(Manager):
+    def __init__(self):
+        super().__init__()
