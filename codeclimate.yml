@@ -5,7 +5,7 @@ engines:
       languages:
         - python
     exclude_paths:
-      - erukar/game/
+      - "erukar/game/" 
   fixme:
     enabled: true
   radon:
