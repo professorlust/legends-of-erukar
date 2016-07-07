@@ -4,6 +4,8 @@ engines:
     config:
       languages:
         - python
+    exclude_paths:
+      - erukar/game/
   fixme:
     enabled: true
   radon:
