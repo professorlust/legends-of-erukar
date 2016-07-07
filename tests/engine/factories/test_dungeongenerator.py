@@ -39,4 +39,4 @@ class DungeonGeneratorTests(unittest.TestCase):
         self.gen.connect_rooms()
 
         dirs = self.gen.possible_directions(self.gen.dungeon.rooms[0])
-        self.assertEqual(len(dirs), 3)
+        self.assertEqual(len(list(dirs)), 3)

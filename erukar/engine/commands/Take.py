@@ -1,7 +1,7 @@
-from erukar.engine.model.Command import Command
+from erukar.engine.model.ActionCommand import ActionCommand
 from erukar.engine.inventory.Item import Item
 
-class Take(Command):
+class Take(ActionCommand):
     failure = "No item '{0}' was found"
     cannot_take = "'{0}' cannot be taken."
     success = "Successfully took {0}"

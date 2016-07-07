@@ -1,9 +1,9 @@
-from erukar.engine.model.Command import Command
+from erukar.engine.model.ActionCommand import ActionCommand
 from erukar.engine.inventory.Armor import Armor
 from erukar.engine.inventory.Weapon import Weapon
 import re
 
-class Equip(Command):
+class Equip(ActionCommand):
     not_found = "Unable to find '{0}' in inventory"
     equipped_weapon = "'{0}' equipped as weapon successfully"
     equipped_armor = "'{0}' equipped as armor successfully"

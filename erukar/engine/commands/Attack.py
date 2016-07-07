@@ -1,7 +1,7 @@
-from erukar.engine.model.Command import Command
+from erukar.engine.model.ActionCommand import ActionCommand
 from erukar.engine.environment.Corpse import Corpse
 
-class Attack(Command):
+class Attack(ActionCommand):
     not_found = "No object matching '{0}' was found in this room."
     unsuccessful = "Your attack of {0} misses {1}."
     successful = "Your attack of {0} hits {1}, dealing {2} damage."

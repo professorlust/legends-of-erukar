@@ -1,4 +1,5 @@
-from erukar.engine.model.Command import Command
+from erukar.engine.model.ActionCommand import ActionCommand
 
-class Quit(Command):
+
+class Quit(ActionCommand):
     pass

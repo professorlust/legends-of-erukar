@@ -14,8 +14,8 @@ class DungeonGenerator(FactoryBase):
 
         The Hallway Bias is the bias of the dungeon to continue forward instead of cornering
         '''
-        self.branching_probabilities = [0.0, 0.50, 0.90]
-        self.hallway_bias = 0.3
+        self.branching_probabilities = [0.0, 0.40, 0.90]
+        self.hallway_bias = 0.2
         self.avg_rooms = 15
 
     def generate(self):
@@ -41,7 +41,9 @@ class DungeonGenerator(FactoryBase):
 
     def unconnected(self):
         '''Shortcut to a generator that provides unconnected rooms'''
-        return (r for r in self.dungeon.rooms[1:] if len(self.possible_directions(r)) == 4)
+        for r in self.dungeon.rooms[1:]:
+            if len(list(self.possible_directions(r))) == 4:
+                yield r
 
     def generate_descriptions(self):
         ''' Add descriptions '''
@@ -88,8 +90,9 @@ class DungeonGenerator(FactoryBase):
 
     def possible_directions(self, room):
         '''Get all directions for a room that are not already specified'''
-        return [d for d in room.connections \
-            if room.connections[d].door is None and room.connections[d].room is None]
+        for d in room.connections:
+            if room.connections[d].door is None and room.connections[d].room is None:
+                yield d
 
     def random_direction(self, room):
         '''Find a random direction implementing biases'''

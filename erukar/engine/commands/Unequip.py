@@ -1,9 +1,9 @@
 from erukar.engine.lifeforms.Lifeform import Lifeform
-from erukar.engine.model.Command import Command
+from erukar.engine.model.ActionCommand import ActionCommand
 from erukar.engine.inventory.Armor import Armor
 from erukar.engine.inventory.Weapon import Weapon
 
-class Unequip(Command):
+class Unequip(ActionCommand):
     not_found = "No equipped item '{0}' was found"
     unequipped_armor = "Armor has been unequipped"
     unequipped_weapon = "Weapon has been unequipped"

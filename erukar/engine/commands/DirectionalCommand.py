@@ -1,7 +1,7 @@
-from erukar.engine.model.Command import Command
+from erukar.engine.model.ActionCommand import ActionCommand
 from erukar.engine.model.Direction import Direction
 
-class DirectionalCommand(Command):
+class DirectionalCommand(ActionCommand):
     def determine_direction(self, payload):
         '''Take text and determine its respective cardinal direction'''
 
