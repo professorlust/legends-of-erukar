@@ -25,6 +25,9 @@ class PlayerNode:
         if item in self.item_indexer:
             self.item_indexer.pop(item, None)
 
+    def turn_modifier(self):
+        return self.character.turn_modifier()
+
     def move_to_room(self, room):
         if self.character in self.character.current_room.contents:
             self.character.current_room.contents.remove(self.character)

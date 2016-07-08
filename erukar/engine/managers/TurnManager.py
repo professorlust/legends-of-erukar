@@ -1,3 +1,4 @@
+import erukar
 from erukar.engine.model.Manager import Manager
 
 class TurnManager(Manager):

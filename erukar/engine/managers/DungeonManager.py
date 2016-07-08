@@ -39,4 +39,7 @@ class DungeonManager(Manager):
 
     def subscribe(self, player):
         super().subscribe(player)
+        room = self.dungeon.rooms[0]
+        player.character.link_to_room(room)
+        player.move_to_room(room)
         self.turn_manager.subscribe(player)
