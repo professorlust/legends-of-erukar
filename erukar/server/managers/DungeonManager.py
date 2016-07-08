@@ -1,6 +1,6 @@
 from erukar.engine.factories import *
 from erukar.engine.model.Manager import Manager
-from erukar.engine.managers.TurnManager import TurnManager
+from erukar.server.managers.TurnManager import TurnManager
 
 class DungeonManager(Manager):
     BaseModule = "erukar.game.modifiers.room.{0}"
@@ -17,12 +17,10 @@ class DungeonManager(Manager):
         "qualities.lighting",
         "qualities.sounds"]
 
-    def __init__(self):
-        super().__init__()
-        self.turn_manager = TurnManager()
-
-    def activate(self, generation_parameters):
+    def activate(self, requests,  generation_parameters):
         '''Here generation_parameters is a GenerationProfile'''
+        self.turn_manager = TurnManager()
+        self.requests = requests
         d = DungeonGenerator()
         self.dungeon = d.generate()
         self.decorate(generation_parameters)
@@ -42,4 +40,11 @@ class DungeonManager(Manager):
         room = self.dungeon.rooms[0]
         player.character.link_to_room(room)
         player.move_to_room(room)
-        self.turn_manager.subscribe(player)
+        self.turn_manager.subscribe(player)        
+        
+    def instance_running(self, requests, gen_params):
+        self.activate(requests, gen_params)
+        while True:
+            if any(self.requests):
+                cmd = self.requests.pop()
+                print(cmd.execute())

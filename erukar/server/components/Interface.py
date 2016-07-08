@@ -1,5 +1,6 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
-from erukar.server.DataAccess import DataAccess
+from erukar.server.components.DataAccess import DataAccess
+from multiprocessing import Manager
 
 class Interface:
     command_location = 'erukar.engine.commands'
@@ -8,6 +9,8 @@ class Interface:
     def __init__(self):
         self.data = DataAccess()
         self.factory = FactoryBase()
+        self.manager = Manager()
+        self.requests = self.manager.list([])
 
     def received_whisper(self, whisper_msg):
         '''received_whisper hook for whenever the node gets a whisper message'''
@@ -28,7 +31,7 @@ class Interface:
             return Interface.command_does_not_exist.format(command)
 
         # The Command tcan return something if it needs to for some reason
-        return created.execute(payload)
+        self.requests.append(created)
 
     def command_and_payload(self, message):
         '''
