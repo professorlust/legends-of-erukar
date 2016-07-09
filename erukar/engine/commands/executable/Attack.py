@@ -1,4 +1,4 @@
-from erukar.engine.model.ActionCommand import ActionCommand
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Corpse import Corpse
 
 class Attack(ActionCommand):

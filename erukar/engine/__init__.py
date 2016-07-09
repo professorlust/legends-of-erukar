@@ -1,3 +1,4 @@
+from erukar.engine.commands.executable import *
 from erukar.engine.commands import *
 from erukar.engine.environment import *
 from erukar.engine.factories import *

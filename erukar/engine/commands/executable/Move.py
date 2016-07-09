@@ -1,4 +1,4 @@
-from erukar.engine.commands.Inspect import Inspect
+from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.DirectionalCommand import DirectionalCommand
 from erukar.engine.environment import *
 

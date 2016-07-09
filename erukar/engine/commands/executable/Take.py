@@ -1,4 +1,4 @@
-from erukar.engine.model.ActionCommand import ActionCommand
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.inventory.Item import Item
 
 class Take(ActionCommand):

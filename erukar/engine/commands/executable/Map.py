@@ -1,4 +1,4 @@
-from erukar.engine.commands.Inspect import Inspect
+from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.model.Command import Command
 from erukar.engine.environment import *
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator

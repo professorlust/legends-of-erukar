@@ -1,5 +1,5 @@
 from erukar.engine.lifeforms.Lifeform import Lifeform
-from erukar.engine.model.ActionCommand import ActionCommand
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.inventory.Armor import Armor
 from erukar.engine.inventory.Weapon import Weapon
 

@@ -3,7 +3,7 @@ from erukar.server.DataAccess import DataAccess
 from multiprocessing import Manager
 
 class Interface:
-    command_location = 'erukar.engine.commands'
+    command_location = 'erukar.engine.commands.executable'
     command_does_not_exist = 'The command \'{0}\' was not found.'
 
     def __init__(self):
