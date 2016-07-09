@@ -16,8 +16,9 @@ class AttackTests(unittest.TestCase):
         a = Attack()
         a.sender_uid = p.uid
         a.data = data_store
+        a.payload = "the air"
 
-        result = a.execute("the air")
+        result = a.execute()
 
         self.assertEqual(result, Attack.not_found.format("the air"))
 
@@ -38,8 +39,9 @@ class AttackTests(unittest.TestCase):
         a = Attack()
         a.sender_uid = p.uid
         a.data = data_store
+        a.payload = "the air"
 
-        result = a.execute("the air")
+        result = a.execute()
 
         self.assertTrue("Your attack of " in result)
 

@@ -2,8 +2,9 @@ class Command:
     def __init__(self):
         self.sender_uid = ''
         self.data = None
+        self.payload = ''
 
-    def execute(self, room, contents):
+    def execute(self, room):
         '''Run this Command'''
         player = self.find_player()
 

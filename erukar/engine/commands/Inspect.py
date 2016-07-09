@@ -7,14 +7,14 @@ class Inspect(DirectionalCommand):
     def __init__(self):
         super().__init__()
 
-    def execute(self, payload):
+    def execute(self):
         player = self.find_player()
         room = player.character.current_room
         self.index(room, player)
-        direction = self.determine_direction(payload.lower())
+        direction = self.determine_direction(self.payload.lower())
 
         if direction is None:
-            return self.inspect_in_room(player, room, payload)
+            return self.inspect_in_room(player, room, self.payload)
 
         result = room.describe_in_direction(direction, inspect_walls=True)
         if result is not None:

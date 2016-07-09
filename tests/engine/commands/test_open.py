@@ -16,7 +16,8 @@ class OpenTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('north')
+        o.payload = 'north'
+        result = o.execute()
 
         self.assertEqual(result, Open.nesw_no_door)
 
@@ -36,7 +37,8 @@ class OpenTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('south')
+        o.payload = 'south'
+        result = o.execute()
 
         self.assertEqual(result, Open.nesw_no_door)
 
@@ -58,7 +60,8 @@ class OpenTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('south')
+        o.payload = 'south'
+        result = o.execute()
 
         self.assertEqual(result, Open.nesw_locked)
 
@@ -80,7 +83,8 @@ class OpenTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('south')
+        o.payload = 'south'
+        result = o.execute()
 
         self.assertEqual(result, Open.nesw_already_open)
 
@@ -101,7 +105,8 @@ class OpenTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('south')
+        o.payload = 'south'
+        result = o.execute()
 
         self.assertEqual(result, Open.nesw_open_success)
         self.assertEqual(d.status, Door.Open)
@@ -122,6 +127,7 @@ class OpenTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('chest')
+        o.payload = 'chest'
+        result = o.execute()
 
         self.assertEqual(result, 'Opened a chest')

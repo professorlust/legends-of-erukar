@@ -6,18 +6,18 @@ class Take(ActionCommand):
     cannot_take = "'{0}' cannot be taken."
     success = "Successfully took {0}"
 
-    def execute(self, item_name):
+    def execute(self):
         player = self.find_player()
         room = player.character.current_room
         if player is None: return
 
         # Try to find the item in the room
-        item = self.find_in_room(room, item_name)
+        item = self.find_in_room(room, self.payload)
         if item is not None:
             return self.move_to_inventory(item, player, room)
 
         # Send a failure message
-        return Take.failure.format(item_name)
+        return Take.failure.format(self.payload)
 
     def move_to_inventory(self, item, player, room):
         if not issubclass(type(item), Item):

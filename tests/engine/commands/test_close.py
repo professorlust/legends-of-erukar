@@ -15,8 +15,9 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
+        o.payload = 'north'
 
-        result = o.execute('north')
+        result = o.execute()
 
         self.assertEqual(result, Close.nesw_no_door)
 
@@ -35,8 +36,9 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
+        o.payload = 'south'
 
-        result = o.execute('south')
+        result = o.execute()
 
         self.assertEqual(result, Close.nesw_no_door)
 
@@ -57,8 +59,9 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
+        o.payload = 'south'
 
-        result = o.execute('south')
+        result = o.execute()
 
         self.assertEqual(result, Door.already_closed)
 
@@ -78,8 +81,10 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
+        o.payload = 'south'
 
-        result = o.execute('south')
+        result = o.execute()
+
         self.assertEqual(result, Door.already_closed)
 
 
@@ -101,7 +106,9 @@ class CloseTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('south')
+        o.payload = 'south'
+
+        result = o.execute()
 
         self.assertEqual(result, Door.close_success)
         self.assertEqual(d.status, Door.Closed)
@@ -122,6 +129,8 @@ class CloseTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        result = o.execute('chest')
+        o.payload = 'chest'
+
+        result = o.execute()
 
         self.assertEqual(result, 'Closed a chest')

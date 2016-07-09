@@ -10,17 +10,17 @@ class Open(DirectionalCommand):
     not_found = 'There is nothing to open'
 
     # I'm not terribly happy with this, as it forces usage of only Doors.
-    def execute(self, payload):
+    def execute(self):
         player = self.find_player()
         room = player.character.current_room
-        direction = self.determine_direction(payload.lower())
+        direction = self.determine_direction(self.payload.lower())
 
         # If the payload was NESW, treat this as a door
         if direction is not None:
             return self.handle_doors(room, direction)
 
         # Otherwise we need to find in the room
-        return self.handle_contents(room, player, payload)
+        return self.handle_contents(room, player, self.payload)
 
     def handle_contents(self, room, player, item_name):
         '''Try to find the item in the room, then run on_open on it if so'''

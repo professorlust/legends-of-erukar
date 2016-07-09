@@ -8,18 +8,18 @@ class Unequip(ActionCommand):
     unequipped_armor = "Armor has been unequipped"
     unequipped_weapon = "Weapon has been unequipped"
 
-    def execute(self, item_name):
+    def execute(self):
         player = self.find_player()
         if player is None: return
 
         # Try to unequip a specific type of equipment
         for equipment_type in Lifeform.equipment_types:
-            result = self.unequip_type(player.character, equipment_type, item_name)
+            result = self.unequip_type(player.character, equipment_type, self.payload)
             if result is not None:
                 return result
 
         # Nothing was found
-        return Unequip.not_found.format(item_name)
+        return Unequip.not_found.format(self.payload)
 
     def unequip_type(self, character, equipment_type, item_name):
         '''Dynamic method to unequip a weapon or armor'''

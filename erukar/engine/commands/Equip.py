@@ -10,14 +10,14 @@ class Equip(ActionCommand):
     cannot_equip = "'{0}' was found but cannot be equipped"
     item_type_expression = "\.(\w+)'"
 
-    def execute(self, item_name):
+    def execute(self):
         player = self.find_player()
         if player is None: return
 
         # Get the item from our inventory if it exists
-        item = self.find_in_inventory(player, item_name)
+        item = self.find_in_inventory(player, self.payload)
         if item is None:
-            return Equip.not_found.format(item_name)
+            return Equip.not_found.format(self.payload)
 
         # Check to see if the item's type exists as a field on the character
         item_type = item.item_type

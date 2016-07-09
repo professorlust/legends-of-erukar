@@ -38,7 +38,8 @@ class MoveTests(unittest.TestCase):
         m.sender_uid = p.uid
         m.data = data_store
 
-        result = m.execute('north')
+        m.payload = 'north'
+        result = m.execute()
 
         self.assertEqual(result, Move.move_through_wall)
 
@@ -59,7 +60,8 @@ class MoveTests(unittest.TestCase):
         m.sender_uid = p.uid
         m.data = data_store
 
-        result = m.execute('south')
+        m.payload = 'south'
+        result = m.execute()
 
         self.assertEqual(result, Move.move_through_closed_door)
 
@@ -81,7 +83,8 @@ class MoveTests(unittest.TestCase):
         m.sender_uid = p.uid
         m.data = data_store
 
-        result = m.execute('south')
+        m.payload = 'south'
+        result = m.execute()
 
         self.assertTrue('You have successfully moved South.' in result)
         self.assertEqual(p.current_room, s)

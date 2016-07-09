@@ -14,7 +14,7 @@ class Map(Command):
     vert_door_open = '╷'
     player_marker = '@'
 
-    def execute(self, payload):
+    def execute(self, *_):
         '''Converts the dungeon_map into a readable map for the user'''
         player = self.find_player()
         room = player.character.current_room
