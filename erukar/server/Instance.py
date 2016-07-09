@@ -1,8 +1,9 @@
 from erukar.engine.factories import *
 from erukar.engine.model.Manager import Manager
-from erukar.server.managers.TurnManager import TurnManager
+from erukar.server.TurnManager import TurnManager
+import erukar
 
-class DungeonManager(Manager):
+class Instance(Manager):
     BaseModule = "erukar.game.modifiers.room.{0}"
     SubModules = [
         "materials.floors",
@@ -40,11 +41,18 @@ class DungeonManager(Manager):
         room = self.dungeon.rooms[0]
         player.character.link_to_room(room)
         player.move_to_room(room)
+        print(player.character.current_room)
         self.turn_manager.subscribe(player)        
+        print('subscribed!')
         
     def instance_running(self, requests, gen_params):
         self.activate(requests, gen_params)
         while True:
             if any(self.requests):
                 cmd = self.requests.pop()
+                print(cmd.find_player())
+                print(cmd.find_player().character.current_room)
+                if isinstance(cmd, erukar.engine.commands.Join):
+                    self.subscribe(cmd.find_player())
+                    continue
                 print(cmd.execute())

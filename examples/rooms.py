@@ -21,14 +21,12 @@ npc = PlayerNode(ucharacter.uid, ucharacter)
 
 w.subscribe(player)
 w.subscribe(npc)
-print(w.interface.execute(character.uid, 'inspect'))
+w.interface.execute(character.uid, 'join')
+#print(w.interface.execute(character.uid, 'inspect'))
 
 while True:
-    turn = w.dungeons[0].turn_manager.next()
-    print('It is now {0}\'s turn\n'.format(turn.uid))
-    if turn is player:
-        line = input('> ')
-        print('-' * 64)
-        res = w.interface.execute(turn.character.uid, line)
-        if res is not None:
-            print(res)
+    line = input('> ')
+    print('-' * 64)
+    res = w.interface.execute(player.character.uid, line)
+    if res is not None:
+        print(res)

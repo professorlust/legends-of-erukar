@@ -1,5 +1,5 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
-from erukar.server.components.DataAccess import DataAccess
+from erukar.server.DataAccess import DataAccess
 from multiprocessing import Manager
 
 class Interface:
