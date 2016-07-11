@@ -3,7 +3,7 @@ import unittest
 
 class InterfaceTests(unittest.TestCase):
     def test_command_and_payload_no_word(self):
-        i = Interface()
+        i = Interface(None)
 
         method, contents = i.command_and_payload('inspect')
 
@@ -11,7 +11,7 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(contents, '')
 
     def test_command_and_payload_single_word(self):
-        i = Interface()
+        i = Interface(None)
 
         method, contents = i.command_and_payload('inspect other')
 

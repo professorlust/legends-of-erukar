@@ -1,4 +1,4 @@
-from erukar.engine.commands.Inspect import Inspect
+from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.model.Command import Command
 from erukar.engine.environment import *
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
@@ -14,7 +14,7 @@ class Map(Command):
     vert_door_open = '╷'
     player_marker = '@'
 
-    def execute(self, payload):
+    def execute(self, *_):
         '''Converts the dungeon_map into a readable map for the user'''
         player = self.find_player()
         room = player.character.current_room

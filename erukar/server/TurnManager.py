@@ -26,6 +26,7 @@ class TurnManager(Manager):
         return command
 
     def next(self):
+        print(self.turn_order)
         next_player, self.current_turn_count = next(self.turn_order)
         return next_player
 

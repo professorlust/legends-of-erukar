@@ -20,13 +20,14 @@ class TakeTests(unittest.TestCase):
         i = Inspect()
         i.sender_uid = p.uid
         i.data = data_store
-        i.execute('')
+        i.execute()
 
         # Now take it
         t = Take()
         t.sender_uid = p.uid
         t.data = data_store
-        result = t.execute('sword')
+        t.payload = 'sword'
+        result = t.execute()
 
         self.assertTrue(w in p.inventory)
         self.assertTrue(w not in r.contents)
@@ -47,7 +48,8 @@ class TakeTests(unittest.TestCase):
         t = Take()
         t.sender_uid = p.uid
         t.data = data_store
-        result = t.execute('Sword')
+        t.payload = 'Sword'
+        result = t.execute()
 
         self.assertTrue(w in r.contents)
         self.assertTrue(w not in p.inventory)

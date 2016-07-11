@@ -1,4 +1,4 @@
-from erukar.engine.commands.Inspect import Inspect
+from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.DirectionalCommand import DirectionalCommand
 from erukar.engine.environment import *
 
@@ -7,9 +7,9 @@ class Move(DirectionalCommand):
     move_through_closed_door = 'You cannot move this way because a door prevents you from doing so'
     move_successful = 'You have successfully moved {0}.\n\n{1}'
 
-    def execute(self, payload):
+    def execute(self):
         player = self.find_player()
-        direction = self.determine_direction(payload.lower())
+        direction = self.determine_direction(self.payload.lower())
         if direction is None: return ''
         in_direction = player.character.current_room.get_in_direction(direction)
 
@@ -33,6 +33,6 @@ class Move(DirectionalCommand):
         i = Inspect()
         i.data = self.data
         i.sender_uid = self.sender_uid
-        inspection_result = i.execute('')
+        inspection_result = i.execute()
 
         return Move.move_successful.format(direction.name, inspection_result)

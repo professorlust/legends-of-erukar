@@ -1,4 +1,4 @@
-from erukar.engine.model.ActionCommand import ActionCommand
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Corpse import Corpse
 
 class Attack(ActionCommand):
@@ -8,12 +8,12 @@ class Attack(ActionCommand):
     caused_dying = "{0}\n{1} has been incapacitated by your attack!"
     caused_death = "{0}\n{1} has been slain!"
 
-    def execute(self, target_description):
+    def execute(self):
         player = self.find_player()
-        target = self.find_in_room(player.character.current_room, target_description)
+        target = self.find_in_room(player.character.current_room, self.payload)
 
         if target is None:
-            return Attack.not_found.format(target_description)
+            return Attack.not_found.format(self.payload)
         return self.adjudicate_attack(player.character, target)
 
     def adjudicate_attack(self, character, target):
