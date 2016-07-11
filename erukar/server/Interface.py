@@ -23,7 +23,7 @@ class Interface:
     def execute(self, uid, line):
         command, payload = self.command_and_payload(line)
         target_command = '{0}.{1}'.format(Interface.command_location, command.capitalize())
-        generation_parameters = {'sender_uid': uid, 'data': self.data }
+        generation_parameters = {'sender_uid': uid, 'payload': payload, 'data': self.data }
 
         # Now actually make the thing with specified params
         created = self.factory.create_one(target_command, generation_parameters)

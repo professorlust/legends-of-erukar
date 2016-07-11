@@ -1,5 +1,6 @@
 class Command:
     def __init__(self):
+        '''These parameters are assigned after instantiation'''
         self.sender_uid = ''
         self.data = None
         self.payload = ''

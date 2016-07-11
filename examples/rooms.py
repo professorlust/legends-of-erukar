@@ -4,7 +4,7 @@ import numpy as np
 
 print('This example shows the Dungeon Procedural generation')
 
-w = GameManager()
+w = Shard()
 w.activate()
 
 # Controlled Character
@@ -25,8 +25,6 @@ w.interface.execute(character.uid, 'join')
 #print(w.interface.execute(character.uid, 'inspect'))
 
 while True:
-    line = input('> ')
+    line = input('')
     print('-' * 64)
     res = w.interface.execute(player.character.uid, line)
-    if res is not None:
-        print(res)
