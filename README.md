@@ -22,3 +22,4 @@ All weapons, armor, items, monsters, etc. will be random. The basis for generati
 * [Mechanics](docs/mechanics.md)
 * [Commands](docs/commands.md)
 * [Character Progression](docs/progression.md)
+* [Networking: Shards and Instancing](docs/networking.md)

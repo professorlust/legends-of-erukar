@@ -1,7 +1,7 @@
 from erukar.engine.model.RpgEntity import RpgEntity
 
 class Lifeform(RpgEntity):
-    attribute_types = ["strength", "dexterity", "vitality", "acuity"]
+    attribute_types = ["strength", "dexterity", "vitality", "acuity", "sense", "willpower"]
     attribute_value_default = -2
     attack_damage_attribute = "strength"
     attack_roll_attribute = "dexterity"

@@ -3,6 +3,6 @@ from erukar.engine.environment import *
 from erukar.game.modifiers.RoomModifier import RoomModifier
 
 class NoDecoration(RoomModifier):
-    Probability = 40
+    Probability = 10
     def apply_to(self, room):
         pass

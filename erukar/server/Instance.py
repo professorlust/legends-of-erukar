@@ -62,12 +62,10 @@ class Instance(Manager):
         while True:
             if any(self.non_action_commands):
                 # Run ALL of these
-                print('Nonaction')
                 cmd = self.non_action_commands.pop()
                 self.execute_command(cmd)
             if any(self.action_commands):
                 # only run if turn order
-                print('Action')
                 cmd = self.action_commands.pop()
                 self.execute_command(cmd)
 

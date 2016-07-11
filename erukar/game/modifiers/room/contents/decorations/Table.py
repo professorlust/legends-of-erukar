@@ -4,7 +4,7 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random
 
 class Table(RoomModifier):
-    Probability = 10
+    Probability = 1
     materials = [
         'birch',
         'poplar',
