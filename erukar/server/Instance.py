@@ -21,11 +21,12 @@ class Instance(Manager):
         "qualities.lighting",
         "qualities.sounds"]
 
-    def activate(self, requests,  generation_parameters):
+    def activate(self, action_commands, non_action_commands,  generation_parameters):
         '''Here generation_parameters is a GenerationProfile'''
         self.turn_manager = TurnManager()
-        self.requests = requests
         self.data = DataAccess()
+        self.action_commands = action_commands
+        self.non_action_commands = non_action_commands
         d = DungeonGenerator()
         self.dungeon = d.generate()
         self.decorate(generation_parameters)
@@ -56,13 +57,22 @@ class Instance(Manager):
         self.data.players.append(p)
         return p
         
-    def instance_running(self, requests, gen_params):
-        self.activate(requests, gen_params)
+    def instance_running(self, action_commands, non_action_commands, gen_params):
+        self.activate(action_commands, non_action_commands, gen_params)
         while True:
-            if any(self.requests):
-                cmd = self.requests.pop()
-                if isinstance(cmd, erukar.engine.commands.Join):
-                    self.subscribe(cmd.find_player())
-                    continue
-                cmd.data = self.data
-                print(cmd.execute())
+            if any(self.non_action_commands):
+                # Run ALL of these
+                print('Nonaction')
+                cmd = self.non_action_commands.pop()
+                self.execute_command(cmd)
+            if any(self.action_commands):
+                # only run if turn order
+                print('Action')
+                cmd = self.action_commands.pop()
+                self.execute_command(cmd)
+
+    def execute_command(self, cmd):
+        if isinstance(cmd, erukar.engine.commands.Join):
+            self.subscribe(cmd.find_player())
+        cmd.data = self.data
+        print(cmd.execute())

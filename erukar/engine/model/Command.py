@@ -5,7 +5,7 @@ class Command:
         self.data = None
         self.payload = ''
 
-    def execute(self, room):
+    def execute(self):
         '''Run this Command'''
         player = self.find_player()
 

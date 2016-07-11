@@ -1,16 +1,14 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.server.DataAccess import DataAccess
-from multiprocessing import Manager
 
 class Interface:
     command_location = 'erukar.engine.commands.executable'
     command_does_not_exist = 'The command \'{0}\' was not found.'
 
-    def __init__(self):
+    def __init__(self, shard):
+        self.shard = shard
         self.data = DataAccess()
         self.factory = FactoryBase()
-        self.manager = Manager()
-        self.requests = self.manager.list([])
 
     def received_whisper(self, whisper_msg):
         '''received_whisper hook for whenever the node gets a whisper message'''
@@ -30,8 +28,10 @@ class Interface:
         if created is None:
             return Interface.command_does_not_exist.format(command)
 
-        # The Command tcan return something if it needs to for some reason
-        self.requests.append(created)
+        # The Command can return something if it needs to for some reason
+        instance = self.shard.player_current_instance(uid)
+        if instance is not None:
+            instance.append(created)
 
     def command_and_payload(self, message):
         '''
