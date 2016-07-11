@@ -1,7 +1,7 @@
-from erukar.engine.commands.DirectionalCommand import DirectionalCommand
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Door import Door
 
-class Open(DirectionalCommand):
+class Open(ActionCommand):
     nesw_open_success = 'You have successfully opened the door'
     nesw_locked = 'You try to open the door, but it is locked'
     nesw_already_open = 'The door is already open'

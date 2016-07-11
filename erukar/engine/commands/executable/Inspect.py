@@ -1,7 +1,7 @@
-from erukar.engine.commands.DirectionalCommand import DirectionalCommand
+from erukar.engine.model.Command import Command
 from erukar.engine.model.Containable import Containable
 
-class Inspect(DirectionalCommand):
+class Inspect(Command):
     not_found = "Nothing matching '{0}' was found in this room."
     abyss = "There is nothing to your {0} except the abyss... plain and nothingness forever."
     def __init__(self):

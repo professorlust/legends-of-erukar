@@ -1,7 +1,7 @@
-from erukar.engine.commands.DirectionalCommand import DirectionalCommand
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Door import Door
 
-class Close(DirectionalCommand):
+class Close(ActionCommand):
     nesw_no_door = 'There is no door in this direction to close'
     nesw_wall = 'You cannot close a wall'
     not_found = 'There is nothing to close'

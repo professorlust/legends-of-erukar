@@ -1,8 +1,8 @@
 from erukar.engine.commands.executable.Inspect import Inspect
-from erukar.engine.commands.DirectionalCommand import DirectionalCommand
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment import *
 
-class Move(DirectionalCommand):
+class Move(ActionCommand):
     move_through_wall = 'You attempt to pass through a wall with no luck'
     move_through_closed_door = 'You cannot move this way because a door prevents you from doing so'
     move_successful = 'You have successfully moved {0}.\n\n{1}'

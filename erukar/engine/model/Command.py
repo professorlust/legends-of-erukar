@@ -1,3 +1,5 @@
+from erukar.engine.model.Direction import Direction
+
 class Command:
     def __init__(self):
         '''These parameters are assigned after instantiation'''
@@ -22,3 +24,15 @@ class Command:
     def find_in_inventory(self, player, item_name):
         '''Attempt to find an item in a player's inventory'''
         return next((p for p in player.character.inventory if p.matches(item_name)), None)
+
+    def determine_direction(self, payload):
+        '''Take text and determine its respective cardinal direction'''
+
+        couples = [
+            { "keywords": ['n', 'north'], "direction": Direction.North },
+            { "keywords": ['e', 'east'], "direction": Direction.East },
+            { "keywords": ['s', 'south'], "direction": Direction.South },
+            { "keywords": ['w', 'west'], "direction": Direction.West } ]
+
+        return next((x['direction'] for x in couples \
+            if any([k == payload for k in x['keywords']])), None)
