@@ -7,12 +7,15 @@ from erukar.engine.model.PlayerNode import PlayerNode
 import erukar, threading
 
 class Instance(Manager):
+    MaximumTurnTime = 5.0 # In seconds
+    MaximumTurnSkipPenalty = 5 # in turns
     BaseModule = "erukar.game.modifiers.room.{0}"
     SubModules = [
         "materials.floors",
         "materials.walls",
         "materials.ceilings",
         "structure.ceilings",
+        "contents.enemies",
         "contents.decorations",
         "contents.items",
         "structure.passages",
@@ -30,6 +33,13 @@ class Instance(Manager):
         d = DungeonGenerator()
         self.dungeon = d.generate()
         self.decorate(generation_parameters)
+        self.subscribe_enemies()
+
+    def subscribe_enemies(self):
+        for room in self.dungeon.rooms:
+            for item in room.contents:
+                if issubclass(type(item), erukar.engine.lifeforms.Enemy):
+                    self.turn_manager.subscribe(item)
     
     def decorate(self, generation_parameters):
         decorators = list(Instance.decorators(generation_parameters))
@@ -59,15 +69,44 @@ class Instance(Manager):
         
     def instance_running(self, action_commands, non_action_commands, gen_params):
         self.activate(action_commands, non_action_commands, gen_params)
+        self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
+        self.timer.start()
+        self.active_player = None
         while True:
             if any(self.non_action_commands):
                 # Run ALL of these
                 cmd = self.non_action_commands.pop()
                 self.execute_command(cmd)
-            if any(self.action_commands):
-                # only run if turn order
-                cmd = self.action_commands.pop()
-                self.execute_command(cmd)
+
+            if isinstance(self.active_player, erukar.engine.model.PlayerNode):
+                player_cmd = self.get_active_player_action()
+                if player_cmd is None:
+                    continue
+                print(player_cmd)
+                self.execute_command(player_cmd)
+
+            if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
+                self.active_player.perform_turn()
+
+            self.active_player = self.turn_manager.next()
+            self.timer.cancel()
+            self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
+            self.timer.start()
+
+    def get_active_player_action(self):
+        for command in self.action_commands:
+            if command.sender_uid == self.active_player.uid:
+                while len(self.action_commands) > 0:
+                    self.action_commands.pop()
+                return command
+
+    def skip_player(self):
+        print("Skipping player")
+        for i in range(self.MaximumTurnSkipPenalty):
+            next_player = self.turn_manager.next()
+            if next_player is not self.active_player:
+                break
+        self.active_player = next_player
 
     def execute_command(self, cmd):
         if isinstance(cmd, erukar.engine.commands.Join):

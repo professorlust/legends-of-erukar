@@ -2,9 +2,6 @@ from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Door import Door
 
 class Open(ActionCommand):
-    nesw_open_success = 'You have successfully opened the door'
-    nesw_locked = 'You try to open the door, but it is locked'
-    nesw_already_open = 'The door is already open'
     nesw_no_door = 'There is no door in this direction to open'
     nesw_wall = 'You cannot open a wall'
     not_found = 'There is nothing to open'

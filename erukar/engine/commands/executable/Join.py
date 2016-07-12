@@ -1,5 +1,4 @@
-from erukar.engine.commands.ActionCommand import ActionCommand
+from erukar.engine.model.Command import Command
 
-
-class Join(ActionCommand):
+class Join(Command):
     pass
