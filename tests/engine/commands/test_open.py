@@ -63,7 +63,7 @@ class OpenTests(unittest.TestCase):
         o.payload = 'south'
         result = o.execute()
 
-        self.assertEqual(result, Open.nesw_locked)
+        self.assertEqual(result, Door.is_locked)
 
     def test_execute_through_open_door(self):
         p = Player()
@@ -86,7 +86,7 @@ class OpenTests(unittest.TestCase):
         o.payload = 'south'
         result = o.execute()
 
-        self.assertEqual(result, Open.nesw_already_open)
+        self.assertEqual(result, Door.already_open)
 
     def test_execute_through_closed_door(self):
         p = Player()
@@ -108,7 +108,7 @@ class OpenTests(unittest.TestCase):
         o.payload = 'south'
         result = o.execute()
 
-        self.assertEqual(result, Open.nesw_open_success)
+        self.assertEqual(result, Door.open_success)
         self.assertEqual(d.status, Door.Open)
 
     def test_execute_on_chest(self):
