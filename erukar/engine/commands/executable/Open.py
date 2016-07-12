@@ -49,14 +49,4 @@ class Open(ActionCommand):
             # There is no door to open
             return Open.nesw_no_door
 
-        # Door is locked
-        if door.status is Door.Locked:
-            return Open.nesw_locked
-
-        # Door is already open
-        if door.status is Door.Open:
-            return Open.nesw_already_open
-
-        # Actually open the door
-        door.status = Door.Open
-        return Open.nesw_open_success
+        return door.on_open()

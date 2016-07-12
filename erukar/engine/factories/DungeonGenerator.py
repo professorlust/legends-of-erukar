@@ -14,7 +14,7 @@ class DungeonGenerator(FactoryBase):
 
         The Hallway Bias is the bias of the dungeon to continue forward instead of cornering
         '''
-        self.branching_probabilities = [0.0, 0.40, 0.90]
+        self.branching_probabilities = [0.0, 0.30, 0.70]
         self.hallway_bias = 0.2
         self.avg_rooms = 15
 

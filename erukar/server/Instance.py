@@ -73,4 +73,6 @@ class Instance(Manager):
         if isinstance(cmd, erukar.engine.commands.Join):
             self.subscribe(cmd.find_player())
         cmd.data = self.data
-        print(cmd.execute())
+        result = cmd.execute()
+        if result is not None:
+            print(result + '\n')
