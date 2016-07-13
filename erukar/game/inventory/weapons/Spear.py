@@ -2,7 +2,7 @@ from erukar.engine.inventory.Weapon import Weapon
 import numpy as np
 
 class Spear(Weapon):
-    Probability = 100
+    Probability = 1
     BaseName = "Spear"
 
     # Damage

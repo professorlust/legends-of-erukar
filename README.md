@@ -18,6 +18,18 @@ All weapons, armor, items, monsters, etc. will be random. The basis for generati
   * Detrimental modifiers have negative quality, offsetting the cost to beneficial modifiers
   * The modifiers are arranged along **P(Quality)** from most detrimental to most beneficial, yielding significantly better results for items of high rarity within high difficulty zones
 
+## Dexterity Influence on Turn Order
+Each lifeform posesses a `turn_order_modifier` method in order to determine turn orders. The TurnManager iterates over the range (0, 100] and permits action by a Lifeform if its `turn_order_modifier`'s result modulused by the range's current value is zero. The Lifeform's dexterity attribute directly affects the value of the `turn_order_modifier` method using the following formula
+
+```python
+# Where d is a value within the range [-2, 20]
+turn_order_modifier = min_turn_mod + max_turn_mod * (1 - (1 + exp( (10 - d) / 5)))
+```
+
+![](docs/plots/turn_order_modifier.png)
+
+Through the use of this sigmoid function, the turn order increases slightly initially, then drastically, eventually tapering off as the dexterity attribute approaches its maximum
+
 ## Documentation
 * [Mechanics](docs/mechanics.md)
 * [Commands](docs/commands.md)

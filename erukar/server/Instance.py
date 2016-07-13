@@ -62,7 +62,7 @@ class Instance(Manager):
     def create_player_node(self, uid):
         character = Player()
         character.uid = uid
-        character.define_stats({'dexterity': 2})
+        character.define_stats({'dexterity': 10})
         p = PlayerNode(uid, character)
         self.data.players.append(p)
         return p
