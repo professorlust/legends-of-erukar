@@ -28,7 +28,7 @@ turn_order_modifier = min_turn_mod + max_turn_mod * (1 - (1 + exp( (10 - d) / 5)
 
 ![](docs/plots/turn_order_modifier.png)
 
-Through the use of this sigmoid function, the turn order increases slightly initially, then drastically, eventually tapering off as the dexterity attribute approaches its maximum
+Through the use of this sigmoid function, the amount of time between turns (turn_order_modifier) decreases slightly initially, then drastically, eventually tapering off as the dexterity attribute approaches its maximum. At -2 dexterity, the Lifeform should have roughly 2 turns per 100 TurnManager ticks. At 20 dexterity, the Lifeform should have approximately 6 turns per 100 TurnManager ticks.
 
 ## Documentation
 * [Mechanics](docs/mechanics.md)

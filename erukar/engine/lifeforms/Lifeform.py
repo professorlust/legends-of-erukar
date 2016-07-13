@@ -2,13 +2,24 @@ from erukar.engine.model.RpgEntity import RpgEntity
 import math, random
 
 class Lifeform(RpgEntity):
-    attribute_types = ["strength", "dexterity", "vitality", "acuity", "sense", "willpower"]
+    attribute_types = [
+        "strength", 
+        "dexterity", 
+        "vitality", 
+        "acuity", 
+        "sense", 
+        "resolve"]
     attribute_value_default = -2
     attack_damage_attribute = "strength"
     attack_roll_attribute = "dexterity"
     armor_attribute = "dexterity"
     health_attribute = "vitality"
-    equipment_types = ["armor", "weapon"]
+    equipment_types = [
+        "armor",
+        "helmet",
+        "boots",
+        "offhand",
+        "weapon"]
     base_health = 4
 
     critical_health = ['The lifeform is in critical health']
@@ -21,7 +32,9 @@ class Lifeform(RpgEntity):
         for att in Lifeform.attribute_types:
             setattr(self, att, Lifeform.attribute_value_default)
         self.level, self.max_health, self.health = (1,1,1)
-        self.armor, self.weapon, self.current_room = [None, None, None]
+        self.current_room = None
+        for eq_type in self.equipment_types:
+            setattr(self, eq_type, None)
         self.name = name
         self.afflictions = []
         self.contents_map = {}
@@ -32,7 +45,8 @@ class Lifeform(RpgEntity):
             setattr(self, stat, stats[stat])
 
     def turn_modifier(self):
-        return 20 - self.dexterity
+        res = 10.0 + round(40* (1.0 - 1.0 / (1.0 + math.exp( (10.0-self.dexterity) / 5.0))))
+        return res
 
     def define_level(self, level):
         '''Set this lifeform's level and defined the health appropriately'''

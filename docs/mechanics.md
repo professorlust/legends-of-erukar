@@ -6,8 +6,10 @@ The following attributes range from -2 (base) to 10 (maximum). On creation, a pl
 
 * **Strength**: Influences damage dealt
 * **Dexterity**: Influences armor, initiative, and attack rolls
-* **Vitality**: Influences health gained per level
+* **Vitality**: Influences health gained per level 
 * **Acuity**: Influences skill checks involving observation and investigation
+* **Sense**: Influences general perception, intuition, and common sense
+* **Resolve**: Influences the ability to persevere and a character's strength of mind
 
 ### Life and Death
 
