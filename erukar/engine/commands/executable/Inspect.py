@@ -25,7 +25,7 @@ class Inspect(Command):
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''
         if payload in ['','room']:
-            return room.describe()
+            return room.describe(player)
 
         if payload in 'flooring':
             return room.floor.on_inspect()

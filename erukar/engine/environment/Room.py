@@ -2,6 +2,7 @@ from erukar.engine.model.Containable import Containable
 from erukar.engine.model.Direction import Direction
 from erukar.engine.environment.Passage import Passage
 from erukar.engine.environment.Surface import Surface
+import erukar
 
 class Room(Containable):
     def __init__(self, coordinates=(0,0)):
@@ -42,10 +43,10 @@ class Room(Containable):
         con = self.connections[direction]
         return con.on_inspect(direction, inspect_walls)
 
-    def describe(self):
+    def describe(self, player=None):
         room_descriptions = list(self.generate_room_descriptions())
         directions = list(self.generate_direction_descriptions())
-        contents = list(self.generate_content_descriptions())
+        contents = list(self.generate_content_descriptions(player))
         return ' '.join(room_descriptions + contents + ['\n'] + directions)
 
     def generate_room_descriptions(self):
@@ -62,9 +63,12 @@ class Room(Containable):
             if res is not None:
                 yield '\n{0}:\t{1}'.format(direction.name, res)
 
-    def generate_content_descriptions(self):
+    def generate_content_descriptions(self, player):
         '''Generator for creating a list of content descriptions'''
         for content in self.contents:
+            if isinstance(content, erukar.engine.lifeforms.Player):
+                if content.uid == player.uid:
+                    continue
             description = content.describe()
             if description is not None:
                 yield description

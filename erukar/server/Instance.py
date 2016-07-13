@@ -7,7 +7,7 @@ from erukar.engine.model.PlayerNode import PlayerNode
 import erukar, threading
 
 class Instance(Manager):
-    MaximumTurnTime = 5.0 # In seconds
+    MaximumTurnTime = 10.0 # In seconds
     MaximumTurnSkipPenalty = 5 # in turns
     BaseModule = "erukar.game.modifiers.room.{0}"
     SubModules = [

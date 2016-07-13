@@ -1,4 +1,5 @@
 from erukar.engine.model.RpgEntity import RpgEntity
+import math, random
 
 class Lifeform(RpgEntity):
     attribute_types = ["strength", "dexterity", "vitality", "acuity", "sense", "willpower"]
@@ -10,10 +11,16 @@ class Lifeform(RpgEntity):
     equipment_types = ["armor", "weapon"]
     base_health = 4
 
+    critical_health = ['The lifeform is in critical health']
+    badly_wounded = ['The lifeform is badly wounded']
+    wounded = ['The lifeform is wounded']
+    slightly_wounded = ['The lifeform is slightly wounded']
+    full_health = ['The lifeform is at full health']
+
     def __init__(self, name=""):
         for att in Lifeform.attribute_types:
             setattr(self, att, Lifeform.attribute_value_default)
-        self.level, self.health = [0, 0]
+        self.level, self.max_health, self.health = (1,1,1)
         self.armor, self.weapon, self.current_room = [None, None, None]
         self.name = name
         self.afflictions = []
@@ -30,7 +37,8 @@ class Lifeform(RpgEntity):
     def define_level(self, level):
         '''Set this lifeform's level and defined the health appropriately'''
         self.level = level
-        self.health = sum([Lifeform.base_health + self.get(Lifeform.health_attribute) for x in range(0, level)])
+        self.max_health = sum([Lifeform.base_health + self.get(Lifeform.health_attribute) for x in range(0, level)])
+        self.health = self.max_health
 
     def calculate_armor_class(self):
         if 'dying' in self.afflictions:
@@ -82,5 +90,13 @@ class Lifeform(RpgEntity):
     def matches(self, payload):
         return payload.lower() in self.name.lower()
 
-    def get_name(self):
-        return self.name
+    def describe(self):
+        descriptor_index = math.floor(4.0 * self.health / self.max_health)
+        description_type = [
+            'critical_health',
+            'badly_wounded',
+            'wounded',
+            'slightly_wounded',
+            'full_health']
+        descriptions = getattr(self, description_type[descriptor_index])
+        return random.choice(descriptions)
