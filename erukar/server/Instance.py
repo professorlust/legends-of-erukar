@@ -82,7 +82,6 @@ class Instance(Manager):
                 player_cmd = self.get_active_player_action()
                 if player_cmd is None:
                     continue
-                print(player_cmd)
                 self.execute_command(player_cmd)
 
             if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):

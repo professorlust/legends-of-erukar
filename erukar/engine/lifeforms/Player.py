@@ -6,3 +6,6 @@ class Player(Lifeform):
         self.uid = '' # Player UID
         self.inventory = []
         self.credits = 0
+
+    def alias(self):
+        return self.uid
