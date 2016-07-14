@@ -21,7 +21,7 @@ class Take(ActionCommand):
 
     def move_to_inventory(self, item, player, room):
         if not issubclass(type(item), Item):
-            return Take.cannot_take.format(item.get_name().capitalize())
+            return Take.cannot_take.format(item.alias().capitalize())
 
         # We found it, so give it to the player and return a success msg
         player.character.inventory.append(item)

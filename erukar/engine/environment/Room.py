@@ -2,7 +2,7 @@ from erukar.engine.model.Containable import Containable
 from erukar.engine.model.Direction import Direction
 from erukar.engine.environment.Passage import Passage
 from erukar.engine.environment.Surface import Surface
-import erukar
+import erukar, random
 
 class Room(Containable):
     def __init__(self, coordinates=(0,0)):
@@ -32,7 +32,12 @@ class Room(Containable):
         return self.description
 
     def inspect_peek(self, direction):
-        return self.description
+        aliases = list(self.generate_content_descriptions(None, give_aliases=True))
+        if len(aliases) > 1:
+            aliases[-1] = 'and {}'.format(aliases[-1])
+        if len(aliases) > 2:
+            return ', '.join(aliases) 
+        return ' '.join(aliases)
 
     def add_door(self, direction, door):
         self.connections[direction].door = door
@@ -56,6 +61,9 @@ class Room(Containable):
         if self.ceiling is not None:
             yield self.ceiling.on_inspect()
 
+    def content_alias_or_description(self, item, give_alias):
+        return item.describe() if not give_alias else item.alias()
+
     def generate_direction_descriptions(self):
         '''Generator for creating a list of directional descriptions'''
         for direction in self.connections:
@@ -63,13 +71,13 @@ class Room(Containable):
             if res is not None:
                 yield '\n{0}:\t{1}'.format(direction.name, res)
 
-    def generate_content_descriptions(self, player):
+    def generate_content_descriptions(self, player, give_aliases=False):
         '''Generator for creating a list of content descriptions'''
         for content in self.contents:
             if isinstance(content, erukar.engine.lifeforms.Player):
                 if content.uid == player.uid:
                     continue
-            description = content.describe()
+            description = self.content_alias_or_description(content, give_aliases)
             if description is not None:
                 yield description
 

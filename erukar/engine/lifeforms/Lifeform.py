@@ -114,3 +114,6 @@ class Lifeform(RpgEntity):
             'full_health']
         descriptions = getattr(self, description_type[descriptor_index])
         return random.choice(descriptions)
+
+    def alias(self):
+        return self.name

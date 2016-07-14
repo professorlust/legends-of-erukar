@@ -18,7 +18,7 @@ class Attack(ActionCommand):
 
     def adjudicate_attack(self, character, target):
         '''Used to actually resolve an attack roll made between a character and target'''
-        target_name = target.get_name()
+        target_name = target.alias()
         attack_roll, armor_class, damages = character.attack(target)
         if attack_roll <= armor_class:
             return Attack.unsuccessful.format(attack_roll, target_name)

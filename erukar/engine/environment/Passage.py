@@ -17,7 +17,10 @@ class Passage:
                 return self.describe_door_in_direction(relative_dir.name)
 
         if self.room is not None:
-            return self.room.inspect_peek(relative_dir.name)
+            peek = self.room.inspect_peek(relative_dir.name)
+            if len(peek) > 0:
+                return 'Inside, you see {}.'.format(peek)
+            return 'There is nothing inside.'
 
         return None
 
