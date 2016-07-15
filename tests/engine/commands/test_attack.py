@@ -43,7 +43,7 @@ class AttackTests(unittest.TestCase):
 
         result = a.execute()
 
-        self.assertTrue("Your attack of " in result)
+        self.assertTrue("Bob's attack of " in result)
 
     def test_adjudicate_attack_success(self):
         p = Player()
@@ -99,7 +99,7 @@ class AttackTests(unittest.TestCase):
         atk = Attack()
         result = atk.adjudicate_attack(p, c)
 
-        self.assertTrue(' has been incapacitated by your attack!' in result)
+        self.assertTrue(' has been incapacitated by Bob\'s attack!' in result)
         self.assertTrue('dying' in c.afflictions)
 
     def test_adjudicate_attack_cause_death(self):
@@ -119,6 +119,6 @@ class AttackTests(unittest.TestCase):
         atk = Attack()
         result = atk.adjudicate_attack(p, c)
 
-        self.assertTrue(' has been slain!' in result)
+        self.assertTrue(' has been slain by Bob!' in result)
         self.assertTrue('dead' in c.afflictions)
         self.assertTrue(c not in r.contents)

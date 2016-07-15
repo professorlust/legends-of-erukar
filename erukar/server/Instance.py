@@ -40,6 +40,7 @@ class Instance(Manager):
             for item in room.contents:
                 if issubclass(type(item), erukar.engine.lifeforms.Enemy):
                     self.turn_manager.subscribe(item)
+                    self.data.players.append(item)
     
     def decorate(self, generation_parameters):
         decorators = list(Instance.decorators(generation_parameters))
@@ -85,7 +86,9 @@ class Instance(Manager):
                 self.execute_command(player_cmd)
 
             if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
-                self.active_player.perform_turn()
+                cmd = self.active_player.perform_turn()
+                if cmd is not None:
+                    self.execute_command(cmd)
 
             self.active_player = self.turn_manager.next()
             self.timer.cancel()

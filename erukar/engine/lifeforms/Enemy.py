@@ -1,24 +1,24 @@
 from erukar.engine.lifeforms.Lifeform import Lifeform
-import random, erukar
+from erukar.engine.model.Indexer import Indexer
+import random, erukar, string
 
-class Enemy(Lifeform):
+class Enemy(Lifeform, Indexer):
+    def __init__(self, name=""):
+        Indexer.__init__(self)
+        Lifeform.__init__(self, name)
+        
+        chars = string.ascii_uppercase + string.digits
+        self.uid = ''.join(random.choice(chars) for x in range(128))
+
     def perform_turn(self):
         targets = list(self.viable_targets())
         if len(targets) == 0:
             return
         target = random.choice(targets)
-
-        roll, ac, damage = self.attack(target) 
-        print_args = {
-            'self': self.alias(),
-            'target': target.alias(),
-            'ac': ac,
-            'roll': roll,
-            'damage': damage}
-        if roll <= ac:
-            print('{self} tries to attack {target}, but misses ({ac} AC vs {roll})'.format(**print_args))
-        if roll > ac:
-            print('{self} hits {target} with an attack, dealing {damage} damage'.format(**print_args))
+        a = erukar.engine.commands.executable.Attack()
+        a.sender_uid = self.uid
+        a.payload = target.alias()
+        return a
 
     def viable_targets(self):
         for item in self.current_room.contents:

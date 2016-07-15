@@ -8,7 +8,7 @@ class Command:
         self.payload = ''
 
     def execute(self):
-        '''Run this Command'''
+        '''Run this Command as a player'''
         player = self.find_player()
 
     def find_player(self):
@@ -21,9 +21,15 @@ class Command:
         contents = set(container.contents + player.reverse_index(container))
         return next((p for p in contents if p.matches(item_name)), None)
 
+    def lifeform(self, player_or_node):
+        if hasattr(player_or_node, 'character'):
+            return player_or_node.character
+        return player_or_node
+
+
     def find_in_inventory(self, player, item_name):
         '''Attempt to find an item in a player's inventory'''
-        return next((p for p in player.character.inventory if p.matches(item_name)), None)
+        return next((p for p in self.lifeform(player).inventory if p.matches(item_name)), None)
 
     def determine_direction(self, payload):
         '''Take text and determine its respective cardinal direction'''

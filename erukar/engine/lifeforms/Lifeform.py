@@ -102,7 +102,7 @@ class Lifeform(RpgEntity):
         return getattr(self, attribute)
 
     def matches(self, payload):
-        return payload.lower() in self.name.lower()
+        return payload.lower() in self.alias().lower()
 
     def describe(self):
         descriptor_index = math.floor(4.0 * self.health / self.max_health)

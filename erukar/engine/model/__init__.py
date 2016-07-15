@@ -3,6 +3,7 @@ from .Containable import Containable
 from .Damage import Damage
 from .GenerationProfile import GenerationProfile
 from .Direction import Direction
+from .Indexer import Indexer
 from .Interactible import Interactible
 from .Manager import Manager
 from .Modifier import Modifier
@@ -15,6 +16,7 @@ __all__ = [
     "Damage", 
     "Direction", 
     "GenerationProfile",
+    "Indexer",
     "Interactible", 
     "Manager", 
     "Modifier", 
