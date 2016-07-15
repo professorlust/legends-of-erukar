@@ -7,9 +7,9 @@ class Spear(Weapon):
 
     # Damage
     DamageRange = [2, 6]
-    DamageType = "bludgeoning"
-    DamageModifier = "strength"
+    DamageType = "piercing"
+    DamageModifier = "dexterity"
 
     # Distribution
-    Distribution = np.random.uniform
-    DistributionProperties = ()
+    Distribution = np.random.exponential
+    DistributionProperties = (2)

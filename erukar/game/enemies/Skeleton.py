@@ -1,4 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
+from erukar.game.inventory.weapons.Sword import Sword
 
 class Skeleton(Enemy):
     critical_health = [
@@ -23,4 +24,5 @@ class Skeleton(Enemy):
 
     def __init__(self):
         super().__init__("Skeleton")
+        self.weapon = Sword()
         self.name = "Skeleton"

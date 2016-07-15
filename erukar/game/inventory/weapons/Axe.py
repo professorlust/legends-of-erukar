@@ -7,7 +7,7 @@ class Axe(Weapon):
 
     # Damage
     DamageRange = [4, 8]
-    DamageType = "hacking"
+    DamageType = "slashing"
     DamageModifier = "strength"
 
     # Distribution

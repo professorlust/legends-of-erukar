@@ -1,5 +1,6 @@
 from erukar.engine.inventory.Weapon import Weapon
 import numpy as np
+import random
 
 class Wand(Weapon):
     Probability = 1
@@ -7,9 +8,9 @@ class Wand(Weapon):
 
     # Damage
     DamageRange = [2, 6]
-    DamageType = "bludgeoning"
-    DamageModifier = "strength"
+    DamageType = random.choice(['fire','acid','cold','electric']) 
+    DamageModifier = "acuity"
 
     # Distribution
-    Distribution = np.random.uniform
-    DistributionProperties = ()
+    Distribution = np.random.gamma
+    DistributionProperties = (2, 0.3)

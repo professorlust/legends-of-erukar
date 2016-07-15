@@ -37,7 +37,6 @@ class Lifeform(RpgEntity):
             setattr(self, eq_type, None)
         self.name = name
         self.afflictions = []
-        self.contents_map = {}
 
     def define_stats(self, stats):
         '''Takes a dictionary to define stats.'''
@@ -45,6 +44,8 @@ class Lifeform(RpgEntity):
             setattr(self, stat, stats[stat])
 
     def turn_modifier(self):
+        if any(x for x in ['dead','dying','incapacitated'] if x in self.afflictions):
+            return 10000
         res = 10.0 + round(40* (1.0 - 1.0 / (1.0 + math.exp( (10.0-self.dexterity) / 5.0))))
         return res
 

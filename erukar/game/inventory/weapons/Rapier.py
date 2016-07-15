@@ -11,5 +11,5 @@ class Rapier(Weapon):
     DamageModifier = "dexterity"
 
     # Distribution (Note: Need to add ref to scipy for nonstandard)
-    Distribution = np.random.standard_cauchy
-    DistributionProperties = ()
+    Distribution = np.random.normal
+    DistributionProperties = (2, 0.3)

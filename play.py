@@ -1,5 +1,4 @@
 from erukar import *
-from examples.helpers.ExampleRunner import ExampleRunner
 import numpy as np
 
 print('This example shows the Dungeon Procedural generation')
@@ -22,7 +21,6 @@ npc = PlayerNode(ucharacter.uid, ucharacter)
 w.subscribe(player)
 w.subscribe(npc)
 w.interface.execute(character.uid, 'join')
-#print(w.interface.execute(character.uid, 'inspect'))
 
 while True:
     line = input('')

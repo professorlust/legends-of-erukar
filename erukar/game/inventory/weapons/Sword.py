@@ -11,5 +11,5 @@ class Sword(Weapon):
     DamageModifier = "strength"
 
     # Distribution
-    Distribution = np.random.uniform
-    DistributionProperties = ()
+    Distribution = np.random.beta
+    DistributionProperties = (2,2)
