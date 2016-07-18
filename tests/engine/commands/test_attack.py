@@ -25,6 +25,8 @@ class AttackTests(unittest.TestCase):
     def test_execute_with_match(self):
         p = Player()
         p.uid = 'Bob'
+        w = Weapon()
+        p.weapon = w
 
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))

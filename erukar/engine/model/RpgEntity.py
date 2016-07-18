@@ -10,14 +10,11 @@ class RpgEntity(Interactible):
         captured = re.search(RpgEntity.nDxy_expression, to_evaluate)
         return [int(x) if x is not None else 0 for x in captured.groups()]
 
-    def roll(self, to_evaluate):
+    def roll(self, roll_range, distribution=None):
         '''Roll on a string such as '1d20' or '6d6+6' '''
-        num, die, mod = self.regex(to_evaluate)
-        return sum([self.individual_roll(die) + mod for x in range(0,num)])
-
-    def individual_roll(self, die):
-        '''Perform a single roll of a die (uniform distribution)'''
-        return math.ceil(random.random()*die)
+        if distribution is None:
+            distribution = random.uniform
+        return round(distribution(*roll_range))
 
     def calculate_armor_class(self):
         return RpgEntity.base_armor_class

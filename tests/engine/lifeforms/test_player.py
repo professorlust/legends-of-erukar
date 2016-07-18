@@ -24,23 +24,11 @@ class PlayerTests(unittest.TestCase):
     def test_skill_roll_string_positive_mod(self):
         p = Player()
         p.define_stats( { Lifeform.attack_roll_attribute: 2 } )
-        dex_srs = p.skill_roll_string(Lifeform.attack_roll_attribute)
-        self.assertEqual('1d20+2', dex_srs)
+        dex_srs = p.skill_range(Lifeform.attack_roll_attribute)
+        self.assertEqual((3,24), dex_srs)
 
     def test_skill_roll_string_negative_mod(self):
         p = Player()
-        dex_srs = p.skill_roll_string(Lifeform.attack_roll_attribute)
-        self.assertEqual('1d20-2', dex_srs)
+        dex_srs = p.skill_range(Lifeform.attack_roll_attribute)
+        self.assertEqual((1,20), dex_srs)
 
-    def test_attack(self):
-        p = Player()
-        p.define_stats({ Lifeform.attack_damage_attribute: 0, Lifeform.attack_roll_attribute: 0 })
-
-        target = Player()
-        target.define_stats({ Lifeform.attack_roll_attribute: 0 })
-
-        p.weapon = Weapon()
-        attack_roll, armor_class, damage = p.attack(target)
-
-        self.assertIn(attack_roll, range(1,21))
-        self.assertEqual(armor_class, 10)

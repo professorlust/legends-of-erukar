@@ -3,35 +3,35 @@ import unittest
 
 class LifeformTests(unittest.TestCase):
     def test_define_stats_no_entry(self):
-        # Test Case: -2 -2 -2
+        # Test Case: 0 0 0
         l = Lifeform()
 
-        self.assertEqual(l.strength, -2)
-        self.assertEqual(l.dexterity, -2)
-        self.assertEqual(l.vitality, -2)
+        self.assertEqual(l.strength, 0)
+        self.assertEqual(l.dexterity, 0)
+        self.assertEqual(l.vitality, 0)
 
     def test_define_stats_stronly(self):
-        # Test Case: 2 -2 -2
+        # Test Case: 2 0 0
         l = Lifeform()
         l.define_stats({ "strength": 2 })
         self.assertEqual(l.strength, 2)
-        self.assertEqual(l.dexterity, -2)
-        self.assertEqual(l.vitality, -2)
+        self.assertEqual(l.dexterity, 0)
+        self.assertEqual(l.vitality, 0)
 
     def test_define_stats_dexonly(self):
-        # Test Case: -2 2 -2
+        # Test Case: 0 2 0
         l = Lifeform()
         l.define_stats({ "dexterity": 2 })
-        self.assertEqual(l.strength, -2)
+        self.assertEqual(l.strength, 0)
         self.assertEqual(l.dexterity, 2)
-        self.assertEqual(l.vitality, -2)
+        self.assertEqual(l.vitality, 0)
 
     def test_define_stats_vitonly(self):
-        # Test Case: -2 -2 2
+        # Test Case: 0 0 2
         l = Lifeform()
         l.define_stats({ "vitality": 2 })
-        self.assertEqual(l.strength, -2)
-        self.assertEqual(l.dexterity, -2)
+        self.assertEqual(l.strength, 0)
+        self.assertEqual(l.dexterity, 0)
         self.assertEqual(l.vitality, 2)
 
     def test_define_level_creates_appropriate_health(self):
