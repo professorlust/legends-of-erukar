@@ -6,6 +6,8 @@ class AttackTests(unittest.TestCase):
     def test_execute_without_match(self):
         p = Player()
         p.uid = 'Bob'
+        w = Weapon()
+        p.weapon = w
 
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))

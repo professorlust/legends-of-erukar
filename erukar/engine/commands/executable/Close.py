@@ -6,7 +6,6 @@ class Close(ActionCommand):
     nesw_wall = 'You cannot close a wall'
     not_found = 'There is nothing to close'
 
-    # I'm not terribly happy with this, as it forces usage of only Doors.
     def execute(self):
         player = self.find_player()
         room = player.character.current_room

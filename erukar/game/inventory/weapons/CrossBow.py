@@ -4,6 +4,8 @@ import numpy as np
 class CrossBow(Weapon):
     Probability = 1
     BaseName = "CrossBow"
+    AttackRange = 2
+    RangePenalty = 2
 
     # Damage
     DamageRange = [1, 4]

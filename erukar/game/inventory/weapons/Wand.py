@@ -5,6 +5,8 @@ import random
 class Wand(Weapon):
     Probability = 1
     BaseName = "Wand"
+    AttackRange = 2
+    RangePenalty = 2
 
     # Damage
     DamageRange = [2, 6]

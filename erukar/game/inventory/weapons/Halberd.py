@@ -4,6 +4,7 @@ import numpy as np
 class Halberd(Weapon):
     Probability = 1
     BaseName = "Halberd"
+    AttackRange = 1
 
     # Damage
     DamageRange = [3, 6]
