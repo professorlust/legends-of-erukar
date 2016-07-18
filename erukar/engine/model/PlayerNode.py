@@ -11,8 +11,5 @@ class PlayerNode(Indexer):
         return self.character.turn_modifier()
 
     def move_to_room(self, room):
-        if self.character in self.character.current_room.contents:
-            self.character.current_room.contents.remove(self.character)
-        self.character.link_to_room(room)
         if room.coordinates not in self.dungeon_map:
             self.dungeon_map[room.coordinates] = room

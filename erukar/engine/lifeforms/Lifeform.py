@@ -31,12 +31,12 @@ class Lifeform(RpgEntity):
     def __init__(self, name=""):
         for att in Lifeform.attribute_types:
             setattr(self, att, Lifeform.attribute_value_default)
-        self.level, self.max_health, self.health = (1,1,1)
         self.current_room = None
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.name = name
         self.afflictions = []
+        self.define_level(1)
 
     def define_stats(self, stats):
         '''Takes a dictionary to define stats.'''

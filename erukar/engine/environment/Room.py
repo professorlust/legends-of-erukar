@@ -2,6 +2,7 @@ from erukar.engine.model.Containable import Containable
 from erukar.engine.model.Direction import Direction
 from erukar.engine.environment.Passage import Passage
 from erukar.engine.environment.Surface import Surface
+from erukar.engine.environment.Door import Door
 import erukar, random
 
 class Room(Containable):
@@ -80,6 +81,14 @@ class Room(Containable):
             description = self.content_alias_or_description(content, give_aliases)
             if description is not None:
                 yield description
+
+    def adjacent_rooms(self):
+        for c in self.connections:
+            passage = self.connections[c]
+            if passage.room is not None:
+                if passage.door is None or\
+                   (isinstance(passage.door, Door) and passage.door.status == Door.Open):
+                    yield c
 
     def walls(self):
         '''Generator for getting only the walls in this room'''
