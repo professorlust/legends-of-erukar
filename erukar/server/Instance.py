@@ -34,6 +34,7 @@ class Instance(Manager):
         self.dungeon = d.generate()
         self.decorate(generation_parameters)
         self.subscribe_enemies()
+        self.had_players = False
 
     def subscribe_enemies(self):
         for room in self.dungeon.rooms:
@@ -59,6 +60,7 @@ class Instance(Manager):
         p.character.link_to_room(room)
         p.move_to_room(room)
         self.turn_manager.subscribe(p)        
+        self.had_players = True
 
     def create_player_node(self, uid):
         character = Player()
@@ -74,7 +76,8 @@ class Instance(Manager):
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
         self.active_player = None
-        while True:
+   
+        while not self.had_players or self.turn_manager.has_players():
             if any(self.non_action_commands):
                 # Run ALL of these
                 cmd = self.non_action_commands.pop()
@@ -95,6 +98,7 @@ class Instance(Manager):
             self.timer.cancel()
             self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
             self.timer.start()
+        print('No players, shutting down instance.')
 
     def get_active_player_action(self):
         for command in self.action_commands:

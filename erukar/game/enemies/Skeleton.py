@@ -24,6 +24,6 @@ class Skeleton(Enemy):
 
     def __init__(self):
         super().__init__("Skeleton")
-        self.dexterity = -4
+        self.dexterity = -2
         self.weapon = Sword()
         self.name = "Skeleton"

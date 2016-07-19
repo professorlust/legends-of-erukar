@@ -4,7 +4,7 @@ from erukar.game.modifiers.RoomModifier import RoomModifier
 import erukar
 
 class Terrormind(RoomModifier):
-    Probability = 0.25
+    Probability = 0.05
     def apply_to(self, room):
         terrormind = erukar.game.enemies.Terrormind()
 #        print(terrormind)

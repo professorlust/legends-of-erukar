@@ -57,3 +57,11 @@ class TurnManager(Manager):
             for player in self.players:
                 if (current_turn_count+1) % player.turn_modifier() == 0:
                     yield (player, current_turn_count)
+
+    def has_players(self):
+        return any([p for p in self.players if self.is_playable(p)])
+
+    def is_playable(self, p):
+        if isinstance(p, erukar.engine.model.PlayerNode):
+            return not 'dead' in p.character.afflictions
+        return False
