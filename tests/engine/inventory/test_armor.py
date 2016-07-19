@@ -6,6 +6,6 @@ class ArmorTests(unittest.TestCase):
         armor = Armor()
         armor.max_dex_mod = 2
         dex = 3
-        ac = armor.calculate_armor_class(dex)
+        ac = armor.calculate_armor_class()
 
-        self.assertEqual(ac, 14)
+        self.assertEqual(ac, 2)

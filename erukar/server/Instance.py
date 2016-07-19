@@ -98,6 +98,7 @@ class Instance(Manager):
             self.timer.cancel()
             self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
             self.timer.start()
+
         print('No players, shutting down instance.')
 
     def get_active_player_action(self):

@@ -58,13 +58,20 @@ class Lifeform(RpgEntity):
         self.health = self.max_health
 
     def calculate_armor_class(self):
-        if 'dying' in self.afflictions:
+        if self.is_incapacitated():
             return RpgEntity.base_armor_class
 
         ac_mod = self.get(Lifeform.armor_attribute)
-        if self.armor is not None:
-            return self.armor.calculate_armor_class(ac_mod)
-        return Lifeform.base_armor_class + ac_mod
+        total_ac = RpgEntity.base_armor_class
+
+        for armor_type in self.equipment_types:
+            if hasattr(self, armor_type):
+                armor = getattr(self, armor_type)
+                if armor is not None:
+                    ac_mod = min(ac_mod, armor.max_dex_mod)
+                    total_ac += armor.calculate_armor_class()
+
+        return total_ac + ac_mod
 
     def skill_range(self, skill_type):
         skill_value = self.get(skill_type)
