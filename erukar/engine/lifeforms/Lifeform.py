@@ -1,5 +1,5 @@
 from erukar.engine.model.RpgEntity import RpgEntity
-import math, random
+import erukar, math, random
 
 class Lifeform(RpgEntity):
     attribute_types = [
@@ -67,7 +67,8 @@ class Lifeform(RpgEntity):
         for armor_type in self.equipment_types:
             if hasattr(self, armor_type):
                 armor = getattr(self, armor_type)
-                if armor is not None:
+                # This allows us to use a shield in off/main hands
+                if armor is not None and issubclass(type(armor), erukar.engine.inventory.Armor):
                     ac_mod = min(ac_mod, armor.max_dex_mod)
                     total_ac += armor.calculate_armor_class()
 
