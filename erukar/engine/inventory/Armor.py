@@ -3,6 +3,7 @@ from erukar.engine.inventory.Item import Item
 class Armor(Item):
     def __init__(self, name="Armor"):
         super().__init__("armor", name)
+        self.equipment_locations = ['chest']
         self.armor_class_modifier = 2
         self.max_dex_mod = 2
 

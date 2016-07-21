@@ -15,11 +15,12 @@ class Lifeform(RpgEntity):
     armor_attribute = "dexterity"
     health_attribute = "vitality"
     equipment_types = [
-        "armor",
+        "left",
+        "right",
+        "chest",
         "helmet",
         "boots",
-        "offhand",
-        "weapon"]
+        "pants"]
     base_health = 4
 
     critical_health = ['The lifeform is in critical health']
@@ -36,7 +37,21 @@ class Lifeform(RpgEntity):
             setattr(self, eq_type, None)
         self.name = name
         self.afflictions = []
+        # Penalties define the reduction in efficacy of shields/weapons etc
+        self.hand_efficacy = {
+            'left': 0.0,
+            'right': 0.0,
+            'both': 0.0
+        }
         self.define_level(1)
+
+    def calculate_handed_penalty(self, hand):
+        '''
+        Calculate a penalty based on the equipped weapons' properties, 
+        the wielder's strength, and any afflictions which might affect 
+        hand usage.
+        '''
+        return self.hand_efficacy[hand]
 
     def define_stats(self, stats):
         '''Takes a dictionary to define stats.'''

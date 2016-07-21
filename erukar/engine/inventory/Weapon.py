@@ -14,10 +14,11 @@ class Weapon(Item):
     Distribution = np.random.uniform
     DistributionProperties = (0, 1)
 
-    def __init__(self, name=""):
-        if name == "":
-            name = self.BaseName
-        super().__init__("weapon", name)
+    def __init__(self):
+        super().__init__(self.BaseName)
+        self.name = self.BaseName
+        self.item_type = "weapon"
+        self.equipment_locations = ['right','left']
         self.damages = [Damage(self.DamageType, list(self.DamageRange), self.DamageModifier,\
                                (self.Distribution, self.DistributionProperties))]
 

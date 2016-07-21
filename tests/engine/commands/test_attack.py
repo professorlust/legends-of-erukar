@@ -7,7 +7,7 @@ class AttackTests(unittest.TestCase):
         p = Player()
         p.uid = 'Bob'
         w = Weapon()
-        p.weapon = w
+        p.right = w
 
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
@@ -28,7 +28,7 @@ class AttackTests(unittest.TestCase):
         p = Player()
         p.uid = 'Bob'
         w = Weapon()
-        p.weapon = w
+        p.right = w
 
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
@@ -52,7 +52,7 @@ class AttackTests(unittest.TestCase):
     def test_adjudicate_attack_success(self):
         p = Player()
         p.uid = 'Bob'
-        p.weapon = Weapon()
+        p.right = Weapon()
 
         c = Lifeform()
         c.define_level(1)
@@ -60,17 +60,17 @@ class AttackTests(unittest.TestCase):
 
         a = Armor()
         a.armor_class_modifier = -90 # guarantees success
-        c.armor = a
+        c.chest = a
 
         atk = Attack()
-        result = atk.adjudicate_attack(p, c)
+        result = atk.adjudicate_attack(p, p.right, c)
 
         self.assertTrue(' hits ' in result)
 
     def test_adjudicate_attack_failure(self):
         p = Player()
         p.uid = 'Bob'
-        p.weapon = Weapon()
+        p.right = Weapon()
 
         c = Lifeform()
         c.define_level(1)
@@ -78,10 +78,10 @@ class AttackTests(unittest.TestCase):
 
         a = Armor()
         a.armor_class_modifier = 90 # guarantees failure
-        c.armor = a
+        c.chest = a
 
         atk = Attack()
-        result = atk.adjudicate_attack(p, c)
+        result = atk.adjudicate_attack(p, p.right, c)
 
         self.assertTrue(' misses ' in result)
 
@@ -89,8 +89,8 @@ class AttackTests(unittest.TestCase):
         p = Player()
         p.define_stats({ 'strength': 2 })
         p.uid = 'Bob'
-        p.weapon = Weapon()
-        p.weapon.damages = [Damage('slashing',(10,12),'',(np.random.uniform, (0,1)))]
+        p.right = Weapon()
+        p.right.damages = [Damage('slashing',(10,12),'',(np.random.uniform, (0,1)))]
 
         c = Lifeform()
         c.health = 1
@@ -98,10 +98,10 @@ class AttackTests(unittest.TestCase):
 
         a = Armor()
         a.armor_class_modifier = -90 # guarantees success
-        c.armor = a
+        c.chest = a
 
         atk = Attack()
-        result = atk.adjudicate_attack(p, c)
+        result = atk.adjudicate_attack(p, p.right, c)
 
         self.assertTrue(' has been incapacitated by Bob\'s attack!' in result)
         self.assertTrue('dying' in c.afflictions)
@@ -112,7 +112,7 @@ class AttackTests(unittest.TestCase):
         p = Player()
         p.define_stats({ 'strength': 2, 'dexterity': 20 })
         p.uid = 'Bob'
-        p.weapon = Weapon()
+        p.right = Weapon()
         p.link_to_room(r)
 
         c = Lifeform()
@@ -121,7 +121,7 @@ class AttackTests(unittest.TestCase):
         c.link_to_room(r)
 
         atk = Attack()
-        result = atk.adjudicate_attack(p, c)
+        result = atk.adjudicate_attack(p, p.right, c)
 
         self.assertTrue(' has been slain by Bob!' in result)
         self.assertTrue('dead' in c.afflictions)

@@ -1,25 +1,27 @@
 from erukar.engine.model.RpgEntity import RpgEntity
 
 class Item(RpgEntity):
-    generic_description = 'This {0} is {2}, but otherwise has no real description whatsoever'
+    generic_description = 'This is {0}, but it otherwise has no real description whatsoever'
 
     def __init__(self, item_type='Item', name="Item"):
         self.item_type = item_type
+        self.equipment_locations = []
         self.name = name
         self.price = 0
-        self.rarity = 'Generic'
-        self.suffix = ''
         self.description = Item.generic_description
 
     def describe(self):
-        return '{0} {1} {2}'.format(self.rarity, self.name, self.suffix).strip()
+        return self.alias()
 
     def matches(self, other):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()
 
     def on_inspect(self, sender):
-        return self.description.format(*(self.name, self.suffix, self.rarity))
+        return self.description.format(self.name)
 
     def alias(self):
         return self.name
+
+    def belongs_in_hand(self):
+        return 'left' in self.equipment_locations or 'right' in self.equipment_locations

@@ -10,7 +10,8 @@ class TakeTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(pn)
 
-        w = Weapon('Sword')
+        w = Weapon()
+        w.name = 'Sword'
         r = Room()
         r.add(w)
         p.link_to_room(r)
@@ -40,7 +41,8 @@ class TakeTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        w = Weapon('Firearm')
+        w = Weapon()
+        w.name = 'Firearm'
         r = Room()
         p.current_room = r
         r.contents.append(w)

@@ -1,18 +1,30 @@
 from erukar.engine.model.Command import Command
 from erukar.engine.lifeforms.Lifeform import Lifeform
+import erukar
 
 class Inventory(Command):
-    header = 'INVENTORY\n----------\nWeapon:\t{1}\nArmor:\t{0}\n----------'
-    item = "{0}.\t{1}"
+    header = 'INVENTORY\n----------\n{}\n----------{}'
+    item = "{:10}.{}"
 
     def execute(self, *_):
         char = self.find_player().character
-        header = self.get_header(char)
+    #    header = self.get_header(char)
 
-        items = '\n'.join([Inventory.item.format(i, char.inventory[i].on_inspect())\
+        items = '\n'.join(['{:2}. {}'.format(i, char.inventory[i].on_inspect())\
             for i in range(0, len(char.inventory))])
+        armor = self.armor(char)
 
-        return header + '\n' + items
+        return self.header.format(armor, items)
+
+    def armor(self, character):
+        armor_results = []
+        for armor_type in Lifeform.equipment_types:
+            armor = getattr(character, armor_type)
+            armor_name = 'None'
+            if armor is not None:
+                armor_name = armor.on_inspect()
+            armor_results.append(self.item.format(armor_type.capitalize(), armor_name))
+        return '\n'.join(armor_results)
 
     def get_header(self, char):
         result = Inventory.header

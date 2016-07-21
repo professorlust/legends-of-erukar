@@ -6,6 +6,10 @@ class Command:
         self.sender_uid = ''
         self.data = None
         self.payload = ''
+        self.arguments = {}
+
+    def process_arguments(self):
+        pass
 
     def execute(self):
         '''Run this Command as a player'''
@@ -25,7 +29,6 @@ class Command:
         if hasattr(player_or_node, 'character'):
             return player_or_node.character
         return player_or_node
-
 
     def find_in_inventory(self, player, item_name):
         '''Attempt to find an item in a player's inventory'''

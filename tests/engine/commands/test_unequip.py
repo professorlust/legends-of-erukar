@@ -10,9 +10,9 @@ class UnequipTests(unittest.TestCase):
         data_store.players.append(PlayerNode(p.uid, p))
 
         w = Weapon()
-        w.item_type = 'Sword'
+        w.name = 'Sword'
         p.inventory.append(w)
-        p.weapon = w;
+        p.right = w
 
         u = Unequip()
         u.sender_uid = p.uid
@@ -21,8 +21,8 @@ class UnequipTests(unittest.TestCase):
         result = u.execute()
 
         self.assertTrue(w in p.inventory)
-        self.assertEqual(p.weapon, None)
-        self.assertEqual(Unequip.unequipped_weapon, result)
+        self.assertEqual(p.right, None)
+        self.assertEqual(Unequip.unequipped_right.format(w.name), result)
 
     def test_unequip_armor(self):
         p = Player()
@@ -32,9 +32,9 @@ class UnequipTests(unittest.TestCase):
         data_store.players.append(PlayerNode(p.uid, p))
 
         a = Armor()
-        a.item_type = 'Plate Mail'
+        a.name = 'Plate Mail'
         p.inventory.append(a)
-        p.armor = a;
+        p.chest = a
 
         u = Unequip()
         u.sender_uid = p.uid
@@ -43,8 +43,8 @@ class UnequipTests(unittest.TestCase):
         result = u.execute()
 
         self.assertTrue(a in p.inventory)
-        self.assertEqual(p.armor, None)
-        self.assertEqual(Unequip.unequipped_armor, result)
+        self.assertEqual(p.chest, None)
+        self.assertEqual(Unequip.unequipped_chest.format(a.name), result)
 
     def test_unequip_item(self):
         p = Player()

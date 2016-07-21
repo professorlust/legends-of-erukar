@@ -4,17 +4,8 @@ import unittest
 class InventoryTests(unittest.TestCase):
     def test_describe_with_suffix(self):
         i = Item(name='Bastard Sword')
-        i.rarity = 'Uncommon'
-        i.suffix = 'of Fire'
 
         result = i.describe()
 
-        self.assertEqual(result, "Uncommon Bastard Sword of Fire")
+        self.assertEqual(result, "Bastard Sword")
 
-    def test_describe_without_suffix(self):
-        i = Item(name='Bastard Sword')
-        i.rarity = 'Uncommon'
-
-        result = i.describe()
-
-        self.assertEqual(result, "Uncommon Bastard Sword")

@@ -16,7 +16,7 @@ class PlayerTests(unittest.TestCase):
         test_armor = Armor()
         test_armor.armor_class_mod = 2
         test_armor.max_dex_mod = 2
-        p.armor = test_armor
+        p.chest = test_armor
 
         ac = p.calculate_armor_class()
         self.assertEqual(14, ac)
