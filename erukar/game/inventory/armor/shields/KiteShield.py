@@ -5,4 +5,5 @@ class KiteShield(Shield):
 
     def __init__(self):
         super().__init__("Kite Shield")
-
+        self.armor_class_modifier = 4
+        self.max_dex_mod = 1 

@@ -50,7 +50,12 @@ class Attack(ActionCommand):
                 return
 
         self.weapons = [getattr(lifeform, hand) for hand in ['left','right'] \
-                        if getattr(lifeform, hand) is not None]
+                            if self.can_attack_with_hand(lifeform, hand)]
+
+    def can_attack_with_hand(self, lifeform, hand):
+        weapon = getattr(lifeform, hand)
+        return weapon is not None \
+                and isinstance(weapon, erukar.engine.inventory.Weapon)
 
     def do_directional_attacks(self, lifeform, direction):
         '''Handles attacking with all queued weapons''' 

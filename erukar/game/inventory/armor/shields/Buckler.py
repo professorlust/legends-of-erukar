@@ -5,4 +5,6 @@ class Buckler(Shield):
 
     def __init__(self):
         super().__init__("Buckler")
+        self.armor_class_modifier = 1
+        self.max_dex_mod = 5
 

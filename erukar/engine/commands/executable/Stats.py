@@ -2,7 +2,7 @@ from erukar.engine.model import Command
 from erukar.engine.lifeforms import Lifeform
 
 class Stats(Command):
-    status = 'STATUS\n----------\nHealth:    {} / {}\nEff. AC:   {}\n'
+    status = 'STATUS\n----------\nHealth:    {} / {}\nEff. AC:   {}\n\n'
     attributes = 'ATTRIBUTES\n----------\n{}'
     stat = "{0:10} {1}"
 
@@ -10,8 +10,12 @@ class Stats(Command):
         player = self.find_player()
         lifeform = self.lifeform(player)
 
-        status = self.status.format(lifeform.health, lifeform.max_health, lifeform.calculate_armor_class())
-        atts = '\n'.join([Stats.stat.format(stat.capitalize(), player.character.get(stat)) \
+        status_description = self.status.format(
+            lifeform.health, 
+            lifeform.max_health, 
+            lifeform.calculate_armor_class())
+
+        attribute_description = '\n'.join([Stats.stat.format(stat.capitalize(), player.character.get(stat)) \
             for stat in Lifeform.attribute_types])
 
-        return status + self.attributes.format(atts) + '\n'
+        return status_description + self.attributes.format(attribute_description) + '\n'
