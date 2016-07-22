@@ -20,7 +20,11 @@ class Lifeform(RpgEntity):
         "chest",
         "helmet",
         "boots",
-        "pants"]
+        "gloves",
+        "pants",
+        "ring",
+        "amulet",
+        "blessing"]
     base_health = 4
 
     critical_health = ['The lifeform is in critical health']

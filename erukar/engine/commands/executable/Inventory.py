@@ -3,20 +3,18 @@ from erukar.engine.lifeforms.Lifeform import Lifeform
 import erukar
 
 class Inventory(Command):
-    header = 'INVENTORY\n----------\n{}\n----------{}'
-    item = "{:10}.{}"
+    header = 'INVENTORY\n----------\n{}\n----------\n{}'
+    item = "{:10}. {}"
 
     def execute(self, *_):
         char = self.find_player().character
-    #    header = self.get_header(char)
 
         items = '\n'.join(['{:2}. {}'.format(i, char.inventory[i].on_inspect())\
             for i in range(0, len(char.inventory))])
-        armor = self.armor(char)
+        equipment = self.equipment(char)
+        return self.header.format(equipment, items)
 
-        return self.header.format(armor, items)
-
-    def armor(self, character):
+    def equipment(self, character):
         armor_results = []
         for armor_type in Lifeform.equipment_types:
             armor = getattr(character, armor_type)

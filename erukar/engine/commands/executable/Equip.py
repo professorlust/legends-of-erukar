@@ -32,11 +32,17 @@ class Equip(ActionCommand):
         item_type = self.determine_type(item)
         if hasattr(player.character, item_type):
             setattr(player.character, item_type, item)
-            return getattr(Equip, 'equipped_{0}'.format(item_type)).format(item.describe())
+            result_string_format = getattr(Equip, 'equipped_{0}'.format(item_type))
+            return result_string_format.format(item.describe())
 
         return Equip.cannot_equip.format(item.describe())
 
     def determine_type(self, item):
+        '''
+        This determines what equipment slot should be evaluated; prior to this, it 
+        is assumed that check_for_arguments has been called to determine which hand 
+        to assign to.
+        '''
         if item.belongs_in_hand():
             return self.arguments['hand']
         if len(item.equipment_locations) > 0:
