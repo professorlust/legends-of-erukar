@@ -1,5 +1,6 @@
-from erukar.engine.inventory.Item import Item
-from erukar.engine.inventory.Armor import Armor
-from erukar.engine.inventory.Weapon import Weapon
+from .Item import Item
+from .Armor import Armor
+from .Shield import Shield
+from .Weapon import Weapon
 
-__all__ = ["Item", "Armor", "Weapon"]
+__all__ = ["Item", "Armor", "Shield", "Weapon"]

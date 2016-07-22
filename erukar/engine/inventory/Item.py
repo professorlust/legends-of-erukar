@@ -17,8 +17,11 @@ class Item(RpgEntity):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()
 
-    def on_inspect(self, sender):
+    def on_inspect(self, *_):
         return self.description.format(self.name)
+
+    def on_inventory(self, *_):
+        return self.alias()
 
     def alias(self):
         return self.name

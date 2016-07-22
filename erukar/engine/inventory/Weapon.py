@@ -28,6 +28,6 @@ class Weapon(Item):
     def describe(self):
         return self.name
 
-    def on_inspect(self):
+    def on_inventory(self):
         damage_desc = '\n'.join(['\t• {0} {1}'.format(d.damage,d.name) for d in self.damages])
         return '{0}\n{1}'.format(self.name, damage_desc)
