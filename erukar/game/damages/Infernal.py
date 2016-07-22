@@ -1,0 +1,2 @@
+class Infernal:
+    pass

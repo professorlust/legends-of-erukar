@@ -7,3 +7,6 @@ class Shield(Armor):
         self.equipment_locations = ['left','right']
         self.armor_class_modifier = 1
         self.max_dex_mod = 5
+
+    def on_inventory(self, *_):
+       return '{}\n\t+{} AC\n\tMax {} Dex Mod'.format(self.alias(), self.armor_class_modifier, self.max_dex_mod)
