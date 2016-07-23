@@ -1,3 +1,4 @@
+from .Affliction import Affliction
 from .Command import Command
 from .Containable import Containable
 from .Damage import Damage
@@ -11,6 +12,7 @@ from .PlayerNode import PlayerNode
 from .RpgEntity import RpgEntity
 
 __all__ = [
+    "Affliction",
     "Command", 
     "Containable", 
     "Damage", 
