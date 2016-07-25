@@ -1,4 +1,4 @@
 from erukar.engine.model.Affliction import Affliction
 
 class Dead(Affliction):
-    pass
+    Incapacitates = True

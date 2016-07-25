@@ -1,4 +1,6 @@
 from erukar.engine.model.RpgEntity import RpgEntity
+from erukar.engine.afflictions.Dead import Dead
+from erukar.engine.afflictions.Dying import Dying
 import erukar, math, random
 
 class Lifeform(RpgEntity):
@@ -63,7 +65,7 @@ class Lifeform(RpgEntity):
             setattr(self, stat, stats[stat])
 
     def is_incapacitated(self):
-        return any(x for x in ['dead','dying','incapacitated'] if x in self.afflictions)
+        return any(aff for aff in self.afflictions if aff.Incapacitates)
 
     def turn_modifier(self):
         if self.is_incapacitated():
@@ -97,17 +99,21 @@ class Lifeform(RpgEntity):
         skill_value = self.get(skill_type)
         return (1+skill_value, 20+(2*skill_value))
 
+    def afflicted_with(self, aff_type):
+        '''Alias to simplify the check to see if the lifeform has an affliction'''
+        return any(x for x in self.afflictions if isinstance(x, aff_type))
+
     def take_damage(self, damage):
-        if 'dying' in self.afflictions:
+        if self.afflicted_with(erukar.engine.afflictions.Dying):
             self.kill()
             return
 
         self.health = max(0, self.health - damage)
         if self.health == 0:
-            self.afflictions.append('dying')
+            self.afflictions.append(Dying(self, None))
 
     def kill(self):
-        self.afflictions = ['dead']
+        self.afflictions = [Dead(self, None)]
 
     def link_to_room(self, room):
         self.current_room = room

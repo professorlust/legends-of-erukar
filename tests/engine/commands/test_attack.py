@@ -104,7 +104,7 @@ class AttackTests(unittest.TestCase):
         result = atk.adjudicate_attack(p, p.right, c)
 
         self.assertTrue(' has been incapacitated by Bob\'s attack!' in result)
-        self.assertTrue('dying' in c.afflictions)
+        self.assertTrue(c.afflicted_with(Dying))
 
     def test_adjudicate_attack_cause_death(self):
         r = Room()
@@ -116,7 +116,7 @@ class AttackTests(unittest.TestCase):
         p.link_to_room(r)
 
         c = Lifeform()
-        c.afflictions = ['dying']
+        c.afflictions = [Dying(None)]
         c.name = "the air"
         c.link_to_room(r)
 
@@ -124,5 +124,5 @@ class AttackTests(unittest.TestCase):
         result = atk.adjudicate_attack(p, p.right, c)
 
         self.assertTrue(' has been slain by Bob!' in result)
-        self.assertTrue('dead' in c.afflictions)
+        self.assertTrue(c.afflicted_with(Dead))
         self.assertTrue(c not in r.contents)

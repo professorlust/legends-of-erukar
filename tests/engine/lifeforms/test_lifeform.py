@@ -54,11 +54,11 @@ class LifeformTests(unittest.TestCase):
         l.define_level(1)
 
         l.take_damage(5)
-        self.assertTrue('dying' in l.afflictions)
+        self.assertTrue(l.afflicted_with(Dying))
 
     def test_take_damage_coup_de_grace(self):
         l = Lifeform()
-        l.afflictions = ['dying']
+        l.afflictions = [Dead(None)]
 
         l.take_damage(5)
-        self.assertTrue('dead' in l.afflictions)
+        self.assertTrue(l.afflicted_with(Dead))
