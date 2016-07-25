@@ -7,6 +7,6 @@ class Armor(RoomModifier):
     Probability = 5
 
     def apply_to(self, room):
-        randomizer = ModuleDecorator('erukar.game.inventory.armor.shields', None)
+        randomizer = ModuleDecorator('erukar.game.inventory.armor', None)
         created = randomizer.create_one()
         room.add(created)

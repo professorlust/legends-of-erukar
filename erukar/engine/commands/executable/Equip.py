@@ -8,10 +8,10 @@ class Equip(ActionCommand):
     equipped_right = "'{}' equipped as primary hand weapon successfully"
     equipped_left = "'{}' equipped in off hand successfully"
     equipped_chest = "'{}' equipped as chest armor successfully"
-    equipped_helm = "'{}' equipped as helm successfully"
-    equipped_gloves = "'{}' equipped as gloves successfully"
-    equipped_pants = "'{}' equipped as pants successfully"
-    equipped_boots = "'{}' equipped as boots successfully"
+    equipped_head = "'{}' equipped as helm successfully"
+    equipped_arms = "'{}' equipped as gloves successfully"
+    equipped_legs = "'{}' equipped as pants successfully"
+    equipped_feet = "'{}' equipped as boots successfully"
     equipped_ring = "'{}' equipped as ring successfully"
     equipped_amulet = "'{}' equipped as amulet successfully"
     equipped_blessing = "'{}' equipped as blessing successfully"
@@ -52,8 +52,12 @@ class Equip(ActionCommand):
     def check_for_arguments(self):
         args = self.payload.split(' ', 1)
         self.arguments['hand'] = 'right'
-        if len(args) > 1:
-            if args[0] in ['left', 'off', 'offhand']:
-                self.arguments['hand'] = 'left'
-                self.payload = args[1]
+        if len(args) <= 1:
+            return
 
+        if args[0] in ['left', 'off', 'offhand']:
+            self.arguments['hand'] = 'left'
+            self.payload = args[1]
+
+        if args[0] in ['right', 'main', 'primary']:
+            self.payload = args[1]

@@ -68,7 +68,7 @@ class Attack(ActionCommand):
         return '\n'.join(attack_results)
 
     def do_attack(self, lifeform):
-        '''Attack within the current room'''
+        '''Attack an enemy within the current room'''
         attack_results = []
         target = self.find_in_room(lifeform.current_room, self.payload)
         if target is None:
@@ -95,6 +95,7 @@ class Attack(ActionCommand):
         return 'You attack a wall. Are you happy now?'
 
     def attack_into_room(self, player, room, weapon, distance, direction):
+        '''Check to see if there's a target in this room to attack; attack if so'''
         if weapon.AttackRange >= distance:
             targets = [c for c in room.contents \
                        if isinstance(c, erukar.engine.lifeforms.Lifeform)]
@@ -138,13 +139,13 @@ class Attack(ActionCommand):
         return attack_string
 
     def create_corpse(self, target):
-        '''Replaces a lifeform with a corpse'''
         room = target.current_room
-        room.remove(target)
+        if target in room.contents:
+            room.remove(target)
         room.add(Corpse(target))
     
     def calculate_attack(self, character, weapon, target):
-        '''Attack another lifeform'''
+        '''Involves the calculation of armor_class, attack roll, and damage'''
         armor_class = target.calculate_armor_class()
         if weapon is None:
             return [0, armor_class, 0]
