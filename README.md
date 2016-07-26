@@ -35,4 +35,4 @@ Through the use of this sigmoid function, the amount of time between turns (turn
 * [Commands](docs/commands.md)
 * [Character Progression](docs/progression.md)
 * [Networking: Shards and Instancing](docs/networking.md)
-* [Procedural Generation](docs/procedural-generation.md)
+* [Procedural Generation](docs/procedural-generation-modifiers.md)
