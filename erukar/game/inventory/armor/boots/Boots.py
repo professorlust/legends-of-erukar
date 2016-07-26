@@ -5,5 +5,5 @@ class Boots(FootArmor):
 
     def __init__(self):
         super().__init__("Boots")
-        self.armor_class_modifier = 0
-        self.max_dex_mod = 20
+        self.armor_class_modifier = 1
+        self.max_dex_mod = 15
