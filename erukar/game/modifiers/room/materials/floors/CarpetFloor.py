@@ -3,7 +3,7 @@ from erukar.engine.environment.Surface import Surface
 import random
 
 class CarpetFloor(RoomModifier):
-    Probability = 3
+    ProbabilityFromFabrication = 0.6
     colors = [
         "dark red",
         "light red",

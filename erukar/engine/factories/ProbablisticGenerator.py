@@ -12,9 +12,20 @@ class ProbablisticGenerator(FactoryBase):
         '''
         The possibilities and weights must be lists in the same order
         '''
+        bins = self.calculate_bin_widths(weights) 
+        values = np.array(possibilities)
+        self.order_bins_and_values(bins, values)
+
+    def calculate_bin_widths(self, weights):
+        min_value = min(weights)
+        if all(w for w in weights if w == min_value):
+            min_value = 0
         total_weight = sum(weights)
-        self.bins = np.array([x/total_weight for x in np.add.accumulate(weights)])
-        self.values = np.array(possibilities)
+        return np.array([(x-min_value)/total_weight for x in np.add.accumulate(weights)])
+
+    def order_bins_and_values(self, bins, values):
+        '''Orders the bins in an increasing order and adjusts the values accordingly'''
+        self.bins, self.values = zip(*sorted(zip(bins, values)))
 
     def create_one(self):
         return self.values[np.digitize(np.random.uniform(0, 1), self.bins)]()

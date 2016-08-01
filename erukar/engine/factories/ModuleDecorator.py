@@ -2,7 +2,7 @@ from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
 import sys, inspect
 
 class ModuleDecorator(ProbablisticGenerator):
-    ConditionalProb = 'ProbFrom{}'
+    ConditionalProb = 'ProbabilityFrom{}'
 
     def __init__(self, module, generation_parameters):
         super().__init__()
@@ -14,6 +14,12 @@ class ModuleDecorator(ProbablisticGenerator):
         self.create_distribution(values, weights)
 
     def calculate_probability(self, modifier):
+        '''
+        Grants the system the capacity for clustered stochastic generation.
+        Takes weights from a GenerationProfile object and then uses conditional
+        probability weighting in modifiers to determine what is more likely to
+        occur given environmental factors.
+        '''
         prob_weight = 0.0
         if hasattr(modifier, 'Probability'):
             prob_weight = getattr(modifier, 'Probability')
