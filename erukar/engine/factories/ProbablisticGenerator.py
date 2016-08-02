@@ -16,16 +16,26 @@ class ProbablisticGenerator(FactoryBase):
         values = np.array(possibilities)
         self.order_bins_and_values(bins, values)
 
-    def calculate_bin_widths(self, weights):
-        min_value = min(weights)
-        if all(w for w in weights if w == min_value):
-            min_value = 0
-        total_weight = sum(weights)
-        return np.array([(x-min_value)/total_weight for x in np.add.accumulate(weights)])
+    def calculate_bin_widths(self, W):
+        if all(w_i == 0.0 for w_i in W) or len(set(W)) == 1:
+            return [1/len(W)] * len(W)
+
+        weights = [self.cluster(w_i, W) for w_i in W]
+        return [w_i / sum(weights) for w_i in weights]
+
+    def cluster(self, w_i, W):
+        '''
+        Uses cluster algorithm developed for this project as follows:
+        where N is the length, w_i is the current weight, and W is the set of weights
+        1 / (N * (1 + (-w_i + sum(W))/(N-1) - w_i))
+        '''
+        return (w_i - min(W))/(max(W)-min(W))
 
     def order_bins_and_values(self, bins, values):
         '''Orders the bins in an increasing order and adjusts the values accordingly'''
-        self.bins, self.values = zip(*sorted(zip(bins, values)))
+        sortedzip = sorted(zip(bins, values), key=lambda x: x[0])
+        self.bins, self.values = zip(*sortedzip)
+        self.bins = np.add.accumulate(self.bins)
 
     def create_one(self):
         return self.values[np.digitize(np.random.uniform(0, 1), self.bins)]()

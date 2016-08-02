@@ -30,7 +30,7 @@ class CarpetFloor(RoomModifier):
         "texture",
         "color"
     ]
-    description = "The floor of this room is a {texture} {color} carpet"
+    description = "The floor of this room is a {texture} {color} carpet."
 
     def apply_to(self, room):
         args = self.get_arguments()

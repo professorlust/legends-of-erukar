@@ -20,21 +20,25 @@ class ModuleDecorator(ProbablisticGenerator):
         probability weighting in modifiers to determine what is more likely to
         occur given environmental factors.
         '''
-        prob_weight = 0.0
+        prob_weights = []
+        overall_probability = 1.0
         if hasattr(modifier, 'Probability'):
-            prob_weight = getattr(modifier, 'Probability')
+            overall_probability = getattr(modifier, 'Probability')
 
         if self.generation_parameters is None:
-            return prob_weight
+            return overall_probability
 
         for parameter in vars(self.generation_parameters):
             var_format = self.ConditionalProb.format(parameter.capitalize()) 
             if hasattr(modifier, var_format):
                 cond_weight = getattr(modifier, var_format) 
                 generation_actual = getattr(self.generation_parameters, parameter)
-                prob_weight += cond_weight * generation_actual 
+                prob_weights.append(cond_weight * generation_actual)
+        
+        if len(prob_weights) > 0:
+            return sum(w * overall_probability for w in prob_weights)
 
-        return prob_weight
+        return overall_probability
 
     def apply_one_to(self, room):
         '''shortcut to make one and apply it'''

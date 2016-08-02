@@ -3,6 +3,6 @@ from erukar.engine.environment import *
 from erukar.game.modifiers.RoomModifier import RoomModifier
 
 class Hallway(RoomModifier):
-    Probability = 1
+    ProbabilityFromFabrication = 1
     def apply_to(self, room):
         pass
