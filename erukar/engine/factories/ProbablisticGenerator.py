@@ -4,6 +4,7 @@ import numpy as np
 import math, random
 
 class ProbablisticGenerator(FactoryBase):
+    MinimumAcceptableWeight = -0.3
     def __init__(self):
         self.bins = []
         self.values = []
@@ -17,10 +18,12 @@ class ProbablisticGenerator(FactoryBase):
         self.order_bins_and_values(bins, values)
 
     def calculate_bin_widths(self, W):
-        if all(w_i == 0.0 for w_i in W) or len(set(W)) == 1:
+        '''Determines the probablistic proportions for binning'''
+        if all(w_i <= self.MinimumAcceptableWeight for w_i in W) or len(set(W)) == 1:
             return [1/len(W)] * len(W)
 
-        weights = [self.cluster(w_i, W) for w_i in W]
+        W_prime = [w_i for w_i in W if w_i > 0]
+        weights = [self.cluster(w_i, W_prime) for w_i in W_prime]
         return [w_i / sum(weights) for w_i in weights]
 
     def cluster(self, w_i, W):

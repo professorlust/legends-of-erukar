@@ -45,6 +45,7 @@ class Instance(Manager):
     
     def decorate(self, generation_parameters):
         decorators = list(Instance.decorators(generation_parameters))
+        self.generation_parameters = generation_parameters
         for room in self.dungeon.rooms:
             for deco in decorators:
                 deco.apply_one_to(room)
@@ -69,6 +70,8 @@ class Instance(Manager):
         character.define_level(1)
         p = PlayerNode(uid, character)
         self.data.players.append(p)
+        for x in vars(self.generation_parameters):
+            print('{} - {}'.format(x, getattr(self.generation_parameters, x)))
         return p
         
     def instance_running(self, action_commands, non_action_commands, gen_params):

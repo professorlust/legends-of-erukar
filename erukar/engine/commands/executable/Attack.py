@@ -23,7 +23,7 @@ class Attack(ActionCommand):
         # Determine if this is directional attack
         direction = self.determine_direction(self.payload.lower())
         if direction is not None:
-            return self.do_directional_attack(lifeform, direction)
+            return self.do_directional_attacks(lifeform, direction)
 
         return self.do_attack(lifeform)
 
