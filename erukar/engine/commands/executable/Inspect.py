@@ -4,6 +4,9 @@ from erukar.engine.model.Containable import Containable
 class Inspect(Command):
     not_found = "Nothing matching '{0}' was found in this room."
     abyss = "There is nothing to your {0} except the abyss... plain and nothingness forever."
+
+    aliases = ['look']
+
     def __init__(self):
         super().__init__()
 
