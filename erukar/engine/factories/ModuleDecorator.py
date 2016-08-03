@@ -1,5 +1,5 @@
 from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
-import sys, inspect
+import sys, inspect, functools, math
 
 class ModuleDecorator(ProbablisticGenerator):
     ConditionalProb = 'ProbabilityFrom{}'
@@ -32,13 +32,16 @@ class ModuleDecorator(ProbablisticGenerator):
             var_format = self.ConditionalProb.format(parameter.capitalize()) 
             if hasattr(modifier, var_format):
                 cond_weight = getattr(modifier, var_format) 
-                generation_actual = getattr(self.generation_parameters, parameter)
-                prob_weights.append(cond_weight * generation_actual)
+                actual = getattr(self.generation_parameters, parameter)
+                prob_weights.append(self.semi_conditional_probabiity(actual, cond_weight))
         
         if len(prob_weights) > 0:
-            return sum(w * overall_probability for w in prob_weights)
+            return overall_probability * functools.reduce(lambda x_i, X: X*x_i, prob_weights)
 
-        return overall_probability
+        return overall_probability 
+
+    def semi_conditional_probabiity(self, x, c):
+        return math.pow(math.exp(2*(x-c)), c-x)
 
     def apply_one_to(self, room):
         '''shortcut to make one and apply it'''

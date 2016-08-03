@@ -1,9 +1,10 @@
 from erukar.game.modifiers.RoomModifier import RoomModifier
 from erukar.engine.environment.Surface import Surface
 
-class DirtFloor(RoomModifier):
-    Proability = 2.0
+class OvergrownFloor(RoomModifier):
+    Proability = 1.1
     ProbabilityFromFabrication = -0.8
 
     def apply_to(self, room):
-        room.floor = Surface('The flooring of this room is packed dirt. ')
+        room.floor = Surface('You cannot see the floor through the dense overgrowth.')
+

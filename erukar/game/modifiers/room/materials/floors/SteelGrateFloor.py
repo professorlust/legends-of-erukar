@@ -2,6 +2,7 @@ from erukar.game.modifiers.RoomModifier import RoomModifier
 from erukar.engine.environment.Surface import Surface
 
 class SteelGrateFloor(RoomModifier):
+    Probability = 0.2
     ProbabilityFromFabrication = 1.0
 
     def apply_to(self, room):

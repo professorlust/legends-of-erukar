@@ -22,7 +22,7 @@ class ProbablisticGenerator(FactoryBase):
         if all(w_i <= self.MinimumAcceptableWeight for w_i in W) or len(set(W)) == 1:
             return [1/len(W)] * len(W)
 
-        W_prime = [w_i for w_i in W if w_i > 0]
+        W_prime = [w_i for w_i in W if w_i > self.MinimumAcceptableWeight]
         weights = [self.cluster(w_i, W_prime) for w_i in W_prime]
         return [w_i / sum(weights) for w_i in weights]
 
