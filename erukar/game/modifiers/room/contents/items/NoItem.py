@@ -3,6 +3,6 @@ from erukar.engine.environment import *
 from erukar.game.modifiers.RoomModifier import RoomModifier
 
 class NoItem(RoomModifier):
-    Probability = 2
+    Probability = 2.0
     def apply_to(self, room):
-        print('No item')
+        pass

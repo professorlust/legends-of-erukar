@@ -45,4 +45,5 @@ class ModuleDecorator(ProbablisticGenerator):
 
     def apply_one_to(self, room):
         '''shortcut to make one and apply it'''
-        self.create_one().apply_to(room)
+        mod = self.create_one()
+        mod.apply_to(room)

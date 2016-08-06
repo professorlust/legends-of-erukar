@@ -3,10 +3,9 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 from erukar.engine.environment import *
 
 class Weapon(RoomModifier):
-    Probability = 1
+    Probability = 1.0
 
     def apply_to(self, room):
-        print('Applying to Weapon')
         randomizer = ModuleDecorator('erukar.game.inventory.weapons', None)
         modifiers = ModuleDecorator('erukar.game.modifiers.inventory.weapon', None)
         material = ModuleDecorator('erukar.game.modifiers.inventory.material', None)

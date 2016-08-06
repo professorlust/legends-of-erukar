@@ -32,7 +32,8 @@ class ProbablisticGenerator(FactoryBase):
         where N is the length, w_i is the current weight, and W is the set of weights
         1 / (N * (1 + (-w_i + sum(W))/(N-1) - w_i))
         '''
-        return (w_i - min(W))/(max(W)-min(W))
+        min_W = max(min(0, min(W)), 0)
+        return (w_i - min_W)/(max(W)-min_W)
 
     def order_bins_and_values(self, bins, values):
         '''Orders the bins in an increasing order and adjusts the values accordingly'''
