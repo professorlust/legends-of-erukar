@@ -2,8 +2,9 @@ class Modifier:
     '''Used to alter any RpgEntity'''
     NONE = 0
     NONE_PROHIBITED = 1
-    ALL_PERMITTED = 2
-    ALL = 3
+    ALL_PERMITTED_BUT_NOT_PROHIBITED = 2
+    ALL_PERMITTED = 3
+    ALL = 4
 
     def __init__(self):
         '''Allows explicit permission and explicit prohibition'''
@@ -26,13 +27,14 @@ class Modifier:
         in permitted_entities and prohibited_entities and this Modifier's
         permission_type
         '''
-        if self.permission_type is Modifier.NONE_PROHIBITED:
-            return not any(r for r in self.prohibited_entities if r == type(entity))
+        is_permitted = self.is_in_group(entity, self.permitted_entities)
+        is_prohibited = any(r for r in self.prohibited_entities if r == type(entity))
 
-        if self.permission_type is Modifier.ALL_PERMITTED:
-            return self.is_in_group(entity, self.permitted_entities)
-
-        return self.permission_type is Modifier.ALL
+        return self.permission_type is Modifier.ALL \
+                or (self.permission_type is Modifier.NONE_PROHIBITED and not is_prohibited) \
+                or (self.permission_type is Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED and not is_prohibited and is_permitted) \
+                or (self.permission_type is Modifier.ALL_PERMITTED and is_permitted) \
+                and not self.permission_type is Modifier.NONE
 
     def is_in_group(self, entity, group):
         return any(r for r in group if r == type(entity) or issubclass(type(entity), r))
