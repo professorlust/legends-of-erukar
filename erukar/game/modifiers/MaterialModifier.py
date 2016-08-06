@@ -5,6 +5,6 @@ from erukar.engine.inventory import Weapon
 class MaterialModifier(Modifier):
     def __init__(self):
         super().__init__()
-        self.permission_type = Modifier.ALL_PERMITTED
+        self.permission_type = Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED
         self.permitted_entities.append(Weapon)
         self.permitted_entities.append(Armor)

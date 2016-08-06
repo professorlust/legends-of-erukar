@@ -1,8 +1,7 @@
 from erukar.game.modifiers.MaterialModifier import MaterialModifier
 
-class Bronze(MaterialModifier):
-    Probability = 0.05
+class Leather(MaterialModifier):
+    Probability = 1.0
 
     def apply_to(self, item):
-        item.name = 'Bronze ' + item.name
-
+        item.name = 'Leather ' + item.name
