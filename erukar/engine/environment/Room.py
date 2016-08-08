@@ -6,8 +6,9 @@ from erukar.engine.environment.Door import Door
 import erukar, random
 
 class Room(Containable):
-    def __init__(self, coordinates=(0,0)):
+    def __init__(self, dungeon, coordinates=(0,0)):
         super().__init__([],"","")
+        self.dungeon = dungeon
         self.floor = None
         self.ceiling = None
         self.luminosity = 1.0 # luminosity will be used in conjunction with visual skill in descriptions

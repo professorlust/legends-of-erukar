@@ -8,6 +8,7 @@ from .Passage import Passage
 from .Room import Room
 from .Trap import Trap
 from .Surface import Surface
+from .Lock import Lock
 
 __all__ = [
     "Container",
@@ -16,6 +17,7 @@ __all__ = [
     "Door",
     "Dungeon",
     "EnvironmentPiece",
+    "Lock",
     "Passage",
     "Room",
     "Trap",

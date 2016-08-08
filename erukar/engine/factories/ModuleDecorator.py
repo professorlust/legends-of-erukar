@@ -36,7 +36,7 @@ class ModuleDecorator(ProbablisticGenerator):
                 prob_weights.append(self.semi_conditional_probabiity(actual, cond_weight))
         
         if len(prob_weights) > 0:
-            return overall_probability * functools.reduce(lambda x_i, X: X*x_i, prob_weights)
+            return overall_probability*(1+functools.reduce(lambda x_i, X: X*x_i, prob_weights))
 
         return overall_probability 
 

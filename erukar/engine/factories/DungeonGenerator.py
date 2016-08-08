@@ -27,7 +27,7 @@ class DungeonGenerator(FactoryBase):
 
     def create_rooms(self, num_rooms):
         '''Create X number of rooms'''
-        self.dungeon.rooms = [Room() for x in range(num_rooms)]
+        self.dungeon.rooms = [Room(self.dungeon) for x in range(num_rooms)]
         self.dungeon.dungeon_map[(0,0)] = self.dungeon.rooms[0]
         self.connect_rooms()
         #self.generate_descriptions()
