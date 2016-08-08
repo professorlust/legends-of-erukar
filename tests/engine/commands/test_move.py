@@ -10,9 +10,9 @@ class MoveTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(p)
 
-        old_room = Room()
+        old_room = Room(None)
         c.current_room = old_room
-        new_room = Room()
+        new_room = Room(None)
         new_room.description = 'new_room'
 
         m = Move()
@@ -31,7 +31,7 @@ class MoveTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        r = Room()
+        r = Room(None)
         p.current_room = r
 
         m = Move()
@@ -50,9 +50,9 @@ class MoveTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
-        s = Room()
+        s = Room(None)
         d = Door()
         n.coestablish_connection(Direction.South, s, d)
 
@@ -72,9 +72,9 @@ class MoveTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
-        s = Room()
+        s = Room(None)
         d = Door()
         d.status = Door.Open
         n.coestablish_connection(Direction.South, s, d)

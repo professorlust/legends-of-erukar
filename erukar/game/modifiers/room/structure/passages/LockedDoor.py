@@ -13,6 +13,6 @@ class LockedDoor(RoomDoorModifier):
     def apply_to(self, room):
         super().apply_to(room)
         k = Key(self.lock)
-        viable_rooms = [room.dungeon.rooms[r] for r in range(room.dungeon.rooms.index(room))]
-        target_room = random.choice(viable_rooms)
-        target_room.add(k)
+        possible_rooms = range(max(1, room.dungeon.rooms.index(room)))
+        key_location = random.choice(list(possible_rooms))
+        room.dungeon.rooms[key_location].add(k)

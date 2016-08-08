@@ -12,7 +12,7 @@ class TakeTests(unittest.TestCase):
 
         w = Weapon()
         w.name = 'Sword'
-        r = Room()
+        r = Room(None)
         r.add(w)
         p.link_to_room(r)
         pn.move_to_room(r)
@@ -43,7 +43,7 @@ class TakeTests(unittest.TestCase):
 
         w = Weapon()
         w.name = 'Firearm'
-        r = Room()
+        r = Room(None)
         p.current_room = r
         r.contents.append(w)
 

@@ -9,8 +9,8 @@ class Use(ActionCommand):
         self.check_for_arguments()
 
         # Get the subject
-        item = self.find_in_inventory(player, self.payload)
-        if item is None:
+        items = self.find_all_in_inventory(player, self.payload)
+        if len(items) == 0:
             return 'Could not find item "{}".',format(self.payload)
 
         # Get the object
@@ -24,19 +24,18 @@ class Use(ActionCommand):
             if target is None:
                 target = self.find_in_room(self.arguments['object'])
 
-        if isinstance(item, erukar.engine.inventory.Key):
-            return self.use_key(item, target, player)
+        for item in items:
+            if isinstance(item, erukar.engine.inventory.Key):
+                if self.use_key(item, target, self.lifeform(player)):
+                    return '{} successfully unlocked the {}'.format(self.lifeform(player).alias(), target.alias())
 
         return 'Cannot use anything.'
 
     def use_key(self, item, target, player):
         if target is None:
-            return 'Keys are useless on their own.'
+            return False
 
-        if item.toggle_lock(target):
-            return '{} was successful in unlocking.'.format(player.alias())
-        return 'This is not the right key.'
-
+        return item.toggle_lock(target)
 
     def check_for_arguments(self):
         if ' on ' in self.payload:

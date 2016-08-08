@@ -32,7 +32,15 @@ class Command:
 
     def find_in_inventory(self, player, item_name):
         '''Attempt to find an item in a player's inventory'''
-        return next((p for p in self.lifeform(player).inventory if p.matches(item_name)), None)
+        return next(self.inventory_find(player, item_name), None)
+
+    def find_all_in_inventory(self, player, item_name):
+        return list(self.inventory_find(player, item_name))
+
+    def inventory_find(self, player, item_name):
+        for p in self.lifeform(player).inventory:
+            if p.matches(item_name):
+                yield p
 
     def determine_direction(self, payload):
         '''Take text and determine its respective cardinal direction'''

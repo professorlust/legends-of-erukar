@@ -5,7 +5,7 @@ class PlayerNodeTests(unittest.TestCase):
     def test_index_item_no_container_yet(self):
         p = PlayerNode('', None)
         i = Item()
-        r = Room()
+        r = Room(None)
 
         p.index_item(i, r)
 
@@ -16,7 +16,7 @@ class PlayerNodeTests(unittest.TestCase):
 
     def test_index_item_with_nested_container(self):
         p = PlayerNode('', None)
-        r = Room()
+        r = Room(None)
         c = Container([],'','')
         r.add(c)
         i = Item()
@@ -34,7 +34,7 @@ class PlayerNodeTests(unittest.TestCase):
 
     def test_index_with_match(self):
         p = PlayerNode('', None)
-        r = Room()
+        r = Room(None)
         c = Container([],'','')
         r.add(c)
         i = Item()
@@ -49,7 +49,7 @@ class PlayerNodeTests(unittest.TestCase):
 
     def test_index_without_match(self):
         p = PlayerNode('', None)
-        r = Room()
+        r = Room(None)
         c = Container([],'','')
         r.add(c)
         i = Item()
@@ -63,7 +63,7 @@ class PlayerNodeTests(unittest.TestCase):
 
     def test_reverse_index(self):
         p = PlayerNode('', None)
-        r = Room()
+        r = Room(None)
         c = Container([],'','')
         r.add(c)
         i = Item()

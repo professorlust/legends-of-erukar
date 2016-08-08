@@ -12,7 +12,7 @@ class AttackTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        r = Room()
+        r = Room(None)
         p.link_to_room(r)
 
         a = Attack()
@@ -33,7 +33,7 @@ class AttackTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        r = Room()
+        r = Room(None)
         p.link_to_room(r)
 
         c = Lifeform()
@@ -107,7 +107,7 @@ class AttackTests(unittest.TestCase):
         self.assertTrue(c.afflicted_with(Dying))
 
     def test_adjudicate_attack_cause_death(self):
-        r = Room()
+        r = Room(None)
 
         p = Player()
         p.define_stats({ 'strength': 2, 'dexterity': 20 })

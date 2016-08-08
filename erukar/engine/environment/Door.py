@@ -9,10 +9,10 @@ class Door(RpgEntity):
     already_open = 'The door is already open'
     Closed = 0
     Open = 1
-    Locked = 2
 
     def __init__(self, description=""):
         '''description should allow a {0} for formatting direction'''
+        self.lock = None
         self.status = Door.Closed
         self.can_close = True
         self.description = description
@@ -37,8 +37,11 @@ class Door(RpgEntity):
     def on_open(self, *_):
         if self.status == Door.Open:
             return Door.already_open
-        if self.status == Door.Locked:
-            return Door.is_locked
+
+        if self.lock is not None:
+            if self.lock.is_locked:
+                return Door.is_locked
+
         if self.can_close:
             self.status = Door.Open
             return Door.open_success

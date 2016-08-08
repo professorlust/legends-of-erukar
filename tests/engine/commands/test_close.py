@@ -9,7 +9,7 @@ class CloseTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        r = Room()
+        r = Room(None)
         p.current_room = r
 
         o = Close()
@@ -28,9 +28,9 @@ class CloseTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
-        s = Room()
+        s = Room(None)
         n.coestablish_connection(Direction.South, s, None)
 
         o = Close()
@@ -49,11 +49,11 @@ class CloseTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
-        s = Room()
+        n = Room(None)
+        s = Room(None)
         d = Door()
         p.current_room = n
-        d.status = Door.Locked
+        d.lock = Lock()
         n.coestablish_connection(Direction.South, s, d)
 
         o = Close()
@@ -72,8 +72,8 @@ class CloseTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
-        s = Room()
+        n = Room(None)
+        s = Room(None)
         p.current_room = n
         d = Door()
         n.coestablish_connection(Direction.South, s, d)
@@ -95,8 +95,8 @@ class CloseTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
-        s = Room()
+        n = Room(None)
+        s = Room(None)
         d = Door()
         p.current_room = n
         d.status = Door.Open
@@ -120,7 +120,7 @@ class CloseTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
         chest = Container(aliases=['chest'], inspect_results='', broad_results='')
         n.add(item=chest)

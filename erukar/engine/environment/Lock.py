@@ -1,7 +1,10 @@
-class Lock:
+from erukar.engine.model.EnvironmentPiece import EnvironmentPiece
+
+class Lock(EnvironmentPiece):
     '''Class which includes all functionality for locking and unlocking'''
 
     def __init__(self):
+        super().__init__(['lock'],'There is a lock.', 'The lock is in good condition')
         self.is_locked = True
         self.armor_class = 10
         self.durability = 5

@@ -18,7 +18,7 @@ class CommandTests(unittest.TestCase):
         c = Command()
         c.sender_uid = 'auid'
         w = Weapon()
-        r = Room()
+        r = Room(None)
         r.contents.append(w)
 
         d = DataAccess()

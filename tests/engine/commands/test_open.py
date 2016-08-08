@@ -9,7 +9,7 @@ class OpenTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        r = Room()
+        r = Room(None)
         p.current_room = r
 
         o = Open()
@@ -28,9 +28,9 @@ class OpenTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
-        s = Room()
+        s = Room(None)
         n.coestablish_connection(Direction.South, s, None)
 
         o = Open()
@@ -49,11 +49,11 @@ class OpenTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
-        s = Room()
+        s = Room(None)
         d = Door()
-        d.status = Door.Locked
+        d.lock = Lock()
         n.coestablish_connection(Direction.South, s, d)
 
         o = Open()
@@ -72,9 +72,9 @@ class OpenTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
-        s = Room()
+        s = Room(None)
         d = Door()
         d.status = Door.Open
         n.coestablish_connection(Direction.South, s, d)
@@ -95,9 +95,9 @@ class OpenTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
-        s = Room()
+        s = Room(None)
         d = Door()
         n.coestablish_connection(Direction.South, s, d)
 
@@ -118,7 +118,7 @@ class OpenTests(unittest.TestCase):
         data_store = DataAccess()
         data_store.players.append(PlayerNode(p.uid, p))
 
-        n = Room()
+        n = Room(None)
         p.current_room = n
         chest = Container(aliases=['chest'], inspect_results='', broad_results='')
         n.add(chest)
