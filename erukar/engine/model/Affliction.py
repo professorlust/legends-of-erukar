@@ -7,7 +7,7 @@ class Affliction:
         self.instigator = instigator
 
     def do_begin_of_turn_effect(self):
-        pass
+        return ''
 
     def do_end_of_turn_effect(self):
-        pass
+        return ''

@@ -13,3 +13,23 @@ class PlayerNode(Indexer):
     def move_to_room(self, room):
         if room.coordinates not in self.dungeon_map:
             self.dungeon_map[room.coordinates] = room
+
+    def afflicted_with(self, type_of):
+        if self.character is None: return False
+
+        return self.character.afflicted_with(type_of)
+
+    def begin_turn(self):
+        if self.character is not None:
+            return self.character.begin_turn()
+        return ''
+
+    def end_turn(self):
+        if self.character is not None:
+            return self.character.end_turn()
+        return ''
+
+    def is_incapacitated(self):
+        if self.character is not None:
+            return self.character.is_incapacitated()
+        return True

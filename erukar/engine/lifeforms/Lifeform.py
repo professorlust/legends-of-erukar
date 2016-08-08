@@ -68,8 +68,6 @@ class Lifeform(RpgEntity):
         return any(aff for aff in self.afflictions if aff.Incapacitates)
 
     def turn_modifier(self):
-        if self.is_incapacitated():
-            return 10000
         return 10.0 + round(40*(1.0 - 1.0 / (1.0 + math.exp( (10.0-self.dexterity) / 5.0))))
 
     def define_level(self, level):
@@ -139,3 +137,11 @@ class Lifeform(RpgEntity):
 
     def alias(self):
         return self.name
+
+    def begin_turn(self):
+        results = [aff.do_begin_of_turn_effect() for aff in self.afflictions]
+        return '\n'.join(r for r in results if r is not '')
+
+    def end_turn(self):
+        results = [aff.do_end_of_turn_effect() for aff in self.afflictions]
+        return '\n'.join(r for r in results if r is not '')

@@ -81,28 +81,40 @@ class Instance(Manager):
         self.active_player = None
    
         while not self.had_players or self.turn_manager.has_players():
-            if any(self.non_action_commands):
-                # Run ALL of these
-                cmd = self.non_action_commands.pop()
-                self.execute_command(cmd)
-
-            if isinstance(self.active_player, erukar.engine.model.PlayerNode):
-                player_cmd = self.get_active_player_action()
-                if player_cmd is None:
-                    continue
-                self.execute_command(player_cmd)
-
-            if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
-                cmd = self.active_player.perform_turn()
-                if cmd is not None:
+            if self.active_player is not None and not self.active_player.is_incapacitated():
+                if any(self.non_action_commands):
+                    # Run ALL of these
+                    cmd = self.non_action_commands.pop()
                     self.execute_command(cmd)
 
-            self.active_player = self.turn_manager.next()
+                if isinstance(self.active_player, erukar.engine.model.PlayerNode):
+                    player_cmd = self.get_active_player_action()
+                    if player_cmd is None:
+                        continue
+                    self.execute_command(player_cmd)
+
+                if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
+                    cmd = self.active_player.perform_turn()
+                    if cmd is not None:
+                        self.execute_command(cmd)
+
+            self.get_next_player()
             self.timer.cancel()
             self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
             self.timer.start()
 
         print('No players, shutting down instance.')
+
+    def get_next_player(self):
+        if self.active_player is not None:
+            res = self.active_player.end_turn()
+            if len(res) > 0:
+                print(res)
+
+        self.active_player = self.turn_manager.next()
+        res = self.active_player.begin_turn()
+        if len(res) > 0:
+            print(res)
 
     def get_active_player_action(self):
         for command in self.action_commands:
