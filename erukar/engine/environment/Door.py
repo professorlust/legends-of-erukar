@@ -18,9 +18,16 @@ class Door(RpgEntity):
         self.description = description
 
     def on_inspect(self, direction):
-        if self.description != "":
-            return self.description.format(direction)
-        return self.on_inspect_generic(direction)
+        if len(self.description) == 0:
+            return self.on_inspect_generic(direction)
+
+        if self.lock is not None:
+            args = {
+                'door': self.description.format(direction),
+                'lockname': self.lock.alias(),
+                'lock': self.lock.on_inspect()}
+            return '{door} Attached to the door is a {lockname}. {lock}'.format(**args)
+        return self.description.format(direction)
 
     def on_inspect_generic(self, direction):
         return "There is a door to the {0}".format(direction)

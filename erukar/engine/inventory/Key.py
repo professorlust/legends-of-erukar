@@ -8,14 +8,9 @@ class Key(Item):
         "tiny ",
         ""]
 
-    materials = [
-        "copper",
-        "steel",
-        "iron"]
-
     def __init__(self, lock):
         self.lock = lock
-        self.material = random.choice(self.materials)
+        self.material = lock.material
         self.size = random.choice(self.sizes)
         alias = '{}{} Key'.format(self.size, self.material)
 
