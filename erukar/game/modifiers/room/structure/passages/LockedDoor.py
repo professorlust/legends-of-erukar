@@ -3,6 +3,7 @@ from erukar import Door, Key, Lock
 import random
 
 class LockedDoor(RoomDoorModifier):
+    Probability = 2
     ProbabilityFromFabrication = 0.75
     def __init__(self):
         self.description = "This door is locked."
