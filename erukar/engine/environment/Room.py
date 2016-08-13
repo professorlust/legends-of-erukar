@@ -15,6 +15,15 @@ class Room(Containable):
         self.coordinates = coordinates
         self.connections = {direction: Passage() for direction in Direction}
 
+    def calculate_luminosity(self):
+        return self.luminosity
+
+    def calculate_danger(self):
+        return 1.0
+
+    def calculate_desirability(self):
+        return 1.0
+
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
             self.connections[direction] = Passage(room=other_room, door=door)
