@@ -6,6 +6,8 @@ class Modifier:
     ALL_PERMITTED = 3
     ALL = 4
 
+    Desirability = 0
+
     def __init__(self):
         '''Allows explicit permission and explicit prohibition'''
         self.permitted_entities = []

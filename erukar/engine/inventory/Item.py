@@ -9,6 +9,7 @@ class Item(RpgEntity):
         self.name = name
         self.price = 0
         self.description = Item.generic_description
+        self.modifiers = []
 
     def describe(self):
         return self.alias()
@@ -28,3 +29,6 @@ class Item(RpgEntity):
 
     def belongs_in_hand(self):
         return 'left' in self.equipment_locations or 'right' in self.equipment_locations
+
+    def calculate_desireability(self):
+        return sum([mod.Desirability for mod in self.modifiers])
