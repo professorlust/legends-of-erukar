@@ -1,11 +1,11 @@
-from erukar.engine.model import Modifier
+from .ItemModifier import ItemModifier
 from erukar.engine.inventory import Weapon
 
-class WeaponMod(Modifier):
+class WeaponMod(ItemModifier):
     def __init__(self):
         super().__init__()
         self.permission_type = Modifier.ALL_PERMITTED
-        self.permitted_entities.append(Weapon)
+        self.permitted_entities = [Weapon]
 
     def apply_to(self, weapon):
-        pass
+        super().apply_to(weapon)

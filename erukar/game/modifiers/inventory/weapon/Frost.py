@@ -5,6 +5,7 @@ import numpy as np
 
 class Frost(WeaponMod):
     Probability = 1
+    Desirability = 8.0
     def apply_to(self, weapon):
         weapon.name = "Frosted " + weapon.name
         weapon.damages.append(Damage("Cold", [1,4], "", (np.random.uniform, (0,1))))

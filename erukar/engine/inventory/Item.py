@@ -1,4 +1,5 @@
 from erukar.engine.model.RpgEntity import RpgEntity
+import functools, operator
 
 class Item(RpgEntity):
     generic_description = 'This is {0}, but it otherwise has no real description whatsoever'
@@ -31,4 +32,4 @@ class Item(RpgEntity):
         return 'left' in self.equipment_locations or 'right' in self.equipment_locations
 
     def calculate_desireability(self):
-        return sum([mod.Desirability for mod in self.modifiers])
+        return functools.reduce(operator.mul, [mod.Desirability for mod in self.modifiers])
