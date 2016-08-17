@@ -1,5 +1,5 @@
 from erukar.game.modifiers.RoomModifier import RoomModifier
-from erukar.engine.factories.ModuleDecorator import ModuleDecorator
+from erukar.engine.factories import *
 from erukar.engine.environment import *
 
 class Weapon(RoomModifier):
@@ -7,13 +7,11 @@ class Weapon(RoomModifier):
 
     def apply_to(self, room):
         randomizer = ModuleDecorator('erukar.game.inventory.weapons', None)
-        randomizer.initialize()
-        modifiers = ModuleDecorator('erukar.game.modifiers.inventory.weapon', None)
-        modifiers.initialize()
-        material = ModuleDecorator('erukar.game.modifiers.inventory.material', None)
-        material.initialize()
+        weapon = randomizer.create_one()
 
-        created_weapon = randomizer.create_one()
-        material.create_one().apply_to(created_weapon)
-        modifiers.create_one().apply_to(created_weapon)
-        room.add(created_weapon)
+        modifiers = ModifierGenerator('erukar.game.modifiers.inventory.weapon', None, weapon)
+        material = ModifierGenerator('erukar.game.modifiers.inventory.material', None, weapon)
+
+        material.create_one().apply_to(weapon)
+        modifiers.create_one().apply_to(weapon)
+        room.add(weapon)

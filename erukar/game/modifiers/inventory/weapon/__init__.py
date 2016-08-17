@@ -12,6 +12,8 @@ from .Frost import Frost
 from .Bane import Bane
 from .Swift import Swift
 from .Unwieldy import Unwieldy
+from .Dull import Dull
+from .Fine import Fine
 
 # Monsters
 #Patheric
@@ -28,7 +30,9 @@ __all__ = [
     "Acid",
     "Bane",
     "Broken",
+    "Dull",
     "Electric",
+    "Fine",
     "Flaming",
     "Frost",
     "Grand",

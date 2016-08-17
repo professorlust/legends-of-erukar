@@ -8,6 +8,7 @@ from .MorningStar import MorningStar
 from .Rapier import Rapier
 from .Spear import Spear
 from .Staff import Staff
+from .Sword import Sword
 from .Wand import Wand
 
 __all__ = [
@@ -20,5 +21,6 @@ __all__ = [
     "MorningStar",
     "Rapier",
     "Spear",
+    "Sword",
     "Staff",
     "Wand"]

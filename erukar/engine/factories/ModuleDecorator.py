@@ -9,9 +9,14 @@ class ModuleDecorator(ProbablisticGenerator):
         super().__init__()
         self.generation_parameters = generation_parameters
         self.decoration_module = sys.modules[module]
+        self.initialize()
+
+    def get_possibilities(self):
+        for x in inspect.getmembers(self.decoration_module, inspect.isclass):
+            yield x[1]
 
     def initialize(self):
-        poss = [x[1] for x in inspect.getmembers(self.decoration_module, inspect.isclass)]
+        poss = list(self.get_possibilities())
 
         weights, values = zip(*[(self.calculate_probability(p), p) for p in poss])
         self.create_distribution(values, weights)

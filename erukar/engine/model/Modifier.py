@@ -26,14 +26,19 @@ class Modifier:
         in PermittedEntities and ProhibitedEntities and this Modifier's
         PermissionType
         '''
-        is_permitted = self.is_in_group(entity, self.PermittedEntities)
+        is_permitted = Modifier.is_in_group(self, entity, self.PermittedEntities)
         is_prohibited = any(r for r in self.ProhibitedEntities if r == type(entity))
 
         return self.PermissionType is Modifier.ALL \
                 or (self.PermissionType is Modifier.NONE_PROHIBITED and not is_prohibited) \
-                or (self.PermissionType is Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED and not is_prohibited and is_permitted) \
+                or (self.PermissionType is Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED\
+                    and not is_prohibited and is_permitted) \
                 or (self.PermissionType is Modifier.ALL_PERMITTED and is_permitted) \
                 and not self.PermissionType is Modifier.NONE
 
     def is_in_group(self, entity, group):
+        '''
+        Used to determine if the entity belongs to either the Permitted or 
+        the Prohibited Entities Lists
+        '''
         return any(r for r in group if r == type(entity) or issubclass(type(entity), r))
