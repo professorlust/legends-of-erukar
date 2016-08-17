@@ -3,13 +3,13 @@ from erukar.engine.environment import Room
 import random
 
 class RoomModifier(Modifier):
+    PermissionType = Modifier.ALL_PERMITTED
+    PermittedEntities = [Room]
     number_of_mutations = 3
     fields = []
 
     def __init__(self):
         super().__init__()
-        self.permission_type = Modifier.ALL_PERMITTED
-        self.permitted_entities.append(Room)
         self.randomize()
 
     def apply_to(self, room):

@@ -54,6 +54,7 @@ class Table(RoomModifier):
             broad_results='',\
             inspect_results=table_top_condition)
         r = ModuleDecorator('erukar.game.inventory', None)
+        r.initialize()
         addition = r.create_one()
         top.add(addition)
         room.add(top)

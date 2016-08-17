@@ -1,4 +1,5 @@
 from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
+from erukar.engine import InitializationException
 import sys, inspect, functools, math
 
 class ModuleDecorator(ProbablisticGenerator):
@@ -8,6 +9,8 @@ class ModuleDecorator(ProbablisticGenerator):
         super().__init__()
         self.generation_parameters = generation_parameters
         self.decoration_module = sys.modules[module]
+
+    def initialize(self):
         poss = [x[1] for x in inspect.getmembers(self.decoration_module, inspect.isclass)]
 
         weights, values = zip(*[(self.calculate_probability(p), p) for p in poss])

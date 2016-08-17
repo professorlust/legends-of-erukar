@@ -7,12 +7,9 @@ class Modifier:
     ALL = 4
 
     Desirability = 0
-
-    def __init__(self):
-        '''Allows explicit permission and explicit prohibition'''
-        self.permitted_entities = []
-        self.prohibited_entities = []
-        self.permission_type = Modifier.ALL
+    PermittedEntities = []
+    ProhibitedEntities = []
+    PermissionType = ALL
 
     def modify(self, entity):
         '''Safe-guarded modification entry point'''
@@ -26,17 +23,17 @@ class Modifier:
     def can_apply_to(self, entity):
         '''
         Checks to see if this is a valid entity based on entities specified
-        in permitted_entities and prohibited_entities and this Modifier's
-        permission_type
+        in PermittedEntities and ProhibitedEntities and this Modifier's
+        PermissionType
         '''
-        is_permitted = self.is_in_group(entity, self.permitted_entities)
-        is_prohibited = any(r for r in self.prohibited_entities if r == type(entity))
+        is_permitted = self.is_in_group(entity, self.PermittedEntities)
+        is_prohibited = any(r for r in self.ProhibitedEntities if r == type(entity))
 
-        return self.permission_type is Modifier.ALL \
-                or (self.permission_type is Modifier.NONE_PROHIBITED and not is_prohibited) \
-                or (self.permission_type is Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED and not is_prohibited and is_permitted) \
-                or (self.permission_type is Modifier.ALL_PERMITTED and is_permitted) \
-                and not self.permission_type is Modifier.NONE
+        return self.PermissionType is Modifier.ALL \
+                or (self.PermissionType is Modifier.NONE_PROHIBITED and not is_prohibited) \
+                or (self.PermissionType is Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED and not is_prohibited and is_permitted) \
+                or (self.PermissionType is Modifier.ALL_PERMITTED and is_permitted) \
+                and not self.PermissionType is Modifier.NONE
 
     def is_in_group(self, entity, group):
         return any(r for r in group if r == type(entity) or issubclass(type(entity), r))

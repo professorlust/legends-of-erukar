@@ -52,7 +52,9 @@ class Instance(Manager):
 
     def decorators(gen_params):
         for sm in Instance.SubModules:
-            yield ModuleDecorator(Instance.BaseModule.format(sm), gen_params)
+            md = ModuleDecorator(Instance.BaseModule.format(sm), gen_params)
+            md.initialize()
+            yield md
 
     def subscribe(self, player):
         super().subscribe(player)

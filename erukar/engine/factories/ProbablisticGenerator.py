@@ -1,4 +1,5 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
+from erukar.engine import InitializationException
 from erukar.engine.environment import *
 import numpy as np
 import math, random
@@ -6,6 +7,7 @@ import math, random
 class ProbablisticGenerator(FactoryBase):
     MinimumAcceptableWeight = -0.3
     def __init__(self):
+        self.is_initialized = False
         self.bins = []
         self.values = []
 
@@ -16,6 +18,7 @@ class ProbablisticGenerator(FactoryBase):
         bins = self.calculate_bin_widths(weights) 
         values = np.array(possibilities)
         self.order_bins_and_values(bins, values)
+        self.is_initialized = True
 
     def calculate_bin_widths(self, W):
         '''Determines the probablistic proportions for binning'''
@@ -42,4 +45,6 @@ class ProbablisticGenerator(FactoryBase):
         self.bins = np.add.accumulate(self.bins)
 
     def create_one(self):
+        if not self.is_initialized:
+            raise InitializationException(self.decoration_module)
         return self.values[np.digitize(np.random.uniform(0, 1), self.bins)]()

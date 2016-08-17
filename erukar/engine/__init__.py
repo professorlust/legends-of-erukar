@@ -2,6 +2,7 @@ from .afflictions import *
 from erukar.engine.commands.executable import *
 from erukar.engine.commands import *
 from erukar.engine.environment import *
+from .exceptions import *
 from erukar.engine.factories import *
 from erukar.engine.inventory import *
 from erukar.engine.lifeforms import *
