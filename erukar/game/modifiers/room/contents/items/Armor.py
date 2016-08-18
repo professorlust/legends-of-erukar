@@ -9,6 +9,6 @@ class Armor(RoomModifier):
     def apply_to(self, room):
         randomizer = ModuleDecorator('erukar.game.inventory.armor', None)
         armor = randomizer.create_one()
-        material = ModifierGenerator('erukar.game.modifiers.inventory.material', None, armor)
+        material = ModifierGenerator('erukar.game.modifiers.material', None, armor)
         material.create_one().apply_to(armor)
         room.add(armor)

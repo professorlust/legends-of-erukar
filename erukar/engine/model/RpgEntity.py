@@ -1,7 +1,7 @@
-from erukar.engine.model.Interactible import Interactible
+from erukar.engine.model.Describable import Describable
 import math, random, re
 
-class RpgEntity(Interactible):
+class RpgEntity(Describable):
     nDxy_expression = '(\d+)d(\d+)([+-]\d+)?'
     base_armor_class = 10
 

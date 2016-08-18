@@ -1,4 +1,4 @@
-from erukar.game.modifiers.inventory.weapon.Enhancement import Enhancement
+from erukar.game.modifiers.inventory.Enhancement import Enhancement
 
 class MajorEnhancement(Enhancement):
     Probability = 1

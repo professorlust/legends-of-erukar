@@ -8,3 +8,4 @@ __all__ = ["ItemModifier", "MaterialModifier", "RoomModifier", "RoomDoorModifier
 
 from .room import *
 from .inventory import *
+from .material import *

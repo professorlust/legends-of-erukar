@@ -1,5 +1,5 @@
 from erukar import *
-from erukar.game.modifiers.inventory.weapon.Broken import Broken
+from erukar.game.modifiers.inventory.Broken import Broken
 import unittest
 
 class WeaponModTests(unittest.TestCase):
