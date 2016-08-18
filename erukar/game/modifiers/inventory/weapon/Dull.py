@@ -1,5 +1,5 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
-from erukar.engine.model.Modifier import Modifier
+from erukar.engine.model import Damage, Modifier
 from erukar.game.inventory.weapons import *
 import math
 
@@ -15,6 +15,6 @@ class Dull(WeaponMod):
         weapon.damages[0].damage = [int(math.floor(min_dam/2)), int(math.floor(max_dam/2))]
         weapon.damages.append(Damage("Bludgeoning", \
                                      [int(math.floor(min_dam/4)), \
-                                     int(math.foor(max_dam/4))], \
+                                     int(math.floor(max_dam/4))], \
                                      "", (np.random.uniform, (0,1))))
 

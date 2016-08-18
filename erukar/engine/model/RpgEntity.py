@@ -18,3 +18,6 @@ class RpgEntity(Interactible):
 
     def calculate_armor_class(self):
         return RpgEntity.base_armor_class
+
+    def necessary_acuity(self):
+        return 0

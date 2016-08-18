@@ -50,3 +50,6 @@ class Enemy(Lifeform, Indexer):
                 # If you have sense < -4, you might attack yourself on accident 
                 if self.sense <= -4 or item is not self:
                     yield item
+
+    def lifeform(self):
+        return self

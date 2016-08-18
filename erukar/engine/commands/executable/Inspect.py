@@ -19,11 +19,10 @@ class Inspect(Command):
         if direction is None:
             return self.inspect_in_room(player, room, self.payload)
 
-        result = room.describe_in_direction(direction, inspect_walls=True)
-        if result is not None:
-            return result
-
-        return Inspect.abyss.format(direction.name)
+        result = room.describe_in_direction(direction, player.lifeform(), inspect_walls=True)
+        if result is None:
+            return Inspect.abyss.format(direction.name)
+        return result
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''

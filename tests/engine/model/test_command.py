@@ -17,12 +17,13 @@ class CommandTests(unittest.TestCase):
     def test_find_in_room(self):
         c = Command()
         c.sender_uid = 'auid'
+        p = Player()
         w = Weapon()
         r = Room(None)
         r.contents.append(w)
 
         d = DataAccess()
-        d.players.append(PlayerNode('auid', None))
+        d.players.append(PlayerNode('auid', p))
         c.data = d
 
         result = c.find_in_room(r, w.item_type)

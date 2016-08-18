@@ -9,3 +9,6 @@ class Player(Lifeform):
 
     def alias(self):
         return self.uid
+
+    def lifeform(self):
+        return self

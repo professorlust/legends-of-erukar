@@ -33,3 +33,6 @@ class PlayerNode(Indexer):
         if self.character is not None:
             return self.character.is_incapacitated()
         return True
+
+    def lifeform(self):
+        return self.character

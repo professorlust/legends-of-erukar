@@ -59,6 +59,24 @@ class Lifeform(RpgEntity):
         '''
         return self.hand_efficacy[hand]
 
+    def calculate_stat_score(self, stat_type):
+        '''Calculates a character's stat score based on armor and status effects'''
+        score = getattr(self, stat_type)
+        # First up, handle equipment
+        for eq_type in self.equipment_types:
+            equipment = getattr(self, eq_type)
+            if equipment is None: 
+                continue
+            for mod in equipment.modifiers:
+                if hasattr(mod, stat_type):
+                    print('found one')
+                    score += getattr(mod, stat_type)
+        # now handle afflictions
+        for aff in self.afflictions:
+            if hasattr(aff, stat_type):
+                score += getattr(aff, stat_type)
+        return score
+
     def define_stats(self, stats):
         '''Takes a dictionary to define stats.'''
         for stat in [stat for stat in stats if hasattr(self, stat)]:
@@ -145,3 +163,6 @@ class Lifeform(RpgEntity):
     def end_turn(self):
         results = [aff.do_end_of_turn_effect() for aff in self.afflictions]
         return '\n'.join(r for r in results if r is not '')
+
+    def lifeform(self):
+        return self

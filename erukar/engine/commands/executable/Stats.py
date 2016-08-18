@@ -15,7 +15,8 @@ class Stats(Command):
             lifeform.max_health, 
             lifeform.calculate_armor_class())
 
-        attribute_description = '\n'.join([Stats.stat.format(stat.capitalize(), player.character.get(stat)) \
+        attribute_description = '\n'.join([Stats.stat.format(stat.capitalize(), \
+            player.character.calculate_stat_score(stat)) \
             for stat in Lifeform.attribute_types])
 
         return status_description + self.attributes.format(attribute_description) + '\n'

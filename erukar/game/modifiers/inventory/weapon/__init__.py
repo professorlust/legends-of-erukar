@@ -14,6 +14,9 @@ from .Swift import Swift
 from .Unwieldy import Unwieldy
 from .Dull import Dull
 from .Fine import Fine
+from .Enhancement import Enhancement
+from .MinorEnhancement import MinorEnhancement
+from .MajorEnhancement import MajorEnhancement
 
 # Monsters
 #Patheric
@@ -38,6 +41,9 @@ __all__ = [
     "Grand",
     "Greater",
     "Large",
+    "MinorEnhancement",
+    "Enhancement",
+    "MajorEnhancement",
     "NoModifier",
     "Rusty",
     "Small",

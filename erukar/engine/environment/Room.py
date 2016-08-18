@@ -42,8 +42,8 @@ class Room(Containable):
     def on_inspect(self, direction):
         return self.description
 
-    def inspect_peek(self, direction):
-        aliases = list(self.generate_content_descriptions(None, give_aliases=True))
+    def inspect_peek(self, direction, lifeform):
+        aliases = list(self.generate_content_descriptions(lifeform, give_aliases=True))
         if len(aliases) > 1:
             aliases[-1] = 'and {}'.format(aliases[-1])
         if len(aliases) > 2:
@@ -55,14 +55,14 @@ class Room(Containable):
         other_dir = self.invert_direction(direction)
         self.connections[direction].room.connections[other_dir].door = door
 
-    def describe_in_direction(self, direction, inspect_walls=False):
+    def describe_in_direction(self, direction, lifeform, inspect_walls=False):
         con = self.connections[direction]
-        return con.on_inspect(direction, inspect_walls)
+        return con.on_inspect(direction, inspect_walls, lifeform)
 
-    def describe(self, player=None):
+    def describe(self, player):
         room_descriptions = list(self.generate_room_descriptions())
-        directions = list(self.generate_direction_descriptions())
-        contents = list(self.generate_content_descriptions(player))
+        directions = list(self.generate_direction_descriptions(player.lifeform()))
+        contents = list(self.generate_content_descriptions(player.lifeform()))
         return ' '.join(room_descriptions + contents + ['\n'] + directions)
 
     def generate_room_descriptions(self):
@@ -75,16 +75,16 @@ class Room(Containable):
     def content_alias_or_description(self, item, give_alias):
         return item.describe() if not give_alias else item.alias()
 
-    def generate_direction_descriptions(self):
+    def generate_direction_descriptions(self, lifeform):
         '''Generator for creating a list of directional descriptions'''
         for direction in self.connections:
-            res = self.describe_in_direction(direction, inspect_walls=False)
+            res = self.describe_in_direction(direction, lifeform, inspect_walls=False)
             if res is not None:
                 yield '\n{0}:\t{1}'.format(direction.name, res)
 
     def generate_content_descriptions(self, player, give_aliases=False):
         '''Generator for creating a list of content descriptions'''
-        for content in self.contents:
+        for content in self.get_visible_contents(player):
             if isinstance(content, erukar.engine.lifeforms.Player):
                 if content.uid == player.uid:
                     continue
@@ -110,3 +110,7 @@ class Room(Containable):
             passage = self.connections[direction]
             if passage.room is None and isinstance(passage.door, Surface):
                 yield direction
+
+    def get_visible_contents(self, lifeform):
+        acu_score = lifeform.calculate_stat_score('acuity')
+        return [x for x in self.contents if x.necessary_acuity() <= acu_score]
