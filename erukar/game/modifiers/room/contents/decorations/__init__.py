@@ -14,6 +14,7 @@ from .Sconce import Sconce
 from .Shelf import Shelf
 from .Shrub import Shrub
 from .Statue import Statue
+from .Stove import Stove
 from .Table import Table
 from .Tree import Tree
 from .Window import Window
@@ -34,6 +35,7 @@ __all__ = ["Branch",
     "Shelf",
     "Shrub",
     "Statue",
+    "Stove",
     "Table",
     "Tree",
     "Window"]

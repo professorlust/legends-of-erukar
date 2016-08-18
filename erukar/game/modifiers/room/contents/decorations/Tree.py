@@ -40,7 +40,6 @@ class Tree(RoomModifier):
         return all_but_loc
 
     def apply_to(self, room):
-        print('Added a tree')
         try:
             location = 'to the ' + random.choice(list(room.wall_directions())).name
         except:

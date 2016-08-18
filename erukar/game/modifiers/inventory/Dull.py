@@ -1,6 +1,7 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
 from erukar.engine.model import Damage, Modifier
 from erukar.game.inventory.weapons import *
+import numpy as np
 import math
 
 class Dull(WeaponMod):
