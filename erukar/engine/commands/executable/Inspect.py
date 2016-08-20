@@ -19,7 +19,7 @@ class Inspect(Command):
         if direction is None:
             return self.inspect_in_room(player, room, self.payload)
 
-        result = room.describe_in_direction(direction, player.lifeform(), inspect_walls=True)
+        result = room.describe_in_direction(direction, player.lifeform(), inspect_walls=True, scalar=1.0)
         if result is None:
             return Inspect.abyss.format(direction.name)
         return result

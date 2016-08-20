@@ -23,7 +23,7 @@ class Command:
         '''Attempt to find an item in a room's contents'''
         player = self.find_player()
         lifeform = self.lifeform(player)
-        contents = set(container.get_visible_contents(lifeform) + player.reverse_index(container))
+        contents = set(container.get_visible_contents(lifeform, 1.0) + player.reverse_index(container))
         return next((p for p in contents if p.matches(item_name)), None)
 
     def lifeform(self, player_or_node):
