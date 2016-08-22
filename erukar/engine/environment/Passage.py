@@ -6,6 +6,9 @@ class Passage:
         self.door = door
         self.room = room
 
+    def is_door(self):
+        return self.door is not None and type(self.door) is Door
+
     def is_not_empty(self):
         return self.door is not None and self.room is not None
 
