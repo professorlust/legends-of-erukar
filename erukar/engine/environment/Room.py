@@ -110,14 +110,12 @@ class Room(Containable):
         decay = self.scalar_decay(lifeform.calculate_stat_score('acuity'))
         our_contents = self.inspect_peek(direction, lifeform, scalar)
         if scalar > 0.15:
-            print('scalar is greater')
             their_contents = self.describe_in_direction(direction, lifeform, scalar=scalar*decay)
-            return '{}. In the next room, you see {}.'.format(our_contents, their_contents)
-        print('scalar is NOT greater')
+            return '{}. In the next room, you see {}'.format(our_contents, their_contents)
         return our_contents
 
     def scalar_decay(self, acuity):
-        return 1 / (2 + (20-acuity)/10)
+        return 1 / (2 + (20-acuity)/5)
 
     def adjacent_rooms(self):
         '''Generator which yields rooms we can see into from this one'''
