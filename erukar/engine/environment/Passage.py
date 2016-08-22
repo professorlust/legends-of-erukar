@@ -19,8 +19,8 @@ class Passage:
         if self.room is not None:
             peek = self.room.directional_inspect(relative_dir, lifeform, scalar)
             if len(peek) > 0:
-                if scalar == 1.0: # First Room
-                    return 'In the first roome, you see {}'.format(peek)
+                if scalar == 1.0:
+                    return 'In the first room, you see {}'.format(peek)
                 return peek
             return 'There is nothing inside.'
 

@@ -75,8 +75,20 @@ class Room(Containable):
         contents = list(self.generate_content_descriptions(player.lifeform()))
         return ' '.join(room_descriptions + contents + ['\n'] + directions)
 
+    def visual_description(self):
+        lum = self.calculate_luminosity()
+        if lum < 0.1:
+            return 'The room is completely dark.'
+        if lum < 0.3:
+            return 'The room is very dimly lit and it is difficult to discern shapes in the darkness.'
+        if lum < 0.6:
+            return 'The room is dimly lit yet you can still see reasonably well.'
+        if lum < 0.9:
+            return 'The room is well lit.'
+        return 'The room is perfectly bright.'
+
     def generate_room_descriptions(self):
-        yield self.description
+        yield self.visual_description()  
         if self.floor is not None:
             yield self.floor.on_inspect()
         if self.ceiling is not None:
