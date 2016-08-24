@@ -12,10 +12,9 @@ class ConcreteWalls(RoomModifier):
     ]
 
     def __init__(self):
-        super().__init__()
         self.texture = random.choice(self.textures)
         self.description = "This wall is made of a {} concrete.".format(self.texture)
 
     def apply_to(self, room):
         for wall in room.walls():
-            wall.description = self.description 
+            wall.description = self.description

@@ -49,7 +49,7 @@ class Room(Containable):
         if len(aliases) > 1:
             aliases[-1] = 'and {}'.format(aliases[-1])
         if len(aliases) > 2:
-            return ', '.join(aliases) 
+            return ', '.join(aliases)
         return ' '.join(aliases)
 
     def add_door(self, direction, door):
@@ -60,9 +60,9 @@ class Room(Containable):
 
     def describe_in_direction(self, direction, lifeform, inspect_walls=False, scalar=1.0):
         '''
-        Raytrace. Used to describe a door or set of rooms in a direction from this room. 
+        Raytrace. Used to describe a door or set of rooms in a direction from this room.
         inspect_walls is a boolean which allows us to describe the walls we hit with our
-        trace (this is False for looking down a set of rooms and in our initial 
+        trace (this is False for looking down a set of rooms and in our initial
         descriptions of the room, yet not when looking NESW within our origin room)
         '''
         con = self.connections[direction]

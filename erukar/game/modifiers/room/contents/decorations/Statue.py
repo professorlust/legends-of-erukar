@@ -4,7 +4,7 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random, collections
 
 class Statue(RoomModifier):
-    Probability = 1
+    Probability = 0.01
     materials = [
         "gypsum",
         "alabaster",

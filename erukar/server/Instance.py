@@ -11,18 +11,18 @@ class Instance(Manager):
     MaximumTurnSkipPenalty = 5 # in turns
     BaseModule = "erukar.game.modifiers.room.{0}"
     SubModules = [
-        "materials.floors",
-        "materials.walls",
-        "materials.ceilings",
-        "structure.ceilings",
-        "contents.enemies",
-        "contents.decorations",
-        "contents.items",
-        "structure.passages",
-        "phenomena",
-        "qualities.air",
-        "qualities.lighting",
-        "qualities.sounds"]
+        (ModuleDecorator, "materials.floors"),
+        (ModuleDecorator, "materials.walls"),
+        (ModuleDecorator, "materials.ceilings"),
+        (ModuleDecorator, "structure.ceilings"),
+        (ModuleDecorator, "qualities.air"),
+        (ModuleDecorator, "qualities.lighting"),
+        (ModuleDecorator, "qualities.sounds"),
+        (ModuleDecorator, "contents.enemies"),
+        (MultipleModuleDecorator, "contents.decorations"),
+        (ModuleDecorator, "contents.items"),
+        (ModuleDecorator, "structure.passages"),
+        (ModuleDecorator, "phenomena")]
 
     def activate(self, action_commands, non_action_commands,  generation_parameters):
         '''Here generation_parameters is a GenerationProfile'''
@@ -42,7 +42,7 @@ class Instance(Manager):
                 if issubclass(type(item), erukar.engine.lifeforms.Enemy):
                     self.turn_manager.subscribe(item)
                     self.data.players.append(item)
-    
+ 
     def decorate(self, generation_parameters):
         decorators = list(Instance.decorators(generation_parameters))
         self.generation_parameters = generation_parameters
@@ -52,7 +52,7 @@ class Instance(Manager):
 
     def decorators(gen_params):
         for sm in Instance.SubModules:
-            md = ModuleDecorator(Instance.BaseModule.format(sm), gen_params)
+            md = sm[0](Instance.BaseModule.format(sm[1]), gen_params)
             md.initialize()
             yield md
 
@@ -62,7 +62,7 @@ class Instance(Manager):
         room = self.dungeon.rooms[0]
         p.character.link_to_room(room)
         p.move_to_room(room)
-        self.turn_manager.subscribe(p)        
+        self.turn_manager.subscribe(p )
         self.had_players = True
 
     def create_player_node(self, uid):
@@ -75,13 +75,13 @@ class Instance(Manager):
         for x in vars(self.generation_parameters):
             print('{} - {}'.format(x, getattr(self.generation_parameters, x)))
         return p
-        
+
     def instance_running(self, action_commands, non_action_commands, gen_params):
         self.activate(action_commands, non_action_commands, gen_params)
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
         self.active_player = None
-   
+
         while not self.had_players or self.turn_manager.has_players():
             if self.active_player is not None and not self.active_player.is_incapacitated():
                 if any(self.non_action_commands):

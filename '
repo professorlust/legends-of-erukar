@@ -8,7 +8,7 @@ class Sconce(RoomModifier):
     ProbabilityFromFabrication = 0.25
 
     broad_alias_base = 'sconce'
-    broad_result_base = 'A sconce hangs on the {} wall of the room.'
+    broad_result_base = 'A sconce hangs on the {} wall of the room'
     inspect_results_base = 'There is a {} inside of the sconce.'
 
     torch_possibilities = [

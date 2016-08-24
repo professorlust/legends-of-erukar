@@ -4,7 +4,7 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random, collections
 
 class Tree(RoomModifier):
-    Probability = 1.5
+    Probability = 0.05
     ProbabilityFromFabrication = -0.9
     ProbabilityFromAltitude = 0.2
 

@@ -5,7 +5,7 @@ class Inspect(Command):
     not_found = "Nothing matching '{0}' was found in this room."
     abyss = "There is nothing to your {0} except the abyss... plain and nothingness forever."
 
-    aliases = ['look']
+    aliases = ['look', 'search']
 
     def __init__(self):
         super().__init__()
@@ -19,7 +19,7 @@ class Inspect(Command):
         if direction is None:
             return self.inspect_in_room(player, room, self.payload)
 
-        result = room.describe_in_direction(direction, player.lifeform(), inspect_walls=True, scalar=1.0)
+        result = room.singular_directional_inspect(direction, player.lifeform(), inspect_walls=True, scalar=1.0)
         if result is None:
             return Inspect.abyss.format(direction.name)
         return result

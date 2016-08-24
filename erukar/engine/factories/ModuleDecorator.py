@@ -1,6 +1,7 @@
 from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
 from erukar.engine import InitializationException
 import sys, inspect, functools, math
+import numpy as np
 
 class ModuleDecorator(ProbablisticGenerator):
     ConditionalProb = 'ProbabilityFrom{}'
@@ -42,7 +43,7 @@ class ModuleDecorator(ProbablisticGenerator):
                 cond_weight = getattr(modifier, var_format) 
                 actual = getattr(self.generation_parameters, parameter)
                 prob_weights.append(self.semi_conditional_probabiity(actual, cond_weight))
-        
+
         if len(prob_weights) > 0:
             return overall_probability*(1+functools.reduce(lambda x_i, X: X*x_i, prob_weights))
 
@@ -55,3 +56,13 @@ class ModuleDecorator(ProbablisticGenerator):
         '''shortcut to make one and apply it'''
         mod = self.create_one()
         mod.apply_to(room)
+
+    def create_one(self):
+        type_to_create = self.values[np.digitize(np.random.uniform(0, 1), self.bins)]
+        return self.create_type(type_to_create)
+
+    def create_type(self, type_to_create):
+        new_one = type_to_create()
+        setattr(new_one, 'generation_parameters', self.generation_parameters)
+        return new_one
+

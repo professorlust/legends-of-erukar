@@ -4,7 +4,7 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random
 
 class Table(RoomModifier):
-    Probability = 1
+    Probability = 0.05 
     materials = [
         'birch',
         'poplar',
@@ -28,10 +28,9 @@ class Table(RoomModifier):
     inspect_result_base='This table is made of {0}. {1}'
     top_alias_base='{0} table top'
 
-    def __init__(self, material=None):
-        if material is None:
-            material = random.choice(Table.materials)
-        self.material = material
+    def __init__(self):
+        super().__init__()
+        self.material = random.choice(Table.materials)
         self.condition = random.choice(Table.conditions)
 
     def apply_to(self, room):

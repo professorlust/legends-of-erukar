@@ -29,3 +29,13 @@ class RoomModifier(Modifier):
         for num in range(self.number_of_mutations):
             result = result.format(**arguments)
         return result
+
+    def random_direction(self, room):
+        return random.choice([x for x in room.connections])
+
+    def random_wall(self, room):
+        try:
+            location = random.choice(list(room.wall_directions())).name
+        except:
+            location = 'center'
+        return location

@@ -30,7 +30,7 @@ class Door(RpgEntity):
         return self.description.format(direction)
 
     def on_inspect_generic(self, direction):
-        return "There is a door to the {0}".format(direction)
+        return "There is a door to the {0}".format(direction.name)
 
     def on_close(self, player):
         if self.can_close:

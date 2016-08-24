@@ -1,3 +1,4 @@
+from .Altar import Altar
 from .Branch import Branch
 from .Bunk import Bunk
 from .Campfire import Campfire
@@ -19,7 +20,8 @@ from .Table import Table
 from .Tree import Tree
 from .Window import Window
 
-__all__ = ["Branch",
+__all__ = ["Altar",
+    "Branch",
     "Bunk",
     "Campfire",
     "Candle",
