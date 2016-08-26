@@ -4,5 +4,5 @@ class Surface(RpgEntity):
     def __init__(self, description="This is a wall."):
         self.description = description
 
-    def on_inspect(self, *_):
+    def inspect_through(self, *_):
         return self.description

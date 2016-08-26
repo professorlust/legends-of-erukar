@@ -19,7 +19,7 @@ class Inspect(Command):
         if direction is None:
             return self.inspect_in_room(player, room, self.payload)
 
-        result = room.singular_directional_inspect(direction, player.lifeform(), inspect_walls=True, scalar=1.0)
+        result = room.directional_inspect(direction, player.lifeform())
         if result is None:
             return Inspect.abyss.format(direction.name)
         return result
@@ -27,7 +27,7 @@ class Inspect(Command):
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''
         if payload in ['','room']:
-            return room.describe(player)
+            return room.inspect_here(player.lifeform())
 
         if payload in 'flooring':
             return room.floor.on_inspect()

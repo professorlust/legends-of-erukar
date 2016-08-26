@@ -20,14 +20,27 @@ class Door(RpgEntity):
     def on_inspect(self, direction):
         if len(self.description) == 0:
             return self.on_inspect_generic(direction)
+        return self.description
 
+    def peek(self, direction, room, lifeform):
+        '''Does a single look through'''
+        if self.status is Door.Open:
+            return ' '.join([self.on_inspect(direction), room.describe(lifeform, 1)])
+        return self.on_inspect(direction)
+
+    def inspect_through(self, direction, room, lifeform, acu, depth):
+        '''Allows a directional inspect to continue'''
         if self.lock is not None:
+            return self.description.format(direction)
+
+    def describe_lock(self, direction):
+        if self.lock.direction is direction:
             args = {
                 'door': self.description.format(direction),
                 'lockname': self.lock.alias(),
                 'lock': self.lock.on_inspect()}
             return '{door} Attached to the door is a {lockname}. {lock}'.format(**args)
-        return self.description.format(direction)
+        return '{door} The door does not open.'.format(self.description.format(direction))
 
     def on_inspect_generic(self, direction):
         return "There is a door to the {0}".format(direction.name)

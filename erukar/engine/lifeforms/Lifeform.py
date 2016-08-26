@@ -53,11 +53,16 @@ class Lifeform(RpgEntity):
 
     def calculate_handed_penalty(self, hand):
         '''
-        Calculate a penalty based on the equipped weapons' properties, 
-        the wielder's strength, and any afflictions which might affect 
+        Calculate a penalty based on the equipped weapons' properties,
+        the wielder's strength, and any afflictions which might affect
         hand usage.
         '''
         return self.hand_efficacy[hand]
+
+    def calculate_effective_stat(self, stat_type, depth):
+        score = self.calculate_stat_score(stat_type)
+        decay_factor = 1.0 - 0.75*math.exp(-0.02*score)
+        return math.floor(math.pow(decay_factor,depth) * score)
 
     def calculate_stat_score(self, stat_type):
         '''Calculates a character's stat score based on armor and status effects'''
@@ -65,7 +70,7 @@ class Lifeform(RpgEntity):
         # First up, handle equipment
         for eq_type in self.equipment_types:
             equipment = getattr(self, eq_type)
-            if equipment is None: 
+            if equipment is None:
                 continue
             for mod in equipment.modifiers:
                 if hasattr(mod, stat_type):

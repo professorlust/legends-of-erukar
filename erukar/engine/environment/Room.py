@@ -24,6 +24,24 @@ class Room(Containable):
     def calculate_desirability(self):
         return 1.0
 
+    def directional_inspect(self, direction, lifeform, depth=0):
+        '''e.g. INSPECT NORTH'''
+        return self.connections[direction].directional_inspect(direction, lifeform)
+
+    def inspect_here(self, lifeform):
+        dir_desc = []
+        for d in self.connections:
+            if self.connections[d].is_door():
+                dir_desc.append('{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform)))
+        return self.describe(lifeform, 0) + '\n\n' + '\n'.join(dir_desc)
+
+    def describe(self, lifeform, depth):
+        '''Room Descriptions'''
+        acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
+        acu_contents  = self.get_visible_contents(acu)
+        sen_contents = self.get_sensed_contents(sen)
+        return ' '.join(x.describe() for x in set(acu_contents + sen_contents))
+
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
             self.connections[direction] = Passage(room=other_room, door=door)
@@ -39,41 +57,11 @@ class Room(Containable):
         self.connect_room(direction, other_room, door)
         other_room.connect_room(self.invert_direction(direction), self, door)
 
-    def on_inspect(self, direction):
-        '''Not really ever called'''
-        return self.description
-
-    def inspect_peek(self, direction, lifeform, scalar=1.0):
-        '''A brief peek into the next room; handles aliases of items'''
-        aliases = list(self.generate_content_descriptions(lifeform, give_aliases=True, scalar=1.0))
-        if len(aliases) > 1:
-            aliases[-1] = 'and {}'.format(aliases[-1])
-        if len(aliases) > 2:
-            return ', '.join(aliases)
-        return ' '.join(aliases)
-
     def add_door(self, direction, door):
         '''Adds a door and sets it up with the next room appropriately'''
         self.connections[direction].door = door
         other_dir = self.invert_direction(direction)
         self.connections[direction].room.connections[other_dir].door = door
-
-    def describe_in_direction(self, direction, lifeform, inspect_walls=False, scalar=1.0):
-        '''
-        Raytrace. Used to describe a door or set of rooms in a direction from this room.
-        inspect_walls is a boolean which allows us to describe the walls we hit with our
-        trace (this is False for looking down a set of rooms and in our initial
-        descriptions of the room, yet not when looking NESW within our origin room)
-        '''
-        con = self.connections[direction]
-        return con.on_inspect(direction, inspect_walls, lifeform, scalar)
-
-    def describe(self, player):
-        '''Used only for the lifeform's current room'''
-        room_descriptions = list(self.generate_room_descriptions())
-        directions = list(self.generate_direction_descriptions(player.lifeform()))
-        contents = list(self.generate_content_descriptions(player.lifeform()))
-        return ' '.join(room_descriptions + contents + ['\n'] + directions)
 
     def visual_description(self):
         lum = self.calculate_luminosity()
@@ -100,7 +88,7 @@ class Room(Containable):
     def generate_direction_descriptions(self, lifeform):
         '''Generator for creating a list of directional descriptions'''
         for direction in self.connections:
-            res = self.describe_in_direction(direction, lifeform, inspect_walls=False)
+            res = self.inspect_peek(direction, lifeform)
             if res is not None:
                 yield '\n{0}:\t{1}'.format(direction.name, res)
 
@@ -116,18 +104,6 @@ class Room(Containable):
             description = self.content_alias_or_description(content, give_aliases)
             if description is not None:
                 yield description
-
-    def directional_inspect(self, direction, lifeform, scalar=1.0):
-        '''This is the entry point for looking into other rooms'''
-        decay = self.scalar_decay(lifeform.calculate_stat_score('acuity'))
-        our_contents = self.inspect_peek(direction, lifeform, scalar)
-        if scalar > 0.15:
-            their_contents = self.describe_in_direction(direction, lifeform, scalar=scalar*decay)
-            return '{}. In the next room, you see {}'.format(our_contents, their_contents)
-        return our_contents
-
-    def scalar_decay(self, acuity):
-        return 1 / (2 + (20-acuity)/5)
 
     def adjacent_rooms(self):
         '''Generator which yields rooms we can see into from this one'''
@@ -150,12 +126,14 @@ class Room(Containable):
             if passage.room is None and isinstance(passage.door, Surface):
                 yield direction
 
-    def get_visible_contents(self, lifeform, scalar):
+    def get_visible_contents(self, acuity):
         '''
         The actual acuity score is the flat Acuity score multiplied by the room's
         luminosity coefficient, which ranges from 0.0 (pitch black, very rare) to 1.0
         (absolute brightness.) The scalar value is a value which is used to reduce
         the acu_score further and diminishes at a rate of 0.5 per room.
         '''
-        acu_score = lifeform.calculate_stat_score('acuity') * self.calculate_luminosity() * scalar
-        return [x for x in self.contents if x.necessary_acuity() <= acu_score]
+        return [x for x in self.contents if x.necessary_acuity() <= acuity]
+
+    def get_sensed_contents(self, sense):
+        return [x for x in self.contents if x.necessary_sense() <= sense]
