@@ -17,7 +17,7 @@ class Door(RpgEntity):
         self.can_close = True
         self.description = description
 
-    def on_inspect(self, *_):
+    def on_inspect(self, direction):
         if len(self.description) == 0:
             return self.on_inspect_generic(direction)
         return self.description
@@ -25,8 +25,8 @@ class Door(RpgEntity):
     def peek(self, direction, room, lifeform):
         '''Does a single look through'''
         if self.status is Door.Open:
-            return ' '.join([self.on_inspect(), room.on_inspect(lifeform)])
-        return self.on_inspect()
+            return ' '.join([self.on_inspect(direction), room.describe(lifeform, 1)])
+        return self.on_inspect(direction)
 
     def inspect_through(self, direction, room, lifeform, acu, depth):
         '''Allows a directional inspect to continue'''

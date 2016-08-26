@@ -26,7 +26,7 @@ class Passage:
         if self.is_door() and self.door is not None:
             return self.door.peek(relative_dir, self.room, lifeform)
         if self.door is not None:
-            return self.door.description
+            return self.door.describe(relative_dir)
         if self.room is not None:
             print('desc')
             return self.room.describe(lifeform, 1)

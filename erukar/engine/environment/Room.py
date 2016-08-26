@@ -32,7 +32,7 @@ class Room(Containable):
         dir_desc = []
         for d in self.connections:
             if self.connections[d].is_door():
-                dir_desc.append('{:8s}: {}'.format(d.name, self.connections[d].peek(d, lifeform)))
+                dir_desc.append('{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform)))
         return self.describe(lifeform, 0) + '\n\n' + '\n'.join(dir_desc)
 
     def describe(self, lifeform, depth):
