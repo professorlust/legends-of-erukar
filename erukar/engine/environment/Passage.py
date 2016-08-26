@@ -7,27 +7,27 @@ class Passage:
         self.room = room
 
     def is_door(self):
-        return self.door is not None and type(self.door) is Door
+        return (self.door is not None and isinstance(self.door, Door)) \
+                or (self.door is None and self.room is not None)
 
     def is_not_empty(self):
         return self.door is not None and self.room is not None
 
-    def directional_inspect_through(self, relative_dir, lifeform, acu, depth=1):
+    def directional_inspect(self, relative_dir, lifeform, depth=1):
+        acu = lifeform.calculate_effective_stat('acuity', depth)
         if self.door is not None:
             return self.door.inspect_through(relative_dir, self.door, lifeform, acu, depth)
-        # Otherwise 
+        if self.room is not None:
+            return self.room.directional_inspect(relative_dir, lifeform, depth+1)
         return None
 
     def peek(self, relative_dir, lifeform):
         '''Used when the current room is describing itself'''
+        if self.is_door() and self.door is not None:
+            return self.door.peek(relative_dir, self.room, lifeform)
         if self.door is not None:
-            if isinstance(self.door, Door):
-                return self.door.peek(relative_dir, self.room, lifeform)
-        return ''
-
-
-    def describe_door_in_direction(self, direction, lifeform, continue_after=True, scalar=1.0):
-        door_result = self.door.on_inspect(direction)
-        if self.door.status == Door.Open and continue_after:
-            door_result += ' ' + self.room.directional_inspect(direction, lifeform, scalar)
-        return door_result
+            return self.door.description
+        if self.room is not None:
+            print('desc')
+            return self.room.describe(lifeform, 1)
+        return
