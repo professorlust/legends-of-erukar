@@ -24,6 +24,15 @@ class Room(Containable):
     def calculate_desirability(self):
         return 1.0
 
+    def directional_inspect(self, direction, lifeform, depth=0):
+        return self.describe(lifeform, depth)
+
+    def describe(self, lifeform, depth):
+        acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
+        acu_contents  = self.get_visible_contents(acu)
+        sen_contents = self.get_sensed_contents(sen)
+        return ' '.join(x.describe() for x in set(acu_contents + sen_contents))
+
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
             self.connections[direction] = Passage(room=other_room, door=door)
@@ -68,12 +77,12 @@ class Room(Containable):
         con = self.connections[direction]
         return con.on_inspect(direction, inspect_walls, lifeform, scalar)
 
-    def describe(self, player):
-        '''Used only for the lifeform's current room'''
-        room_descriptions = list(self.generate_room_descriptions())
-        directions = list(self.generate_direction_descriptions(player.lifeform()))
-        contents = list(self.generate_content_descriptions(player.lifeform()))
-        return ' '.join(room_descriptions + contents + ['\n'] + directions)
+#   def describe(self, player):
+#       '''Used only for the lifeform's current room'''
+#       room_descriptions = list(self.generate_room_descriptions())
+#       directions = list(self.generate_direction_descriptions(player.lifeform()))
+#       contents = list(self.generate_content_descriptions(player.lifeform()))
+#       return ' '.join(room_descriptions + contents + ['\n'] + directions)
 
     def visual_description(self):
         lum = self.calculate_luminosity()
@@ -150,12 +159,14 @@ class Room(Containable):
             if passage.room is None and isinstance(passage.door, Surface):
                 yield direction
 
-    def get_visible_contents(self, lifeform, scalar):
+    def get_visible_contents(self, acuity):
         '''
         The actual acuity score is the flat Acuity score multiplied by the room's
         luminosity coefficient, which ranges from 0.0 (pitch black, very rare) to 1.0
         (absolute brightness.) The scalar value is a value which is used to reduce
         the acu_score further and diminishes at a rate of 0.5 per room.
         '''
-        acu_score = lifeform.calculate_stat_score('acuity') * self.calculate_luminosity() * scalar
-        return [x for x in self.contents if x.necessary_acuity() <= acu_score]
+        return [x for x in self.contents if x.necessary_acuity() <= acuity]
+
+    def get_sensed_contents(self, sense):
+        return [x for x in self.contents if x.necessary_sense() <= sense]

@@ -12,25 +12,22 @@ class Passage:
     def is_not_empty(self):
         return self.door is not None and self.room is not None
 
-    def on_inspect(self, relative_dir, inspect_walls, lifeform, scalar=1.0):
+    def directional_inspect_through(self, relative_dir, lifeform, acu, depth=1):
         if self.door is not None:
-            if isinstance(self.door, Surface) and inspect_walls:
-                return self.door.on_inspect(relative_dir.name)
-            if type(self.door) is Door:
-                return self.describe_door_in_direction(relative_dir, lifeform, scalar)
-
-        if self.room is not None:
-            peek = self.room.directional_inspect(relative_dir, lifeform, scalar)
-            if len(peek) > 0:
-                if scalar == 1.0:
-                    return 'In the first room, you see {}'.format(peek)
-                return peek
-            return 'There is nothing inside.'
-
+            return self.door.inspect_through(relative_dir, self.door, lifeform, acu, depth)
+        # Otherwise 
         return None
 
-    def describe_door_in_direction(self, direction, lifeform, scalar=1.0):
+    def peek(self, relative_dir, lifeform):
+        '''Used when the current room is describing itself'''
+        if self.door is not None:
+            if isinstance(self.door, Door):
+                return self.door.peek(relative_dir, self.room, lifeform)
+        return ''
+
+
+    def describe_door_in_direction(self, direction, lifeform, continue_after=True, scalar=1.0):
         door_result = self.door.on_inspect(direction)
-        if self.door.status == Door.Open:
+        if self.door.status == Door.Open and continue_after:
             door_result += ' ' + self.room.directional_inspect(direction, lifeform, scalar)
         return door_result

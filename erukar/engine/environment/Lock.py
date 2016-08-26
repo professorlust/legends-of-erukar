@@ -17,6 +17,7 @@ class Lock(EnvironmentPiece):
         self.material = random.choice(self.materials)
         name = '{} lock'.format(self.material)
         super().__init__([name],'There is a {}.'.format(name), '')
+        self.direction = None 
         self.is_locked = True
         self.armor_class = 10
         self.durability = 5
