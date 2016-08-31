@@ -19,8 +19,3 @@ class RpgEntity(Describable):
     def calculate_armor_class(self):
         return RpgEntity.base_armor_class
 
-    def necessary_sense(self):
-        return 0
-
-    def necessary_acuity(self):
-        return 0
