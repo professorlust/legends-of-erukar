@@ -38,9 +38,9 @@ class Room(Containable):
     def describe(self, lifeform, depth):
         '''Room Descriptions'''
         acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
-        acu_contents  = [x.visual_description() for x in self.get_visible_contents(acu, lifeform)]
-        sen_contents = [x.sensed_description() for x in  self.get_sensed_contents(sen, lifeform)]
-        return ' '.join(acu + sen)
+        acu_contents  = [x.visual_description(lifeform, acu) for x in self.get_visible_contents(acu, lifeform)]
+        sen_contents = [x.sensed_description(lifeform, sen) for x in  self.get_sensed_contents(sen, lifeform)]
+        return ' '.join(acu_contents + sen_contents)
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:

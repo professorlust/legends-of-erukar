@@ -1,17 +1,11 @@
 from .Interactible import Interactible
 
 class Describable(Interactible):
-    def auditory_description(self):
-        pass
+    def visual_description(self, lifeform, acuity):
+        return ''
 
-    def temperature_description(self):
-        pass
-    
-    def visual_description(self):
-        pass
-
-    def olfactory_description(self):
-        pass
+    def sensed_description(self, lifeform, sense):
+        return ''
 
     def describe(self):
         pass
