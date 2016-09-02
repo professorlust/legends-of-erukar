@@ -3,7 +3,7 @@ from erukar.engine.environment import *
 import random
 
 class Stove(RoomModifier):
-    Probability = 0.025
+    Probability = 0.00
     ProbabilityFromFabrication = 1.0
 
     broad_alias_base = 'stove'

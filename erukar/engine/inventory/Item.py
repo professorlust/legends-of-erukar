@@ -11,6 +11,8 @@ class Item(RpgEntity):
         self.price = 0
         self.description = Item.generic_description
         self.modifiers = []
+        self.set_vision_results('You see a {}.'.format(name),'You see a {}.'.format(name),(0,1))
+        self.set_sensory_results('You sense a {}.'.format(name),'You sense a {}.'.format(name),(50,60))
 
     def describe(self):
         return self.alias()

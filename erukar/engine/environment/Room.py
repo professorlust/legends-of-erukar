@@ -7,7 +7,7 @@ import erukar, random
 
 class Room(Containable):
     def __init__(self, dungeon, coordinates=(0,0)):
-        super().__init__([],"","")
+        super().__init__([])
         self.dungeon = dungeon
         self.floor = None
         self.ceiling = None
@@ -38,6 +38,7 @@ class Room(Containable):
     def describe(self, lifeform, depth):
         '''Room Descriptions'''
         acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
+        print((acu, sen, depth))
         acu_contents  = [x.visual_description(lifeform, acu) for x in self.get_visible_contents(acu, lifeform)]
         sen_contents = [x.sensed_description(lifeform, sen) for x in  self.get_sensed_contents(sen, lifeform)]
         return ' '.join(acu_contents + sen_contents)

@@ -5,7 +5,7 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random
 
 class Altar(RoomModifier):
-    Probability = 0.2
+    Probability = 0
     ProbabilityFromFabrication = 0.1
     ProbabilityFromSanctity = 1.0
 
@@ -23,6 +23,7 @@ class Altar(RoomModifier):
         deity = random.choice(self.deity_possibilities)
         direction = self.random_wall(room)
         loc = self.broad_result_base.format(direction)
+
         # Create the Altar proper
         deco = Decoration(aliases=[self.broad_alias_base],
             broad_results=loc,

@@ -5,6 +5,9 @@ class RpgEntity(Describable):
     nDxy_expression = '(\d+)d(\d+)([+-]\d+)?'
     base_armor_class = 10
 
+    def __init__(self):
+        super().__init__()
+
     def regex(self, to_evaluate):
         '''Regex on the damage string'''
         captured = re.search(RpgEntity.nDxy_expression, to_evaluate)
