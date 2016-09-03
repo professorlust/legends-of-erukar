@@ -50,8 +50,8 @@ class Lifeform(RpgEntity):
             'both': 0.0
         }
         self.define_level(1)
-        self.set_vision_results('You see a {}.'.format(name),'You see a {}.'.format(name),(1,2))
-        self.set_sensory_results('You sense a {}.'.format(name),'You sense a {}.'.format(name),(0, 1))
+        self.set_vision_results('You see movement but cannot discern the source.'.format(name),'You see a {}.'.format(name),(0,1))
+        self.set_sensory_results('You hear movement.'.format(name),'You hear a {}.'.format(name),(0, 1))
 
     def calculate_handed_penalty(self, hand):
         '''
