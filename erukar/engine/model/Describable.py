@@ -4,7 +4,7 @@ class Describable(Interactible):
     '''Mechanically, the brain can combine two sources of minimal information
     into a full story. Here, we do the same thing with sensory feedback and
     visual feedback. There are three major results with two categories each.
-    These include vision, sensory, and both; the subsets are a minimal and an
+    These include vision, sensory, and detailed; the subsets are a minimal and an
     ideal result. The three major categories detail whether only vision or
     sensory minimum was met or at least the minimum for each was met.
 
@@ -28,22 +28,27 @@ class Describable(Interactible):
         self.sense_range = (0, 1)
         self.sense_minimal = 'Minimal Sensory Result'
         self.sense_ideal = 'Ideal Sensory Result'
-        self.both_minimal = 'Minimal Visual and Sensory Result'
-        self.both_ideal = 'Ideal Visual and Sensory Result'''
+        self.detailed_minimal = 'Minimal Visual and Sensory Result'
+        self.detailed_ideal = 'Ideal Visual and Sensory Result'''
 
-    def visual_description(self, lifeform, acuity):
-        if acuity > self.vision_range[1]:
+    def describe_visual(self, lifeform, acuity):
+        if acuity >= self.vision_range[1]:
             return self.vision_ideal
-        if acuity > self.vision_range[0]:
+        if acuity >= self.vision_range[0]:
             return self.vision_minimal
         return ''
 
-    def sensed_description(self, lifeform, sense):
-        if sense > self.sense_range[1]:
+    def describe_sensory(self, lifeform, sense):
+        if sense >= self.sense_range[1]:
             return self.sense_ideal
-        if sense > self.sense_range[0]:
+        if sense >= self.sense_range[0]:
             return self.sense_minimal
         return ''
+
+    def describe_detailed(self, lifeform, acuity, sense):
+        if acuity >= self.vision_range[1] and sense >= self.sense_range[1]:
+            return self.detailed_ideal
+        return self.detailed_minimal
 
     def set_sensory_results(self, minimal, ideal, sense_range):
         self.sense_range = sense_range
@@ -55,13 +60,19 @@ class Describable(Interactible):
         self.vision_minimal = minimal
         self.vision_ideal = ideal
 
-    def on_inspect(self, lifeform):
-        acu, sen = [lifeform.calculate_effective_stat(x) for x in ['acuity', 'sense']]
-        visual = self.visual_description(lifeform, acu)
-        sensory = self.sensed_description(lifeform, sen)
-        if visual is not '' and sensory is not '':
-            return '{} {}'.format(visual, sensory)
-        return visual if visual is not '' else sensory
+    def set_detailed_results(self, minimal, ideal):
+        self.detailed_minimal = minimal
+        self.detailed_ideal = ideal
+
+    def on_inspect(self, lifeform, acuity, sense):
+        '''This should be the entry point for finding things in a room'''
+        if acuity >= self.vision_range[0] and sense >= self.sense_range[0]:
+            return self.describe_detailed(lifeform, acuity, sense)
+        if acuity >= self.vision_range[0]:
+            return self.describe_visual(lifeform, acuity)
+        if sense >= self.sense_range[0]:
+            return self.describe_sensory(lifeform, sense)
+        return ''
 
     def necessary_sense(self):
         return 0
