@@ -5,4 +5,6 @@ from erukar.game.modifiers.RoomModifier import RoomModifier
 class WoodDoor(RoomModifier):
     Probability = 3
     def apply_to(self, room):
-        pass
+        self.description = "There is a wooden door."
+        self.can_close = True
+        self.start_state = Door.Closed

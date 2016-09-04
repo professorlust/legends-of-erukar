@@ -1,4 +1,5 @@
 from .Interactible import Interactible
+import re
 
 class Describable(Interactible):
     '''Mechanically, the brain can combine two sources of minimal information
@@ -30,6 +31,17 @@ class Describable(Interactible):
         self.sense_ideal = 'Ideal Sensory Result'
         self.detailed_minimal = 'Minimal Visual and Sensory Result'
         self.detailed_ideal = 'Ideal Visual and Sensory Result'''
+
+    def mutate(self, mutatable_string):
+        captured = re.search('{(\w*)}', mutatable_string)
+        mutation_arguments = {}
+        for cap in captured.groups():
+            if hasattr(self, cap):
+                value = getattr(self,cap) 
+                if callable(value):
+                    value = value()
+                mutation_arguments[cap] = value
+        return mutatable_string.format(**mutation_arguments)
 
     def describe_visual(self, lifeform, acuity):
         if acuity >= self.vision_range[1]:
@@ -67,11 +79,11 @@ class Describable(Interactible):
     def on_inspect(self, lifeform, acuity, sense):
         '''This should be the entry point for finding things in a room'''
         if acuity >= self.vision_range[0] and sense >= self.sense_range[0]:
-            return self.describe_detailed(lifeform, acuity, sense)
+            return self.mutate(self.describe_detailed(lifeform, acuity, sense))
         if acuity >= self.vision_range[0]:
-            return self.describe_visual(lifeform, acuity)
+            return self.mutate(self.describe_visual(lifeform, acuity))
         if sense >= self.sense_range[0]:
-            return self.describe_sensory(lifeform, sense)
+            return self.mutate(self.describe_sensory(lifeform, sense))
         return ''
 
     def necessary_sense(self):
