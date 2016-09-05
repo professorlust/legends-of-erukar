@@ -24,12 +24,13 @@ class Instance(Manager):
         (ModuleDecorator, "structure.passages"),
         (ModuleDecorator, "phenomena")]
 
-    def activate(self, action_commands, non_action_commands,  generation_parameters):
+    def activate(self, action_commands, non_action_commands, joins, generation_parameters):
         '''Here generation_parameters is a GenerationProfile'''
         self.turn_manager = TurnManager()
         self.data = DataAccess()
         self.action_commands = action_commands
         self.non_action_commands = non_action_commands
+        self.joins = joins
         d = DungeonGenerator()
         self.dungeon = d.generate()
         self.decorate(generation_parameters)
@@ -76,13 +77,17 @@ class Instance(Manager):
             print('{} - {}'.format(x, getattr(self.generation_parameters, x)))
         return p
 
-    def instance_running(self, action_commands, non_action_commands, gen_params):
-        self.activate(action_commands, non_action_commands, gen_params)
+    def instance_running(self, action_commands, non_action_commands, joins, gen_params):
+        self.activate(action_commands, non_action_commands, joins, gen_params)
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
         self.active_player = None
 
         while not self.had_players or self.turn_manager.has_players():
+            if any(self.joins):
+                cmd = self.joins.pop()
+                self.subscribe(cmd.find_player())
+
             if self.active_player is not None and not self.active_player.is_incapacitated():
                 if any(self.non_action_commands):
                     # Run ALL of these
@@ -134,8 +139,6 @@ class Instance(Manager):
         self.active_player = next_player
 
     def execute_command(self, cmd):
-        if isinstance(cmd, erukar.engine.commands.Join):
-            self.subscribe(cmd.find_player())
         cmd.data = self.data
         result = cmd.execute()
         if result is not None:

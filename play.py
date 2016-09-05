@@ -21,6 +21,7 @@ npc = PlayerNode(ucharacter.uid, ucharacter)
 w.subscribe(player)
 w.subscribe(npc)
 w.interface.execute(character.uid, 'join')
+#w.interface.execute(npc.uid, 'join')
 
 while True:
     line = input('')

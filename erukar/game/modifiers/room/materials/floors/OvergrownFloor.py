@@ -6,5 +6,5 @@ class OvergrownFloor(RoomModifier):
     ProbabilityFromFabrication = -0.8
 
     def apply_to(self, room):
-        room.floor = Surface('You cannot see the floor through the dense overgrowth.')
+        room.floor = Surface('You can hardly see the dirt and grass in some areas of this area due to the heavy overgrowth.')
 

@@ -28,6 +28,5 @@ class Passage:
         if self.door is not None:
             return self.door.describe(relative_dir)
         if self.room is not None:
-            print('desc')
             return self.room.describe(lifeform, 1)
         return

@@ -39,7 +39,12 @@ class Room(Containable):
         '''Room Descriptions'''
         acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
         content_results = [x.on_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
-        return ' '.join(x for x in content_results if x is not '')
+        content_descriptions = [' '.join(x for x in content_results if x is not '')]
+        if self.ceiling is not None:
+            content_descriptions.insert(0, self.ceiling.describe(lifeform, depth))
+        if self.floor is not None:
+            content_descriptions.insert(0, self.floor.describe(lifeform, depth))
+        return ' '.join(content_descriptions)
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:

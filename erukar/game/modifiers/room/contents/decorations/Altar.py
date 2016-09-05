@@ -5,13 +5,11 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random
 
 class Altar(RoomModifier):
-    Probability = 0
+    Probability = 0.2
     ProbabilityFromFabrication = 0.1
     ProbabilityFromSanctity = 1.0
 
     broad_alias_base = 'altar'
-    broad_result_base = 'An altar sits to the {} of the room'
-    inspect_results_base = 'This is an altar to {}. '
 
     deity_possibilities = [
         'the God Omanis',
@@ -22,18 +20,17 @@ class Altar(RoomModifier):
     def apply_to(self, room):
         deity = random.choice(self.deity_possibilities)
         direction = self.random_wall(room)
-        loc = self.broad_result_base.format(direction)
 
         # Create the Altar proper
-        deco = Decoration(aliases=[self.broad_alias_base],
-            broad_results=loc,
-            inspect_results=self.inspect_results_base.format(deity))
+        deco = Decoration(aliases=[self.broad_alias_base])
+        deco.set_vision_results('You see an altar to the {} of the room.'.format(direction),'You see an altar to {} to the {} of the room.'.format(deity, direction), (1, 5))
+        deco.set_sensory_results('You smell burning incense.','You can sense holiness from an altar nearby',(1, 10))
+        deco.set_detailed_results('The smell of incense burning on an altar to {} fills the room. The altar is located on the {} wall.'.format(deity, direction),\
+                                  'A warm smell of lightly burning incense on an altar to the {} fills the room with a sense of holiness. The presence of {} can be felt here, and it is evident that his acolytes have been incredibly loyal.'.format(direction,deity))
         self.create_altar_top(room)
         room.add(deco)
 
     def create_altar_top(self, room):
-        top = Container(['top of the altar', 'altar top'],\
-            broad_results='',\
-            inspect_results = 'The altar is in good condition')
+        top = Container(['top of the altar', 'altar top'])
         r = ModuleDecorator('erukar.game.inventory', self.generation_parameters)
         top.add(r.create_one())

@@ -23,7 +23,7 @@ class Shard(Manager):
         self.interface.data.players.append(player)
 
     def launch_dungeon_instance(self, info, gen_params):
-        args=(info.action_commands, info.non_action_commands,  gen_params,)
+        args=(info.action_commands, info.non_action_commands, info.joins, gen_params,)
         dungeon_thread = threading.Thread(target=info.instance.instance_running,args=args)
         dungeon_thread.daemon = True
         dungeon_thread.start()

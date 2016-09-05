@@ -15,10 +15,14 @@ class InstanceInfo:
         self.player_list = []
         self.non_action_commands = m.list([])
         self.action_commands = m.list([])
+        self.joins = m.list([])
         self.command_results_list = m.list([])
 
     def append(self, command):
         '''appends the command to the correct queue'''
+        if isinstance(command, erukar.engine.commands.executable.Join):
+            self.joins.append(command)
+            return
         if isinstance(command, erukar.engine.commands.ActionCommand):
             self.action_commands.append(command)
             return
