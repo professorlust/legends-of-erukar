@@ -26,7 +26,14 @@ class Room(Containable):
 
     def directional_inspect(self, direction, lifeform, depth=0):
         '''e.g. INSPECT NORTH'''
-        return self.connections[direction].directional_inspect(direction, lifeform)
+        connection_result = self.connections[direction].directional_inspect(direction, lifeform, depth)
+        acu = lifeform.calculate_effective_stat('acuity', depth)
+        if depth == 0:
+            return connection_result
+        if acu < 1 and depth > 1:
+            return 'You can see no further.'
+        our_result = self.describe(lifeform, depth)
+        return our_result + ' ' + connection_result
 
     def inspect_here(self, lifeform):
         dir_desc = []

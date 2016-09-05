@@ -15,11 +15,18 @@ class Passage:
 
     def directional_inspect(self, relative_dir, lifeform, depth=1):
         acu = lifeform.calculate_effective_stat('acuity', depth)
+        depth += 1
         if self.door is not None:
-            return self.door.inspect_through(relative_dir, self.door, lifeform, acu, depth)
+            result = self.door.inspect_through(relative_dir, self.room, lifeform, depth)
+            if result is not '':
+                return '\nRoom {}: {}'.format(depth, result)
+            return result
         if self.room is not None:
-            return self.room.directional_inspect(relative_dir, lifeform, depth+1)
-        return None
+            result = self.room.directional_inspect(relative_dir, lifeform, depth)
+            if result is not '':
+                return '\nRoom {}: {}'.format(depth, result)
+            return result
+        return ''
 
     def peek(self, relative_dir, lifeform):
         '''Used when the current room is describing itself'''

@@ -6,3 +6,6 @@ class Surface(RpgEntity):
 
     def describe(self, *_):
         return self.description
+
+    def inspect_through(self, *_):
+        return self.describe()

@@ -28,10 +28,11 @@ class Door(RpgEntity):
             return ' '.join([self.on_inspect(direction), room.describe(lifeform, 1)])
         return self.on_inspect(direction)
 
-    def inspect_through(self, direction, room, lifeform, acu, depth):
+    def inspect_through(self, direction, room, lifeform, depth):
         '''Allows a directional inspect to continue'''
-        if self.lock is not None:
-            return self.description.format(direction)
+        if self.status is Door.Open:
+            return self.on_inspect(direction) + ' ' + room.directional_inspect(direction, lifeform, depth)
+        return self.on_inspect(direction)
 
     def describe_lock(self, direction):
         if self.lock.direction is direction:
