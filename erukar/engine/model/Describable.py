@@ -33,14 +33,21 @@ class Describable(Interactible):
         self.detailed_ideal = 'Ideal Visual and Sensory Result'''
 
     def mutate(self, mutatable_string):
-        captured = re.search('{(\w*)}', mutatable_string)
+        captured = re.findall('{(\w*)(?:\|(\w*))*}', mutatable_string)
+        if len(captured) == 0:
+            return mutatable_string
         mutation_arguments = {}
-        for cap in captured.groups():
-            if hasattr(self, cap):
-                value = getattr(self,cap) 
+        for cap in captured:
+            target = self
+            format_name = cap[0]
+            if cap[1] is not None and hasattr(self, cap[1]):
+                target = getattr(self, cap[1])
+                format_name = '|'.join(cap)
+            if hasattr(target, cap[0]):
+                value = getattr(target, cap[0]) 
                 if callable(value):
                     value = value()
-                mutation_arguments[cap] = value
+                mutation_arguments[format_name] = value
         return mutatable_string.format(**mutation_arguments)
 
     def describe_visual(self, lifeform, acuity):

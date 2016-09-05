@@ -27,3 +27,6 @@ class Skeleton(Enemy):
         self.dexterity = -2
         self.right = Sword()
         self.name = "Skeleton"
+        self.set_vision_results('You see a {alias}.','You see a {alias}. {describe}',(0,1))
+        self.set_sensory_results('You hear movement.','You hear a {alias}.',(0, 1))
+        self.set_detailed_results('There is a skeleton holding a {describe|right}.','DETAILED')

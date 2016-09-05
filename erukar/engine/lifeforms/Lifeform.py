@@ -50,8 +50,6 @@ class Lifeform(RpgEntity):
             'both': 0.0
         }
         self.define_level(1)
-        self.set_vision_results('You see movement but cannot discern the source.'.format(name),'You see a {}.'.format(name),(0,1))
-        self.set_sensory_results('You hear movement.'.format(name),'You hear a {}.'.format(name),(0, 1))
 
     def calculate_handed_penalty(self, hand):
         '''
@@ -158,7 +156,7 @@ class Lifeform(RpgEntity):
             'slightly_wounded',
             'full_health']
         descriptions = getattr(self, description_type[descriptor_index])
-        return 'There is a {}. {}'.format(self.alias(), random.choice(descriptions))
+        return random.choice(descriptions)
 
     def alias(self):
         return self.name
