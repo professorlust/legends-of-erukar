@@ -38,7 +38,7 @@ class Room(Containable):
     def inspect_here(self, lifeform):
         dir_desc = []
         for d in self.connections:
-            if self.connections[d].is_door():
+            if self.connections[d].is_door() and self.connections[d].can_see_or_sense(lifeform):
                 dir_desc.append('{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform)))
         return self.describe(lifeform, 0) + '\n\n' + '\n'.join(dir_desc)
 
@@ -55,7 +55,7 @@ class Room(Containable):
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
-            self.connections[direction] = Passage(room=other_room, door=door)
+            self.connections[direction] = Passage(wall=Surface(), room=other_room, door=door)
 
     def invert_direction(self, direction):
         return Direction( (direction.value + 2) % 4 )
@@ -128,14 +128,15 @@ class Room(Containable):
     def walls(self):
         '''Generator for getting only the walls in this room'''
         for direction in self.wall_directions():
-            yield self.connections[direction].door
+            yield self.connections[direction].wall
 
     def wall_directions(self):
         '''Generator for getting the directions which contain only walls'''
         for direction in self.connections:
             passage = self.connections[direction]
-            if passage.room is None and isinstance(passage.door, Surface):
+            if passage.room is None and passage.door is None:
                 yield direction
+
 
     def get_visible_contents(self, acuity, lifeform=None):
         '''

@@ -16,9 +16,9 @@ class Door(Describable):
         self.status = Door.Closed
         self.can_close = True
         self.description = description
+        self.acuity_needed = 0
         if self.description is '':
             self.description = self.generic_description 
-        print(self.description)
 
     def on_inspect(self, direction):
         return self.mutate(self.description, {'direction': direction.name})
@@ -28,6 +28,9 @@ class Door(Describable):
         if self.status is Door.Open:
             return ' '.join([self.on_inspect(direction), room.describe(lifeform, 1)])
         return self.on_inspect(direction)
+
+    def necessary_acuity(self):
+        return self.acuity_needed
 
     def inspect_through(self, direction, room, lifeform, depth):
         '''Allows a directional inspect to continue'''

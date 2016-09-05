@@ -17,6 +17,7 @@ class RoomDoorModifier(RoomModifier):
 
         direction = random.choice(rooms)
         thisdoor = Door(self.description)
+        thisdoor.acuity_needed = 0
         thisdoor.status = self.start_state
         thisdoor.can_close = self.can_close
         room.add_door(direction, thisdoor)
