@@ -41,7 +41,7 @@ class MoveTests(unittest.TestCase):
         m.payload = 'north'
         result = m.execute()
 
-        self.assertEqual(result, Move.move_through_wall)
+        self.assertEqual(result.result, Move.move_through_wall)
 
     def test_execute_through_closed_door(self):
         p = Player()
@@ -63,7 +63,7 @@ class MoveTests(unittest.TestCase):
         m.payload = 'south'
         result = m.execute()
 
-        self.assertEqual(result, Move.move_through_closed_door)
+        self.assertEqual(result.result, Move.move_through_closed_door)
 
     def test_execute_through_open_door(self):
         p = Player()
@@ -86,5 +86,5 @@ class MoveTests(unittest.TestCase):
         m.payload = 'south'
         result = m.execute()
 
-        self.assertTrue('You have successfully moved South.' in result)
+        self.assertTrue('You have successfully moved South.' in result.result)
         self.assertEqual(p.current_room, s)

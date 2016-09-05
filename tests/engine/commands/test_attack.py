@@ -22,7 +22,7 @@ class AttackTests(unittest.TestCase):
 
         result = a.execute()
 
-        self.assertEqual(result, Attack.not_found.format("the air"))
+        self.assertEqual(result.result, Attack.not_found.format("the air"))
 
     def test_execute_with_match(self):
         p = Player()
@@ -47,7 +47,7 @@ class AttackTests(unittest.TestCase):
 
         result = a.execute()
 
-        self.assertTrue("Bob's attack of " in result)
+        self.assertTrue("Bob's attack of " in result.result)
 
     def test_adjudicate_attack_success(self):
         p = Player()

@@ -98,7 +98,9 @@ class Instance(Manager):
                     player_cmd = self.get_active_player_action()
                     if player_cmd is None:
                         continue
-                    self.execute_command(player_cmd)
+                    result = self.execute_command(player_cmd)
+                    if result is None or (result is not None and not result.success):
+                        continue
 
                 if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
                     cmd = self.active_player.perform_turn()
@@ -142,4 +144,5 @@ class Instance(Manager):
         cmd.data = self.data
         result = cmd.execute()
         if result is not None:
-            print(result + '\n')
+            print(result.result + '\n')
+        return result

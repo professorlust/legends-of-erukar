@@ -1,5 +1,5 @@
 from erukar.engine.commands.executable.Inspect import Inspect
-from erukar.engine.model.Command import Command
+from erukar.engine.commands.Command import Command
 from erukar.engine.environment import *
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.model.Direction import Direction
@@ -51,7 +51,7 @@ class Map(Command):
 
         # show the player as an X
         self.complex_add_player(room.coordinates, dnjn_map, min_x, min_y)
-        return '\n'.join(' '.join(y) for y in reversed(dnjn_map))
+        return self.succeed('\n'.join(' '.join(y) for y in reversed(dnjn_map)))
 
     def complex_map_location(self, x, y, dungeon_map):
         '''Add a cell to the complex map; only concerned with walls!'''

@@ -1,4 +1,5 @@
 from erukar.engine.model.Direction import Direction
+from erukar.engine.commands.CommandResult import CommandResult
 
 class Command:
     def __init__(self):
@@ -10,6 +11,12 @@ class Command:
 
     def process_arguments(self):
         pass
+
+    def succeed(self, result):
+        return CommandResult(True, self, result)
+
+    def fail(self, result):
+        return CommandResult(False, self, result)
 
     def execute(self):
         '''Run this Command as a player'''

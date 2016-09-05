@@ -23,10 +23,10 @@ class Close(ActionCommand):
         item = self.find_in_room(room, item_name)
         if item is not None:
             # We found it, so run on_close on it
-            return item.on_close(player)
+            return self.succeed(item.on_close(player))
 
         # Send a failure message
-        return Close.not_found
+        return self.fail(Close.not_found)
 
     def handle_doors(self, room, direction, player):
         '''
@@ -37,13 +37,13 @@ class Close(ActionCommand):
 
         # No connections have been made in this direction
         if in_direction is None:
-            return Close.nesw_wall
+            return self.fail(Close.nesw_wall)
 
         # determine if the door prevents movement
         door = in_direction.door
         if door is None:
             # There is no door to close
-            return Close.nesw_no_door
+            return self.fail(Close.nesw_no_door)
 
         # Have the door handle it now
-        return door.on_close(player)
+        return self.fail(door.on_close(player))

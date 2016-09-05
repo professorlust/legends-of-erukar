@@ -1,4 +1,4 @@
-from erukar.engine.model import Command
+from erukar.engine.commands.Command import Command
 from erukar.engine.lifeforms import Lifeform
 
 class Stats(Command):
@@ -19,4 +19,4 @@ class Stats(Command):
             player.character.calculate_stat_score(stat)) \
             for stat in Lifeform.attribute_types])
 
-        return status_description + self.attributes.format(attribute_description) + '\n'
+        return self.succeed(status_description + self.attributes.format(attribute_description) + '\n')

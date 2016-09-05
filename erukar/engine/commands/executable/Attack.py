@@ -18,14 +18,14 @@ class Attack(ActionCommand):
         self.check_for_arguments(lifeform)
 
         if len(self.weapons) == 0:
-            return 'You must equip a weapon in order to attack'
+            return self.fail('You must equip a weapon in order to attack')
 
         # Determine if this is directional attack
         direction = self.determine_direction(self.payload.lower())
         if direction is not None:
-            return self.do_directional_attacks(lifeform, direction)
+            return self.succeed(self.do_directional_attacks(lifeform, direction))
 
-        return self.do_attack(lifeform)
+        return self.succeed(self.do_attack(lifeform))
 
     def check_for_arguments(self, lifeform):
         '''

@@ -31,10 +31,10 @@ class Unequip(ActionCommand):
             item = getattr(lifeform, item_type)
             setattr(lifeform, item_type, None)
             uneq_string = getattr(self, 'unequipped_{}'.format(item_type))
-            return uneq_string.format(item.describe())
+            return self.succeed(uneq_string.format(item.describe()))
 
         # Nothing was found
-        return Unequip.not_found.format(self.payload)
+        return self.fail(Unequip.not_found.format(self.payload))
 
     def determine_type(self, lifeform):
         if self.payload in Lifeform.equipment_types:

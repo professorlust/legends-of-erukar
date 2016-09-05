@@ -1,4 +1,4 @@
-from erukar.engine.model.Command import Command
+from erukar.engine.commands.Command import Command
 from erukar.engine.model.Containable import Containable
 
 class Inspect(Command):
@@ -17,12 +17,12 @@ class Inspect(Command):
         direction = self.determine_direction(self.payload.lower())
 
         if direction is None:
-            return self.inspect_in_room(player, room, self.payload)
+            return self.succeed(self.inspect_in_room(player, room, self.payload))
 
         result = room.directional_inspect(direction, player.lifeform())
         if result is None:
-            return Inspect.abyss.format(direction.name)
-        return result
+            return self.succeed(Inspect.abyss.format(direction.name))
+        return self.succeed(result)
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''

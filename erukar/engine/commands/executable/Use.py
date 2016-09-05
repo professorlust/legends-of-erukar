@@ -12,7 +12,7 @@ class Use(ActionCommand):
         # Get the subject
         items = self.find_all_in_inventory(player, self.payload)
         if len(items) == 0:
-            return 'Could not find item "{}".',format(self.payload)
+            return self.fail('Could not find item "{}".',format(self.payload))
 
         # Get the object
         target = None
@@ -22,9 +22,9 @@ class Use(ActionCommand):
         for item in items:
             if isinstance(item, erukar.engine.inventory.Key):
                 if self.use_key(item, target, self.lifeform(player)):
-                    return self.unlock.format(self.lifeform(player).alias(), target.alias())
+                    return self.succeed(self.unlock.format(self.lifeform(player).alias(), target.alias()))
 
-        return 'Cannot use anything.'
+        return self.fail('Cannot use anything.')
 
     def determine_target(self, player):
         '''Attempts to determine what the target is'''

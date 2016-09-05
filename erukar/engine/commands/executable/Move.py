@@ -19,14 +19,14 @@ class Move(ActionCommand):
         door = in_direction.door
         if door is not None:
             if type(door) is Door and door.status is not Door.Open:
-                return Move.move_through_closed_door
+                return self.fail(Move.move_through_closed_door)
             if type(door) is Surface:
-                return Move.move_through_wall
+                return self.fail(Move.move_through_wall)
 
         # Move and autoinspect the room for the player
         if in_direction.room is None:
-            return Move.move_through_wall
-        return self.change_room(player, in_direction.room, direction)
+            return self.fail(Move.move_through_wall)
+        return self.succeed(self.change_room(player, in_direction.room, direction))
 
     def change_room(self, player, new_room, direction):
         '''Used to transfer the character from one room to the next'''
@@ -43,6 +43,6 @@ class Move(ActionCommand):
             i.sender_uid = self.sender_uid
             inspection_result = i.execute()
 
-            return Move.move_successful.format(direction.name, inspection_result)
+            return Move.move_successful.format(direction.name, inspection_result.result)
 
         return Move.enemy_movement.format(lifeform.alias(), direction.name)

@@ -1,4 +1,4 @@
-from erukar.engine.model.Command import Command
+from erukar.engine.commands.Command import Command
 from erukar.engine.lifeforms.Lifeform import Lifeform
 import erukar
 

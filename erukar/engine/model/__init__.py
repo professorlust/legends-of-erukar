@@ -1,5 +1,4 @@
 from .Affliction import Affliction
-from .Command import Command
 from .Containable import Containable
 from .Damage import Damage
 from .GenerationProfile import GenerationProfile
@@ -14,7 +13,6 @@ from .RpgEntity import RpgEntity
 
 __all__ = [
     "Affliction",
-    "Command", 
     "Containable", 
     "Damage", 
     "Describable",

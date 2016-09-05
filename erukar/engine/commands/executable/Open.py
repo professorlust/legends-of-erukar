@@ -24,10 +24,10 @@ class Open(ActionCommand):
         item = self.find_in_room(room, item_name)
         if item is not None:
             # We found it, so run on_open on it
-            return item.on_open(player)
+            return self.succeed(item.on_open(player))
 
         # Send a failure message
-        return Open.not_found
+        return self.fail(Open.not_found)
 
     def handle_doors(self, room, direction):
         '''
@@ -38,12 +38,12 @@ class Open(ActionCommand):
 
         # No connections have been made in this direction
         if in_direction is None:
-            return Open.nesw_wall
+            return self.fail(Open.nesw_wall)
 
         # determine if the door prevents movement
         door = in_direction.door
         if door is None:
             # There is no door to open
-            return Open.nesw_no_door
+            return self.fail(Open.nesw_no_door)
 
-        return door.on_open()
+        return self.succeed(door.on_open())
