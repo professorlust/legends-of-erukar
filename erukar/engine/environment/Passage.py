@@ -11,8 +11,8 @@ class Passage:
         return self.door is not None or self.room is not None
 
     def can_see_or_sense(self, lifeform, depth=0):
-        if self.door is None and self.room is not None:
-            return True
+        if self.door is None:
+            return self.room is not None
         acu = lifeform.calculate_effective_stat('acuity', depth)
         return self.door.necessary_acuity() < acu
 

@@ -68,12 +68,14 @@ class Map(Command):
 
     def complex_add_doors(self, dungeon_map, room, min_x, min_y, drawn_doors):
         '''Draws the doors and passageways in a complex map'''
+        lifeform = self.find_player().lifeform()
         x, y = room.coordinates
         center_x, center_y = ((x-min_x)*3+1, (y-min_y)*3+1)
 
         for connection in room.connections:
-            dy, dx = CoordinateTranslator.translate((center_x, center_y), connection)
-            dungeon_map[dx][dy] = self.passage_to_icon(room.connections[connection], connection, drawn_doors)
+            if room.connections[connection].can_see_or_sense(lifeform):
+                dy, dx = CoordinateTranslator.translate((center_x, center_y), connection)
+                dungeon_map[dx][dy] = self.passage_to_icon(room.connections[connection], connection, drawn_doors)
 
     def passage_to_icon(self, connection, direction, drawn_doors):
         '''Converts a passage type to its appropriate icon'''
