@@ -2,11 +2,11 @@ from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.model.EnvironmentPiece import EnvironmentPiece
 
 class Containable(EnvironmentPiece):
-    def __init__(self, aliases, broad_results, inspect_results):
-        super().__init__(aliases, broad_results, inspect_results)
+    def __init__(self, aliases):
+        super().__init__(aliases)
         self.contents = []
         self.contents_conjuntion = " Inside of the container:  "
-
+        
     def add(self, item):
         self.contents.append(item)
 

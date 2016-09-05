@@ -4,7 +4,7 @@ from erukar.game.modifiers.RoomModifier import RoomModifier
 import erukar
 
 class Skeleton(RoomModifier):
-    Probability = 5
+    Probability = 1
     def apply_to(self, room):
         skelly = erukar.game.enemies.Skeleton()
 #        print(skelly)

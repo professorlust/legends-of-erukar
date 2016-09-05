@@ -2,10 +2,9 @@ from erukar.engine.model.Containable import Containable
 from erukar.engine.environment.Lock import Lock
 
 class Container(Containable):
-    def __init__(self, aliases, broad_results, inspect_results):
-        super().__init__(aliases, broad_results, inspect_results)
+    def __init__(self, aliases):
+        super().__init__(aliases)
         self.lock = None
-        self.description = broad_results
 
     def on_open(self, sender):
         if self.lock is not None:

@@ -11,6 +11,8 @@ class Item(RpgEntity):
         self.price = 0
         self.description = Item.generic_description
         self.modifiers = []
+        self.set_vision_results('You see a {name}.','You see a {describe}.',(0,1))
+        self.set_sensory_results('You sense a {name}.','You sense a {describe}.',(50,60))
 
     def describe(self):
         return self.alias()
@@ -18,9 +20,6 @@ class Item(RpgEntity):
     def matches(self, other):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()
-
-    def on_inspect(self, *_):
-        return self.description.format(self.name)
 
     def on_inventory(self, *_):
         return self.alias()
