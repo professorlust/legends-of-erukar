@@ -120,7 +120,7 @@ class OpenTests(unittest.TestCase):
 
         n = Room(None)
         p.current_room = n
-        chest = Container(aliases=['chest'], inspect_results='', broad_results='')
+        chest = Container(aliases=['chest'])
         n.add(chest)
 
         o = Open()

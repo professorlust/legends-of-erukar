@@ -5,7 +5,6 @@ class Container(Containable):
     def __init__(self, aliases):
         super().__init__(aliases)
         self.lock = None
-        self.description = broad_results
 
     def on_open(self, sender):
         if self.lock is not None:

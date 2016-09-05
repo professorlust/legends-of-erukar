@@ -32,17 +32,21 @@ class Describable(Interactible):
         self.detailed_minimal = 'Minimal Visual and Sensory Result'
         self.detailed_ideal = 'Ideal Visual and Sensory Result'''
 
-    def mutate(self, mutatable_string):
-        captured = re.findall('{(\w*)(?:\|(\w*))*}', mutatable_string)
-        if len(captured) == 0:
-            return mutatable_string
+    def mutate(self, mutatable_string, optional_parameters=None):
         mutation_arguments = {}
+        if optional_parameters is not None:
+            mutation_arguments = optional_paramters
+        # Perform Regex
+        captured = re.findall('{(\w*)(?:\|(\w*))*}', mutatable_string)
+        # iterate through all of our capture groups 
         for cap in captured:
             target = self
             format_name = cap[0]
+            # in the event of a specified target e.g. {prop|target}
             if cap[1] is not None and hasattr(self, cap[1]):
                 target = getattr(self, cap[1])
                 format_name = '|'.join(cap)
+            # Get the value from the target
             if hasattr(target, cap[0]):
                 value = getattr(target, cap[0]) 
                 if callable(value):
