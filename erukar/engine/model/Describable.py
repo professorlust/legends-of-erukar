@@ -35,7 +35,7 @@ class Describable(Interactible):
     def mutate(self, mutatable_string, optional_parameters=None):
         mutation_arguments = {}
         if optional_parameters is not None:
-            mutation_arguments = optional_paramters
+            mutation_arguments = optional_parameters
         # Perform Regex
         captured = re.findall('{(\w*)(?:\|(\w*))*}', mutatable_string)
         # iterate through all of our capture groups 

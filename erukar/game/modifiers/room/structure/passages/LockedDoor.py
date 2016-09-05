@@ -6,7 +6,7 @@ class LockedDoor(RoomDoorModifier):
     Probability = 2
     ProbabilityFromFabrication = 0.75
     def __init__(self):
-        self.description = "This door is locked."
+        self.description = 'You see {describe_locked} door to the {direction}. The door is {status}.'
         self.can_close = True
         self.start_state = Door.Closed
         self.lock = Lock()

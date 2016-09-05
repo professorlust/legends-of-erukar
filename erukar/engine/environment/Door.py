@@ -1,26 +1,27 @@
-from erukar.engine.model.RpgEntity import RpgEntity
+from erukar.engine.model.Describable import Describable
 
-class Door(RpgEntity):
+class Door(Describable):
     close_success = 'You have successfully closed the door'
     open_success = 'You have successfully opened the door'
     already_closed = 'The door is already closed'
     open_success = 'You have successfully opened the door'
     is_locked = 'You try to open the door, but it is locked'
     already_open = 'The door is already open'
-    Closed = 0
-    Open = 1
+    Closed = 'closed'
+    Open = 'open'
+    generic_description = 'There is a door to the {direction}. It is {status}.'
 
     def __init__(self, description=""):
-        '''description should allow a {0} for formatting direction'''
         self.lock = None
         self.status = Door.Closed
         self.can_close = True
         self.description = description
+        if self.description is '':
+            self.description = self.generic_description 
+        print(self.description)
 
     def on_inspect(self, direction):
-        if len(self.description) == 0:
-            return self.on_inspect_generic(direction)
-        return self.description
+        return self.mutate(self.description, {'direction': direction.name})
 
     def peek(self, direction, room, lifeform):
         '''Does a single look through'''
@@ -34,6 +35,11 @@ class Door(RpgEntity):
             return self.on_inspect(direction) + ' ' + room.directional_inspect(direction, lifeform, depth)
         return self.on_inspect(direction)
 
+    def describe_locked(self):
+        if self.lock is None or self.lock.is_locked:
+            return 'a locked'
+        return 'an unlocked'
+
     def describe_lock(self, direction):
         if self.lock.direction is direction:
             args = {
@@ -42,9 +48,6 @@ class Door(RpgEntity):
                 'lock': self.lock.on_inspect()}
             return '{door} Attached to the door is a {lockname}. {lock}'.format(**args)
         return '{door} The door does not open.'.format(self.description.format(direction))
-
-    def on_inspect_generic(self, direction):
-        return "There is a door to the {0}".format(direction.name)
 
     def on_close(self, player):
         if self.can_close:

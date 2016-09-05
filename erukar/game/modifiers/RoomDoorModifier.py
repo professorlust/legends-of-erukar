@@ -6,7 +6,7 @@ import random
 
 class RoomDoorModifier(RoomModifier):
     def __init__(self):
-        self.description = "A door to the {0} opens into another room."
+        self.description = "A {status} door to the {direction} opens into another room."
         self.can_close = False
         self.start_state = Door.Open
         self.lock = None
