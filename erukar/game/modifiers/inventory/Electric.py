@@ -9,5 +9,6 @@ class Electric(WeaponMod):
     Description = "Sparks and electrical arcs regularly dance off of the {EssentialPart} of the {item_type}"
 
     def apply_to(self, weapon):
+        super().apply_to(weapon)
         weapon.name += " of Lightning"
         weapon.damages.append(Damage("Electric", [1,4], "", (np.random.uniform, (0,1))))

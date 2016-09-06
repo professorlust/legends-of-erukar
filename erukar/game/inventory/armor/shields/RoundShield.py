@@ -1,6 +1,7 @@
 from erukar.engine.inventory.Shield import Shield
 
 class RoundShield(Shield):
+    BaseName="Round Shield"
     Probability = 2
 
     def __init__(self):

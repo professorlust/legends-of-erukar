@@ -1,6 +1,7 @@
 from erukar.engine.inventory.FootArmor import FootArmor
 
 class Sprinters(FootArmor):
+    BaseName="Sprinters"
     Probability = 1
 
     def __init__(self):

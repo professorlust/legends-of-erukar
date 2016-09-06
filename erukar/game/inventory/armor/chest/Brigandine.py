@@ -1,6 +1,7 @@
 from erukar.engine.inventory.ChestArmor import ChestArmor
 
 class Brigandine(ChestArmor):
+    BaseName="Brigandine"
     Probability = 1
 
     def __init__(self):

@@ -1,6 +1,7 @@
 from erukar.engine.inventory.ArmArmor import ArmArmor
 
 class Wraps(ArmArmor):
+    BaseName="Wraps"
     Probability = 1
 
     def __init__(self):

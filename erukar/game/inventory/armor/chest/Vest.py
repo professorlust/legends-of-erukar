@@ -1,6 +1,7 @@
 from erukar.engine.inventory.ChestArmor import ChestArmor
 
 class Vest(ChestArmor):
+    BaseName="Vest"
     Probability = 1
 
     def __init__(self):

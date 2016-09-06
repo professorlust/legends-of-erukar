@@ -1,6 +1,7 @@
 from erukar.engine.inventory.LegArmor import LegArmor
 
 class Breeches(LegArmor):
+    BaseName="Breeches"
     Probability = 1
 
     def __init__(self):

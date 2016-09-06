@@ -8,3 +8,4 @@ class Bane(WeaponMod):
 
     def apply_to(self, weapon):
         weapon.name = weapon.name + ", Bane of ___"
+        super().apply_to(weapon)

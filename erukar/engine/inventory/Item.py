@@ -13,8 +13,9 @@ class Item(Describable):
         self.price = 0
         self.description = Item.generic_description
         self.modifiers = []
-        self.set_vision_results('You see a {name}.','You see a {alias}.',(0,1))
-        self.set_sensory_results('You sense a {name}.','You sense a {alias}.',(50,60))
+        self.set_vision_results('You see a {BaseName}.','You see a {BaseName}.',(0,1))
+        self.set_sensory_results('You sense a {BaseName}.','You sense a {BaseName}.',(50,60))
+        self.set_detailed_results('There is a {BaseName}.{describe_modifiers}', 'You see a {name}.{describe_modifiers}')
 
     def describe(self):
         return self.name
@@ -35,8 +36,12 @@ class Item(Describable):
     def calculate_desireability(self):
         return functools.reduce(operator.mul, [mod.Desirability for mod in self.modifiers])
 
-    def on_inspect(self, lifeform, acu, sen):
+    def describe_modifiers(self):
         modifier_descriptions = [x.Description for x in self.modifiers if x.Description is not '']
-        if len(modifier_descriptions) > 0:
-            return self.mutate(self.describe_base(lifeform, acu, sen) + '. ' +' '.join(modifier_descriptions))
+        return ' ' + ' '.join(modifier_descriptions) 
+
+    def on_inspect(self, lifeform, acu, sen):
+        modifier_description = self.describe_modifiers()
+        if modifier_description is not ' ':
+            return self.mutate(self.describe_base(lifeform, acu, sen) + modifier_description)
         return self.describe_base(lifeform, acu, sen)

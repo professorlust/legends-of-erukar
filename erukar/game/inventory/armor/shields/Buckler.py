@@ -1,6 +1,7 @@
 from erukar.engine.inventory.Shield import Shield
 
 class Buckler(Shield):
+    BaseName="Buckler"
     Probability = 2
 
     def __init__(self):

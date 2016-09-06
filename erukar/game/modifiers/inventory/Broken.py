@@ -11,3 +11,4 @@ class Broken(WeaponMod):
         weapon.name = "Broken " + weapon.name
         max_dam = weapon.damages[0].damage[1]
         weapon.damages[0].damage = [0, int(math.floor(max_dam/2))]
+        super().apply_to(weapon)

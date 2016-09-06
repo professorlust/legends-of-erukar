@@ -1,6 +1,7 @@
 from erukar.engine.inventory.HeadArmor import HeadArmor
 
 class FrogMouthHelm(HeadArmor):
+    BaseName="Frog Mouth Helm"
     Probability = 1
 
     def __init__(self):

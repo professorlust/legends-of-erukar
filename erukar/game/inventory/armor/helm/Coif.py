@@ -1,6 +1,7 @@
 from erukar.engine.inventory.HeadArmor import HeadArmor
 
 class Coif(HeadArmor):
+    BaseName="Coif"
     Probability = 1
 
     def __init__(self):

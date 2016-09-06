@@ -12,6 +12,7 @@ class Dull(WeaponMod):
     Description = "The {EssentialPart} of the {item_type} has been dulled from extensive, careless use."
 
     def apply_to(self, weapon):
+        super().apply_to(weapon)
         weapon.name = "Dull " + weapon.name
         min_dam, max_dam = weapon.damages[0].damage
         weapon.damages[0].damage = [int(math.floor(min_dam/2)), int(math.floor(max_dam/2))]

@@ -1,6 +1,7 @@
 from erukar.engine.inventory.HeadArmor import HeadArmor
 
 class Armet(HeadArmor):
+    BaseName="Armet"
     Probability = 1
 
     def __init__(self):

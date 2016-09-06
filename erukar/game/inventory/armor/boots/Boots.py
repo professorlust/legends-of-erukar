@@ -2,6 +2,7 @@ from erukar.engine.inventory.FootArmor import FootArmor
 
 class Boots(FootArmor):
     Probability = 1
+    BaseName = "Boots"
 
     def __init__(self):
         super().__init__("Boots")

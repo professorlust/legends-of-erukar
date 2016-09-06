@@ -3,6 +3,7 @@ from erukar.engine.inventory.FootArmor import FootArmor
 class Feet(FootArmor):
     '''Note: This requires a magical modifier!'''
     Probability = 1
+    BaseName = "Feet"
 
     def __init__(self):
         super().__init__("Feet")

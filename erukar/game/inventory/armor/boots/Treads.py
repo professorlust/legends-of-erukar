@@ -1,6 +1,7 @@
 from erukar.engine.inventory.FootArmor import FootArmor
 
 class Treads(FootArmor):
+    BaseName="Treads"
     Probability = 1
 
     def __init__(self):

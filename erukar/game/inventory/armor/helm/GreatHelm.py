@@ -1,6 +1,7 @@
 from erukar.engine.inventory.HeadArmor import HeadArmor
 
 class GreatHelm(HeadArmor):
+    BaseName="Great Helm"
     Probability = 1
 
     def __init__(self):

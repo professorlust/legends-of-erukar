@@ -1,6 +1,7 @@
 from erukar.engine.inventory.LegArmor import LegArmor
 
 class Legplates(LegArmor):
+    BaseName="Legplates"
     Probability = 1
 
     def __init__(self):

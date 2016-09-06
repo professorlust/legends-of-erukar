@@ -1,6 +1,7 @@
 from erukar.engine.inventory.FootArmor import FootArmor
 
 class Spurs(FootArmor):
+    BaseName="Spurs"
     Probability = 1
 
     def __init__(self):

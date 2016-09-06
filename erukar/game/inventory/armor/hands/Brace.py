@@ -1,6 +1,7 @@
 from erukar.engine.inventory.ArmArmor import ArmArmor
 
 class Brace(ArmArmor):
+    BaseName="Brace"
     Probability = 1
 
     def __init__(self):

@@ -1,6 +1,7 @@
 from erukar.engine.inventory.ArmArmor import ArmArmor
 
 class Gauntlets(ArmArmor):
+    BaseName="Gauntlets"
     Probability = 1
 
     def __init__(self):

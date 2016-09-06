@@ -1,6 +1,7 @@
 from erukar.engine.inventory.HeadArmor import HeadArmor
 
 class CloseHelm(HeadArmor):
+    BaseName="Close Helm"
     Probability = 1
 
     def __init__(self):
