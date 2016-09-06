@@ -6,6 +6,7 @@ class Enhancement(WeaponMod):
     Probability = 2
     Desirability = 4.0
     StatBonus = 2
+    Description = "The {item_type} radiates a colorful aura."
 
     def __init__(self):
         self.stat_type = random.choice(Lifeform.attribute_types)

@@ -3,6 +3,7 @@ import functools, operator
 
 class Item(RpgEntity):
     generic_description = 'This is {0}, but it otherwise has no real description whatsoever'
+    EssentialPart = 'item part'
 
     def __init__(self, item_type='Item', name="Item"):
         self.item_type = item_type

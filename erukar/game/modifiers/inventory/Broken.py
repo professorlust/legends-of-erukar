@@ -5,6 +5,7 @@ import math
 class Broken(WeaponMod):
     Probability = 2
     Desirability = 0.0625
+    Description = "The {item_type} is in a poor state and its {EssentialPart} has been broken."
 
     def apply_to(self, weapon):
         weapon.name = "Broken " + weapon.name

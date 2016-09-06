@@ -11,6 +11,9 @@ class Modifier:
     ProhibitedEntities = []
     PermissionType = ALL
 
+    Prefix = ''
+    Suffix = ''
+
     def modify(self, entity):
         '''Safe-guarded modification entry point'''
         if self.can_apply_to(entity):

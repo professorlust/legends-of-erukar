@@ -7,7 +7,7 @@ from erukar.engine.model.PlayerNode import PlayerNode
 import erukar, threading
 
 class Instance(Manager):
-    MaximumTurnTime = 10.0 # In seconds
+    MaximumTurnTime = 20.0 # In seconds
     MaximumTurnSkipPenalty = 5 # in turns
     BaseModule = "erukar.game.modifiers.room.{0}"
     SubModules = [
@@ -43,7 +43,7 @@ class Instance(Manager):
                 if issubclass(type(item), erukar.engine.lifeforms.Enemy):
                     self.turn_manager.subscribe(item)
                     self.data.players.append(item)
- 
+
     def decorate(self, generation_parameters):
         decorators = list(Instance.decorators(generation_parameters))
         self.generation_parameters = generation_parameters

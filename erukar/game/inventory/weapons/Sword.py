@@ -2,7 +2,7 @@ from erukar.engine.inventory.Weapon import Weapon
 import numpy as np
 
 class Sword(Weapon):
-    Probability = 1
+    Probability = 100
     BaseName = "Sword"
 
     # Damage
@@ -13,3 +13,7 @@ class Sword(Weapon):
     # Distribution
     Distribution = np.random.beta
     DistributionProperties = (2,2)
+
+    def describe(self):
+        modifier_descriptions = [x.Description for x in self.modifiers if x.Description is not '']
+        return self.mutate(self.BaseName + '. ' +' '.join(modifier_descriptions))

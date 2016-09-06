@@ -12,7 +12,7 @@ class Inventory(Command):
         items = '\n'.join(['{:2}. {}'.format(i, char.inventory[i].on_inventory())\
             for i in range(0, len(char.inventory))])
         equipment = self.equipment(char)
-        return self.header.format(equipment, items)
+        return self.succeed(self.header.format(equipment, items))
 
     def equipment(self, character):
         armor_results = []

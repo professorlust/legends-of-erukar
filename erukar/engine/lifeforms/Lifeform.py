@@ -64,6 +64,10 @@ class Lifeform(RpgEntity):
         decay_factor = 1.0 - 0.75*math.exp(-0.02*score)
         return math.floor(math.pow(decay_factor,depth) * score)
 
+    def stat_random_range(self, stat_type):
+        score = self.calculate_stat_score(stat_type)
+        return (score, 50+score)
+
     def calculate_stat_score(self, stat_type):
         '''Calculates a character's stat score based on armor and status effects'''
         score = getattr(self, stat_type)

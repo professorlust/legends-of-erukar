@@ -9,6 +9,7 @@ class Dull(WeaponMod):
     Desirability = 0.025
     PermissionType = Modifier.ALL_PERMITTED
     PermittedEntities = [Axe, Halberd, Rapier, Spear, Sword]
+    Description = "The {EssentialPart} of the {item_type} has been dulled from extensive, careless use."
 
     def apply_to(self, weapon):
         weapon.name = "Dull " + weapon.name

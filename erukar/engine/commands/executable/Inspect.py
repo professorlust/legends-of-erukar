@@ -1,5 +1,6 @@
 from erukar.engine.commands.Command import Command
 from erukar.engine.model.Containable import Containable
+import random, math
 
 class Inspect(Command):
     not_found = "Nothing matching '{0}' was found in this room."
@@ -26,6 +27,8 @@ class Inspect(Command):
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''
+        acu, sen = [math.floor(random.uniform(*player.lifeform().stat_random_range(x))) for x in ('acuity', 'sense')]
+
         if payload in ['','room']:
             return room.inspect_here(player.lifeform())
 
@@ -37,14 +40,14 @@ class Inspect(Command):
 
         item = self.find_in_room(room, payload)
         if item is not None:
-            return self.inspect_item(item, player)
+            return self.inspect_item(item, player, acu, sen)
 
         return Inspect.not_found.format(payload)
 
-    def inspect_item(self, item, player):
+    def inspect_item(self, item, player, acu, sen):
         '''Inspect an item and index it if it's a container'''
         self.index(item, player)
-        return item.on_inspect(player)
+        return item.on_inspect(player, acu, sen)
 
     def index(self, container, player):
         '''Indexes all items in a container for the PlayerNode's indexer'''
