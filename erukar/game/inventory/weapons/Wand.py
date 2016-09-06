@@ -5,12 +5,13 @@ import random
 class Wand(Weapon):
     Probability = 1
     BaseName = "Wand"
+    EssentialPart = "tip"
     AttackRange = 2
     RangePenalty = 2
 
     # Damage
     DamageRange = [2, 6]
-    DamageType = random.choice(['fire','acid','cold','electric']) 
+    DamageType = random.choice(['fire','acid','cold','electric'])
     DamageModifier = "acuity"
 
     # Distribution

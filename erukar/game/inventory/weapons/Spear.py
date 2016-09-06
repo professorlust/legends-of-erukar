@@ -5,6 +5,7 @@ class Spear(Weapon):
     Probability = 1
     BaseName = "Spear"
     AttackRange = 1
+    EssentialPart = "tip"
 
     # Damage
     DamageRange = [2, 6]

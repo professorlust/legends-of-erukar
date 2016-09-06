@@ -4,6 +4,7 @@ import numpy as np
 class Staff(Weapon):
     Probability = 1
     BaseName = "Staff"
+    EssentialPart = "head"
 
     # Damage
     DamageRange = [2, 6]

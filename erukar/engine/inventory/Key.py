@@ -1,4 +1,4 @@
-from .Item import Item
+from erukar.engine.inventory.Item import Item
 import random
 
 class Key(Item):

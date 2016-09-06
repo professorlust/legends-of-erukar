@@ -3,7 +3,8 @@ import numpy as np
 
 class CrossBow(Weapon):
     Probability = 1
-    BaseName = "CrossBow"
+    BaseName = "Crossbow"
+    EssentialPart = "string"
     AttackRange = 2
     RangePenalty = 2
 

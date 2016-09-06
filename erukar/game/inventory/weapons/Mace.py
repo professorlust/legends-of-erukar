@@ -4,6 +4,7 @@ import numpy as np
 class Mace(Weapon):
     Probability = 1
     BaseName = "Mace"
+    EssentialPart = "head"
 
     # Damage
     DamageRange = [2, 6]

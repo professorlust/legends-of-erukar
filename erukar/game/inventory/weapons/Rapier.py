@@ -4,6 +4,7 @@ import numpy as np
 class Rapier(Weapon):
     Probability = 1
     BaseName = "Rapier"
+    EssentialPart = "blade"
 
     # Damage
     DamageRange = [2, 6]

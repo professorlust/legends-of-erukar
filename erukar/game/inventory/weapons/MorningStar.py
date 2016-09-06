@@ -3,7 +3,8 @@ import numpy as np
 
 class MorningStar(Weapon):
     Probability = 1
-    BaseName = "MorningStar"
+    BaseName = "Morning Star"
+    EssentialPart = "head"
 
     # Damage
     DamageRange = [2, 6]

@@ -4,6 +4,7 @@ import numpy as np
 class Sword(Weapon):
     Probability = 100
     BaseName = "Sword"
+    EssentialPart = "blade"
 
     # Damage
     DamageRange = [2, 6]
@@ -14,6 +15,3 @@ class Sword(Weapon):
     Distribution = np.random.beta
     DistributionProperties = (2,2)
 
-    def describe(self):
-        modifier_descriptions = [x.Description for x in self.modifiers if x.Description is not '']
-        return self.mutate(self.BaseName + '. ' +' '.join(modifier_descriptions))

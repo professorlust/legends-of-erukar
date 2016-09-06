@@ -1,8 +1,9 @@
-from erukar.engine.model.RpgEntity import RpgEntity
+from erukar.engine.model.Describable import Describable
 import functools, operator
 
-class Item(RpgEntity):
-    generic_description = 'This is {0}, but it otherwise has no real description whatsoever'
+class Item(Describable):
+    generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
+    BaseName = 'base'
     EssentialPart = 'item part'
 
     def __init__(self, item_type='Item', name="Item"):
@@ -12,11 +13,11 @@ class Item(RpgEntity):
         self.price = 0
         self.description = Item.generic_description
         self.modifiers = []
-        self.set_vision_results('You see a {name}.','You see a {describe}.',(0,1))
-        self.set_sensory_results('You sense a {name}.','You sense a {describe}.',(50,60))
+        self.set_vision_results('You see a {name}.','You see a {alias}.',(0,1))
+        self.set_sensory_results('You sense a {name}.','You sense a {alias}.',(50,60))
 
     def describe(self):
-        return self.alias()
+        return self.name
 
     def matches(self, other):
         return other.lower() in self.alias().lower() \
@@ -33,3 +34,9 @@ class Item(RpgEntity):
 
     def calculate_desireability(self):
         return functools.reduce(operator.mul, [mod.Desirability for mod in self.modifiers])
+
+    def on_inspect(self, lifeform, acu, sen):
+        modifier_descriptions = [x.Description for x in self.modifiers if x.Description is not '']
+        if len(modifier_descriptions) > 0:
+            return self.mutate(self.describe_base(lifeform, acu, sen) + '. ' +' '.join(modifier_descriptions))
+        return self.describe_base(lifeform, acu, sen)

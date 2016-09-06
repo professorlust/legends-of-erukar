@@ -6,7 +6,7 @@ import numpy as np
 class Acid(WeaponMod):
     Probability = 1
     Desirability = 8.0
-    Description = "Acid drips from the {item_type}'s {EssentialPart}."
+    Description = "Acid drips from the {BaseName}'s {EssentialPart}."
 
     def apply_to(self, weapon):
         weapon.name = "Acid " + weapon.name

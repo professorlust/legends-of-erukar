@@ -17,7 +17,7 @@ class Describable(Interactible):
     is enveloped in bright orange and yellow flames. The flames, though they
     are bright enough to illuminate the room well enough, give off only scant
     heat."
-    
+
     If both Ideals are met, the user should be given even more information,
     though sometimes this is unnecessary.
     '''
@@ -87,7 +87,7 @@ class Describable(Interactible):
         self.detailed_minimal = minimal
         self.detailed_ideal = ideal
 
-    def on_inspect(self, lifeform, acuity, sense):
+    def describe_base(self, lifeform, acuity, sense):
         '''This should be the entry point for finding things in a room'''
         if acuity >= self.vision_range[0] and sense >= self.sense_range[0]:
             return self.mutate(self.describe_detailed(lifeform, acuity, sense))
@@ -96,6 +96,9 @@ class Describable(Interactible):
         if sense >= self.sense_range[0]:
             return self.mutate(self.describe_sensory(lifeform, sense))
         return ''
+
+    def on_inspect(self, lifeform, acuity, sense):
+        return self.describe_base(lifeform, acuity, sense)
 
     def necessary_sense(self):
         return 0

@@ -4,6 +4,7 @@ import numpy as np
 class Bow(Weapon):
     Probability = 1
     BaseName = "Bow"
+    EssentialPart = "bowstrings"
     AttackRange = 3
     RangePenalty = 2
 

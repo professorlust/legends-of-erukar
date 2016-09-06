@@ -47,6 +47,7 @@ class Inspect(Command):
     def inspect_item(self, item, player, acu, sen):
         '''Inspect an item and index it if it's a container'''
         self.index(item, player)
+        print('Inspecting an item')
         return item.on_inspect(player, acu, sen)
 
     def index(self, container, player):

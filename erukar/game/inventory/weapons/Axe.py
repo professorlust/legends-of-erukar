@@ -4,6 +4,7 @@ import numpy as np
 class Axe(Weapon):
     Probability = 1
     BaseName = "Axe"
+    EssentialPart = "edge"
 
     # Damage
     DamageRange = [4, 8]
