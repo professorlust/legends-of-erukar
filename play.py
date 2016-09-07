@@ -1,4 +1,5 @@
 from erukar import *
+import readline
 import numpy as np
 
 print('This example shows the Dungeon Procedural generation')

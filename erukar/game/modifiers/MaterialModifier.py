@@ -8,4 +8,4 @@ class MaterialModifier(ItemModifier):
     PermittedEntities = [Weapon, Armor]
 
     def apply_to(self, item):
-        super().apply_to(item)
+        item.material = self
