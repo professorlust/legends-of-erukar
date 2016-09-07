@@ -1,6 +1,7 @@
 from erukar.engine.inventory.Armor import Armor
 
 class Shield(Armor):
+    EssentialPart = "shield"
     '''Basic Shield; shouldn't appear in game, but if it does that's okay'''
     def __init__(self, name):
         super().__init__(name)

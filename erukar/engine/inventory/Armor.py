@@ -1,6 +1,8 @@
 from erukar.engine.inventory.Item import Item
 
 class Armor(Item):
+    EssentialPart = "armor"
+
     def __init__(self, name="Armor"):
         super().__init__("armor", name)
         self.equipment_locations = ['chest']

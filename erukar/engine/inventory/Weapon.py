@@ -4,6 +4,7 @@ import numpy as np
 
 class Weapon(Item):
     BaseName = "Weapon"
+    EssentialPart = "weapon"
     AttackRange = 0 # Maximum number of rooms beyond our current room that we can reach
     RangePenalty = 5
 

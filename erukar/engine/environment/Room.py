@@ -35,6 +35,15 @@ class Room(Containable):
         our_result = self.describe(lifeform, depth)
         return our_result + ' ' + connection_result
 
+    def on_inspect(self, lifeform, acu, sen, depth=0):
+        content_results = [x.on_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
+        content_descriptions = [' '.join(x for x in content_results if x is not '')]
+        if self.ceiling is not None:
+            content_descriptions.insert(0, self.ceiling.describe(lifeform, depth))
+        if self.floor is not None:
+            content_descriptions.insert(0, self.floor.describe(lifeform, depth))
+        return ' '.join(content_descriptions)
+
     def inspect_here(self, lifeform):
         dir_desc = []
         for d in self.connections:
@@ -45,13 +54,7 @@ class Room(Containable):
     def describe(self, lifeform, depth):
         '''Room Descriptions'''
         acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
-        content_results = [x.on_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
-        content_descriptions = [' '.join(x for x in content_results if x is not '')]
-        if self.ceiling is not None:
-            content_descriptions.insert(0, self.ceiling.describe(lifeform, depth))
-        if self.floor is not None:
-            content_descriptions.insert(0, self.floor.describe(lifeform, depth))
-        return ' '.join(content_descriptions)
+        return self.on_inspect(lifeform, acu, sen, depth)
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:

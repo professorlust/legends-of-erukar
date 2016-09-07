@@ -52,7 +52,11 @@ class Describable(Interactible):
                 if callable(value):
                     value = value()
                 mutation_arguments[format_name] = value
-        return mutatable_string.format(**mutation_arguments)
+        try:
+            result = mutatable_string.format(**mutation_arguments)
+        except:
+            result = mutatable_string
+        return result
 
     def describe_visual(self, lifeform, acuity):
         if acuity >= self.vision_range[1]:

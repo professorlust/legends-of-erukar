@@ -1,8 +1,8 @@
-from erukar.engine.commands.Command import Command
+from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.model.Containable import Containable
 import random, math
 
-class Inspect(Command):
+class Inspect(ActionCommand):
     not_found = "Nothing matching '{0}' was found in this room."
     abyss = "There is nothing to your {0} except the abyss... plain and nothingness forever."
 
@@ -27,10 +27,13 @@ class Inspect(Command):
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''
+        if payload is '':
+            return room.inspect_here(player.lifeform())
+
         acu, sen = [math.floor(random.uniform(*player.lifeform().stat_random_range(x))) for x in ('acuity', 'sense')]
 
-        if payload in ['','room']:
-            return room.inspect_here(player.lifeform())
+        if payload in 'room':
+            return room.on_inspect(player.lifeform(), acu, sen)
 
         if payload in 'flooring':
             return room.floor.on_inspect()

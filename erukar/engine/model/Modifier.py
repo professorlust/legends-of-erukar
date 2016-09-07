@@ -14,10 +14,10 @@ class Modifier(Describable):
 
     VisualMinimalDescription = "Visual Minimal"
     VisualIdealDescription = "Visual Ideal"
-    VisualRange = (0, 1)
+    VisualRange = (1, 15)
     SensoryMinimalDescription = "Sensory Minimal"
     SensoryIdealDescription = "Sensory Ideal"
-    SensoryRange = (0, 1)
+    SensoryRange = (6, 20)
     Adjective = "Adjective"
     DetailedMinimalDescription = "{SensoryMinimalDescription} {VisualMinimalDescription}"
     DetailedIdealDescription = "{SensoryIdealDescription} {VisualIdealDescription}"

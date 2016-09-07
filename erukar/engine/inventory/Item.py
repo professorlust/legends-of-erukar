@@ -13,8 +13,8 @@ class Item(Describable):
         self.price = 0
         self.description = Item.generic_description
         self.modifiers = []
-        self.set_vision_results('You see a {BaseName}.','You see a {BaseName}.',(0,1))
-        self.set_sensory_results('You sense a {BaseName}.','You sense a {BaseName}.',(50,60))
+        self.set_vision_results('You see a {BaseName}.','You see a {BaseName}.',(1,10))
+        self.set_sensory_results('You sense a {BaseName}.','You sense a {BaseName}.',(5,20))
         self.set_detailed_results('There is a {BaseName}.', 'You see a {name}.')
         self.material = None
 
