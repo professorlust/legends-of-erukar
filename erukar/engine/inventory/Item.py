@@ -15,7 +15,8 @@ class Item(Describable):
         self.modifiers = []
         self.set_vision_results('You see a {BaseName}.','You see a {BaseName}.',(0,1))
         self.set_sensory_results('You sense a {BaseName}.','You sense a {BaseName}.',(50,60))
-        self.set_detailed_results('There is a {BaseName}.{describe_modifiers}', 'You see a {name}.{describe_modifiers}')
+        self.set_detailed_results('There is a {BaseName}.', 'You see a {name}.')
+        self.material = None
 
     def describe(self):
         return self.name
@@ -36,12 +37,12 @@ class Item(Describable):
     def calculate_desireability(self):
         return functools.reduce(operator.mul, [mod.Desirability for mod in self.modifiers])
 
-    def describe_modifiers(self):
-        modifier_descriptions = [x.Description for x in self.modifiers if x.Description is not '']
-        return ' ' + ' '.join(modifier_descriptions) 
+    def describe_modifiers(self, lifeform, acu, sen):
+        modifier_descriptions = [x.on_inspect(lifeform, acu, sen) for x in self.modifiers if x.Description is not '']
+        return ' ' + ' '.join(modifier_descriptions)
 
     def on_inspect(self, lifeform, acu, sen):
-        modifier_description = self.describe_modifiers()
-        if modifier_description is not ' ':
-            return self.mutate(self.describe_base(lifeform, acu, sen) + modifier_description)
-        return self.describe_base(lifeform, acu, sen)
+        modifiers = self.describe_modifiers(lifeform, acu, sen)
+        material = '' if not self.material else self.material.on_inspect(lifeform, acu, sen)
+        self_desc = self.describe_base(lifeform, acu, sen)
+        return self.mutate(' '.join(x for x in [self_desc, material, modifiers] if x is not ''))

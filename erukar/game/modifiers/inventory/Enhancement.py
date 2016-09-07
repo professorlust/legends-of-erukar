@@ -9,6 +9,7 @@ class Enhancement(WeaponMod):
     Description = "The {BaseName} radiates a colorful aura."
 
     def __init__(self):
+        super().__init__()
         self.stat_type = random.choice(Lifeform.attribute_types)
         setattr(self, self.stat_type, self.StatBonus)
         enh_type = type(self).__name__.replace('Enhancement','')

@@ -1,5 +1,6 @@
-class Modifier:
-    '''Used to alter any RpgEntity'''
+from erukar.engine.model.Describable import Describable
+
+class Modifier(Describable):
     NONE = 0
     NONE_PROHIBITED = 1
     ALL_PERMITTED_BUT_NOT_PROHIBITED = 2
@@ -11,8 +12,21 @@ class Modifier:
     ProhibitedEntities = []
     PermissionType = ALL
 
-    Prefix = ''
-    Suffix = ''
+    VisualMinimalDescription = "Visual Minimal"
+    VisualIdealDescription = "Visual Ideal"
+    VisualRange = (0, 1)
+    SensoryMinimalDescription = "Sensory Minimal"
+    SensoryIdealDescription = "Sensory Ideal"
+    SensoryRange = (0, 1)
+    Adjective = "Adjective"
+    DetailedMinimalDescription = "{SensoryMinimalDescription} {VisualMinimalDescription}"
+    DetailedIdealDescription = "{SensoryIdealDescription} {VisualIdealDescription}"
+
+    def __init__(self):
+        super().__init__()
+        self.set_vision_results(self.VisualMinimalDescription, self.VisualIdealDescription, self.VisualRange)
+        self.set_sensory_results(self.SensoryMinimalDescription, self.SensoryIdealDescription, self.SensoryRange)
+        self.set_detailed_results(self.DetailedMinimalDescription, self.DetailedIdealDescription)
 
     def modify(self, entity):
         '''Safe-guarded modification entry point'''
