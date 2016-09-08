@@ -12,6 +12,8 @@ class Modifier(Describable):
     ProhibitedEntities = []
     PermissionType = ALL
 
+    BriefDescription = "{BaseName}"
+    AbsoluteMinimalDescription = "Absolute Minimal"
     VisualMinimalDescription = "Visual Minimal"
     VisualIdealDescription = "Visual Ideal"
     VisualRange = (1, 15)
@@ -59,3 +61,4 @@ class Modifier(Describable):
         the Prohibited Entities Lists
         '''
         return any(r for r in group if r == type(entity) or issubclass(type(entity), r))
+

@@ -45,4 +45,9 @@ class Item(Describable):
         modifiers = self.describe_modifiers(lifeform, acu, sen)
         material = '' if not self.material else self.material.on_inspect(lifeform, acu, sen)
         self_desc = self.describe_base(lifeform, acu, sen)
+        if self_desc is '':
+            return ''
         return self.mutate(' '.join(x for x in [self_desc, material, modifiers] if x is not ''))
+
+    def describe_material(self):
+        return self.material.BriefDescription if self.material else self.name

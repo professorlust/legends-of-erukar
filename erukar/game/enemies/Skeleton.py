@@ -30,7 +30,7 @@ class Skeleton(Enemy):
         self.randomize_equipment()
         self.set_vision_results('You see a {alias}.','You see a {alias}. {describe}',(0,1))
         self.set_sensory_results('You hear movement.','You hear a {alias}.',(0, 1))
-        self.set_detailed_results('There is a skeleton holding a {describe|right}.','The skeleton is holding a {describe|right} in its right hand and {describe|left} in its left. ')
+        self.set_detailed_results('There is a skeleton holding a {describe_material|right}.','The skeleton is holding a {describe_material|right} in its right hand and {describe_material|left} in its left. ')
 
     def randomize_equipment(self):
         self.right = Sword()

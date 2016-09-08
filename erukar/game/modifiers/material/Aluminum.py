@@ -1,11 +1,12 @@
 from erukar.game.modifiers.MaterialModifier import MaterialModifier
 
 class Aluminum(MaterialModifier):
-    Probability = 400
+    Probability = 200
     ProbabilityFromFabrication = 0.1
     Desirability = 1.0
 
-    AbsoluteMinimalDescription = "The {EssentialPart} is a shiny metal color."
+    BriefDescription = "a grayish {BaseName}"
+    AbsoluteMinimalDescription = "The {EssentialPart} is an unpolished metallic gray."
     VisualMinimalDescription = "The {EssentialPart} has been forged with some sort of worked, gray metal."
     VisualIdealDescription = "The {EssentialPart} of the {BaseName} has been forged from an unpolished aluminum."
     SensoryMinimalDescription = "The {BaseName} is lighter than you anticipate."

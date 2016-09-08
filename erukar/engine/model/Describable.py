@@ -21,6 +21,8 @@ class Describable(Interactible):
     If both Ideals are met, the user should be given even more information,
     though sometimes this is unnecessary.
     '''
+    BriefDescription = "Brief Description"
+    AbsoluteMinimalDescription = ""
 
     def __init__(self):
         self.vision_range = (0, 1)
@@ -48,7 +50,7 @@ class Describable(Interactible):
                 format_name = '|'.join(cap)
             # Get the value from the target
             if hasattr(target, cap[0]):
-                value = getattr(target, cap[0]) 
+                value = getattr(target, cap[0])
                 if callable(value):
                     value = value()
                 mutation_arguments[format_name] = value
@@ -99,7 +101,7 @@ class Describable(Interactible):
             return self.mutate(self.describe_visual(lifeform, acuity))
         if sense >= self.sense_range[0]:
             return self.mutate(self.describe_sensory(lifeform, sense))
-        return ''
+        return self.mutate(self.AbsoluteMinimalDescription)
 
     def on_inspect(self, lifeform, acuity, sense):
         return self.describe_base(lifeform, acuity, sense)

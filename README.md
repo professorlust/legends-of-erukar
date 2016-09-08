@@ -3,6 +3,11 @@
 
 The Legends of Erukar is a procedurally-generated multiplayer online dungeon (MUD) set in the world of Tolmea. Every single thing is stochastically generated per shard. Locations, though their names may be consistent from shard to shard, will be generated on creation and persisted. Dungeons may or may not be persisted; this will be determined at a later point in time.
 
+Track my progress on [Trello](https://trello.com/b/1M9LUBqx/legends-of-erukar) and on my [Personal Page](evankirsch.io)! Below are the latest development blogs.
+
+* 09/08/2016 -- [Narrative on a per-character basis](https://evankirsch.io/blogs/loe-devblog-090916)
+* 08/19/2016 -- [Procedural Generation of Dungeons and Items](https://evankirsch.io/blogs/loe-devblog-081916)
+
 ### Stochastic Generation
 All weapons, armor, items, monsters, etc. will be random. The basis for generation is as follows.
 
