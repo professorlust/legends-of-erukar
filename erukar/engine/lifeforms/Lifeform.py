@@ -123,7 +123,7 @@ class Lifeform(RpgEntity):
         return  10+math.ceil(0.5*x*x + pow(2, math.exp((x-100)/x)))
 
     def calculate_necessary_xp(self):
-        return calculate_xp_worth()*5
+        return self.calculate_xp_worth()*5
 
     def award_xp(self, xp):
         self.current_xp += xp
