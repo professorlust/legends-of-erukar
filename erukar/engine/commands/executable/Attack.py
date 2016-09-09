@@ -125,7 +125,7 @@ class Attack(ActionCommand):
         if attack_roll <= armor_class:
             return Attack.unsuccessful.format(**args)
 
-        enemy.take_damage(damage)
+        enemy.take_damage(damage, subject)
         attack_string = Attack.successful.format(**args)
 
         if hasattr(enemy, 'afflictions'):

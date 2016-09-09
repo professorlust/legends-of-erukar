@@ -115,9 +115,18 @@ class Lifeform(RpgEntity):
         '''Alias to simplify the check to see if the lifeform has an affliction'''
         return any(x for x in self.afflictions if isinstance(x, aff_type))
 
-    def take_damage(self, damage):
+    def calculate_xp_worth(self):
+        if self.level >= 100:
+            return 100*self.level
+        x = self.level
+        return  10+math.ceil(0.5*x*x + pow(2, math.exp((x-100)/x)))
+
+    def take_damage(self, damage, instigator=None):
         if self.afflicted_with(erukar.engine.afflictions.Dying):
             self.kill()
+            if instigator is not None:
+                xp = self.calculate_xp_worth()
+                print('{} has received {} xp!'.format(instigator.alias(), xp))
             return
 
         self.health = max(0, self.health - damage)

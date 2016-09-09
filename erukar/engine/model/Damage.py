@@ -6,7 +6,7 @@ class Damage:
         self.damage = damage_range
         self.modifier = mod
         self.distribution, self.dist_params = dist_and_params
-        
+
     def roll(self, attacker):
         random_val = self.distribution(*self.dist_params)
         raw = np.round((self.damage[1] - self.damage[0]) * random_val) + self.damage[0]
