@@ -87,7 +87,7 @@ class AttackTests(unittest.TestCase):
 
     def test_adjudicate_attack_cause_dying(self):
         p = Player()
-        p.define_stats({ 'strength': 2 })
+        p.strength =2
         p.uid = 'Bob'
         p.right = Weapon()
         p.right.damages = [Damage('slashing',(10,12),'',(np.random.uniform, (0,1)))]
@@ -110,7 +110,8 @@ class AttackTests(unittest.TestCase):
         r = Room(None)
 
         p = Player()
-        p.define_stats({ 'strength': 2, 'dexterity': 20 })
+        p.strength = 2
+        p.dexterity = 20
         p.uid = 'Bob'
         p.right = Weapon()
         p.link_to_room(r)

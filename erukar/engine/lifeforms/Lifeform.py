@@ -4,14 +4,6 @@ from erukar.engine.afflictions.Dying import Dying
 import erukar, math, random
 
 class Lifeform(RpgEntity):
-    attribute_types = [
-        "strength", 
-        "dexterity", 
-        "vitality", 
-        "acuity", 
-        "sense", 
-        "resolve"]
-    attribute_value_default = 0 
     attack_damage_attribute = "strength"
     attack_roll_attribute = "dexterity"
     armor_attribute = "dexterity"
@@ -36,8 +28,12 @@ class Lifeform(RpgEntity):
     full_health = ['The lifeform is at full health']
 
     def __init__(self, name=""):
-        for att in Lifeform.attribute_types:
-            setattr(self, att, Lifeform.attribute_value_default)
+        self.strength   = 0
+        self.dexterity  = 0
+        self.vitality   = 0
+        self.acuity     = 0
+        self.sense      = 0
+        self.resolve    = 0
         self.current_room = None
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
@@ -86,11 +82,6 @@ class Lifeform(RpgEntity):
                 score += getattr(aff, stat_type)
         return score
 
-    def define_stats(self, stats):
-        '''Takes a dictionary to define stats.'''
-        for stat in [stat for stat in stats if hasattr(self, stat)]:
-            setattr(self, stat, stats[stat])
-
     def is_incapacitated(self):
         return any(aff for aff in self.afflictions if aff.Incapacitates)
 
@@ -119,10 +110,6 @@ class Lifeform(RpgEntity):
                     total_ac += armor.calculate_armor_class()
 
         return total_ac + ac_mod
-
-    def skill_range(self, skill_type):
-        skill_value = self.get(skill_type)
-        return (1+skill_value, 20+(2*skill_value))
 
     def afflicted_with(self, aff_type):
         '''Alias to simplify the check to see if the lifeform has an affliction'''

@@ -117,9 +117,9 @@ class Attack(ActionCommand):
         damage_descriptions = ', '.join(["{} {}".format(*x) for x in damages])
 
         args = {
-            'subject': subject.alias(), 
-            'target': enemy.alias(), 
-            'roll': attack_roll, 
+            'subject': subject.alias(),
+            'target': enemy.alias(),
+            'roll': attack_roll,
             'damage': damage_descriptions}
 
         if attack_roll <= armor_class:
@@ -127,7 +127,7 @@ class Attack(ActionCommand):
 
         enemy.take_damage(damage)
         attack_string = Attack.successful.format(**args)
-        
+
         if hasattr(enemy, 'afflictions'):
             if enemy.afflicted_with(erukar.engine.afflictions.Dying):
                 attack_string = attack_string + Attack.caused_dying.format(**args)
@@ -143,14 +143,14 @@ class Attack(ActionCommand):
         if target in room.contents:
             room.remove(target)
         room.add(Corpse(target))
-    
+
     def calculate_attack(self, character, weapon, target):
         '''Involves the calculation of armor_class, attack roll, and damage'''
         armor_class = target.calculate_armor_class()
         if weapon is None:
             return [0, armor_class, 0]
 
-        attack_roll = character.roll(character.skill_range('dexterity'))
+        attack_roll = character.roll(character.stat_random_range('dexterity'))
         damage = weapon.roll(character)
 
         return [attack_roll, armor_class, damage]

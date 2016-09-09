@@ -10,13 +10,11 @@ w.activate()
 # Controlled Character
 character = Player()
 character.uid = 'ControlledPlayer'
-character.define_stats({'dexterity': 2, 'acuity': 0})
 player = PlayerNode(character.uid, character)
 
 # Uncontrolled Character
 ucharacter = Player()
 ucharacter.uid = 'NonPlayableCharacter'
-ucharacter.define_stats({'dexterity': 2, 'acuity': 0})
 npc = PlayerNode(ucharacter.uid, ucharacter)
 
 w.subscribe(player)

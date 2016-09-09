@@ -75,7 +75,11 @@ class Instance(Manager):
     def create_player_node(self, uid):
         character = Player()
         character.uid = uid
-        character.define_stats({'dexterity': 2, 'strength': 2,'resolve': 4, 'acuity': 2, 'sense': 2})
+        character.dexterity = 2
+        character.strength = 2
+        character.resolve = 4
+        character.acuity = 2
+        character.sense = 2
         character.define_level(1)
         p = PlayerNode(uid, character)
         self.data.players.append(p)
@@ -149,7 +153,7 @@ class Instance(Manager):
         for i in range(self.MaximumTurnSkipPenalty):
             next_player = self.turn_manager.next()
             if next_player is not self.active_player:
-                break
+               break
         self.active_player = next_player
 
     def execute_command(self, cmd):
