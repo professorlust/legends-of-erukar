@@ -10,7 +10,7 @@ class TurnManager(Manager):
         self.current_turn_count = 0
         self.turn_order = None  # This will be a generator
         self.most_recent_active_commands = {}
-        
+
     def subscribe(self, player):
         super().subscribe(player)
         self.turn_order = self.turn_order_generator(self.current_turn_count)

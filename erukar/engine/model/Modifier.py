@@ -60,5 +60,5 @@ class Modifier(Describable):
         Used to determine if the entity belongs to either the Permitted or 
         the Prohibited Entities Lists
         '''
-        return any(r for r in group if r == type(entity) or issubclass(type(entity), r))
+        return any(r for r in group if isinstance(entity, r))
 

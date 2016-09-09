@@ -24,6 +24,10 @@ class Instance(Manager):
         (ModuleDecorator, "structure.passages"),
         (ModuleDecorator, "phenomena")]
 
+    def __init__(self):
+        super().__init__()
+        self.command_contexts = {}
+
     def activate(self, action_commands, non_action_commands, joins, generation_parameters):
         '''Here generation_parameters is a GenerationProfile'''
         self.turn_manager = TurnManager()
@@ -35,12 +39,13 @@ class Instance(Manager):
         self.dungeon = d.generate()
         self.decorate(generation_parameters)
         self.subscribe_enemies()
-        self.had_players = False
+        self.has_had_players = False
 
     def subscribe_enemies(self):
         for room in self.dungeon.rooms:
             for item in room.contents:
                 if issubclass(type(item), erukar.engine.lifeforms.Enemy):
+                    self.command_contexts[item.uid] = None
                     self.turn_manager.subscribe(item)
                     self.data.players.append(item)
 
@@ -63,8 +68,9 @@ class Instance(Manager):
         room = self.dungeon.rooms[0]
         p.character.link_to_room(room)
         p.move_to_room(room)
-        self.turn_manager.subscribe(p )
-        self.had_players = True
+        self.turn_manager.subscribe(p)
+        self.command_contexts[player.uid] = None
+        self.has_had_players = True
 
     def create_player_node(self, uid):
         character = Player()
@@ -78,22 +84,26 @@ class Instance(Manager):
         return p
 
     def instance_running(self, action_commands, non_action_commands, joins, gen_params):
+        # Activate and initialize timers
         self.activate(action_commands, non_action_commands, joins, gen_params)
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
         self.active_player = None
 
-        while not self.had_players or self.turn_manager.has_players():
+        while not self.has_had_players or self.turn_manager.has_players():
+            # Check for newly connecting players
             if any(self.joins):
                 cmd = self.joins.pop()
                 self.subscribe(cmd.find_player())
 
+            # Check to see if our active Player exists and can send commands 
             if self.active_player is not None and not self.active_player.is_incapacitated():
+                # run any non action command by any player
                 if any(self.non_action_commands):
-                    # Run ALL of these
                     cmd = self.non_action_commands.pop()
                     self.execute_command(cmd)
 
+                # if this is a player and not an AI, try to run an active command
                 if isinstance(self.active_player, erukar.engine.model.PlayerNode):
                     player_cmd = self.get_active_player_action()
                     if player_cmd is None:
@@ -102,11 +112,13 @@ class Instance(Manager):
                     if result is None or (result is not None and not result.success):
                         continue
 
+                # If this is an AI, execute the command without worrying about failure
                 if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
                     cmd = self.active_player.perform_turn()
                     if cmd is not None:
                         self.execute_command(cmd)
 
+            # Get the next player and reset the timer
             self.get_next_player()
             self.timer.cancel()
             self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
@@ -141,8 +153,10 @@ class Instance(Manager):
         self.active_player = next_player
 
     def execute_command(self, cmd):
+        context = self.command_contexts[cmd.sender_uid]
         cmd.data = self.data
         result = cmd.execute()
         if result is not None:
             print(result.result + '\n')
+            self.command_contexts[cmd.sender_uid] = result
         return result

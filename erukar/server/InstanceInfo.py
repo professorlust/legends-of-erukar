@@ -6,8 +6,8 @@ import erukar
 class InstanceInfo:
     '''
     Small object which exists on the main thread that keeps track
-    of information that the Shard should know about a Dungeon 
-    Instance, e.g. PlayerList, command_queue, command results list 
+    of information that the Shard should know about a Dungeon
+    Instance, e.g. PlayerList, command_queue, command results list
     '''
     def __init__(self):
         m = Manager()
@@ -17,6 +17,7 @@ class InstanceInfo:
         self.action_commands = m.list([])
         self.joins = m.list([])
         self.command_results_list = m.list([])
+        self.player_command_contexts = {}
 
     def append(self, command):
         '''appends the command to the correct queue'''
