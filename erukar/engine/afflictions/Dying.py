@@ -5,10 +5,11 @@ class Dying(Affliction):
     Incapacitates = True
 
     def do_begin_of_turn_effect(self):
-        dc = self.afflicted.resolve/2 + 25
+        dc = 25
         skill_range = self.afflicted.stat_random_range('resolve')
+        mod = 10*(1-(pow((self.afflicted.resolve-1000)/1000, 2)))
 
-        if random.uniform(*skill_range) >= dc:
+        if random.uniform(*skill_range)+mod >= dc:
             self.afflicted.afflictions.remove(self)
             return '{} has regained the strength to fight!'.format(self.afflicted.alias())
 

@@ -34,6 +34,7 @@ class Lifeform(RpgEntity):
         self.acuity     = 0
         self.sense      = 0
         self.resolve    = 0
+        self.current_xp = 0
         self.current_room = None
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
@@ -121,12 +122,22 @@ class Lifeform(RpgEntity):
         x = self.level
         return  10+math.ceil(0.5*x*x + pow(2, math.exp((x-100)/x)))
 
+    def calculate_necessary_xp(self):
+        return calculate_xp_worth()*5
+
+    def award_xp(self, xp):
+        self.current_xp += xp
+        while self.current_xp >= self.calculate_necessary_xp():
+            self.current_xp -= self.calculate_necessary_xp()
+            self.define_level(self.level + 1)
+            print('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
+
     def take_damage(self, damage, instigator=None):
         if self.afflicted_with(erukar.engine.afflictions.Dying):
             self.kill()
             if instigator is not None:
                 xp = self.calculate_xp_worth()
-                print('{} has received {} xp!'.format(instigator.alias(), xp))
+                instigator.award_xp(xp)
             return
 
         self.health = max(0, self.health - damage)
