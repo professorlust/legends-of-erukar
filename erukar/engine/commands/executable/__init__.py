@@ -1,5 +1,6 @@
 from .Attack import Attack
 from .Close import Close
+from .Drop import Drop
 from .Equip import Equip
 from .Give import Give
 from .Inspect import Inspect
@@ -17,6 +18,7 @@ from .Use import Use
 __all__ = [
     "Attack",
     "Close",
+    "Drop",
     "Equip",
     "Give",
     "Inspect",

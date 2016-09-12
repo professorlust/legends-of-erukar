@@ -24,7 +24,7 @@ class Take(ActionCommand):
             return Take.cannot_take.format(item.alias().capitalize())
 
         # We found it, so give it to the player and return a success msg
-        player.character.inventory.append(item)
+        player.lifeform().inventory.append(item)
         container = player.index(item)
         player.remove_index(item)
         if len(container) > 0:
