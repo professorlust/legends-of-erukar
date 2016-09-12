@@ -6,7 +6,7 @@ class Enemy(Lifeform, Indexer):
     def __init__(self, name=""):
         Indexer.__init__(self)
         Lifeform.__init__(self, name)
-        
+
         chars = string.ascii_uppercase + string.digits
         self.uid = ''.join(random.choice(chars) for x in range(128))
 
@@ -26,14 +26,14 @@ class Enemy(Lifeform, Indexer):
     def do_move(self, direction):
         m = erukar.engine.commands.executable.Move()
         m.sender_uid = self.uid
-        m.payload = direction.name
+        m.user_specified_payload = direction.name
         return m
 
     def do_attack(self, targets):
         target = random.choice(targets)
         a = erukar.engine.commands.executable.Attack()
         a.sender_uid = self.uid
-        a.payload = target.alias()
+        a.user_specified_payload = target.alias()
         return a
 
     def viable_targets(self, room):

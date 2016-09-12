@@ -1,6 +1,6 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.server.DataAccess import DataAccess
-import sys, inspect
+import sys, inspect, erukar
 
 class Interface:
     command_location = 'erukar.engine.commands.executable'
@@ -38,8 +38,10 @@ class Interface:
         if created is None:
             created = self.check_for_aliases(command, generation_parameters)
 
-        if created is None:
-            return Interface.command_does_not_exist.format(command)
+        # Prevent noninstances from breaking through here
+        if created is None or not isinstance(created, erukar.engine.commands.Command):
+            generation_parameters['user_specified_payload'] = line
+            created = self.factory.create_one('erukar.engine.commands.AmbiguousCommand', generation_parameters)
 
         # The Command can return something if it needs to for some reason
         instance = self.shard.player_current_instance(uid)

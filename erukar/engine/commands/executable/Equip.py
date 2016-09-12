@@ -39,8 +39,8 @@ class Equip(ActionCommand):
 
     def determine_type(self, item):
         '''
-        This determines what equipment slot should be evaluated; prior to this, it 
-        is assumed that check_for_arguments has been called to determine which hand 
+        This determines what equipment slot should be evaluated; prior to this, it
+        is assumed that check_for_arguments has been called to determine which hand
         to assign to.
         '''
         if item.belongs_in_hand():
