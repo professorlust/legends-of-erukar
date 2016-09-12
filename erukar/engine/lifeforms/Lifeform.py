@@ -1,6 +1,6 @@
 from erukar.engine.model.RpgEntity import RpgEntity
-from erukar.engine.afflictions.Dead import Dead
-from erukar.engine.afflictions.Dying import Dying
+from erukar.engine.effects.Dead import Dead
+from erukar.engine.effects.Dying import Dying
 import erukar, math, random
 
 class Lifeform(RpgEntity):
@@ -135,7 +135,7 @@ class Lifeform(RpgEntity):
             print('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
 
     def take_damage(self, damage, instigator=None):
-        if self.afflicted_with(erukar.engine.afflictions.Dying):
+        if self.afflicted_with(erukar.engine.effects.Dying):
             self.kill(killer=instigator)
             return
         self.health = max(0, self.health - damage)

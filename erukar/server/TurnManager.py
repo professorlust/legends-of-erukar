@@ -42,7 +42,7 @@ class TurnManager(Manager):
             current_turn_count = (current_turn_count + 1) % TurnManager.MaximumTurnCount
             for player in self.players:
                 if (current_turn_count+1) % player.turn_modifier() == 0:
-                    if player.afflicted_with(erukar.engine.afflictions.Dead):
+                    if player.afflicted_with(erukar.engine.effects.Dead):
                         continue
                     yield (player, current_turn_count)
 
@@ -51,5 +51,5 @@ class TurnManager(Manager):
 
     def is_playable(self, p):
         if isinstance(p, erukar.engine.model.PlayerNode):
-            return not p.afflicted_with(erukar.engine.afflictions.Dead)
+            return not p.afflicted_with(erukar.engine.effects.Dead)
         return False

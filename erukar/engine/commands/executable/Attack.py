@@ -129,10 +129,10 @@ class Attack(ActionCommand):
         attack_string = Attack.successful.format(**args)
 
         if hasattr(enemy, 'afflictions'):
-            if enemy.afflicted_with(erukar.engine.afflictions.Dying):
+            if enemy.afflicted_with(erukar.engine.effects.Dying):
                 attack_string = attack_string + Attack.caused_dying.format(**args)
 
-            if enemy.afflicted_with(erukar.engine.afflictions.Dead):
+            if enemy.afflicted_with(erukar.engine.effects.Dead):
                 self.create_corpse(enemy)
                 attack_string = attack_string + Attack.caused_death.format(**args)
 

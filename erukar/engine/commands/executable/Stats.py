@@ -43,4 +43,6 @@ class Stats(Command):
 
     def give_details(self, wanted, lifeform):
         desc = self.descriptions[wanted]
-        return '{}: {}\n\nYour current {} score:  {}'.format(wanted.capitalize(), desc, wanted, lifeform.calculate_stat_score(wanted))
+        result = ['{}: {}'.format(wanted.capitalize(), desc),\
+                'Your current {} score:  {}'.format(wanted, lifeform.calculate_stat_score(wanted))]
+        return '\n\n'.join(result)
