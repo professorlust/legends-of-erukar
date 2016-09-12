@@ -15,10 +15,11 @@ class Inspect(ActionCommand):
         player = self.find_player()
         room = player.character.current_room
         self.index(room, player)
-        direction = self.determine_direction(self.payload.lower())
+        payload = self.payload()
+        direction = self.determine_direction(payload.lower())
 
         if direction is None:
-            return self.succeed(self.inspect_in_room(player, room, self.payload))
+            return self.succeed(self.inspect_in_room(player, room, payload))
 
         result = room.directional_inspect(direction, player.lifeform())
         if result is None:

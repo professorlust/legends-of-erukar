@@ -11,7 +11,7 @@ class Move(ActionCommand):
 
     def execute(self):
         player = self.find_player()
-        direction = self.determine_direction(self.payload.lower())
+        direction = self.determine_direction(self.payload().lower())
         if direction is None: return ''
         in_direction = self.lifeform(player).current_room.get_in_direction(direction)
 

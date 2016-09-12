@@ -27,7 +27,7 @@ class TakeTests(unittest.TestCase):
         t = Take()
         t.sender_uid = p.uid
         t.data = data_store
-        t.payload = 'sword'
+        t.user_specified_payload = 'sword'
         result = t.execute()
 
         self.assertTrue(w in p.inventory)
@@ -50,7 +50,7 @@ class TakeTests(unittest.TestCase):
         t = Take()
         t.sender_uid = p.uid
         t.data = data_store
-        t.payload = 'Sword'
+        t.user_specified_payload = 'Sword'
         result = t.execute()
 
         self.assertTrue(w in r.contents)

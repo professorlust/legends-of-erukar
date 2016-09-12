@@ -157,7 +157,7 @@ class Instance(Manager):
         self.active_player = next_player
 
     def execute_command(self, cmd):
-        context = self.command_contexts[cmd.sender_uid]
+        cmd.context = self.command_contexts[cmd.sender_uid]
         cmd.data = self.data
         result = cmd.execute()
         if result is not None:

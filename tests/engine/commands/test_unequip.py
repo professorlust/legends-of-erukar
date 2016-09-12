@@ -17,7 +17,7 @@ class UnequipTests(unittest.TestCase):
         u = Unequip()
         u.sender_uid = p.uid
         u.data = data_store
-        u.payload = 'sword'
+        u.user_specified_payload = 'sword'
         result = u.execute()
 
         self.assertTrue(w in p.inventory)
@@ -39,7 +39,7 @@ class UnequipTests(unittest.TestCase):
         u = Unequip()
         u.sender_uid = p.uid
         u.data = data_store
-        u.payload = 'plate mail'
+        u.user_specified_payload = 'plate mail'
         result = u.execute()
 
         self.assertTrue(a in p.inventory)
@@ -60,7 +60,7 @@ class UnequipTests(unittest.TestCase):
         u = Unequip()
         u.sender_uid = p.uid
         u.data = data_store
-        u.payload = 'potion'
+        u.user_specified_payload= 'potion'
         result = u.execute()
 
         self.assertTrue(i in p.inventory)

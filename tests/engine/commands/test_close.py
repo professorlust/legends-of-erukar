@@ -15,7 +15,7 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
-        o.payload = 'north'
+        o.user_specified_payload = 'north'
 
         result = o.execute()
 
@@ -36,7 +36,7 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
-        o.payload = 'south'
+        o.user_specified_payload = 'south'
 
         result = o.execute()
 
@@ -59,7 +59,7 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
-        o.payload = 'south'
+        o.user_specified_payload = 'south'
 
         result = o.execute()
 
@@ -81,7 +81,7 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
-        o.payload = 'south'
+        o.user_specified_payload = 'south'
 
         result = o.execute()
 
@@ -106,7 +106,7 @@ class CloseTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        o.payload = 'south'
+        o.user_specified_payload = 'south'
 
         result = o.execute()
 
@@ -129,7 +129,7 @@ class CloseTests(unittest.TestCase):
         o.sender_uid = p.uid
         o.data = data_store
 
-        o.payload = 'chest'
+        o.user_specified_payload = 'chest'
 
         result = o.execute()
 

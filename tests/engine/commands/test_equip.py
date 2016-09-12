@@ -16,7 +16,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.sender_uid = p.uid
         e.data = data_store
-        e.payload = 'sword'
+        e.user_specified_payload = 'sword'
         result = e.execute()
 
         self.assertTrue(w in p.inventory)
@@ -39,7 +39,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.sender_uid = p.uid
         e.data = data_store
-        e.payload = 'plate mail'
+        e.user_specified_payload = 'plate mail'
         result = e.execute()
 
         self.assertTrue(a in p.inventory)
@@ -59,7 +59,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.sender_uid = p.uid
         e.data = data_store
-        e.payload = 'potion'
+        e.user_specified_payload = 'potion'
         result = e.execute()
 
         self.assertTrue(i in p.inventory)
@@ -80,7 +80,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.sender_uid = p.uid
         e.data = data_store
-        e.payload = 'sword'
+        e.user_specified_payload = 'sword'
         result = e.execute()
 
         self.assertTrue(i in p.inventory)

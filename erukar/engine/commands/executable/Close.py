@@ -8,15 +8,16 @@ class Close(ActionCommand):
 
     def execute(self):
         player = self.find_player()
+        payload = self.payload()
         room = player.character.current_room
-        direction = self.determine_direction(self.payload.lower())
+        direction = self.determine_direction(payload.lower())
 
         # If the payload was NESW, treat this as a door
         if direction is not None:
             return self.handle_doors(room, direction, player)
 
         # Otherwise we need to find in the room
-        return self.handle_contents(room, player, self.payload)
+        return self.handle_contents(room, player, payload)
 
     def handle_contents(self, room, player, item_name):
         '''Try to find the item in the room, then run on_close on it if so'''

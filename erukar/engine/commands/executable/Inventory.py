@@ -8,13 +8,14 @@ class Inventory(Command):
 
     def execute(self, *_):
         char = self.find_player().character
-
+        # All of the Other items
         items = '\n'.join(['{:2}. {}'.format(i, char.inventory[i].on_inventory())\
-            for i in range(0, len(char.inventory))])
+            for i in range(len(char.inventory))])
         equipment = self.equipment(char)
         return self.succeed(self.header.format(equipment, items))
 
     def equipment(self, character):
+        '''Draw (Equipped) Equipment'''
         armor_results = []
         for armor_type in Lifeform.equipment_types:
             armor = getattr(character, armor_type)
@@ -25,6 +26,7 @@ class Inventory(Command):
         return '\n'.join(armor_results)
 
     def get_header(self, char):
+        '''Draw Equipment'''
         result = Inventory.header
         descriptions = (self.describe_attribute(char, item_type)\
             for item_type in Lifeform.equipment_types)

@@ -8,16 +8,17 @@ class Take(ActionCommand):
 
     def execute(self):
         player = self.find_player()
+        payload = self.payload()
         room = player.character.current_room
         if player is None: return
 
         # Try to find the item in the room
-        item = self.find_in_room(room, self.payload)
+        item = self.find_in_room(room, payload)
         if item is not None:
             return self.succeed(self.move_to_inventory(item, player, room))
 
         # Send a failure message
-        return self.fail(Take.failure.format(self.payload))
+        return self.fail(Take.failure.format(payload))
 
     def move_to_inventory(self, item, player, room):
         if not issubclass(type(item), Item):

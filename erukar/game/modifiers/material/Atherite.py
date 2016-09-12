@@ -13,8 +13,3 @@ class Atherite(MaterialModifier):
     DetailedMinimalDescription = "The {EssentialPart} feels magical to you and has been forged from a whitish metal which shimmers a faint blue light."
     DetailedIdealDescription = "The {BaseName}'s {EssentialPart} has been forged from Atherite, a magical ore which is white and shimmers a blue light; you feel that this weapon possesses some link to magical chaos."
     Adjective = "Atherite"
-
-    def apply_to(self, item):
-        super().apply_to(item)
-        item.name = 'Atherite ' + item.name
-

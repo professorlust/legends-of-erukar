@@ -6,17 +6,25 @@ class Command:
         '''These parameters are assigned after instantiation'''
         self.sender_uid = ''
         self.data = None
-        self.payload = ''
+        self.context = None
+        self.user_specified_payload = ''
         self.arguments = {}
+
+    def payload(self):
+        if self.context:
+            if self.user_specified_payload.isdigit() or \
+               (len(self.user_specified_payload) > 1 and self.user_specified_payload in self.context.indexed_items):
+                return self.context.indexed_items[self.payload]
+        return self.user_specified_payload
 
     def process_arguments(self):
         pass
 
-    def succeed(self, result):
-        return CommandResult(True, self, result)
+    def succeed(self, result, indexed=None):
+        return CommandResult(True, self, result, indexed)
 
-    def fail(self, result):
-        return CommandResult(False, self, result)
+    def fail(self, result, indexed=None):
+        return CommandResult(False, self, result, indexed)
 
     def execute(self):
         '''Run this Command as a player'''
@@ -53,7 +61,7 @@ class Command:
             if p.matches(item_name):
                 yield p
 
-    def determine_direction(self, payload):
+    def determine_direction(self, text):
         '''Take text and determine its respective cardinal direction'''
 
         couples = [
@@ -63,4 +71,4 @@ class Command:
             { "keywords": ['w', 'west'], "direction": Direction.West } ]
 
         return next((x['direction'] for x in couples \
-            if any([k == payload for k in x['keywords']])), None)
+            if any([k == text for k in x['keywords']])), None)

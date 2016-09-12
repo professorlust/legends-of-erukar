@@ -25,8 +25,9 @@ class Stats(Command):
         player = self.find_player()
         lifeform = self.lifeform(player)
 
-        if self.payload:
-            wanted = next((x for x in self.attribute_types if self.payload in x), None)
+        payload = self.payload()
+        if payload:
+            wanted = next((x for x in self.attribute_types if payload in x), None)
             if wanted is not None:
                 return self.succeed(self.give_details(wanted, lifeform))
 

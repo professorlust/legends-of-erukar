@@ -18,7 +18,7 @@ class AttackTests(unittest.TestCase):
         a = Attack()
         a.sender_uid = p.uid
         a.data = data_store
-        a.payload = "the air"
+        a.user_specified_payload = "the air"
 
         result = a.execute()
 
@@ -43,7 +43,7 @@ class AttackTests(unittest.TestCase):
         a = Attack()
         a.sender_uid = p.uid
         a.data = data_store
-        a.payload = "the air"
+        a.user_specified_payload = "the air"
 
         result = a.execute()
 

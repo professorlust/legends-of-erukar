@@ -8,4 +8,5 @@ class MaterialModifier(ItemModifier):
     PermittedEntities = [Weapon, Armor]
 
     def apply_to(self, item):
+        item.name = ' '.join([self.Adjective, item.name])
         item.material = self

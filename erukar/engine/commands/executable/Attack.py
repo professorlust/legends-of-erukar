@@ -12,20 +12,18 @@ class Attack(ActionCommand):
     caused_death = "\n{target} has been slain by {subject}!"
 
     def execute(self):
-        player = self.find_player()
-        lifeform = self.lifeform(player)
-
-        self.check_for_arguments(lifeform)
+        lifeform = self.find_player().lifeform()
+        payload = self.check_for_arguments(lifeform)
 
         if len(self.weapons) == 0:
             return self.fail('You must equip a weapon in order to attack')
 
         # Determine if this is directional attack
-        direction = self.determine_direction(self.payload.lower())
+        direction = self.determine_direction(payload.lower())
         if direction is not None:
             return self.succeed(self.do_directional_attacks(lifeform, direction))
 
-        return self.succeed(self.do_attack(lifeform))
+        return self.succeed(self.do_attack(payload, lifeform))
 
     def check_for_arguments(self, lifeform):
         '''
@@ -37,20 +35,20 @@ class Attack(ActionCommand):
         The lifeform will eventually need to make a decision for itself as
         to what hand is dominant.
         '''
+        payload = self.payload()
         for r in ['main ', 'primary ', 'right ']:
-            if self.payload[:len(r)] == r:
+            if payload[:len(r)] == r:
                 self.weapons = [getattr(lifeform, 'right')]
-                self.payload = self.payload[:len(r)]
-                return
+                return payload[:len(r)]
 
         for r in ['off ', 'offhand ', 'left ']:
-            if self.payload[:len(r)] == r:
+            if payload[:len(r)] == r:
                 self.weapons = [getattr(lifeform, 'left')]
-                self.payload = self.payload[:len(r)]
-                return
+                return payload[:len(r)]
 
         self.weapons = [getattr(lifeform, hand) for hand in ['left','right'] \
                             if self.can_attack_with_hand(lifeform, hand)]
+        return payload
 
     def can_attack_with_hand(self, lifeform, hand):
         weapon = getattr(lifeform, hand)
@@ -67,12 +65,12 @@ class Attack(ActionCommand):
             attack_results.append(res)
         return '\n'.join(attack_results)
 
-    def do_attack(self, lifeform):
+    def do_attack(self, payload, lifeform):
         '''Attack an enemy within the current room'''
         attack_results = []
-        target = self.find_in_room(lifeform.current_room, self.payload)
+        target = self.find_in_room(lifeform.current_room, payload)
         if target is None:
-            return Attack.not_found.format(self.payload)
+            return Attack.not_found.format(payload)
         for weapon in self.weapons:
             if weapon is None: continue
             res = self.adjudicate_attack(lifeform, weapon, target)

@@ -5,7 +5,7 @@ class Aluminum(MaterialModifier):
     ProbabilityFromFabrication = 0.1
     Desirability = 1.0
 
-    BriefDescription = "a grayish {BaseName}"
+    BriefDescription = "a {BaseName} with a metallic gray {EssentialPart}"
     AbsoluteMinimalDescription = "The {EssentialPart} is an unpolished metallic gray."
     VisualMinimalDescription = "The {EssentialPart} has been forged with some sort of worked, gray metal."
     VisualIdealDescription = "The {EssentialPart} of the {BaseName} has been forged from an unpolished aluminum."
@@ -14,7 +14,3 @@ class Aluminum(MaterialModifier):
     DetailedMinimalDescription = "The {EssentialPart} of the {BaseName} is very light, as it has been forged from some sort of unpolished aluminum."
     DetailedIdealDescription = "The {BaseName}'s {EssentialPart} has been forged from a sturdy and lightweight, yet unpolished, aluminum."
     Adjective = "Aluminum"
-
-    def apply_to(self, item):
-        super().apply_to(item)
-        item.name = 'Aluminum ' + item.name

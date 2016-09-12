@@ -7,12 +7,12 @@ class Use(ActionCommand):
     def execute(self):
         player = self.find_player()
         if player is None: return
-        self.check_for_arguments()
+        payload = self.check_for_arguments()
 
         # Get the subject
-        items = self.find_all_in_inventory(player, self.payload)
+        items = self.find_all_in_inventory(player, payload)
         if len(items) == 0:
-            return self.fail('Could not find item "{}".',format(self.payload))
+            return self.fail('Could not find item "{}".',format(payload))
 
         # Get the object
         target = None
@@ -44,7 +44,8 @@ class Use(ActionCommand):
         return item.toggle_lock(target)
 
     def check_for_arguments(self):
-        if ' on ' in self.payload:
-            args = self.payload.split(' on ', 1)
-            self.payload = args[0]
+        payload = self.payload()
+        if ' on ' in payload:
+            args = payload.split(' on ', 1)
             self.arguments['object'] = args[1]
+            return args[0]

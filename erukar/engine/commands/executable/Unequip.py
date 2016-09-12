@@ -11,45 +11,46 @@ class Unequip(ActionCommand):
     unequipped_helm = "'{}' unequipped from helm successfully"
     unequipped_gloves = "'{}' unequipped from gloves successfully"
     unequipped_pants = "'{}' unequipped from pants successfully"
-    unequipped_boots = "'{}' unequipped from boots successfully"
+    unequipped_feet = "'{}' unequipped from feet successfully"
     unequipped_ring = "'{}' unequipped from ring successfully"
     unequipped_amulet = "'{}' unequipped from amulet successfully"
     unequipped_blessing = "'{}' unequipped from blessing successfully"
 
     def execute(self):
-        player = self.find_player()
-        if player is None: return
-
-        lifeform = self.lifeform(player)
-        self.check_for_arguments()
+        lifeform = self.find_player().lifeform()
+        payload = self.check_for_arguments()
 
         # Figure out the item type
-        item_type = self.determine_type(lifeform)
+        item_type = self.determine_type(lifeform, payload)
 
         # remove if we know the type
         if item_type is not '':
             item = getattr(lifeform, item_type)
             setattr(lifeform, item_type, None)
             uneq_string = getattr(self, 'unequipped_{}'.format(item_type))
-            return self.succeed(uneq_string.format(item.describe()))
+            results = uneq_string.format(item.describe())
+            return self.succeed(results, lifeform.inventory)
 
         # Nothing was found
-        return self.fail(Unequip.not_found.format(self.payload))
+        results = Unequip.not_found.format(payload)
+        return self.fail(results, lifeform.inventory)
 
-    def determine_type(self, lifeform):
-        if self.payload in Lifeform.equipment_types:
-            return self.payload
+    def determine_type(self, lifeform, payload):
+        if payload in Lifeform.equipment_types:
+            return payload
         for e_type in Lifeform.equipment_types:
             equipped = getattr(lifeform, e_type)
             if equipped is not None:
-                if self.payload.lower() in equipped.describe().lower():
+                if payload.lower() in equipped.describe().lower():
                      return e_type
         return ''
 
     def check_for_arguments(self):
-        args = self.payload.split(' ', 1)
+        payload = self.payload()
+        args = payload.split(' ', 1)
         self.arguments['hand'] = 'right'
         if len(args) > 1:
             if args[0] in ['left', 'off', 'offhand']:
                 self.arguments['hand'] = 'left'
-                self.payload = args[1]
+                return args[1]
+        return payload

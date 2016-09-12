@@ -21,12 +21,12 @@ class Equip(ActionCommand):
         player = self.find_player()
         if player is None: return
 
-        self.check_for_arguments()
+        payload = self.check_for_arguments()
 
         # Get the item from our inventory if it exists
-        item = self.find_in_inventory(player, self.payload)
+        item = self.find_in_inventory(player, payload)
         if item is None:
-            return self.fail(Equip.not_found.format(self.payload))
+            return self.fail(Equip.not_found.format(payload))
 
         # Check to see if the item's type exists as a field on the character
         item_type = self.determine_type(item)
@@ -50,14 +50,17 @@ class Equip(ActionCommand):
         return 'error_no_equip_slot'
 
     def check_for_arguments(self):
-        args = self.payload.split(' ', 1)
+        payload = self.payload()
+        args = payload.split(' ', 1)
         self.arguments['hand'] = 'right'
         if len(args) <= 1:
-            return
+            return args[0]
 
         if args[0] in ['left', 'off', 'offhand']:
             self.arguments['hand'] = 'left'
-            self.payload = args[1]
+            return args[1]
 
         if args[0] in ['right', 'main', 'primary']:
-            self.payload = args[1]
+            return args[1]
+
+        return payload
