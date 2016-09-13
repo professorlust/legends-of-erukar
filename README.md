@@ -17,7 +17,7 @@ You will need a few tools to make Legends of Erukar work. LoE has been developed
 4. run `install.py`
 
 
-Set up your postgresql using [this guide.](https://www.digitalocean.com/community/tutorials/how-to-create-remove-manage-tables-in-postgresql-on-a-cloud-server). If you have auposstgresthentication issues, confer with [this post](http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge)
+Set up your postgresql using [this guide.](https://www.digitalocean.com/community/tutorials/how-to-create-remove-manage-tables-in-postgresql-on-a-cloud-server). If you have authentication issues, confer with [this post](http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge)
 
 ### Stochastic Generation
 All weapons, armor, items, monsters, etc. will be random. The basis for generation is as follows.
