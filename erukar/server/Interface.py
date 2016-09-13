@@ -50,7 +50,8 @@ class Interface:
             return
         aliased = self.aliases[command]
         target_command = '{0}.{1}'.format(Interface.command_location, aliased.capitalize())
-        return self.factory.create_one(target_command, generation_parameters)
+        res = self.factory.create_one(target_command, generation_parameters)
+        return res
 
     def command_and_payload(self, message):
         '''

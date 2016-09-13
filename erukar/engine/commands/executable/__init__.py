@@ -9,6 +9,7 @@ from .Join import Join
 from .Map import Map
 from .Move import Move
 from .Open import Open
+from .Levelup import Levelup
 from .Quit import Quit
 from .Stats import Stats
 from .Take import Take
@@ -24,6 +25,7 @@ __all__ = [
     "Inspect",
     "Inventory",
     "Join",
+    "Levelup",
     "Map",
     "Move",
     "Open",
