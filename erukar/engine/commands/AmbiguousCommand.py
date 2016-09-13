@@ -2,8 +2,10 @@ from erukar.engine.commands.Command import Command
 
 class AmbiguousCommand(Command):
     def execute(self):
-        if self.context is None:
+        if self.context is None or isinstance(self.context.context, type(self)):
+            self.context = None
             return self.fail('Command is ambiguous.')
+        print(self.context)
 
         new_cmd = type(self.context.context)()
         new_cmd.data = self.data
