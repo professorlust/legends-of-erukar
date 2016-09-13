@@ -75,12 +75,7 @@ class Instance(Manager):
     def create_player_node(self, uid):
         character = Player()
         character.uid = uid
-        character.dexterity = 2
-        character.strength = 2
-        character.resolve = 4
-        character.acuity = 2
-        character.sense = 2
-        character.define_level(1)
+        character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
         p = PlayerNode(uid, character)
         self.data.players.append(p)
         for x in vars(self.generation_parameters):

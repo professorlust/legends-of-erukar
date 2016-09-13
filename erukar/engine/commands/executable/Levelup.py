@@ -27,7 +27,8 @@ class Levelup(Command):
 
     def execute(self, *_):
         self.target = self.find_player().lifeform()
-        self.num_points = len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.ReadyToLevel)])
+        self.num_points = 15*len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.NeedsInitialization)])
+        self.num_points += len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.ReadyToLevel)])
         if self.num_points is 0:
            return self.succeed(self.NoPoints)
 
