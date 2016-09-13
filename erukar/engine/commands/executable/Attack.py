@@ -11,6 +11,8 @@ class Attack(ActionCommand):
     caused_dying = "\n{target} has been incapacitated by {subject}'s attack!"
     caused_death = "\n{target} has been slain by {subject}!"
 
+    aliases = ['attack']
+
     def execute(self):
         lifeform = self.find_player().lifeform()
         payload = self.check_for_arguments(lifeform)

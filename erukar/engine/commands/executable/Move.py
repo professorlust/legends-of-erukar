@@ -9,6 +9,8 @@ class Move(ActionCommand):
     move_successful = 'You have successfully moved {0}.\n\n{1}'
     enemy_movement = '{} has moved {}.'
 
+    aliases = ['move']
+
     def execute(self):
         player = self.find_player()
         direction = self.determine_direction(self.payload().lower())
@@ -26,7 +28,7 @@ class Move(ActionCommand):
         # Move and autoinspect the room for the player
         if in_direction.room is None:
             return self.fail(Move.move_through_wall)
-        return self.succeed(self.change_room(player, in_direction.room, direction))
+        return self.change_room(player, in_direction.room, direction)
 
     def change_room(self, player, new_room, direction):
         '''Used to transfer the character from one room to the next'''
@@ -42,7 +44,8 @@ class Move(ActionCommand):
             i.data = self.data
             i.sender_uid = self.sender_uid
             inspection_result = i.execute()
+            inspection_result.result = Move.move_successful.format(direction.name, inspection_result.result)
 
-            return Move.move_successful.format(direction.name, inspection_result.result)
+            return inspection_result 
 
         return Move.enemy_movement.format(lifeform.alias(), direction.name)

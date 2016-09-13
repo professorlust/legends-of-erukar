@@ -21,6 +21,8 @@ class Stats(Command):
         "resolve": "A measure of mental fortitude and resilience. The higher your score is, the more likely you are to overcome afflictions and highly dangerous situations."
     }
 
+    aliases = ['stats', 'attributes', 'vitals']
+
     def execute(self, *_):
         player = self.find_player()
         lifeform = self.lifeform(player)

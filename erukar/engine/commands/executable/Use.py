@@ -4,6 +4,8 @@ import erukar
 class Use(ActionCommand):
     unlock = "{} successfully unlocked the {}!"
 
+    aliases = ['use']
+
     def execute(self):
         player = self.find_player()
         if player is None: return

@@ -6,6 +6,8 @@ class Take(ActionCommand):
     cannot_take = "'{0}' cannot be taken."
     success = "Successfully took {0}"
 
+    aliases = ['take', 'get', 'grab']
+
     def execute(self):
         player = self.find_player()
         payload = self.payload()

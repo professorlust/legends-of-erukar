@@ -30,13 +30,10 @@ class Interface:
 
     def execute(self, uid, line):
         command, payload = self.command_and_payload(line)
-        target_command = '{0}.{1}'.format(Interface.command_location, command.capitalize())
         generation_parameters = {'sender_uid': uid, 'user_specified_payload': payload, 'data': self.data }
 
         # Now actually make the thing with specified params
-        created = self.factory.create_one(target_command, generation_parameters)
-        if created is None:
-            created = self.check_for_aliases(command, generation_parameters)
+        created = self.check_for_aliases(command, generation_parameters)
 
         # Prevent noninstances from breaking through here
         if created is None or not isinstance(created, erukar.engine.commands.Command):

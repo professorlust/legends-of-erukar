@@ -6,7 +6,7 @@ class Inspect(ActionCommand):
     not_found = "Nothing matching '{0}' was found in this room."
     abyss = "There is nothing to your {0} except the abyss... plain and nothingness forever."
 
-    aliases = ['look', 'search']
+    aliases = ['inspect', 'look', 'search']
 
     def __init__(self):
         super().__init__()
@@ -23,7 +23,7 @@ class Inspect(ActionCommand):
 
         result = room.directional_inspect(direction, player.lifeform())
         if result is None:
-            return self.succeed(Inspect.abyss.format(direction.name))
+            return self.fail(Inspect.abyss.format(direction.name))
         return self.succeed(result)
 
     def inspect_in_room(self, player, room, payload):

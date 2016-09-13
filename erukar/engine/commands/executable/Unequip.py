@@ -16,6 +16,8 @@ class Unequip(ActionCommand):
     unequipped_amulet = "'{}' unequipped from amulet successfully"
     unequipped_blessing = "'{}' unequipped from blessing successfully"
 
+    aliases = ['unequip']
+
     def execute(self):
         lifeform = self.find_player().lifeform()
         payload = self.check_for_arguments()

@@ -6,6 +6,8 @@ class Close(ActionCommand):
     nesw_wall = 'You cannot close a wall'
     not_found = 'There is nothing to close'
 
+    aliases = ['close', 'shut']
+
     def execute(self):
         player = self.find_player()
         payload = self.payload()

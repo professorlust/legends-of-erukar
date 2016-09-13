@@ -5,6 +5,8 @@ class Drop(ActionCommand):
     no_item = 'Cannot find {} in inventory.'
     dropped = 'You dropped {} in the current room.'
 
+    aliases = ['drop']
+
     def execute(self):
         player = self.find_player()
         payload = self.payload()

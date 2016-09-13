@@ -6,6 +6,8 @@ class Inventory(Command):
     header = 'INVENTORY\n----------\n{}\n----------\n{}'
     item = "{:10}. {}"
 
+    aliases = ['inventory']
+
     def execute(self, *_):
         char = self.find_player().character
         # All of the Other items

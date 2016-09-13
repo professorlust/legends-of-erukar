@@ -6,6 +6,8 @@ class Open(ActionCommand):
     nesw_wall = 'You cannot open a wall'
     not_found = 'There is nothing to open'
 
+    aliases = ['open']
+
     # I'm not terribly happy with this, as it forces usage of only Doors.
     def execute(self):
         player = self.find_player()

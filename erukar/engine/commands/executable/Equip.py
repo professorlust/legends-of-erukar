@@ -17,6 +17,8 @@ class Equip(ActionCommand):
     equipped_blessing = "'{}' equipped as blessing successfully"
     cannot_equip = "'{}' was found but cannot be equipped"
 
+    aliases = ['equip']
+
     def execute(self):
         player = self.find_player()
         if player is None: return
