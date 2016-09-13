@@ -1,1 +1,2 @@
 numpy==1.8.2
+pygresql==5.0.1
