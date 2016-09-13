@@ -13,7 +13,7 @@ class Levelup(Command):
 
     def __init__(self):
         super().__init__()
-        self.sub_command = ''
+        self.num_points = 0
         self.initial_state = {}
         self.future_state = {}
         self.subcommands = [
@@ -27,12 +27,12 @@ class Levelup(Command):
 
     def execute(self, *_):
         self.target = self.find_player().lifeform()
+        self.num_points = len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.ReadyToLevel)])
         if self.num_points is 0:
            return self.succeed(self.NoPoints)
 
         # Welcome
         if not self.context or not isinstance(self.context.context, erukar.engine.commands.executable.Levelup):
-            self.num_points = sum(x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.ReadyToLevel))
             self.initial_state = {x:self.target.get(x) for x in self.attributes}
             self.future_state = self.initial_state.copy()
             return self.fail(self.Welcome.format(self.target.level, self.num_points))
@@ -107,13 +107,18 @@ class Levelup(Command):
     def yes(self, *_):
         '''Confirm a Confirmation or Cancelation'''
         if self.context.context.subcommand is 'confirm':
-            for x in self.attributes:
-                setattr(self.target, x, self.future_state[x])
-            self.target.afflictions = [x for x in self.target.afflictions if not isinstance(x, erukar.engine.effects.ReadyToLeve)]
-            return self.succeed('Your Level Up attribute allocation is now LOCKED.')
+            return self.complete()
         if self.context.context.subcommand is 'cancel':
             return self.succeed('Aborting Level Up attribute allocation.')
         return self.fail('Unrecognized "yes" command')
+
+    def complete(self):
+        for x in self.attributes:
+            setattr(self.target, x, self.future_state[x])
+        self.target.max_health += (4 + self.target.vitality)
+        self.target.health += (4 + self.target.vitality)
+        self.target.afflictions = [x for x in self.target.afflictions if not isinstance(x, erukar.engine.effects.ReadyToLevel)]
+        return self.succeed('Your Level Up attribute allocation is now LOCKED.')
 
     def no(self, *_):
         return self.fail('Returning to level up process.')

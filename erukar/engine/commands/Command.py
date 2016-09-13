@@ -1,5 +1,6 @@
 from erukar.engine.model.Direction import Direction
 from erukar.engine.commands.CommandResult import CommandResult
+import erukar
 
 class Command:
     OverridesUntilSuccess = False
@@ -13,9 +14,9 @@ class Command:
         self.arguments = {}
 
     def payload(self):
-        if self.context:
+        if isinstance(self.context, erukar.engine.commands.Command):
             if self.user_specified_payload.isdigit() or \
-               (len(self.user_specified_payload) > 1 and self.user_specified_payload in self.context.indexed_items):
+               (self.context.indexed_items and len(self.user_specified_payload) > 1 and self.user_specified_payload in self.context.indexed_items):
                 return self.context.indexed_items[self.payload]
         return self.user_specified_payload
 

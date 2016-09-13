@@ -161,6 +161,7 @@ class Instance(Manager):
         cmd.data = self.data
         result = cmd.execute()
         if result is not None:
-            print(result.result + '\n')
+            if hasattr(result, 'result'):
+                print(result.result + '\n')
             self.command_contexts[cmd.sender_uid] = result
         return result

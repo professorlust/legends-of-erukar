@@ -123,7 +123,7 @@ class Lifeform(RpgEntity):
         return  10+math.ceil(0.5*x*x + pow(2, math.exp((x-100)/x)))
 
     def calculate_necessary_xp(self):
-        return self.calculate_xp_worth()*5
+        return self.calculate_xp_worth()
 
     def award_xp(self, xp):
         print('{} has gained {} xp.'.format(self.alias(), xp))
@@ -131,7 +131,8 @@ class Lifeform(RpgEntity):
         # Allows multiple level ups to occur
         while self.current_xp >= self.calculate_necessary_xp():
             self.current_xp -= self.calculate_necessary_xp()
-            self.define_level(self.level + 1)
+            self.level += 1
+            self.afflictions.append(erukar.engine.effects.ReadyToLevel(self, None))
             print('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
 
     def take_damage(self, damage, instigator=None):
