@@ -2,6 +2,8 @@ from erukar.engine.model.Direction import Direction
 from erukar.engine.commands.CommandResult import CommandResult
 
 class Command:
+    OverridesUntilSuccess = False
+
     def __init__(self):
         '''These parameters are assigned after instantiation'''
         self.sender_uid = ''
