@@ -118,7 +118,8 @@ class Levelup(Command):
             setattr(self.target, x, self.future_state[x])
         self.target.max_health += (4 + self.target.vitality)
         self.target.health += (4 + self.target.vitality)
-        self.target.afflictions = [x for x in self.target.afflictions if not isinstance(x, erukar.engine.effects.ReadyToLevel)]
+        self.target.afflictions = [x for x in self.target.afflictions \
+                            if (not isinstance(x, erukar.engine.effects.ReadyToLevel) and not isinstance(x, erukar.engine.effects.NeedsInitialization))]
         return self.succeed('Your Level Up attribute allocation is now LOCKED.')
 
     def no(self, *_):

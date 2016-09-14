@@ -5,6 +5,7 @@ class Item(Describable):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
     BaseName = 'base'
     EssentialPart = 'item part'
+    Persistent = False
 
     def __init__(self, item_type='Item', name="Item"):
         self.item_type = item_type

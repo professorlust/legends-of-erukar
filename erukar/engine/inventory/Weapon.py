@@ -3,6 +3,7 @@ from erukar.engine.model.Damage import Damage
 import numpy as np
 
 class Weapon(Item):
+    Persistent = True
     BaseName = "Weapon"
     EssentialPart = "weapon"
     AttackRange = 0 # Maximum number of rooms beyond our current room that we can reach

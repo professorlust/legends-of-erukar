@@ -1,6 +1,7 @@
 from erukar.engine.inventory.Item import Item
 
 class Armor(Item):
+    Persistent = True
     EssentialPart = "armor"
 
     def __init__(self, name="Armor"):
