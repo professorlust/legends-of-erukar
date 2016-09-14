@@ -4,11 +4,20 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
+class EquippedItem(Base):
+    __tablename__ = 'equippeditems'
+
+    character_id    = Column(Integer, ForeignKey('characters.id'), primary_key=True)
+    item_id         = Column(Integer, ForeignKey('items.id'), primary_key=True)
+    item            = relationship("Item")
+    equipment_slot  = Column(String)
+
+
 class Player(Base):
     __tablename__ = 'players'
 
     id          = Column(Integer, primary_key=True)
-    uid         = Column(String)
+    uid         = Column(String, nullable=False)
     name        = Column(String)
     characters  = relationship("Character")
 
@@ -26,21 +35,14 @@ class Character(Base):
     acuity      = Column(Integer)
     sense       = Column(Integer)
     resolve     = Column(Integer)
-    left        = Column(Integer, ForeignKey('items.id'))
-    right       = Column(Integer, ForeignKey('items.id'))
-    chest       = Column(Integer, ForeignKey('items.id'))
-    head        = Column(Integer, ForeignKey('items.id'))
-    feet        = Column(Integer, ForeignKey('items.id'))
-    arms        = Column(Integer, ForeignKey('items.id'))
-    legs        = Column(Integer, ForeignKey('items.id'))
-    ring        = Column(Integer, ForeignKey('items.id'))
-    amulet      = Column(Integer, ForeignKey('items.id'))
-    blessing    = Column(Integer, ForeignKey('items.id'))
     level       = Column(Integer)
     experience  = Column(Integer)
+
+    equipment   = relationship("EquippedItem")
     inventory   = relationship("Item")
     effects     = relationship("Effect")
-    player_id   = Column(Integer, ForeignKey('players.id'))
+    player_id   = Column(Integer, ForeignKey('players.id'), nullable=False)
+    player      = relationship("Player", foreign_keys=[player_id])
 
 
 class Item(Base):
@@ -49,6 +51,7 @@ class Item(Base):
     id              = Column(Integer, primary_key=True)
     item_type       = Column(String)
     character_id    = Column(Integer, ForeignKey('characters.id'))
+    character       = relationship("Character", foreign_keys=[character_id])
     material_class  = Column(String)
     modifiers       = relationship("Modifier")
 
@@ -59,6 +62,7 @@ class Modifier(Base):
     id              = Column(Integer, primary_key=True)
     modifier_type   = Column(String)
     item_id         = Column(Integer, ForeignKey('items.id'))
+    item            = relationship("Item", foreign_keys=[item_id])
 
 
 class Effect(Base):
@@ -67,3 +71,4 @@ class Effect(Base):
     id              = Column(Integer, primary_key=True)
     effect_type     = Column(String)
     character_id    = Column(Integer, ForeignKey('characters.id'))
+    character       = relationship("Character", foreign_keys=[character_id])

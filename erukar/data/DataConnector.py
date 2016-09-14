@@ -21,7 +21,7 @@ class DataConnector:
 
     def add_player(self, playernode_object):
         '''Translate a PlayerNode into a Player Schema object and add it'''
-        self.add(playernode_object, Player, supplementary_data)
+        self.add(playernode_object, Player)
 
     def add(self, obj, schema_type, supplementary_data=None):
         '''
@@ -29,10 +29,11 @@ class DataConnector:
         field values based on field names in the schema. If there are discrepancies,
         use supplementary_data as a dict to add additional information into the new obj
         '''
-        obj_params = type(obj).__dict__
+        obj_params = schema_type.__dict__
         schema_params = {x:getattr(obj,x) for x in obj_params \
                          if isinstance(obj_params[x],InstrumentedAttribute) if hasattr(obj, x)}
-        if supplementary_data and isinstance(supplementary_data, dict):
+        print(schema_params)
+        if isinstance(supplementary_data, dict):
             schema_params.update(supplementary_data)
         new_object = schema_type(**schema_params)
         self.session.add(new_object)
