@@ -1,4 +1,5 @@
 from .Schema import *
+from erukar.engine.model.PlayerNode import PlayerNode
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.attributes import InstrumentedAttribute
@@ -19,10 +20,15 @@ class DataConnector:
         Base.metadata.create_all(self.engine)
 
     def add_player(self, playernode_object):
-        supplementary_data = {'uid': playernode_object.uid}
+        '''Translate a PlayerNode into a Player Schema object and add it'''
         self.add(playernode_object, Player, supplementary_data)
 
     def add(self, obj, schema_type, supplementary_data=None):
+        '''
+        Master Method for adding new data into the database. Dynamic; auto-gets the
+        field values based on field names in the schema. If there are discrepancies,
+        use supplementary_data as a dict to add additional information into the new obj
+        '''
         obj_params = type(obj).__dict__
         schema_params = {x:getattr(obj,x) for x in obj_params \
                          if isinstance(obj_params[x],InstrumentedAttribute) if hasattr(obj, x)}
@@ -32,6 +38,9 @@ class DataConnector:
         self.session.add(new_object)
         self.session.commit()
 
+    def get_player(self, filters):
+        data = self.get(Player, filters).first()
+        return PlayerNode(data.uid, None)
 
-    def get_test_objects(self):
-        return self.session.query(Character).filter_by(name="Vorenus").first()
+    def get(self, schema_type, filters):
+        return self.session.query(schema_type).filter_by(**filters)
