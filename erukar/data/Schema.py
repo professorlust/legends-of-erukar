@@ -26,16 +26,16 @@ class Character(Base):
     acuity      = Column(Integer)
     sense       = Column(Integer)
     resolve     = Column(Integer)
-    left        = Column(String)
-    right       = Column(String)
-    chest       = Column(String)
-    head        = Column(String)
-    feet        = Column(String)
-    arms        = Column(String)
-    legs        = Column(String)
-    ring        = Column(String)
-    amulet      = Column(String)
-    blessing    = Column(String)
+    left        = Column(Integer, ForeignKey('items.id'))
+    right       = Column(Integer, ForeignKey('items.id'))
+    chest       = Column(Integer, ForeignKey('items.id'))
+    head        = Column(Integer, ForeignKey('items.id'))
+    feet        = Column(Integer, ForeignKey('items.id'))
+    arms        = Column(Integer, ForeignKey('items.id'))
+    legs        = Column(Integer, ForeignKey('items.id'))
+    ring        = Column(Integer, ForeignKey('items.id'))
+    amulet      = Column(Integer, ForeignKey('items.id'))
+    blessing    = Column(Integer, ForeignKey('items.id'))
     level       = Column(Integer)
     experience  = Column(Integer)
     inventory   = relationship("Item")
@@ -47,7 +47,7 @@ class Item(Base):
     __tablename__ = 'items'
 
     id              = Column(Integer, primary_key=True)
-    name            = Column(String)
+    item_type       = Column(String)
     character_id    = Column(Integer, ForeignKey('characters.id'))
     material_class  = Column(String)
     modifiers       = relationship("Modifier")
@@ -56,14 +56,14 @@ class Item(Base):
 class Modifier(Base):
     __tablename__ = 'modifiers'
 
-    id          = Column(Integer, primary_key=True)
-    class_name  = Column(String)
-    item_id     = Column(Integer, ForeignKey('items.id'))
+    id              = Column(Integer, primary_key=True)
+    modifier_type   = Column(String)
+    item_id         = Column(Integer, ForeignKey('items.id'))
 
 
 class Effect(Base):
     __tablename__ = 'effects'
 
     id              = Column(Integer, primary_key=True)
-    class_name      = Column(String)
+    effect_type     = Column(String)
     character_id    = Column(Integer, ForeignKey('characters.id'))
