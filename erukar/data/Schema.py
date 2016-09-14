@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -26,17 +26,18 @@ class Character(Base):
     __tablename__ = 'characters'
 
     id          = Column(Integer, primary_key=True)
+    deceased    = Column(Boolean, default=False)
     name        = Column(String)
-    max_health  = Column(Integer)
+    max_health  = Column(Integer, default=4)
     health      = Column(Integer)
-    strength    = Column(Integer)
-    dexterity   = Column(Integer)
-    vitality    = Column(Integer)
-    acuity      = Column(Integer)
-    sense       = Column(Integer)
-    resolve     = Column(Integer)
-    level       = Column(Integer)
-    experience  = Column(Integer)
+    strength    = Column(Integer, default=0)
+    dexterity   = Column(Integer, default=0)
+    vitality    = Column(Integer, default=0)
+    acuity      = Column(Integer, default=0)
+    sense       = Column(Integer, default=0)
+    resolve     = Column(Integer, default=0)
+    level       = Column(Integer, default=1)
+    experience  = Column(Integer, default=0)
 
     equipment   = relationship("EquippedItem")
     inventory   = relationship("Item")

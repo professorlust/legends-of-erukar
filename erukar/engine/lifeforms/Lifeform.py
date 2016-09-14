@@ -28,13 +28,14 @@ class Lifeform(RpgEntity):
     full_health = ['The lifeform is at full health']
 
     def __init__(self, name=""):
+        self.inventory = []
         self.strength   = 0
         self.dexterity  = 0
         self.vitality   = 0
         self.acuity     = 0
         self.sense      = 0
         self.resolve    = 0
-        self.current_xp = 0
+        self.experience = 0
         self.current_room = None
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
@@ -127,10 +128,10 @@ class Lifeform(RpgEntity):
 
     def award_xp(self, xp):
         print('{} has gained {} xp.'.format(self.alias(), xp))
-        self.current_xp += xp
+        self.experience += xp
         # Allows multiple level ups to occur
-        while self.current_xp >= self.calculate_necessary_xp():
-            self.current_xp -= self.calculate_necessary_xp()
+        while self.experience >= self.calculate_necessary_xp():
+            self.experience -= self.calculate_necessary_xp()
             self.level += 1
             self.afflictions.append(erukar.engine.effects.ReadyToLevel(self, None))
             print('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
