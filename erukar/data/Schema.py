@@ -39,8 +39,8 @@ class Character(Base):
     level       = Column(Integer, default=1)
     experience  = Column(Integer, default=0)
 
-    equipment   = relationship("EquippedItem")
-    inventory   = relationship("Item")
+    equipment   = relationship("EquippedItem", cascade="all, delete-orphan")
+    inventory   = relationship("Item", cascade="all, delete-orphan")
     effects     = relationship("Effect")
     player_id   = Column(Integer, ForeignKey('players.id'), nullable=False)
     player      = relationship("Player", foreign_keys=[player_id])

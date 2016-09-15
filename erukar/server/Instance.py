@@ -158,8 +158,14 @@ class Instance(Manager):
         cmd.context = self.command_contexts[cmd.sender_uid]
         cmd.data = self.data
         result = cmd.execute()
+        # Check results
         if result is not None:
+            # Print Result, replace with outbox later
             if hasattr(result, 'result'):
                 print(result.result + '\n')
+            # Save Dirtied Characters in DB 
+            for dirty in result.dirtied_characters:
+                self.connector.update_character(dirty)
+            # Set context for player
             self.command_contexts[cmd.sender_uid] = result
         return result

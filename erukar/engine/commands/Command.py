@@ -12,6 +12,7 @@ class Command:
         self.context = None
         self.user_specified_payload = ''
         self.arguments = {}
+        self.dirtied_characters = []
 
     def payload(self):
         if isinstance(self.context, erukar.engine.commands.Command):
@@ -23,11 +24,19 @@ class Command:
     def process_arguments(self):
         pass
 
+    def clean(self, lifeform):
+        if lifeform in self.dirtied_characters:
+            self.dirtied_characters.remove(lifeform)
+
+    def dirty(self, lifeform):
+        if lifeform not in self.dirtied_characters:
+            self.dirtied_characters.append(lifeform)
+
     def succeed(self, result, indexed=None):
-        return CommandResult(True, self, result, indexed)
+        return CommandResult(True, self, result, indexed, self.dirtied_characters)
 
     def fail(self, result, indexed=None):
-        return CommandResult(False, self, result, indexed)
+        return CommandResult(False, self, result, indexed, None)
 
     def execute(self):
         '''Run this Command as a player'''

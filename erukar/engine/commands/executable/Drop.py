@@ -16,13 +16,15 @@ class Drop(ActionCommand):
         if item is None:
             return self.fail(Drop.no_item.format(payload))
 
-        self.move_from_inventory(item, player, room)
+        # We have the item, so actually remove it
+        self.move_from_inventory(item, player.lifeform(), room)
         return self.succeed(Drop.dropped.format(item.alias()))
 
-    def move_from_inventory(self, item, player, room):
+    def move_from_inventory(self, item, lifeform, room):
         self.try_to_unequip(item.alias())
-        player.lifeform().inventory.remove(item)
+        lifeform.inventory.remove(item)
         room.add(item)
+        self.dirty(lifeform)
 
     def try_to_unequip(self, alias):
         u = Unequip()

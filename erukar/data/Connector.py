@@ -6,6 +6,7 @@ import sqlalchemy, erukar
 
 '''Establish'''
 class Connector:
+    simple_map_character_params = ['name','max_health','health','strength','dexterity','vitality','acuity','sense','resolve','level','experience']
     def __init__(self, session):
         self.session = session
 
@@ -39,6 +40,21 @@ class Connector:
                 .filter_by(deceased=False)\
                 .first();
 
+    def update_character(self, character):
+        if not hasattr(character, 'uid'): return
+        schema = self.get_character(character.uid)
+        if schema is None: return
+        # Actually try to update the character
+        inventory = self.gen_to_dict(self.generate_inventory(character))
+        for schema_param in self.simple_map_character_params:
+            setattr(schema, schema_param, getattr(character, schema_param))
+        if character.health <= 0:
+            schema.deceased = True
+        schema.equipment = list(self.generate_equipped_items(character, inventory))
+        schema.inventory = list(inventory.values())
+        self.session.add(schema)
+        self.session.commit()
+
     def load_player(self, uid, out_char):
         data = self.get_character(uid)
         if data is not None:
@@ -48,7 +64,7 @@ class Connector:
 
     def simple_map_character(self, out, data):
         '''Handles non-relational mapping onto an instantiated lifeform'''
-        to_map = ['name','max_health','health','strength','dexterity','vitality','acuity','sense','resolve','level','experience']
+        to_map = self.simple_map_character_params
         for x in to_map:
             setattr(out, x, getattr(data, x))
 
@@ -88,7 +104,8 @@ class Connector:
     def generate_inventory(self, lifeform):
         '''Create Item Schema objects from a lifeform's inventory'''
         for item in lifeform.inventory:
-            yield (item, erukar.data.Schema.Item(item_type=item.__module__))
+            if item.Persistent:
+                yield (item, erukar.data.Schema.Item(item_type=item.__module__))
 
     def gen_to_dict(self, generator):
         return {x[0]:x[1] for x in generator}

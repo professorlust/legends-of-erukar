@@ -32,9 +32,10 @@ class Equip(ActionCommand):
 
         # Check to see if the item's type exists as a field on the character
         item_type = self.determine_type(item)
-        if hasattr(player.character, item_type):
-            setattr(player.character, item_type, item)
+        if hasattr(player.lifeform(), item_type):
+            setattr(player.lifeform(), item_type, item)
             result_string_format = getattr(Equip, 'equipped_{0}'.format(item_type))
+            self.dirty(player.lifeform())
             return self.succeed(result_string_format.format(item.describe()))
 
         return self.fail(Equip.cannot_equip.format(item.describe()))

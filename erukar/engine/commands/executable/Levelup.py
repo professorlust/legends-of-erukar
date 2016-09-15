@@ -21,6 +21,8 @@ class Levelup(Command):
             ('remove ', self.remove_points),
             ('status', self.status),
             ('confirm', self.confirm),
+            ('commit', self.confirm),
+            ('save', self.confirm),
             ('cancel', self.cancel),
             ('yes', self.yes),
             ('no', self.no)]
@@ -120,6 +122,7 @@ class Levelup(Command):
         self.target.health += (4 + self.target.vitality)
         self.target.afflictions = [x for x in self.target.afflictions \
                             if (not isinstance(x, erukar.engine.effects.ReadyToLevel) and not isinstance(x, erukar.engine.effects.NeedsInitialization))]
+        self.dirty(self.target)
         return self.succeed('Your Level Up attribute allocation is now LOCKED.')
 
     def no(self, *_):

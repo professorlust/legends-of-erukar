@@ -29,10 +29,10 @@ class Attack(ActionCommand):
 
     def check_for_arguments(self, lifeform):
         '''
-        Check to see if it's a single attack made with either hand, or if 
+        Check to see if it's a single attack made with either hand, or if
         it's both hands. In the event of a single attack, that attack only
         incurs handedness penalty (left hand attacks with right hand dominant
-        take a slight penalty based on dexterity and vice versa), whereas 
+        take a slight penalty based on dexterity and vice versa), whereas
         attacking with both weapons incurs a larger penalty for each attack.
         The lifeform will eventually need to make a decision for itself as
         to what hand is dominant.
@@ -58,7 +58,7 @@ class Attack(ActionCommand):
                 and isinstance(weapon, erukar.engine.inventory.Weapon)
 
     def do_directional_attacks(self, lifeform, direction):
-        '''Handles attacking with all queued weapons''' 
+        '''Handles attacking with all queued weapons'''
         attack_results = []
         room = lifeform.current_room
         for weapon in self.weapons:
@@ -125,6 +125,7 @@ class Attack(ActionCommand):
         if attack_roll <= armor_class:
             return Attack.unsuccessful.format(**args)
 
+        self.dirty(enemy)
         enemy.take_damage(damage, subject)
         attack_string = Attack.successful.format(**args)
 

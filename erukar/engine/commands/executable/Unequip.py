@@ -31,6 +31,7 @@ class Unequip(ActionCommand):
             setattr(lifeform, item_type, None)
             uneq_string = getattr(self, 'unequipped_{}'.format(item_type))
             results = uneq_string.format(item.describe())
+            self.dirty(lifeform)
             return self.succeed(results, lifeform.inventory)
 
         # Nothing was found
