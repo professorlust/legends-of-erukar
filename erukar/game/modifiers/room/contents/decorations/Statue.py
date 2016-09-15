@@ -175,7 +175,7 @@ class Statue(RoomModifier):
         'tribe',
         'topic',
         'position']
-        
+
     broad_alias_base="{material} statue"
     broad_result_base="There is a {material} statue to the {location} of the room."
     inspect_result_base="This is a {material} statue depicting {topic} is {position}. {condition}"

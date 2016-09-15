@@ -10,7 +10,7 @@ class Describable(Interactible):
     sensory minimum was met or at least the minimum for each was met.
 
     Ideally, this will lead to situations where items appear as purely visual
-    "You see a Ceramic Cuirass", invisible events such as air currents are 
+    "You see a Ceramic Cuirass", invisible events such as air currents are
     purely sensory "You feel a warm draft of air circulating through the room",
     and combinations are something much more robust "Piercing the floor is a
     heavy-looking sword forged with some sort of dark metal, the blade of which
@@ -21,6 +21,7 @@ class Describable(Interactible):
     If both Ideals are met, the user should be given even more information,
     though sometimes this is unnecessary.
     '''
+    MaximumMutationDepth = 4
     BriefDescription = "Brief Description"
     AbsoluteMinimalDescription = ""
 

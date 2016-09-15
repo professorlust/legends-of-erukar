@@ -1,23 +1,13 @@
 from .Schema import *
 from erukar.engine.model.PlayerNode import PlayerNode
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, joinedload
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 import sqlalchemy, erukar
 
 '''Establish'''
-class DataConnector:
-    def __init__(self, passwd="thisisnottherealpassword"):
-        self.connection_string = "postgres+pygresql://postgres:{}@localhost:5432/loedev".format(passwd)
-
-    def establish_connection(self):
-        #engine = create_engine('sqlite:///:memory:', echo=True)
-        self.engine = sqlalchemy.create_engine(self.connection_string)
-        Session = sessionmaker(bind=self.engine)
-        self.session = Session()
-
-    def create_metadata(self):
-        Base.metadata.create_all(self.engine)
+class Connector:
+    def __init__(self, session):
+        self.session = session
 
     def add(self, obj, schema_type, supplementary_data=None):
         '''
@@ -49,13 +39,12 @@ class DataConnector:
                 .filter_by(deceased=False)\
                 .first();
 
-    def get_and_load_character(self, uid):
+    def load_player(self, uid, out_char):
         data = self.get_character(uid)
-        if data is None: return None
-        out = erukar.engine.lifeforms.Lifeform()
-        self.simple_map_character(out, data)
-        self.map_items_on_character(out, data)
-        return out
+        if data is not None:
+            self.simple_map_character(out_char, data)
+            self.map_items_on_character(out_char, data)
+        return data is not None
 
     def simple_map_character(self, out, data):
         '''Handles non-relational mapping onto an instantiated lifeform'''
@@ -64,9 +53,11 @@ class DataConnector:
             setattr(out, x, getattr(data, x))
 
     def map_items_on_character(self, out, data):
+        '''Create items from Schema and assign to inventory (or equipment slots as necessary)'''
         for item in data.inventory:
             instantiated = self.create_item(item)
             out.inventory.append(instantiated)
+            # Now check to see if this item is equipped and if so, assign it to its spot
             location = next((x.equipment_slot for x in data.equipment if x.item_id == item.id ), None)
             if location is not None:
                 setattr(out, location, instantiated)

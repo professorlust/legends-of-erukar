@@ -1,4 +1,5 @@
 from .Schema import *
-from .DataConnector import DataConnector
+from .ConnectorFactory import ConnectorFactory
+from .Connector import Connector
 
-__all__ = ["Player", "DataConnector", "Character", "Item", "Modifier", "EquippedItem"]
+__all__ = ["ConnectorFactory", "Player", "Connector", "Character", "Item", "Modifier", "EquippedItem"]

@@ -9,7 +9,7 @@ w.activate()
 
 # Controlled Character
 character = Player()
-character.uid = 'ControlledPlayer'
+character.uid = 'a-uid'
 player = PlayerNode(character.uid, character)
 
 # Uncontrolled Character

@@ -1,4 +1,5 @@
-from erukar.engine.model import * 
+from erukar.data.ConnectorFactory import ConnectorFactory
+from erukar.engine.model import *
 from erukar.server.Interface import Interface
 from erukar.server.InstanceInfo import InstanceInfo
 import threading
@@ -7,10 +8,13 @@ import numpy as np
 class Shard(Manager):
     def __init__(self):
         super().__init__()
+        db_pass = input('Enter the password for your database:  ')
+        self.connector_factory = ConnectorFactory(db_pass)
         self.interface = Interface(self)
         self.instances = []
 
     def activate(self):
+        self.connector_factory.establish_connection()
         self.instances = [InstanceInfo()]
         for info in self.instances:
             gen_params = GenerationProfile(*(np.random.uniform(-1, 1) for x in range(4)))
@@ -23,7 +27,13 @@ class Shard(Manager):
         self.interface.data.players.append(player)
 
     def launch_dungeon_instance(self, info, gen_params):
-        args=(info.action_commands, info.non_action_commands, info.joins, gen_params,)
+        args=(\
+              self.connector_factory.create_session(),\
+              info.action_commands,\
+              info.non_action_commands,\
+              info.joins,\
+              gen_params,\
+              )
         dungeon_thread = threading.Thread(target=info.instance.instance_running,args=args)
         dungeon_thread.daemon = True
         dungeon_thread.start()

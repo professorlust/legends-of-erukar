@@ -1,3 +1,4 @@
+from erukar.data.Connector import Connector
 from erukar.engine.factories import *
 from erukar.engine.model.Manager import Manager
 from erukar.server.TurnManager import TurnManager
@@ -64,7 +65,7 @@ class Instance(Manager):
 
     def subscribe(self, player):
         super().subscribe(player)
-        p = self.create_player_node(player.uid)
+        p = self.launch_player(player.uid)
         room = self.dungeon.rooms[0]
         p.character.link_to_room(room)
         p.move_to_room(room)
@@ -72,18 +73,20 @@ class Instance(Manager):
         self.command_contexts[player.uid] = None
         self.has_had_players = True
 
-    def create_player_node(self, uid):
+    def launch_player(self, uid):
+        # Create the base object
         character = Player()
         character.uid = uid
-        character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
+        is_new_player = self.connector.load_player(uid, character)
+        if is_new_player:
+            character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
         p = PlayerNode(uid, character)
         self.data.players.append(p)
-        for x in vars(self.generation_parameters):
-            print('{} - {}'.format(x, getattr(self.generation_parameters, x)))
         return p
 
-    def instance_running(self, action_commands, non_action_commands, joins, gen_params):
+    def instance_running(self, connector, action_commands, non_action_commands, joins, gen_params):
         # Activate and initialize timers
+        self.connector = connector
         self.activate(action_commands, non_action_commands, joins, gen_params)
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
