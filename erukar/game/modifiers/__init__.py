@@ -7,5 +7,5 @@ from .WeaponMod import WeaponMod
 __all__ = ["ItemModifier", "MaterialModifier", "RoomModifier", "RoomDoorModifier", "WeaponMod"]
 
 from .room import *
-from .inventory import *
 from .material import *
+from .inventory import *

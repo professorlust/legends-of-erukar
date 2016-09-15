@@ -76,13 +76,19 @@ class Instance(Manager):
     def launch_player(self, uid):
         # Create the base object
         character = Player()
+        playernode = self.connector.get_player({'uid': uid})
+        if playernode is None:
+            playernode = PlayerNode(uid, None)
+            self.connector.add_player(playernode)
         character.uid = uid
-        is_new_player = self.connector.load_player(uid, character)
-        if is_new_player:
+        is_returning = self.connector.load_player(uid, character)
+        if not is_returning:
+            print('Adding new character')
+            self.connector.add_character(uid, character)
             character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
-        p = PlayerNode(uid, character)
-        self.data.players.append(p)
-        return p
+        playernode.character = character
+        self.data.players.append(playernode)
+        return playernode
 
     def instance_running(self, connector, action_commands, non_action_commands, joins, gen_params):
         # Activate and initialize timers

@@ -29,7 +29,7 @@ class Connector:
     '''Schema Specific CRUD'''
     def get_player(self, filters):
         data = self.get(Player, filters).first()
-        return PlayerNode(data.uid, None)
+        return None if not data else PlayerNode(data.uid, None)
 
     def get_character(self, uid):
         player = self.get(Player, {'uid': uid}).first()
@@ -41,6 +41,7 @@ class Connector:
                 .first();
 
     def update_character(self, character):
+        '''Takes a dirty character and updates it in the database'''
         if not hasattr(character, 'uid'): return
         schema = self.get_character(character.uid)
         if schema is None: return
@@ -80,15 +81,23 @@ class Connector:
 
     def create_item(self, data):
         '''Create an item from an ItemSchema'''
-        return getattr(__import__(data.item_type), data.item_type.split('.')[-1])()
+        item = self.create_from_type(data.item_type)
+        modifiers = [self.create_from_type(m.modifier_type) for m in data.modifiers] + [self.create_from_type(data.material_type)]
+        for mod in modifiers:
+            mod.apply_to(item)
+        return item
+
+    def create_from_type(self, item_type):
+        prelim_type = item_type.split('.')
+        return getattr(__import__(item_type, fromlist=[prelim_type[-1]]), prelim_type[-1])()
 
     def add_player(self, playernode_object):
         '''Translate a PlayerNode into a Player Schema object and add it'''
         self.add(playernode_object, Player)
 
-    def add_character(self, playernode_object, lifeform_object):
+    def add_character(self, uid, lifeform_object):
         '''Used when adding a Lifeform to the database'''
-        player = self.get(Player, {'uid': playernode_object.uid}).first()
+        player = self.get(Player, {'uid': uid}).first()
         inventory = self.gen_to_dict(self.generate_inventory(lifeform_object))
         equipment = list(self.generate_equipped_items(lifeform_object, inventory))
         supplementary_data = {'player_id': player.id, 'inventory': list(inventory.values()), 'equipment': equipment}
@@ -105,7 +114,9 @@ class Connector:
         '''Create Item Schema objects from a lifeform's inventory'''
         for item in lifeform.inventory:
             if item.Persistent:
-                yield (item, erukar.data.Schema.Item(item_type=item.__module__))
+                modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers]
+                material = item.material.__module__
+                yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers))
 
     def gen_to_dict(self, generator):
         return {x[0]:x[1] for x in generator}

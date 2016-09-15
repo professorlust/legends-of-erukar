@@ -41,7 +41,7 @@ class Character(Base):
 
     equipment   = relationship("EquippedItem", cascade="all, delete-orphan")
     inventory   = relationship("Item", cascade="all, delete-orphan")
-    effects     = relationship("Effect")
+    effects     = relationship("Effect", cascade="all, delete-orphan")
     player_id   = Column(Integer, ForeignKey('players.id'), nullable=False)
     player      = relationship("Player", foreign_keys=[player_id])
 
@@ -53,8 +53,8 @@ class Item(Base):
     item_type       = Column(String)
     character_id    = Column(Integer, ForeignKey('characters.id'))
     character       = relationship("Character", foreign_keys=[character_id])
-    material_class  = Column(String)
-    modifiers       = relationship("Modifier")
+    material_type   = Column(String)
+    modifiers       = relationship("Modifier", cascade="all, delete-orphan")
 
 
 class Modifier(Base):

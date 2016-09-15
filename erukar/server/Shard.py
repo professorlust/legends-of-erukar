@@ -10,11 +10,12 @@ class Shard(Manager):
         super().__init__()
         db_pass = input('Enter the password for your database:  ')
         self.connector_factory = ConnectorFactory(db_pass)
+        self.connector_factory.establish_connection()
+        self.connector_factory.create_metadata()
         self.interface = Interface(self)
         self.instances = []
 
     def activate(self):
-        self.connector_factory.establish_connection()
         self.instances = [InstanceInfo()]
         for info in self.instances:
             gen_params = GenerationProfile(*(np.random.uniform(-1, 1) for x in range(4)))

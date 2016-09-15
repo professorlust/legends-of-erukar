@@ -1,6 +1,8 @@
+from erukar.data.Schema import *
 from erukar.data.Connector import Connector
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy
+from sqlalchemy.ext.declarative import declarative_base
 
 class ConnectorFactory:
     def __init__(self, passwd="thisisnottherealpassword"):
