@@ -122,7 +122,7 @@ class Instance(Manager):
                 if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
                     cmd = self.active_player.perform_turn()
                     if cmd is not None:
-                        self.execute_command(cmd)
+                        result = self.execute_command(cmd)
 
             # Get the next player and reset the timer
             self.get_next_player()
@@ -168,8 +168,9 @@ class Instance(Manager):
             if hasattr(result, 'result'):
                 print(result.result + '\n')
             # Save Dirtied Characters in DB 
-            for dirty in result.dirtied_characters:
-                self.connector.update_character(dirty)
+            if hasattr(result, 'dirtied_characters'):
+                for dirty in result.dirtied_characters:
+                    self.connector.update_character(dirty)
             # Set context for player
             self.command_contexts[cmd.sender_uid] = result
         return result

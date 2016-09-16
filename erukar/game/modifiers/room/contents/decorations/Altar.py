@@ -23,6 +23,7 @@ class Altar(RoomModifier):
 
         # Create the Altar proper
         deco = Decoration(aliases=[self.broad_alias_base])
+        deco.BriefDescription = "an altar to the {} of the room".format(direction)
         deco.set_vision_results('You see an altar to the {} of the room.'.format(direction),'You see an altar to {} to the {} of the room.'.format(deity, direction), (1, 5))
         deco.set_sensory_results('You smell burning incense.','You can sense holiness from an altar nearby',(1, 10))
         deco.set_detailed_results('The smell of incense burning on an altar to {} fills the room. The altar is located on the {} wall.'.format(deity, direction),\

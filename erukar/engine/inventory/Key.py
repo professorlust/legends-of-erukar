@@ -2,6 +2,7 @@ from erukar.engine.inventory.Item import Item
 import random
 
 class Key(Item):
+    BriefDescription = "a {size}{material|lock} key"
     sizes = [
         "large ",
         "small ",

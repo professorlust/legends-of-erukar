@@ -36,7 +36,7 @@ class Room(Containable):
         return our_result + ' ' + connection_result
 
     def on_inspect(self, lifeform, acu, sen, depth=0):
-        content_results = [x.on_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
+        content_results = ['You see {}.'.format(x.brief_inspect(lifeform, acu, sen)) for x in self.contents if x is not lifeform]
         content_descriptions = [' '.join(x for x in content_results if x is not '')]
         if self.ceiling is not None:
             content_descriptions.insert(0, self.ceiling.describe(lifeform, depth))

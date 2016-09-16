@@ -4,7 +4,9 @@ import functools, operator
 class Item(Describable):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
     BaseName = 'base'
+    BriefDescription = "You see a {BaseName}"
     EssentialPart = 'item part'
+    SupportPart = 'item part'
     Persistent = False
 
     def __init__(self, item_type='Item', name="Item"):
@@ -42,6 +44,10 @@ class Item(Describable):
         modifier_descriptions = [x.on_inspect(lifeform, acu, sen) for x in self.modifiers]
         return ' ' + ' '.join(modifier_descriptions)
 
+    def describe_brief_modifiers(self, lifeform, acu, sen):
+        modifier_descriptions = [x.brief_inspect(lifeform, acu, sen) for x in self.modifiers]
+        return ' ' + ' '.join(modifier_descriptions)
+
     def on_inspect(self, lifeform, acu, sen):
         modifiers = self.describe_modifiers(lifeform, acu, sen)
         material = '' if not self.material else self.material.on_inspect(lifeform, acu, sen)
@@ -49,6 +55,10 @@ class Item(Describable):
         if self_desc is '':
             return ''
         return self.mutate(' '.join(x for x in [self_desc, material, modifiers] if x is not ''))
+
+    def brief_inspect(self, lifeform, acuity, sense):
+        material = self.BriefDescription if not self.material else self.material.brief_inspect(lifeform, acuity, sense)
+        return self.mutate(material) 
 
     def describe_material(self):
         return self.material.BriefDescription if self.material else self.name

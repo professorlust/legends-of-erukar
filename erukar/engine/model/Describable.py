@@ -22,7 +22,8 @@ class Describable(Interactible):
     though sometimes this is unnecessary.
     '''
     MaximumMutationDepth = 4
-    BriefDescription = "Brief Description"
+    MinimalBriefDescription = "You see a {BaseName}."
+    BriefDescription = ""
     AbsoluteMinimalDescription = ""
 
     def __init__(self):
@@ -106,6 +107,9 @@ class Describable(Interactible):
 
     def on_inspect(self, lifeform, acuity, sense):
         return self.describe_base(lifeform, acuity, sense)
+
+    def brief_inspect(self, lifeform, acuity, sense):
+        return self.mutate(self.BriefDescription)
 
     def necessary_sense(self):
         return 0
