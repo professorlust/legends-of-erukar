@@ -1,7 +1,7 @@
 from erukar.engine.model.Indexer import Indexer
 
 class PlayerNode(Indexer):
-    def __init__(self, uid, character):
+    def __init__(self, uid, character=None):
         super().__init__()
         self.uid = uid
         self.character = character

@@ -39,7 +39,7 @@ class Item(Describable):
         return functools.reduce(operator.mul, [mod.Desirability for mod in self.modifiers])
 
     def describe_modifiers(self, lifeform, acu, sen):
-        modifier_descriptions = [x.on_inspect(lifeform, acu, sen) for x in self.modifiers if x.Description is not '']
+        modifier_descriptions = [x.on_inspect(lifeform, acu, sen) for x in self.modifiers]
         return ' ' + ' '.join(modifier_descriptions)
 
     def on_inspect(self, lifeform, acu, sen):

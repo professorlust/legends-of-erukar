@@ -78,12 +78,10 @@ class Instance(Manager):
         character = Player()
         playernode = self.connector.get_player({'uid': uid})
         if playernode is None:
-            playernode = PlayerNode(uid, None)
+            playernode = PlayerNode(uid)
             self.connector.add_player(playernode)
         character.uid = uid
-        is_returning = self.connector.load_player(uid, character)
-        if not is_returning:
-            print('Adding new character')
+        if not self.connector.load_player(uid, character):
             self.connector.add_character(uid, character)
             character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
         playernode.character = character

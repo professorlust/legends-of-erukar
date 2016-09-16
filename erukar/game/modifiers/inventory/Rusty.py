@@ -4,7 +4,16 @@ from erukar.engine.inventory import Weapon
 class Rusty(WeaponMod):
     Probability = 5
     Desirability = 0.125
-    Description = "The {EssentialPart} of this {BaseName} has corroded heavily and is covered in rust"
+    InventoryDescription = "Reduces efficacy"
+    BriefDescription = "{EssentialPart} is rusty."
+    AbsoluteMinimalDescription = "The {EssentialPart} is covered in rust."
+    VisualMinimalDescription = "The {EssentialPart} is covered in rust."
+    VisualIdealDescription = "The {EssentialPart} is covered in rust."
+    SensoryMinimalDescription = ""
+    SensoryIdealDescription = ""
+    DetailedMinimalDescription = "The {EssentialPart} is covered in rust."
+    DetailedIdealDescription = "The {EssentialPart} is covered in rust."
+    Adjective = ""
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

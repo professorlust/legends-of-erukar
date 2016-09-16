@@ -6,7 +6,16 @@ import numpy as np
 class Flaming(WeaponMod):
     Probability = 1
     Desirability = 8.0
-    Description = "The {EssentialPart} of the {BaseName} is wreathed in flames."
+    InventoryDescription = "[1, 4] Fire Damage"
+    BriefDescription = "flames erupt from the {EssentialPart}"
+    AbsoluteMinimalDescription = ""
+    VisualMinimalDescription = "The {EssentialPart} seems to be on fire."
+    VisualIdealDescription = "Jets of flames erupt from the {EssentialPart}, illuminating the room slightly."
+    SensoryMinimalDescription = "You feel heat radiating from the {EssentialPart}. You sense magic emanating from the {BaseName}."
+    SensoryIdealDescription = "You feel heat radiating from the {BaseName}. You sense an elemental enchantment radiating from the {EssentialPart}."
+    DetailedMinimalDescription = "Magical flames coat the {EssentialPart}, enveloping the room in heat."
+    DetailedIdealDescription = "The {BaseName} has an Fire elemental enchantment, producing heat and jets of flames from the {EssentialPart}."
+    Adjective = ""
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

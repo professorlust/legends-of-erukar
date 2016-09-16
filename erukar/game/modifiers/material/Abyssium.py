@@ -5,6 +5,7 @@ class Abyssium(MaterialModifier):
     ProbabilityFromSanctity = -1.0
     Desirability = 2.0
 
+    InventoryDescription = "Predilection towards Unholiness and Curses"
     BriefDescription = "a {BaseName} with a dark red {EssentialPart}"
     AbsoluteMinimalDescription = "The {EssentialPart} is a reddish black color."
     VisualMinimalDescription = "The {EssentialPart} has been carved out of a dark, reddish black stone that seems to glow a faint red color."

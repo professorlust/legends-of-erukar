@@ -4,7 +4,18 @@ from erukar.engine.inventory import Weapon
 class Small(WeaponMod):
     Probability = 1
     Desirability = 0.5
-    Description = "The {EssentialPart} of the {BaseName} is inexcplicably small compared to the rest of the weapon."
+
+    InventoryDescription = "Cosmetic"
+    BriefDescription = "The {EssentialPart} is disproportionately small."
+    AbsoluteMinimalDescription = ""
+    VisualMinimalDescription = "The {EssentialPart} seems small."
+    VisualIdealDescription = "The {EssentialPart} is disproportionately small in comparison to the rest of the {BasePart}."
+    SensoryMinimalDescription = ""
+    SensoryIdealDescription = ""
+    DetailedMinimalDescription = "The {EssentialPart} seems small."
+    DetailedIdealDescription = "The {EssentialPart} is disproportionately small in comparison to the rest of the {BasePart}."
+    Adjective = ""
+
     def apply_to(self, weapon):
         super().apply_to(weapon)
         weapon.name = "Small " + weapon.name
