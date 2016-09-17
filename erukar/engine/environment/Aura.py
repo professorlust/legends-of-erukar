@@ -14,13 +14,13 @@ class Aura(Describable):
         self.decay_factor = decay_factor
 
     def affects_tile(self, coordinate):
-        pass
-
-    def affects_tile_raw(self, coordinate):
         '''This is used for the quick calculations for the dungeon'''
         dist = math.ceil(self.distance(coordinate))
         strength_at_tile = self.aura_strength * math.pow(self.decay_factor, dist)
         return strength_at_tile >= 1
 
     def distance(self, to_coordinate):
-        return math.sqrt(math.pow(to_coordinate[0]-self.location[0], 2) + math.pow(to_coordinate[1]-self.location[1], 2))
+        return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(self.location, to_coordinate)))
+
+    def do_effect(self, at):
+        pass
