@@ -1,3 +1,4 @@
+from tests.engine.aura import *
 from tests.engine.commands import *
 from tests.engine.environment import *
 from tests.engine.factories import *

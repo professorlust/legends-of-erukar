@@ -1,3 +1,4 @@
+from .Aura import Aura
 from .Container import Container
 from .Corpse import Corpse
 from .Dungeon import Dungeon
@@ -11,6 +12,7 @@ from .Surface import Surface
 from .Lock import Lock
 
 __all__ = [
+    "Aura",
     "Container",
     "Corpse",
     "Decoration",

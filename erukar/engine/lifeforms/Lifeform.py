@@ -26,6 +26,7 @@ class Lifeform(RpgEntity):
     wounded = ['The lifeform is wounded']
     slightly_wounded = ['The lifeform is slightly wounded']
     full_health = ['The lifeform is at full health']
+    BaseDescription = "a {alias}"
 
     def __init__(self, name=""):
         self.inventory = []
@@ -76,7 +77,6 @@ class Lifeform(RpgEntity):
                 continue
             for mod in equipment.modifiers:
                 if hasattr(mod, stat_type):
-                    print('found one')
                     score += getattr(mod, stat_type)
         # now handle afflictions
         for aff in self.afflictions:
