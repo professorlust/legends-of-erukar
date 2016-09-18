@@ -19,7 +19,7 @@ class Room(Containable):
         for x in self.dungeon.get_applicable_auras(self.coordinates):
             if hasattr(x, 'modify_light'):
                 luminosity += x.modify_light()
-        return luminosity
+        return min(1.0, luminosity)
 
     def calculate_danger(self):
         return 1.0
@@ -38,14 +38,18 @@ class Room(Containable):
         our_result = self.describe(lifeform, depth)
         return our_result + ' ' + connection_result
 
-    def on_inspect(self, lifeform, acu, sen, depth=0):
-        content_results = ['You see {}.'.format(x.brief_inspect(lifeform, acu, sen)) for x in self.contents if x is not lifeform]
-        content_descriptions = [' '.join(x for x in content_results if x is not '')]
-        if self.ceiling is not None:
-            content_descriptions.insert(0, self.ceiling.describe(lifeform, depth))
+    def on_inspect(self, lifeform, acuity, sense, depth=0):
+        light_mod = self.calculate_luminosity()
+        if light_mod <= 0.01:
+            return 'This room is completely dark.'
+        acu, sen = acuity * light_mod, sense
+        content_results = [x.brief_inspect(lifeform,acu,sen) for x in self.contents if x is not lifeform]
+        descriptions = [' '.join(['You see {}.'.format(x) for x in content_results if x is not ''])]
+#       if self.ceiling is not None:
+#           content_descriptions.insert(0, self.ceiling.describe(lifeform, depth))
         if self.floor is not None:
-            content_descriptions.insert(0, self.floor.describe(lifeform, depth))
-        return ' '.join(content_descriptions)
+            descriptions.insert(0, self.floor.describe(lifeform, depth))
+        return ' '.join(descriptions)
 
     def inspect_here(self, lifeform):
         dir_desc = []
@@ -80,25 +84,6 @@ class Room(Containable):
         other_dir = self.invert_direction(direction)
         self.connections[direction].room.connections[other_dir].door = door
 
-    def visual_description(self):
-        lum = self.calculate_luminosity()
-        if lum < 0.1:
-            return 'The room is completely dark.'
-        if lum < 0.3:
-            return 'The room is very dimly lit and it is difficult to discern shapes in the darkness.'
-        if lum < 0.6:
-            return 'The room is dimly lit yet you can still see reasonably well.'
-        if lum < 0.9:
-            return 'The room is well lit.'
-        return 'The room is perfectly bright.'
-
-    def generate_room_descriptions(self):
-        yield self.visual_description()  
-        if self.floor is not None:
-            yield self.floor.on_inspect()
-        if self.ceiling is not None:
-            yield self.ceiling.on_inspect()
-
     def content_alias_or_description(self, item, give_alias):
         return item.describe() if not give_alias else item.alias()
 
@@ -108,19 +93,6 @@ class Room(Containable):
             res = self.inspect_peek(direction, lifeform)
             if res is not None:
                 yield '\n{0}:\t{1}'.format(direction.name, res)
-
-    def generate_content_descriptions(self, player, give_aliases=False, scalar=1.0):
-        '''Generator for creating a list of content descriptions'''
-        visible_contents = self.get_visible_contents(player.lifeform(), scalar)
-        if len(visible_contents) == 0: 
-            yield 'nothing'
-        for content in visible_contents:
-            if isinstance(content, erukar.engine.lifeforms.Player):
-                if content.uid == player.uid:
-                    continue
-            description = self.content_alias_or_description(content, give_aliases)
-            if description is not None:
-                yield description
 
     def adjacent_rooms(self):
         '''Generator which yields rooms we can see into from this one'''

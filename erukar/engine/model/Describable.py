@@ -103,13 +103,15 @@ class Describable(Interactible):
             return self.mutate(self.describe_visual(lifeform, acuity))
         if sense >= self.sense_range[0]:
             return self.mutate(self.describe_sensory(lifeform, sense))
-        return self.mutate(self.AbsoluteMinimalDescription)
+        return ''
 
     def on_inspect(self, lifeform, acuity, sense):
         return self.describe_base(lifeform, acuity, sense)
 
     def brief_inspect(self, lifeform, acuity, sense):
-        return self.mutate(self.BriefDescription)
+        if acuity >= self.vision_range[0]:
+            return self.mutate(self.BriefDescription)
+        return ''
 
     def necessary_sense(self):
         return 0

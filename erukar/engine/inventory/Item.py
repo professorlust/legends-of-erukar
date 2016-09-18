@@ -57,6 +57,8 @@ class Item(Describable):
         return self.mutate(' '.join(x for x in [self_desc, material, modifiers] if x is not ''))
 
     def brief_inspect(self, lifeform, acuity, sense):
+        if acuity < self.vision_range[0]:
+            return ''
         material = self.BriefDescription if not self.material else self.material.brief_inspect(lifeform, acuity, sense)
         return self.mutate(material) 
 
