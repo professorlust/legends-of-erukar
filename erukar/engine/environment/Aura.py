@@ -12,6 +12,7 @@ class Aura(Describable):
         self.location = location
         self.aura_strength = strength
         self.decay_factor = decay_factor
+        self.is_expired = False
 
     def affects_tile(self, coordinate):
         '''This is used for the quick calculations for the dungeon'''
@@ -22,5 +23,11 @@ class Aura(Describable):
     def distance(self, to_coordinate):
         return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(self.location, to_coordinate)))
 
-    def do_effect(self, at):
+    def tick(self):
+        '''
+        Time-based, regular Tick that occurs every 25 ticks in a TurnManager (5 seconds).
+        For time-based auras, this might decrement a timer function. If that timer is at 
+        zero at the end, it sets the expired flag to true, then is removed by the dungeon 
+        on the next cleanup cycle
+        '''
         pass

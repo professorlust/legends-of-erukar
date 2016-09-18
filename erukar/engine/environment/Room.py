@@ -11,12 +11,15 @@ class Room(Containable):
         self.dungeon = dungeon
         self.floor = None
         self.ceiling = None
-        self.luminosity = 1.0 # luminosity will be used in conjunction with visual skill in descriptions
         self.coordinates = coordinates
         self.connections = {direction: Passage() for direction in Direction}
 
     def calculate_luminosity(self):
-        return self.luminosity
+        luminosity = 0
+        for x in self.dungeon.get_applicable_auras(self.coordinates):
+            if hasattr(x, 'modify_light'):
+                luminosity += x.modify_light()
+        return luminosity
 
     def calculate_danger(self):
         return 1.0
