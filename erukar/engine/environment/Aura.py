@@ -9,7 +9,7 @@ class Aura(Describable):
         1 in adjacent rooms, and cannot affect outside of these tiles.
         '''
         super().__init__()
-        self.location = (0,0)
+        self.location = location
         self.aura_strength = strength
         self.decay_factor = decay_factor
 
