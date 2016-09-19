@@ -39,6 +39,15 @@ class Modifier(Describable):
         '''Actually does the modification; this should be overridden'''
         pass
 
+    def on_move(self, room):
+        pass
+
+    def on_equip(self, lifeform):
+        pass
+
+    def on_unequip(self, lifeform):
+        pass
+
     def can_apply_to(self, entity):
         '''
         Checks to see if this is a valid entity based on entities specified

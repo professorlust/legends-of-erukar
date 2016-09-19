@@ -27,6 +27,10 @@ class Room(Containable):
     def calculate_desirability(self):
         return 1.0
 
+    def initiate_aura(self, aura):
+        aura.location = self.coordinates
+        self.dungeon.active_auras.add(aura)
+
     def directional_inspect(self, direction, lifeform, depth=0):
         '''e.g. INSPECT NORTH'''
         connection_result = self.connections[direction].directional_inspect(direction, lifeform, depth)

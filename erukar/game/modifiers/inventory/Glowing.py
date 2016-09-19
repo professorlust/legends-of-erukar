@@ -1,4 +1,5 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
+from erukar.engine.environment.Aura import Aura
 from erukar.engine.inventory import Weapon
 
 class Glowing(WeaponMod):
@@ -18,8 +19,22 @@ class Glowing(WeaponMod):
 
     def apply_to(self, weapon):
         super().apply_to(weapon)
+        self.aura = None
         weapon.name = "Glowing " + weapon.name
 
+    def on_move(self, room):
+        if self.aura:
+            self.aura.location = room.coordinates
 
+    def on_equip(self, lifeform):
+        self.aura = Aura((0,0))
+        self.aura.modify_light = self.modify_light
+        lifeform.initiate_aura(self.aura)
 
+    def on_unequip(self, lifeform):
+        if self.aura:
+            self.aura.is_expired = True
+            self.aura = None
 
+    def modify_light(self):
+        return 0.2

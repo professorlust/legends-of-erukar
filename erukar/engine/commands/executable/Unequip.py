@@ -29,6 +29,7 @@ class Unequip(ActionCommand):
         if item_type is not '':
             item = getattr(lifeform, item_type)
             setattr(lifeform, item_type, None)
+            item.on_unequip(lifeform)
             uneq_string = getattr(self, 'unequipped_{}'.format(item_type))
             results = uneq_string.format(item.describe())
             self.dirty(lifeform)

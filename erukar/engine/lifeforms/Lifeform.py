@@ -50,6 +50,9 @@ class Lifeform(RpgEntity):
         }
         self.define_level(1)
 
+    def initiate_aura(self, aura):
+        self.current_room.initiate_aura(aura)
+
     def calculate_handed_penalty(self, hand):
         '''
         Calculate a penalty based on the equipped weapons' properties,
@@ -152,6 +155,10 @@ class Lifeform(RpgEntity):
 
     def link_to_room(self, room):
         self.current_room = room
+        for eq in self.equipment_types:
+            equip = getattr(self, eq)
+            if equip is not None:
+                equip.on_move(room)
         room.contents.append(self)
 
     def get(self, attribute):

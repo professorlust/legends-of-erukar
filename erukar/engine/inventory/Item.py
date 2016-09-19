@@ -28,8 +28,20 @@ class Item(Describable):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()
 
+    def on_move(self, room):
+        for modifier in self.modifiers:
+            modifier.on_move(room)
+
     def on_inventory(self, *_):
         return self.alias()
+
+    def on_unequip(self, lifeform):
+        for modifier in self.modifiers:
+            modifier.on_unequip(lifeform)
+
+    def on_equip(self, lifeform):
+        for modifier in self.modifiers:
+            modifier.on_equip(lifeform)
 
     def alias(self):
         return self.name

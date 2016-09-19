@@ -35,6 +35,7 @@ class Equip(ActionCommand):
         if hasattr(player.lifeform(), item_type):
             setattr(player.lifeform(), item_type, item)
             result_string_format = getattr(Equip, 'equipped_{0}'.format(item_type))
+            item.on_equip(player.lifeform())
             self.dirty(player.lifeform())
             return self.succeed(result_string_format.format(item.describe()))
 
