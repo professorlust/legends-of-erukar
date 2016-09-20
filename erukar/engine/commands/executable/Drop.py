@@ -23,6 +23,7 @@ class Drop(ActionCommand):
     def move_from_inventory(self, item, lifeform, room):
         self.try_to_unequip(item.alias())
         lifeform.inventory.remove(item)
+        item.on_drop(room,lifeform)
         room.add(item)
         self.dirty(lifeform)
 

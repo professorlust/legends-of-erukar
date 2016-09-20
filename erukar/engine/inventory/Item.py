@@ -28,9 +28,9 @@ class Item(Describable):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()
 
-    def on_idle(self, room):
+    def on_start(self, room):
         for modifier in self.modifiers:
-            modifier.on_idle(room)
+            modifier.on_start(room)
 
     def on_take(self, lifeform):
         for modifier in self.modifiers:

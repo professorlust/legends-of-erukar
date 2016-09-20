@@ -148,3 +148,86 @@ class AuraControlTests(unittest.TestCase):
 
         self.assertTrue(len(list(x for x in d.active_auras if not x.location == (0,1))) == 0)
 
+    def test_on_start_starts_auras(self):
+        item = Sword()
+        d = Dungeon()
+        r = Room(d, (0,0))
+        r.add(item)
+
+        f = erukar.game.modifiers.inventory.Glowing()
+        f.apply_to(item)
+
+        r.on_start()
+
+        self.assertTrue(len(d.active_auras) > 0)
+
+    def test_take_stops_started_aura(self):
+        item = Sword()
+        d = Dungeon()
+        r = Room(d, (0,0))
+        r.add(item)
+
+        f = erukar.game.modifiers.inventory.Glowing()
+        f.apply_to(item)
+        r.on_start()
+
+        p = Player()
+        p.uid = 'bob'
+        p.current_room = r
+        pn = PlayerNode('bob', p)
+        data = DataAccess()
+        data.players.append(pn)
+        p.link_to_room(r)
+        pn.move_to_room(r)
+
+        i = Inspect()
+        i.sender_uid = 'bob'
+        i.data = data
+        i.execute()
+
+        t = Take()
+        t.user_specified_payload = 'sword'
+        t.sender_uid = 'bob'
+        t.data = data
+        t.execute()
+
+        self.assertEqual(len(list(x for x in d.active_auras if not x.is_expired)), 0)
+
+    def test_drop_restarts_aura(self):
+        item = Sword()
+        d = Dungeon()
+        r = Room(d, (0,0))
+        r.add(item)
+
+        f = erukar.game.modifiers.inventory.Glowing()
+        f.apply_to(item)
+        r.on_start()
+
+        p = Player()
+        p.uid = 'bob'
+        p.current_room = r
+        pn = PlayerNode('bob', p)
+        data = DataAccess()
+        data.players.append(pn)
+        p.link_to_room(r)
+        pn.move_to_room(r)
+
+        i = Inspect()
+        i.sender_uid = 'bob'
+        i.data = data
+        i.execute()
+
+        t = Take()
+        t.user_specified_payload = 'sword'
+        t.sender_uid = 'bob'
+        t.data = data
+        t.execute()
+
+        t = Drop()
+        t.user_specified_payload = 'sword'
+        t.sender_uid = 'bob'
+        t.data = data
+        t.execute()
+
+        self.assertEqual(len(list(x for x in d.active_auras if not x.is_expired)), 1)
+

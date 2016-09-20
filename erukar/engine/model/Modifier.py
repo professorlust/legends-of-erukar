@@ -39,7 +39,7 @@ class Modifier(Describable):
         '''Actually does the modification; this should be overridden'''
         pass
 
-    def on_idle(self, room):
+    def on_start(self, room):
         pass
 
     def on_take(self, lifeform):

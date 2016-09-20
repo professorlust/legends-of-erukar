@@ -9,16 +9,31 @@ class LightManipulatingItemModifier(ItemModifier):
         self.aura_decay = 0.5
         self.light_power = 0.2
 
+    def on_start(self, room):
+        self.start_aura(room)
+
+    def on_take(self, lifeform):
+        self.stop_aura()
+
+    def on_drop(self, room, lifeform):
+        self.start_aura(room)
+
     def on_move(self, room):
         if self.aura:
             self.aura.location = room.coordinates
 
     def on_equip(self, lifeform):
+        self.start_aura(lifeform)
+
+    def start_aura(self, initiator):
         self.aura = Aura((0,0), self.aura_strength, self.aura_decay)
         self.aura.modify_light = self.modify_light
-        lifeform.initiate_aura(self.aura)
+        initiator.initiate_aura(self.aura)
 
     def on_unequip(self, lifeform):
+        self.stop_aura()
+
+    def stop_aura(self):
         if self.aura:
             self.aura.is_expired = True
             self.aura = None

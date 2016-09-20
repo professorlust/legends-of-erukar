@@ -32,5 +32,6 @@ class Take(ActionCommand):
         player.remove_index(item)
         if len(container) > 0:
             container[-1].remove(item)
+        item.on_take(player.lifeform())
         self.dirty(player.lifeform())
         return Take.success.format(item.describe())

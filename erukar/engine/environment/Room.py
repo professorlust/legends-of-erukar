@@ -45,8 +45,8 @@ class Room(Containable):
     def on_start(self, *_):
         '''Called when the Instance has decorated and is actually starting'''
         for content in self.contents:
-            content.on_start()
-    
+            content.on_start(self)
+
     def on_inspect(self, lifeform, acuity, sense, depth=0):
         light_mod = self.calculate_luminosity()
         if light_mod <= 0.01:
