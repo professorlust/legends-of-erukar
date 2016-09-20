@@ -22,5 +22,8 @@ class Dungeon(RpgEntity):
         '''
         return {loc: set(self.get_applicable_auras(loc)) for loc in locations}
 
+    def tick(self):
+        self.clean_up_auras()
+
     def clean_up_auras(self):
         self.active_auras = set(x for x in self.active_auras if not x.is_expired)

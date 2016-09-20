@@ -10,6 +10,7 @@ class TurnManager(Manager):
         self.current_turn_count = 0
         self.turn_order = None  # This will be a generator
         self.most_recent_active_commands = {}
+        self.tick_time = False
 
     def subscribe(self, player):
         super().subscribe(player)
@@ -31,6 +32,11 @@ class TurnManager(Manager):
         next_player, self.current_turn_count = next(self.turn_order)
         return next_player
 
+    def needs_tick(self):
+        result = self.tick_time
+        self.tick_time = False
+        return result
+
     def turn_order_generator(self, current_turn_count=0):
         '''
         (Generator) Turn Order Calculator: Calculates which of the subscribed 
@@ -40,6 +46,8 @@ class TurnManager(Manager):
         '''
         while True:
             current_turn_count = (current_turn_count + 1) % TurnManager.MaximumTurnCount
+            if current_turn_count % 25 is 0:
+                self.tick_time = True
             for player in self.players:
                 if (current_turn_count+1) % player.turn_modifier() == 0:
                     if player.afflicted_with(erukar.engine.effects.Dead):

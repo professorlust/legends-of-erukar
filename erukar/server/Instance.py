@@ -147,10 +147,15 @@ class Instance(Manager):
             if len(res) > 0:
                 print(res)
 
-        self.active_player = self.turn_manager.next()
+        self.grab_from_turn_manager()
         res = self.active_player.begin_turn()
         if len(res) > 0:
             print(res)
+
+    def grab_from_turn_manager(self):
+        self.active_player = self.turn_manager.next()
+        if self.turn_manager.needs_tick():
+            self.dungeon.tick()
 
     def get_active_player_action(self):
         for command in self.action_commands:
