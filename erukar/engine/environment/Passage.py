@@ -7,6 +7,10 @@ class Passage:
         self.room = room
         self.wall = wall
 
+    def can_see_through(self):
+        return False if not self.is_door() \
+                else self.door is None or (self.door is not None and self.door.status is not Door.Closed)
+
     def is_door(self):
         return self.door is not None or self.room is not None
 

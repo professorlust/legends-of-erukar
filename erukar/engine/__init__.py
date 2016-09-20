@@ -1,3 +1,4 @@
+from .calculators import *
 from .effects import *
 from .commands.executable import *
 from .commands import *

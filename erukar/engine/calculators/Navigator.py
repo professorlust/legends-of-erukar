@@ -1,0 +1,43 @@
+import math, operator
+
+class Navigator:
+    '''Static class which does most Pathfinding.'''
+
+    def angle(start, finish):
+        x,y = list(map(operator.sub, finish, start))
+        if x == 0:
+            return math.pi/2 if y > 0 else 3*math.pi/2
+        elif y == 0:
+            return 0 if x > 0 else math.pi
+        else:
+            angle = math.atan(y/x)
+
+        if y < 0: angle += math.pi
+        return angle
+
+    def raytrace(start, finish):
+        angle = Navigator.angle(start.coordinates, finish.coordinates)
+        hyp = Navigator.distance(start.coordinates, finish.coordinates)
+        paths = list(set(Navigator.project(start.coordinates, angle, x) for x in range(math.ceil(hyp)+1)))
+
+        cur = start
+        travelled = set({cur.coordinates})
+        while True:
+            next_room = next((cur.connections[x].room for x in cur.connections \
+                              if cur.connections[x].can_see_through() \
+                              and cur.connections[x].room.coordinates not in travelled\
+                              and cur.connections[x].room.coordinates in paths), None)   
+            if next_room is None or cur is finish:
+                return cur
+            travelled.add(next_room.coordinates)
+            cur = next_room
+        
+    def project(start, angle, scalar):
+        return int(start[0] + scalar*math.cos(angle)), int(start[1] + scalar*math.sin(angle))
+
+    def distance(start, finish):
+        return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(finish, start)))
+
+    def exists_obstruction_between(start, finish):
+        raytrace_collision = Navigator.raytrace(start, finish)
+        return raytrace_collision != finish
