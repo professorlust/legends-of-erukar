@@ -28,6 +28,18 @@ class Item(Describable):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()
 
+    def on_idle(self, room):
+        for modifier in self.modifiers:
+            modifier.on_idle(room)
+
+    def on_take(self, lifeform):
+        for modifier in self.modifiers:
+            modifier.on_take(lifeform)
+
+    def on_drop(self, room, lifeform):
+        for modifier in self.modifiers:
+            modifier.on_drop(room, lifeform)
+
     def on_move(self, room):
         for modifier in self.modifiers:
             modifier.on_move(room)
