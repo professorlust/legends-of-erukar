@@ -1,7 +1,10 @@
+from erukar.engine.model.Direction import Direction
 from erukar.engine.model.Describable import Describable
-import math
+import math, operator
 
 class Aura(Describable):
+    BriefDescription = "You feel an aura originating from the {relative_direction}."
+
     def __init__(self, location, strength=2, decay_factor=0.5):
         '''
         An aura can only affect if its strength is >= 1. In the defaults, the aura's
@@ -22,6 +25,29 @@ class Aura(Describable):
 
     def distance(self, to_coordinate):
         return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(self.location, to_coordinate)))
+
+    def directionality(self, from_coordinate):
+        x,y = list(map(operator.sub, self.location, from_coordinate))
+        if x == 0:
+            return Direction.North if y > 0 else Direction.South
+        elif y == 0:
+            return Direction.East if x > 0 else Direction.West
+        else:
+            angle = math.arctan(y, x)
+
+        if y < 0: angle += math.pi
+        # todo: rewrite 
+        if math.pi/4 <= angle < 3*math.pi/4:
+            return Direction.North
+        if 3*math.pi/4 <= angle < 5*math.pi/4:
+            return Direction.West
+        if 5*math.pi/4 <= angle < 7*math.pi/4:
+            return Direction.South
+        return Direction.East
+
+    def describe_brief(self, lifeform, acuity, sense):
+        loc = self.directionality(lifeform.current_room.coordinates)
+        return self.mutate(self.BriefDescription, {'relative_direction':loc.name})
 
     def tick(self):
         '''

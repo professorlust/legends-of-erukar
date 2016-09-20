@@ -49,23 +49,24 @@ class Room(Containable):
 
     def on_inspect(self, lifeform, acuity, sense, depth=0):
         light_mod = self.calculate_luminosity()
+        acu, sen = acuity * light_mod, sense
         if light_mod <= 0.01:
             return 'This room is completely dark.'
-        acu, sen = acuity * light_mod, sense
-        content_results = [x.brief_inspect(lifeform,acu,sen) for x in self.contents if x is not lifeform]
+        content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
         descriptions = [' '.join(['You see {}.'.format(x) for x in content_results if x is not ''])]
-#       if self.ceiling is not None:
-#           content_descriptions.insert(0, self.ceiling.describe(lifeform, depth))
         if self.floor is not None:
             descriptions.insert(0, self.floor.describe(lifeform, depth))
         return ' '.join(descriptions)
 
     def inspect_here(self, lifeform):
         dir_desc = []
+        acu, sen = (lifeform.calculate_effective_stat(x) for x in ['acuity', 'sense'])
+        aura_descriptions = ' '.join(x.describe_brief(lifeform, acu, sen) \
+                                      for x in self.dungeon.get_applicable_auras(self.coordinates))
         for d in self.connections:
             if self.connections[d].is_door() and self.connections[d].can_see_or_sense(lifeform):
                 dir_desc.append('{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform)))
-        return self.describe(lifeform, 0) + '\n\n' + '\n'.join(dir_desc)
+        return '\n\n'.join([aura_descriptions, self.describe(lifeform, 0), '\n'.join(dir_desc)])
 
     def describe(self, lifeform, depth):
         '''Room Descriptions'''

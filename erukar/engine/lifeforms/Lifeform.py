@@ -61,7 +61,7 @@ class Lifeform(RpgEntity):
         '''
         return self.hand_efficacy[hand]
 
-    def calculate_effective_stat(self, stat_type, depth):
+    def calculate_effective_stat(self, stat_type, depth=0):
         score = self.calculate_stat_score(stat_type)
         decay_factor = 1.0 - 0.75*math.exp(-0.02*score)
         return math.floor(math.pow(decay_factor,depth) * score)
