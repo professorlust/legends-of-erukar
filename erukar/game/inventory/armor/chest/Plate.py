@@ -6,5 +6,5 @@ class Plate(ChestArmor):
 
     def __init__(self):
         super().__init__("Plate")
-        self.armor_class_modifier = 0
+        self.armor_class_modifier = 9
         self.max_dex_mod = 20

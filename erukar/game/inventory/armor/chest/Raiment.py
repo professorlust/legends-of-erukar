@@ -6,5 +6,5 @@ class Raiment(ChestArmor):
 
     def __init__(self):
         super().__init__("Raiment")
-        self.armor_class_modifier = 0
+        self.armor_class_modifier = 3
         self.max_dex_mod = 20

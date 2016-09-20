@@ -7,7 +7,7 @@ from erukar.game.modifiers.inventory import Luminous, Glowing
 import random
 
 class Sconce(RoomModifier):
-    Probability = 0
+    Probability = 0.2
     ProbabilityFromFabrication = 0.25
     broad_alias_base = 'sconce'
 

@@ -6,6 +6,8 @@ class Skeleton(Enemy):
     def __init__(self):
         super().__init__("Skeleton")
         self.dexterity = -2
+        self.vitality = -1
+        self.define_level(1)
         self.name = "Skeleton"
         self.randomize_equipment()
         self.BriefDescription = "a skeleton holding a {describe|right} and a {describe|left}."

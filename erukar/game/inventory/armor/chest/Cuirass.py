@@ -6,5 +6,5 @@ class Cuirass(ChestArmor):
 
     def __init__(self):
         super().__init__("Cuirass")
-        self.armor_class_modifier = 0
+        self.armor_class_modifier = 6
         self.max_dex_mod = 20

@@ -6,8 +6,6 @@ import erukar
 class Skeleton(RoomModifier):
     Probability = 10
     def apply_to(self, room):
-        skelly = erukar.game.enemies.Skeleton()
-#        print(skelly)
-        skelly.define_level(1)
+        skelly = erukar.game.enemies.undead.Skeleton()
         skelly.current_room = room
         room.add(skelly)

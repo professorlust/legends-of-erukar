@@ -6,5 +6,5 @@ class Plackart(ChestArmor):
 
     def __init__(self):
         super().__init__("Plackart")
-        self.armor_class_modifier = 0
+        self.armor_class_modifier = 5
         self.max_dex_mod = 20

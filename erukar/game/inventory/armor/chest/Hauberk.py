@@ -6,5 +6,5 @@ class Hauberk(ChestArmor):
 
     def __init__(self):
         super().__init__("Hauberk")
-        self.armor_class_modifier = 0
+        self.armor_class_modifier = 7
         self.max_dex_mod = 20
