@@ -2,6 +2,9 @@ class Interactible:
     def on_inspect(self, sender):
         pass
 
+    def on_start(self, *_):
+        pass
+
     def on_attack(self, sender):
         pass
 

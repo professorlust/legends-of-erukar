@@ -1,7 +1,6 @@
-from erukar.game.modifiers.WeaponMod import WeaponMod
-from erukar.engine.inventory import Weapon
+from erukar.game.modifiers.base.LightManipulatingItemModifier import LightManipulatingItemModifier
 
-class Dark(WeaponMod):
+class Dark(LightManipulatingItemModifier):
     Probability = 0.2
     Desirability = 4.0
 
@@ -18,6 +17,9 @@ class Dark(WeaponMod):
 
     def apply_to(self, weapon):
         super().apply_to(weapon)
+        self.aura_decay = 0.5
+        self.aura_strength = 3
+        self.light_power = 0.25
         weapon.name = "Dark " + weapon.name
 
 

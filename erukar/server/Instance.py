@@ -53,9 +53,13 @@ class Instance(Manager):
     def decorate(self, generation_parameters):
         decorators = list(Instance.decorators(generation_parameters))
         self.generation_parameters = generation_parameters
+        # First Pass -- Actually add Decorations
         for room in self.dungeon.rooms:
             for deco in decorators:
                 deco.apply_one_to(room)
+        # Second pass -- Tell Decorators to start
+        for room in self.dungeon.rooms:
+            room.on_start()
 
     def decorators(gen_params):
         for sm in Instance.SubModules:
