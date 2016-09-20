@@ -39,7 +39,7 @@ class TurnManager(Manager):
 
     def turn_order_generator(self, current_turn_count=0):
         '''
-        (Generator) Turn Order Calculator: Calculates which of the subscribed 
+        (Generator) Turn Order Calculator: Calculates which of the subscribed
         players should go next in turn order according to his or her dexterity modifier.
         * current_turn_count allows the system to restart the turn count if a
         lifeform dies/disconnects or joins the server.
