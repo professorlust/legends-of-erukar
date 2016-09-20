@@ -22,5 +22,3 @@ class Dark(LightManipulatingItemModifier):
         self.light_power = 0.25
         weapon.name = "Dark " + weapon.name
 
-
-

@@ -73,6 +73,11 @@ class Instance(Manager):
         room = self.dungeon.rooms[0]
         p.character.link_to_room(room)
         p.move_to_room(room)
+        # Run on_equip for all equipped items
+        for equip in p.character.equipment_types:
+            equipped = getattr(p.character, equip)
+            if equipped is not None:
+                equipped.on_equip(p.character)
         self.turn_manager.subscribe(p)
         self.command_contexts[player.uid] = None
         self.has_had_players = True

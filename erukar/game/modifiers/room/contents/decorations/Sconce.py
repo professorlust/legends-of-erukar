@@ -1,12 +1,14 @@
 from erukar.engine.model import Modifier
+from erukar.game.inventory.consumables.Torch import Torch
 from erukar.engine.environment import *
 from erukar.game.modifiers.RoomModifier import RoomModifier
+from erukar.game.modifiers.material.Wood import Wood
+from erukar.game.modifiers.inventory import Luminous, Glowing
 import random
 
 class Sconce(RoomModifier):
-    Probability = 3
+    Probability =0# 3
     ProbabilityFromFabrication = 0.25
-
     broad_alias_base = 'sconce'
 
     def __init__(self):
@@ -21,10 +23,10 @@ class Sconce(RoomModifier):
     def apply_to(self, room):
         torch, add_torch_method, sensory_result, sense_difficulty = random.choice(self.torch_possibilities)
 
-        deco = Decoration(aliases=[self.broad_alias_base, torch])
+        deco = Decoration(aliases=[self.broad_alias_base])
         deco.torch_type = torch
-        deco.location = random.choice([x for x in room.connections])
-        deco.BriefDescription = 'A sconce sits on the {location} wall.'
+        deco.location = random.choice([x.name for x in room.connections])
+        deco.BriefDescription = 'a sconce on the {location} wall'
         deco.set_vision_results('You see a {torch} on the {location} wall.',
                                 'You see a {torch} inside of a sconce on the {location} wall.', (5, 8))
         deco.set_sensory_results('', sensory_result, (sense_difficulty, sense_difficulty))
@@ -32,30 +34,35 @@ class Sconce(RoomModifier):
         add_torch_method(room)
         room.add(deco)
 
+
+    def make_torch(self, room):
+        '''Make a base torch and add it to the room'''
+        torch = Torch()
+        Wood().apply_to(torch)
+        room.add(torch)
+        return torch
+
     def charred(self, room):
         print('charred')
 
     def unlit(self, room):
-        print('unlit')
-
-    def modify_light(self):
-        print(self.modify_light_amount)
-        return self.modify_light_amount
+        self.make_torch(room)
 
     def dim(self, room):
-        torch = Aura((0,0))
-        torch.modify_light = self.modify_light
-        self.modify_light_amount = 0.2
-        room.initiate_aura(torch)
+        torch = self.make_torch(room)
+        l = Glowing()
+        l.apply_to(torch)
 
     def bright(self, room):
-        torch = Aura((0,0))
-        torch.modify_light = self.modify_light
-        self.modify_light_amount = 0.8
-        room.initiate_aura(torch)
+        torch = self.make_torch(room)
+        l = Luminous()
+        l.aura_decay = 0.75
+        l.light_power = 0.8
+        l.apply_to(torch)
 
     def burning(self, room):
-        torch = Aura((0,0))
-        torch.modify_light = self.modify_light
-        self.modify_light_amount = 0.5
-        room.initiate_aura(torch)
+        torch = self.make_torch(room)
+        l = Luminous()
+        l.aura_decay = 0.5
+        l.light_power = 0.5
+        l.apply_to(torch)
