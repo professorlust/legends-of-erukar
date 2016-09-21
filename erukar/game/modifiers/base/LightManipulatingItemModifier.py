@@ -2,6 +2,8 @@ from erukar.game.modifiers.ItemModifier import ItemModifier
 from erukar.engine.environment.Aura import Aura
 
 class LightManipulatingItemModifier(ItemModifier):
+    AuraDescription = "You see light emanating from the {relative_direction}."
+
     def apply_to(self, item):
         super().apply_to(item)
         self.aura = None
@@ -28,6 +30,7 @@ class LightManipulatingItemModifier(ItemModifier):
     def start_aura(self, initiator):
         self.aura = Aura((0,0), self.aura_strength, self.aura_decay)
         self.aura.modify_light = self.modify_light
+        self.aura.BriefDescription = self.AuraDescription
         initiator.initiate_aura(self.aura)
 
     def on_unequip(self, lifeform):

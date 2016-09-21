@@ -4,6 +4,7 @@ class Dark(LightManipulatingItemModifier):
     Probability = 0.2
     Desirability = 4.0
 
+    AuraDescription = "Light seems to disappear unnaturally to {relative_direction}."
     InventoryDescription = "Reduces room's light level"
     BriefDescription = "The {EssentialPart} is draped in shadows."
     AbsoluteMinimalDescription = ""

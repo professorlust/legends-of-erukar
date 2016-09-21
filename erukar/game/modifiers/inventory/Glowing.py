@@ -6,6 +6,7 @@ class Glowing(LightManipulatingItemModifier):
     Probability = 0.2
     Desirability = 4.0
 
+    AuraDescription = "A dull, soft white glow emanates from {relative_direction}."
     InventoryDescription = "Slightly increases room's light level"
     BriefDescription = "The {EssentialPart} glows a soft white."
     AbsoluteMinimalDescription = ""

@@ -5,6 +5,7 @@ class Luminous(LightManipulatingItemModifier):
     Probability = 0.1
     Desirability = 4.0
 
+    AuraDescription = "A Bright light pours into the room from {relative_direction}."
     InventoryDescription = "Increases room's light level"
     BriefDescription = "The {EssentialPart} emanates a white light."
     AbsoluteMinimalDescription = ""

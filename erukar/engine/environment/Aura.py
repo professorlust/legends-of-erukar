@@ -33,20 +33,23 @@ class Aura(Describable):
         return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(self.location.coordinates, to_coordinate)))
 
     def directionality(self, from_coordinate):
-        angle = Navigator.angle(self.location, from_coordinate)
+        if from_coordinate == self.location.coordinates:
+            return 'this area'
+
+        angle = Navigator.angle(self.location.coordinates, from_coordinate)
 
         # todo: rewrite 
         if math.pi/4 <= angle < 3*math.pi/4:
-            return Direction.North
+            return 'the north'
         if 3*math.pi/4 <= angle < 5*math.pi/4:
-            return Direction.West
+            return 'the west'
         if 5*math.pi/4 <= angle < 7*math.pi/4:
-            return Direction.South
-        return Direction.East
+            return 'the south'
+        return 'the east'
 
     def describe_brief(self, lifeform, acuity, sense):
         loc = self.directionality(lifeform.current_room.coordinates)
-        return self.mutate(self.BriefDescription, {'relative_direction':loc.name})
+        return self.mutate(self.BriefDescription, {'relative_direction':loc})
 
     def tick(self):
         '''

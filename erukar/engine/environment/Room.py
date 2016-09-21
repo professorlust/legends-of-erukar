@@ -16,7 +16,7 @@ class Room(Containable):
 
     def calculate_luminosity(self):
         luminosity = 0
-        for x in self.dungeon.get_applicable_auras(self.coordinates):
+        for x in self.dungeon.get_applicable_auras(self):
             if hasattr(x, 'modify_light'):
                 luminosity += x.modify_light()
         return min(1.0, luminosity)
