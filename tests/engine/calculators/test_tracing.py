@@ -52,3 +52,19 @@ class TracingTests(unittest.TestCase):
         for start, finish, result in payloads:
             angle = Navigator.angle(start, finish)
             self.assertEqual(angle, result)
+
+    def test_light_obstruction(self):
+        d = Dungeon()
+
+        l = Room(d, (0,0))
+        m = Room(d, (1,0))
+        r = Room(d, (2,0))
+        l.coestablish_connection(Direction.East, m, None)
+        m.coestablish_connection(Direction.East, r, Door())
+        
+        a = Aura((2,0))
+        a.blocked_by_walls = True
+        a.aura_strength = 1000
+        r.initiate_aura(a)
+
+        self.assertEqual(len(list(d.get_applicable_auras(l))), 0)

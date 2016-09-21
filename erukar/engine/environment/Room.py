@@ -28,7 +28,7 @@ class Room(Containable):
         return 1.0
 
     def initiate_aura(self, aura):
-        aura.location = self.coordinates
+        aura.location = self
         self.dungeon.active_auras.add(aura)
 
     def directional_inspect(self, direction, lifeform, depth=0):

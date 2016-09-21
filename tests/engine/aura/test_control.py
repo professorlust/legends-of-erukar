@@ -11,7 +11,7 @@ class AuraControlTests(unittest.TestCase):
         r.initiate_aura(aura)
 
         self.assertIn(aura, d.active_auras)
-        self.assertEqual(aura.location, (0,0))
+        self.assertEqual(aura.location.coordinates, (0,0))
 
     def test_lifeform_can_create(self):
         d = Dungeon()
@@ -23,7 +23,7 @@ class AuraControlTests(unittest.TestCase):
         l.initiate_aura(aura)
 
         self.assertIn(aura, d.active_auras)
-        self.assertEqual(aura.location, (2,2))
+        self.assertEqual(aura.location.coordinates, (2,2))
 
     def test_equip_starts_aura(self):
         item = Sword()
@@ -146,7 +146,7 @@ class AuraControlTests(unittest.TestCase):
         m.data = data
         m.execute()
 
-        self.assertTrue(len(list(x for x in d.active_auras if not x.location == (0,1))) == 0)
+        self.assertTrue(len(list(x for x in d.active_auras if not x.location.coordinates == (0,1))) == 0)
 
     def test_on_start_starts_auras(self):
         item = Sword()

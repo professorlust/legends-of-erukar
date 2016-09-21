@@ -1,5 +1,6 @@
 from erukar.engine.model.Direction import Direction
 from erukar.engine.model.Describable import Describable
+from erukar.engine.calculators.Navigator import Navigator
 import math, operator
 
 class Aura(Describable):
@@ -15,27 +16,25 @@ class Aura(Describable):
         self.location = location
         self.aura_strength = strength
         self.decay_factor = decay_factor
+        self.blocked_by_walls = False
         self.is_expired = False
 
-    def affects_tile(self, coordinate):
+    def affects_tile(self, tile):
         '''This is used for the quick calculations for the dungeon'''
-        dist = math.ceil(self.distance(coordinate))
+        dist = math.ceil(self.distance(tile.coordinates))
         strength_at_tile = self.aura_strength * math.pow(self.decay_factor, dist)
-        return strength_at_tile >= 1
+        if strength_at_tile < 1:
+            return False
+        if self.blocked_by_walls:
+            return Navigator.exists_obstruction_between(self.location, tile)
+        return True
 
     def distance(self, to_coordinate):
-        return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(self.location, to_coordinate)))
+        return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(self.location.coordinates, to_coordinate)))
 
     def directionality(self, from_coordinate):
-        x,y = list(map(operator.sub, self.location, from_coordinate))
-        if x == 0:
-            return Direction.North if y > 0 else Direction.South
-        elif y == 0:
-            return Direction.East if x > 0 else Direction.West
-        else:
-            angle = math.arctan(y, x)
+        angle = Navigator.angle(self.location, from_coordinate)
 
-        if y < 0: angle += math.pi
         # todo: rewrite 
         if math.pi/4 <= angle < 3*math.pi/4:
             return Direction.North

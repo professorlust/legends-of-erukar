@@ -4,6 +4,7 @@ class Navigator:
     '''Static class which does most Pathfinding.'''
 
     def angle(start, finish):
+        '''Calculate the angle (Radians) from 0 to 2*pi between two coordinates'''
         x,y = list(map(operator.sub, finish, start))
         if x == 0:
             return math.pi/2 if y > 0 else 3*math.pi/2
@@ -16,6 +17,7 @@ class Navigator:
         return angle
 
     def raytrace(start, finish):
+        '''Basic path tracing from one room to another; yields the furthest traversible Room'''
         angle = Navigator.angle(start.coordinates, finish.coordinates)
         hyp = Navigator.distance(start.coordinates, finish.coordinates)
         paths = list(set(Navigator.project(start.coordinates, angle, x) for x in range(math.ceil(hyp)+1)))
@@ -32,8 +34,9 @@ class Navigator:
             travelled.add(next_room.coordinates)
             cur = next_room
         
-    def project(start, angle, scalar):
-        return int(start[0] + scalar*math.cos(angle)), int(start[1] + scalar*math.sin(angle))
+    def project(start, angle, magnitude):
+        '''project an angle from the start coordinates and a magnitude'''
+        return int(start[0] + magnitude*math.cos(angle)), int(start[1] + magnitude*math.sin(angle))
 
     def distance(start, finish):
         return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(finish, start)))

@@ -20,7 +20,7 @@ class LightManipulatingItemModifier(ItemModifier):
 
     def on_move(self, room):
         if self.aura:
-            self.aura.location = room.coordinates
+            self.aura.location = room
 
     def on_equip(self, lifeform):
         self.start_aura(lifeform)

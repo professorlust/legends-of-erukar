@@ -10,9 +10,17 @@ class Dungeon(RpgEntity):
 
     def get_applicable_auras(self, for_loc):
         '''Generator which gets all applicable, active auras at a location'''
+        if not isinstance(for_loc, tuple):
+            for_loc = for_loc.coordinates
+        room_at = self.get_room_at(for_loc)
+        if room_at is None:
+            return
         for aura in self.active_auras:
-            if aura.affects_tile(for_loc):
+            if aura.affects_tile(room_at):
                 yield aura
+
+    def get_room_at(self, location):
+        return next((x for x in self.rooms if x.coordinates == location), None)
 
     def auras_for_locations(self, locations):
         '''
