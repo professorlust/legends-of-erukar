@@ -4,8 +4,8 @@ import random
 class Dying(Affliction):
     Incapacitates = True
 
-    def do_begin_of_turn_effect(self):
-        dc = 25
+    def do_end_of_turn_effect(self):
+        dc = 35
         skill_range = self.afflicted.stat_random_range('resolve')
         mod = 10*(1-(pow((self.afflicted.resolve-1000)/1000, 2)))
 

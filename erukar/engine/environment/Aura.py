@@ -54,8 +54,8 @@ class Aura(Describable):
     def tick(self):
         '''
         Time-based, regular Tick that occurs every 25 ticks in a TurnManager (5 seconds).
-        For time-based auras, this might decrement a timer function. If that timer is at 
-        zero at the end, it sets the expired flag to true, then is removed by the dungeon 
+        For time-based auras, this might decrement a timer function. If that timer is at
+        zero at the end, it sets the expired flag to true, then is removed by the dungeon
         on the next cleanup cycle
         '''
         pass

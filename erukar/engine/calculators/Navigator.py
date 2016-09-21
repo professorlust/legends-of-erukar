@@ -10,10 +10,13 @@ class Navigator:
             return math.pi/2 if y > 0 else 3*math.pi/2
         elif y == 0:
             return 0 if x > 0 else math.pi
-        else:
-            angle = math.atan(y/x)
 
-        if y < 0: angle += math.pi
+        angle = math.atan(y/x)
+        if x < 0:
+            angle += math.pi
+        elif y < 0:
+            angle += 2*math.pi
+
         return angle
 
     def raytrace(start, finish):
@@ -28,12 +31,12 @@ class Navigator:
             next_room = next((cur.connections[x].room for x in cur.connections \
                               if cur.connections[x].can_see_through() \
                               and cur.connections[x].room.coordinates not in travelled\
-                              and cur.connections[x].room.coordinates in paths), None)   
+                              and cur.connections[x].room.coordinates in paths), None)
             if next_room is None or cur is finish:
                 return cur
             travelled.add(next_room.coordinates)
             cur = next_room
-        
+
     def project(start, angle, magnitude):
         '''project an angle from the start coordinates and a magnitude'''
         return int(start[0] + magnitude*math.cos(angle)), int(start[1] + magnitude*math.sin(angle))
