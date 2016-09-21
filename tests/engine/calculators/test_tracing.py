@@ -14,6 +14,8 @@ class TracingTests(unittest.TestCase):
 
         result = Navigator.raytrace(l, r)
         self.assertEqual(result, r)
+        self.assertFalse(Navigator.exists_obstruction_between(r, r))
+        self.assertFalse(Navigator.exists_obstruction_between(l, r))
 
     def test_raytrace_yields_collision_if_obstructed(self):
         d = Dungeon()
@@ -26,8 +28,9 @@ class TracingTests(unittest.TestCase):
 
         result = Navigator.raytrace(l, r)
         self.assertEqual(result, m)
+        self.assertTrue(Navigator.exists_obstruction_between(l, r))
 
-    def test_raytrace_yields_collision_if_obstructedi_but_door_is_open(self):
+    def test_raytrace_yields_collision_if_obstructed_but_door_is_open(self):
         d = Dungeon()
 
         l = Room(d, (0,0))
@@ -39,6 +42,7 @@ class TracingTests(unittest.TestCase):
         m.coestablish_connection(Direction.East, r, door)
 
         result = Navigator.raytrace(l, r)
+        self.assertFalse(Navigator.exists_obstruction_between(l, r))
         self.assertEqual(result, r)
 
     def test_angle_results_are_coherent(self):

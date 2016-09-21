@@ -29,6 +29,7 @@ class LightManipulatingItemModifier(ItemModifier):
 
     def start_aura(self, initiator):
         self.aura = Aura((0,0), self.aura_strength, self.aura_decay)
+        self.aura.blocked_by_walls = True
         self.aura.modify_light = self.modify_light
         self.aura.BriefDescription = self.AuraDescription
         initiator.initiate_aura(self.aura)

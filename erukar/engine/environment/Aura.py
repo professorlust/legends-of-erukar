@@ -26,7 +26,7 @@ class Aura(Describable):
         if strength_at_tile < 1:
             return False
         if self.blocked_by_walls:
-            return Navigator.exists_obstruction_between(self.location, tile)
+            return not Navigator.exists_obstruction_between(self.location, tile)
         return True
 
     def distance(self, to_coordinate):
