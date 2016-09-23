@@ -21,11 +21,11 @@ class LightSource(Item):
     DecayAtZeroFuel = 0.2
 
     def __init__(self):
-        super().__init__("Light Source","Light Source")
+        super().__init__(self.BaseName,self.BaseName)
         self.aura = None
         self.equipment_locations = ['left', 'right']
         self.fuel = random.uniform(self.MaxFuel/2, self.MaxFuel)
-        self.name = "Light Source"
+        self.name = self.BaseName
         self.modifiers = []
 
     def on_inventory(self):

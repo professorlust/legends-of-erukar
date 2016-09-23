@@ -4,6 +4,7 @@ from erukar.engine.environment.Lock import Lock
 class Container(Containable):
     def __init__(self, aliases):
         super().__init__(aliases)
+        self.visible_in_room_description = True
         self.can_close = True
         self.contents_visible = False
         self.lock = None
@@ -19,6 +20,10 @@ class Container(Containable):
         self.contents_visible = True
         return "Opened a chest"
 
+    def on_start(self, room):
+        for content in self.contents:
+            content.on_start(room)
+
     def on_close(self, sender):
         if self.can_close:
             self.contents_visible = False
@@ -26,7 +31,10 @@ class Container(Containable):
         return "Cannot close this container"
 
     def brief_inspect(self, lifeform, acu, sen):
-        return 'Container brief inspect.'
+        if not self.visible_in_room_description: return ''
+        content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
+        descriptions = ' '.join(['You see {}.'.format(x) for x in content_results if x is not ''])
+        return 'In this {}...{}'.format(self.alias(),  descriptions)
 
     def on_inspect(self, *_):
         return 'Container Full Inspect'

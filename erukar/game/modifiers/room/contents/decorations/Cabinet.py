@@ -5,7 +5,7 @@ import random
 
 class Cabinet(RoomModifier):
     Probability = 0.2
-    ProbabilityFromFabrication = 0.8
+    ProbabilityFromFabrication = 1
 
     materials = [
         "ash",
