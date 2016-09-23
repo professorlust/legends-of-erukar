@@ -1,3 +1,4 @@
+from erukar.engine.model.Direction import Direction
 import math, operator
 
 class Navigator:
@@ -18,6 +19,18 @@ class Navigator:
             angle += 2*math.pi
 
         return angle
+
+    def angle_to_direction(angle):
+        unit_circle = [
+            (math.pi/4, 3*math.pi/4, Direction.North),
+            (3*math.pi/4, 5*math.pi/4, Direction.West),
+            (5*math.pi/4, 7*math.pi/4, Direction.South)]
+
+        for uc in unit_circle:
+            if uc[0] <= angle < uc[1]:
+                return uc[2]
+
+        return Direction.East
 
     def raytrace(start, finish):
         '''Basic path tracing from one room to another; yields the furthest traversible Room'''

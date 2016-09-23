@@ -3,6 +3,7 @@ from erukar.engine.environment.Aura import Aura
 
 class LightManipulatingItemModifier(ItemModifier):
     AuraDescription = "You see light emanating from the {relative_direction}."
+    SelfAuraDescription = "Light from your item lights up this room."
 
     def apply_to(self, item):
         super().apply_to(item)

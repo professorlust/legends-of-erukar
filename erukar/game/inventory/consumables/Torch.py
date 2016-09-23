@@ -9,6 +9,7 @@ class Torch(Item):
     EssentialPart = "tip"
     SupportPart = "handle"
     BriefDescription = "a torch"
+    SelfAuraDescription = "The light from your torch illuminates the room."
     AuraDescription = "The flickering, golden light of a torch flows into the room from {relative_direction}."
     PersistentAttributes = ['fuel']
 
@@ -25,7 +26,7 @@ class Torch(Item):
 
     def tick(self):
         if self.aura is not None:
-            self.fuel -= 1
+            self.fuel -= 0.25
             self.aura.aura_strength = self.torch_strength()
             self.aura.decay_factor = self.decay_factor()
             if self.fuel <= 0:
@@ -38,7 +39,7 @@ class Torch(Item):
         self.stop_aura()
 
     def on_drop(self, room, lifeform):
-        self.start_aura(lifeform)
+        self.start_aura(room)
 
     def on_move(self, room):
         if self.aura:

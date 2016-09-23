@@ -12,7 +12,7 @@ class TracingTests(unittest.TestCase):
 
         # This iterates over all of the directions and makes sure that the 
         # directions from describe_brief all are coherent (e.g. West -> "... west... ")
-        for aux in [((1,0), Direction.East), ((0,-1), Direction.South), ((-1,0), Direction.West), ((0,1), Direction.North)]:
+        for aux in [((1,0), Direction.West), ((0,-1), Direction.North), ((-1,0), Direction.East), ((0,1), Direction.South)]:
             nr = Room(d, aux[0])
             l.link_to_room(nr)
             center.coestablish_connection(aux[1], nr, None)

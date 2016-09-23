@@ -5,6 +5,7 @@ import math, operator
 
 class Aura(Describable):
     BriefDescription = "You feel an aura originating from the {relative_direction}."
+    SelfAuraDescription = "You sense your own aura."
 
     def __init__(self, location, strength=2, decay_factor=0.5):
         '''
@@ -13,6 +14,7 @@ class Aura(Describable):
         1 in adjacent rooms, and cannot affect outside of these tiles.
         '''
         super().__init__()
+        self.initiator = None
         self.location = location
         self.aura_strength = strength
         self.decay_factor = decay_factor
@@ -36,18 +38,14 @@ class Aura(Describable):
         if from_coordinate == self.location.coordinates:
             return 'this area'
 
-        angle = Navigator.angle(self.location.coordinates, from_coordinate)
+        angle = Navigator.angle(from_coordinate, self.location.coordinates)
+        direction = Navigator.angle_to_direction(angle)
 
-        # todo: rewrite 
-        if math.pi/4 <= angle < 3*math.pi/4:
-            return 'the north'
-        if 3*math.pi/4 <= angle < 5*math.pi/4:
-            return 'the west'
-        if 5*math.pi/4 <= angle < 7*math.pi/4:
-            return 'the south'
-        return 'the east'
+        return 'the {}'.format(direction.name.lower())
 
     def describe_brief(self, lifeform, acuity, sense):
+        if self.initiator is lifeform:
+            return self.mutate(self.SelfAuraDescription)
         loc = self.directionality(lifeform.current_room.coordinates)
         return self.mutate(self.BriefDescription, {'relative_direction':loc})
 

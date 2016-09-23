@@ -6,7 +6,7 @@ class Containable(EnvironmentPiece):
         super().__init__(aliases)
         self.contents = []
         self.contents_conjuntion = " Inside of the container:  "
-        
+
     def add(self, item):
         self.contents.append(item)
 
