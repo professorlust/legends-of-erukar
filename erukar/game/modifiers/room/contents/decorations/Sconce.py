@@ -15,7 +15,6 @@ class Sconce(RoomModifier):
         super().__init__()
         self.torch_possibilities = [
             ('charred torch', self.charred, 'You smell smoke that seems to linger on the air.', 10),
-            ('unlit torch', self.unlit, 'You feel like this would be a good place for a torch and notice an unlit sconce on the {location} wall.', 40),
             ('dimly burning torch', self.dim, 'You hear the faintest crackle of flames from the tip of a {torch_type} on the {location} side of the room', 30),
             ('burning torch', self.burning, 'You feel the heat of a {torch_type}\'s flames.', 20),
             ('brightly burning torch', self.bright, 'The crackle, heat, and light emanating from the {location} by a {torch_type} are unmistakable.', 10)]
@@ -35,34 +34,22 @@ class Sconce(RoomModifier):
         room.add(deco)
 
 
-    def make_torch(self, room):
+    def make_torch(self, room, fuel):
         '''Make a base torch and add it to the room'''
         torch = Torch()
+        torch.fuel = fuel
         Wood().apply_to(torch)
         room.add(torch)
         return torch
 
     def charred(self, room):
-        print('charred')
-
-    def unlit(self, room):
-        self.make_torch(room)
+        self.make_torch(room, 0)
 
     def dim(self, room):
-        torch = self.make_torch(room)
-        l = Glowing()
-        l.apply_to(torch)
+        torch = self.make_torch(room, random.uniform(10, 25))
 
     def bright(self, room):
-        torch = self.make_torch(room)
-        l = Luminous()
-        l.aura_decay = 0.75
-        l.light_power = 0.8
-        l.apply_to(torch)
+        torch = self.make_torch(room, random.uniform(75,100))
 
     def burning(self, room):
-        torch = self.make_torch(room)
-        l = Luminous()
-        l.aura_decay = 0.5
-        l.light_power = 0.5
-        l.apply_to(torch)
+        torch = self.make_torch(room, random.uniform(25, 75))

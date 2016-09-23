@@ -156,6 +156,8 @@ class Instance(Manager):
         self.active_player = self.turn_manager.next()
         if self.turn_manager.needs_tick():
             self.dungeon.tick()
+            for player in self.data.players:
+                player.lifeform().tick()
 
     def get_active_player_action(self):
         for command in self.action_commands:

@@ -25,6 +25,9 @@ class Item(Describable):
     def describe(self):
         return self.name
 
+    def tick(self):
+        pass
+
     def matches(self, other):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()

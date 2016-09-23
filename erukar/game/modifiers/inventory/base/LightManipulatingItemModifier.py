@@ -29,6 +29,7 @@ class LightManipulatingItemModifier(ItemModifier):
 
     def start_aura(self, initiator):
         self.aura = Aura((0,0), self.aura_strength, self.aura_decay)
+        self.aura.initiator = initiator
         self.aura.blocked_by_walls = True
         self.aura.modify_light = self.modify_light
         self.aura.BriefDescription = self.AuraDescription
@@ -42,5 +43,5 @@ class LightManipulatingItemModifier(ItemModifier):
             self.aura.is_expired = True
             self.aura = None
 
-    def modify_light(self):
-        return self.light_power
+    def modify_light(self, decay=1):
+        return self.light_power * decay

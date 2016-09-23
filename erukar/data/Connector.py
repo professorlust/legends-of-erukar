@@ -117,7 +117,7 @@ class Connector:
         '''Create Item Schema objects from a lifeform's inventory'''
         for item in lifeform.inventory:
             if item.Persistent:
-                modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers]
+                modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers if m.Persistent]
                 material = item.material.__module__
                 item_attributes = item.persistable_attributes()
                 yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers, item_attributes=item_attributes))

@@ -11,6 +11,7 @@ class Modifier(Describable):
     PermittedEntities = []
     ProhibitedEntities = []
     PermissionType = ALL
+    Persistent = True
 
     BriefDescription = "{BaseName}"
     AbsoluteMinimalDescription = "Absolute Minimal"
