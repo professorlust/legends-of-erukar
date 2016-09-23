@@ -1,4 +1,4 @@
-from erukar.game.modifiers.base.LightManipulatingItemModifier import LightManipulatingItemModifier
+from erukar.game.modifiers.inventory.base.LightManipulatingItemModifier import LightManipulatingItemModifier
 from erukar.engine.environment.Aura import Aura
 from erukar.engine.inventory import Weapon
 

@@ -30,7 +30,7 @@ class Aura(Describable):
         return True
 
     def distance(self, to_coordinate):
-        return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(self.location.coordinates, to_coordinate)))
+        return Navigator.distance(self.location.coordinates, to_coordinate)
 
     def directionality(self, from_coordinate):
         if from_coordinate == self.location.coordinates:

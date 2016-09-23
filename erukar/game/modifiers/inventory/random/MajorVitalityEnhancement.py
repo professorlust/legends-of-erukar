@@ -1,4 +1,4 @@
-from erukar.game.modifiers.inventory.Enhancement import Enhancement
+from erukar.game.modifiers.inventory.random.Enhancement import Enhancement
 
 class MajorVitalityEnhancement(Enhancement):
     Probability = 0.0333333

@@ -85,6 +85,9 @@ class Connector:
         modifiers = [self.create_from_type(m.modifier_type) for m in data.modifiers] + [self.create_from_type(data.material_type)]
         for mod in modifiers:
             mod.apply_to(item)
+            if data.item_attributes is not None and len(data.item_attributes) > 0:
+                for pattr in data.item_attributes:
+                    setattr(item, pattr, data.item_attributes[pattr])
         return item
 
     def create_from_type(self, item_type):
@@ -116,7 +119,8 @@ class Connector:
             if item.Persistent:
                 modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers]
                 material = item.material.__module__
-                yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers))
+                item_attributes = item.persistable_attributes()
+                yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers, item_attributes=item_attributes))
 
     def gen_to_dict(self, generator):
         return {x[0]:x[1] for x in generator}

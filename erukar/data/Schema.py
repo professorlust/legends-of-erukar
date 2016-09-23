@@ -1,6 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSON
 
 Base = declarative_base()
 
@@ -55,6 +56,7 @@ class Item(Base):
     character       = relationship("Character", foreign_keys=[character_id])
     material_type   = Column(String)
     modifiers       = relationship("Modifier", cascade="all, delete-orphan")
+    item_attributes = Column(JSON, nullable=True)
 
 
 class Modifier(Base):

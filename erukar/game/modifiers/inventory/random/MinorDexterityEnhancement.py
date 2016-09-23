@@ -1,4 +1,4 @@
-from erukar.game.modifiers.inventory.Enhancement import Enhancement
+from erukar.game.modifiers.inventory.random.Enhancement import Enhancement
 
 class MinorDexterityEnhancement(Enhancement):
     Probability = 0.333333

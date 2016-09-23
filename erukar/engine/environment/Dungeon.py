@@ -14,6 +14,7 @@ class Dungeon(RpgEntity):
             for_loc = for_loc.coordinates
         room_at = self.get_room_at(for_loc)
         if room_at is None:
+            print('room is none')
             return
         for aura in self.active_auras:
             if aura.affects_tile(room_at):

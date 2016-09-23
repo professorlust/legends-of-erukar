@@ -8,7 +8,7 @@ class Navigator:
         x,y = list(map(operator.sub, finish, start))
         if x == 0:
             return math.pi/2 if y > 0 else 3*math.pi/2
-        elif y == 0:
+        if y == 0:
             return 0 if x > 0 else math.pi
 
         angle = math.atan(y/x)

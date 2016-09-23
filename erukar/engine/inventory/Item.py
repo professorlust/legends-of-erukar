@@ -8,6 +8,7 @@ class Item(Describable):
     EssentialPart = 'item part'
     SupportPart = 'item part'
     Persistent = False
+    PersistentAttributes = []
 
     def __init__(self, item_type='Item', name="Item"):
         self.item_type = item_type
@@ -84,7 +85,11 @@ class Item(Describable):
         if acuity < self.vision_range[0]:
             return ''
         material = self.BriefDescription if not self.material else self.material.brief_inspect(lifeform, acuity, sense)
-        return self.mutate(material) 
+        return self.mutate(material)
 
     def describe_material(self):
         return self.material.BriefDescription if self.material else self.name
+
+    def persistable_attributes(self):
+        '''For use with database; getattrs all attributes defined by persistent_attr dict'''
+        return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}

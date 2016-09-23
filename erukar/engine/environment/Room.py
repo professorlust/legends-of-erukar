@@ -9,6 +9,8 @@ class Room(Containable):
     def __init__(self, dungeon, coordinates=(0,0)):
         super().__init__([])
         self.dungeon = dungeon
+        if self.dungeon is not None:
+            self.dungeon.rooms.append(self)
         self.floor = None
         self.ceiling = None
         self.coordinates = coordinates

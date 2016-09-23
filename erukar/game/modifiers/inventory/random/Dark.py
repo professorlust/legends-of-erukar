@@ -1,4 +1,4 @@
-from erukar.game.modifiers.base.LightManipulatingItemModifier import LightManipulatingItemModifier
+from erukar.game.modifiers.inventory.base.LightManipulatingItemModifier import LightManipulatingItemModifier
 
 class Dark(LightManipulatingItemModifier):
     Probability = 0.2
