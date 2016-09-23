@@ -1,6 +1,7 @@
 from erukar.engine.lifeforms.Enemy import Enemy
 from erukar.game.inventory.weapons.Halberd import Halberd
 from erukar.game.modifiers.material import Abyssium
+import erukar
 
 class Cuadrodemon(Enemy):
     def __init__(self):
@@ -18,6 +19,7 @@ class Cuadrodemon(Enemy):
         self.set_vision_results('You see a {alias}.','You see a {alias}. {describe}',(0,1))
         self.set_sensory_results('You hear movement.','You hear a {alias}.',(0, 1))
         self.set_detailed_results('There is a Cuadrodemon holding a {describe_material|right}.','There is a Cuadrodemon holding {describe_material|right} in its right hand and {describe_material|left} in its left.')
+        self.afflictions.append(erukar.engine.effects.Dreadful(self))
 
     def randomize_equipment(self):
         self.right = Halberd()

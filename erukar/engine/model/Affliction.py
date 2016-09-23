@@ -11,3 +11,6 @@ class Affliction:
 
     def do_end_of_turn_effect(self):
         return ''
+
+    def tick(self):
+        pass
