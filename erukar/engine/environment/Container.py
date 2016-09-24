@@ -2,7 +2,11 @@ from erukar.engine.model.Containable import Containable
 from erukar.engine.environment.Lock import Lock
 
 class Container(Containable):
+    ContentDescription = "Inside of the container is {}."
+
+
     def __init__(self, aliases):
+        '''visible_in_room_description here is used for Containers like Table Tops'''
         super().__init__(aliases)
         self.visible_in_room_description = True
         self.can_close = True
@@ -30,11 +34,15 @@ class Container(Containable):
             return "Closed a chest"
         return "Cannot close this container"
 
-    def brief_inspect(self, lifeform, acu, sen):
+    def brief_inspect(self, lifeform, acu, sen, content_desc_format='{},'):
         if not self.visible_in_room_description: return ''
-        content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
-        descriptions = ' '.join(['You see {}.'.format(x) for x in content_results if x is not ''])
-        return 'In this {}...{}'.format(self.alias(),  descriptions)
+        return super().brief_inspect(lifeform, acu, sen)
 
-    def on_inspect(self, *_):
-        return 'Container Full Inspect'
+    def on_inspect(self, lifeform, acu, sen):
+        self_desc = self.describe_base(lifeform, acu, sen) 
+        content_desc = self.content_brief_descriptions(lifeform, acu, sen)
+        return '\n\n'.join([self_desc, self.ContentDescription.format(content_desc)])
+
+    def content_brief_descriptions(self, lifeform, acu, sen, content_format=', '):
+        content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
+        return content_format.join([x for x in content_results if x is not ''])

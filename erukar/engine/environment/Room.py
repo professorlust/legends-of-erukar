@@ -15,6 +15,7 @@ class Room(Containable):
         self.ceiling = None
         self.coordinates = coordinates
         self.connections = {direction: Passage() for direction in Direction}
+        self.visible_in_room_description = False
 
     def calculate_luminosity(self):
         luminosity = 0
@@ -54,13 +55,16 @@ class Room(Containable):
         acu, sen = acuity * light_mod, sense
         if light_mod <= 0.01:
             return 'This room is completely dark.'
-        content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
-        descriptions = [' '.join(['You see {}.'.format(x) for x in content_results if x is not ''])]
+        descriptions = []
+        if depth == 0:
+            content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
+            descriptions = [' '.join(['You see {}.'.format(x) for x in content_results if x is not ''])]
         if self.floor is not None:
             descriptions.insert(0, self.floor.describe(lifeform, depth))
         return ' '.join(descriptions)
 
     def inspect_here(self, lifeform):
+        '''Also provides NESW descriptions'''
         dir_desc = []
         acu, sen = (lifeform.calculate_effective_stat(x) for x in ['acuity', 'sense'])
         aura_descriptions = ' '.join(x.describe_brief(lifeform, acu, sen) \
