@@ -3,6 +3,7 @@ from erukar.engine.model.Direction import Direction
 from erukar.engine.environment.Passage import Passage
 from erukar.engine.environment.Surface import Surface
 from erukar.engine.environment.Door import Door
+from erukar.engine.environment.Decoration import Decoration
 import erukar, random
 
 class Room(Containable):
@@ -45,39 +46,66 @@ class Room(Containable):
         our_result = self.describe(lifeform, depth)
         return our_result + ' ' + connection_result
 
+    def aura_descriptions(self, lifeform, acuity, sense):
+        '''Used for all aura descriptions'''
+        for x in self.dungeon.get_applicable_auras(self):
+            yield x.brief_inspect(lifeform, acuity, sense)
+
+    def decoration_descriptions(self, lifeform, acuity, sense):
+        '''used to describe non-decoration contents'''
+        for x in self.contents:
+            if isinstance(x, Decoration):
+                yield x.brief_inspect(lifeform, acuity, sense)
+
+    def container_descriptions(self, lifeform, acuity, sense):
+        '''used to describe non-decoration contents'''
+        for x in self.contents:
+            if not isinstance(x, Decoration) and not isinstance(x, erukar.engine.lifeforms.Lifeform):
+                yield x.brief_inspect(lifeform, acuity, sense)
+
+    def directional_descriptions(self, lifeform, acuity, sense):
+        for d in self.connections:
+            if self.connections[d].is_door() and self.connections[d].can_see_or_sense(lifeform):
+                yield '{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform))
+
+    def threat_descriptions(self, lifeform, acuity, sense):
+        for content in self.contents:
+            if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
+                yield content.describe_as_threat(lifeform, acuity, sense)
+
     def on_start(self, *_):
         '''Called when the Instance has decorated and is actually starting'''
         for content in self.contents:
             content.on_start(self)
 
-    def on_inspect(self, lifeform, acuity, sense, depth=0):
+    def peek(self, lifeform, acuity, sense):
+        '''Used for peeking NESW during on_inspect'''
+        light_mod = self.calculate_luminosity()
+        if light_mod <= 0.01: return 'The chamber in this direction is completely dark.'
+        desc = list(self.threat_descriptions(lifeform, acu, sen))
+        desc.insert(self.describe(lifeform),0)
+        return ' '.join(desc)
+
+    def on_inspect(self, lifeform, acuity, sense):
+        '''Used exclusively for inspecting the current room'''
         light_mod = self.calculate_luminosity()
         acu, sen = acuity * light_mod, sense
         if light_mod <= 0.01:
             return 'This room is completely dark.'
-        descriptions = []
-        if depth == 0:
-            content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
-            descriptions = [' '.join(['You see {}.'.format(x) for x in content_results if x is not ''])]
-        if self.floor is not None:
-            descriptions.insert(0, self.floor.describe(lifeform, depth))
-        return ' '.join(descriptions)
+        threats = ' '.join(list(self.threat_descriptions(lifeform, acu, sen)))
+        auras = ' '.join(list(self.aura_descriptions(lifeform, acu, sen)))
+        self_desc = self.describe(lifeform)
+        container = ' '.join(list(self.container_descriptions(lifeform, acu, sen)))
+        peeks = '\n'.join(list(self.directional_descriptions(lifeform, acu, sen)))
+        return '\n\n'.join(x for x in [threats,auras,self_desc,container,peeks] if x is not '')
 
-    def inspect_here(self, lifeform):
-        '''Also provides NESW descriptions'''
-        dir_desc = []
-        acu, sen = (lifeform.calculate_effective_stat(x) for x in ['acuity', 'sense'])
-        aura_descriptions = ' '.join(x.describe_brief(lifeform, acu, sen) \
-                                      for x in self.dungeon.get_applicable_auras(self.coordinates))
-        for d in self.connections:
-            if self.connections[d].is_door() and self.connections[d].can_see_or_sense(lifeform):
-                dir_desc.append('{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform)))
-        return '\n\n'.join([aura_descriptions, self.describe(lifeform, 0), '\n'.join(dir_desc)])
-
-    def describe(self, lifeform, depth):
+    def describe(self, lifeform, depth=0):
         '''Room Descriptions'''
         acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
-        return self.on_inspect(lifeform, acu, sen, depth)
+        describable_contents = list(self.decoration_descriptions(lifeform, acu, sen))
+        if self.floor is not None:
+            describable_contents.insert(0, self.floor.brief_inspect(lifeform, acu, sen))
+        return ' '.join(describable_contents)
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:

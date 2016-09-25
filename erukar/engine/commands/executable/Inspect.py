@@ -28,19 +28,17 @@ class Inspect(ActionCommand):
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''
-        if payload is '':
-            return room.inspect_here(player.lifeform())
+        lifeform = player.lifeform()
+        acu, sen = [math.floor(random.uniform(*lifeform.stat_random_range(x))) for x in ('acuity', 'sense')]
 
-        acu, sen = [math.floor(random.uniform(*player.lifeform().stat_random_range(x))) for x in ('acuity', 'sense')]
-
-        if payload in 'room':
-            return room.on_inspect(player.lifeform(), acu, sen)
+        if payload in ['', 'room']:
+            return room.on_inspect(lifeform, acu, sen)
 
         if payload in 'flooring':
-            return room.floor.on_inspect()
+            return room.floor.on_inspect(lifeform, acu, sen)
 
         if payload in 'ceiling':
-            return room.ceiling.on_inspect()
+            return room.ceiling.on_inspect(lifeform, acu, sen)
 
         item = self.find_in_room(room, payload)
         if item is not None:
