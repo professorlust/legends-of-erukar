@@ -17,7 +17,7 @@ class TracingTests(unittest.TestCase):
             l.link_to_room(nr)
             center.coestablish_connection(aux[1], nr, None)
             applicable = list(d.get_applicable_auras(nr))
-            desc = applicable[0].describe_brief(l, 50, 50)
+            desc = applicable[0].brief_inspect(l, 50, 50)
             self.assertIn(aux[1].name.lower(), desc)
 
 
