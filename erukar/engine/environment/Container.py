@@ -4,7 +4,6 @@ from erukar.engine.environment.Lock import Lock
 class Container(Containable):
     ContentDescription = "Inside of the container is {}."
 
-
     def __init__(self, aliases):
         '''visible_in_room_description here is used for Containers like Table Tops'''
         super().__init__(aliases)
@@ -39,7 +38,7 @@ class Container(Containable):
         return super().brief_inspect(lifeform, acu, sen)
 
     def on_inspect(self, lifeform, acu, sen):
-        self_desc = self.describe_base(lifeform, acu, sen) 
+        self_desc = self.describe_base(lifeform, acu, sen)
         content_desc = self.content_brief_descriptions(lifeform, acu, sen)
         return '\n\n'.join([self_desc, self.ContentDescription.format(content_desc)])
 

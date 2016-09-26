@@ -142,7 +142,7 @@ class Attack(ActionCommand):
     def create_corpse(self, target):
         room = target.current_room
         if target in room.contents:
-            room.remove(target)
+            room.contents.remove(target)
         room.add(Corpse(target))
 
     def calculate_attack(self, character, weapon, target):

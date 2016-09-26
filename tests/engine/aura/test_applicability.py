@@ -6,7 +6,7 @@ class ApplicabilityTests(unittest.TestCase):
         aura = Aura((0, 0))
 
         d = Dungeon()
-        center = Room(d,(0,0)) 
+        center = Room(d,(0,0))
         center.initiate_aura(aura)
         e = Room(d, (1,0))
         n = Room(d, (0,1))
@@ -26,7 +26,7 @@ class ApplicabilityTests(unittest.TestCase):
     def test_does_not_affect_outside_range(self):
         aura = Aura((0, 0))
         d = Dungeon()
-        center = Room(d,(0,0)) 
+        center = Room(d,(0,0))
         center.initiate_aura(aura)
         e = Room(d, (1,0))
         n = Room(d, (0,1))
@@ -145,7 +145,7 @@ class ApplicabilityTests(unittest.TestCase):
         self.assertIn(a1, second)
 
     def test_lighting(self):
-        def modify_light():
+        def modify_light(decay):
             return 0.5
 
         d = Dungeon()

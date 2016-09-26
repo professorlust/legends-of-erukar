@@ -16,8 +16,9 @@ class Command:
 
     def payload(self):
         if isinstance(self.context, erukar.engine.commands.Command):
-            if self.user_specified_payload.isdigit() or \
-               (self.context.indexed_items and len(self.user_specified_payload) > 1 and self.user_specified_payload in self.context.indexed_items):
+            if self.user_specified_payload.isdigit() \
+                or (self.context.indexed_items and len(self.user_specified_payload) > 1\
+                and self.user_specified_payload in self.context.indexed_items):
                 return self.context.indexed_items[self.payload]
         return self.user_specified_payload
 
@@ -51,9 +52,7 @@ class Command:
         player = self.find_player()
         lifeform = self.lifeform(player)
         acuity, sense = (lifeform.calculate_stat_score(x) for x in ['acuity', 'sense'])
-        contents = set(container.get_visible_contents(acuity)\
-                       + container.get_sensed_contents(sense)\
-                       + player.reverse_index(container))
+        contents = set(container.contents + player.reverse_index(container))
         return next((p for p in contents if p.matches(item_name)), None)
 
     def lifeform(self, player_or_node):

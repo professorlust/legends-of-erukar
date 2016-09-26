@@ -2,11 +2,17 @@ from erukar.engine.model.Containable import Containable
 from erukar.engine.model.Direction import Direction
 from erukar.engine.environment.Passage import Passage
 from erukar.engine.environment.Surface import Surface
+from erukar.engine.environment.Container import Container
 from erukar.engine.environment.Door import Door
 from erukar.engine.environment.Decoration import Decoration
+from erukar.engine.model.Describable import Describable
 import erukar, random
 
 class Room(Containable):
+    SelfDescription = "This room is fairly large."
+    DecoDescription = "You see {} in it."
+    ContainerDescription = "In the room you see {}."
+
     def __init__(self, dungeon, coordinates=(0,0)):
         super().__init__([])
         self.dungeon = dungeon
@@ -20,9 +26,10 @@ class Room(Containable):
 
     def calculate_luminosity(self):
         luminosity = 0
-        for x in self.dungeon.get_applicable_auras(self):
-            if hasattr(x, 'modify_light'):
-                luminosity += x.modify_light()
+        for aura in self.dungeon.get_applicable_auras(self):
+            if hasattr(aura, 'modify_light'):
+                decay = aura.get_decay_at(self)
+                luminosity += aura.modify_light(decay)
         return min(1.0, luminosity)
 
     def calculate_danger(self):
@@ -54,7 +61,7 @@ class Room(Containable):
     def decoration_descriptions(self, lifeform, acuity, sense):
         '''used to describe non-decoration contents'''
         for x in self.contents:
-            if isinstance(x, Decoration):
+            if isinstance(x, Decoration) or isinstance(x, Container):
                 yield x.brief_inspect(lifeform, acuity, sense)
 
     def container_descriptions(self, lifeform, acuity, sense):
@@ -84,7 +91,8 @@ class Room(Containable):
         if light_mod <= 0.01: return 'The chamber in this direction is completely dark.'
         desc = list(self.threat_descriptions(lifeform, acu, sen))
         desc.insert(self.describe(lifeform),0)
-        return ' '.join(desc)
+        print(desc)
+        return Describable.erjoin(desc)
 
     def on_inspect(self, lifeform, acuity, sense):
         '''Used exclusively for inspecting the current room'''
@@ -95,7 +103,8 @@ class Room(Containable):
         threats = ' '.join(list(self.threat_descriptions(lifeform, acu, sen)))
         auras = ' '.join(list(self.aura_descriptions(lifeform, acu, sen)))
         self_desc = self.describe(lifeform)
-        container = ' '.join(list(self.container_descriptions(lifeform, acu, sen)))
+        container_desc = Describable.erjoin(list(self.container_descriptions(lifeform, acu, sen)))
+        container = self.ContainerDescription.format(container_desc)
         peeks = '\n'.join(list(self.directional_descriptions(lifeform, acu, sen)))
         return '\n\n'.join(x for x in [threats,auras,self_desc,container,peeks] if x is not '')
 
@@ -105,7 +114,7 @@ class Room(Containable):
         describable_contents = list(self.decoration_descriptions(lifeform, acu, sen))
         if self.floor is not None:
             describable_contents.insert(0, self.floor.brief_inspect(lifeform, acu, sen))
-        return ' '.join(describable_contents)
+        return self.SelfDescription + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents))
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
@@ -128,16 +137,6 @@ class Room(Containable):
         other_dir = self.invert_direction(direction)
         self.connections[direction].room.connections[other_dir].door = door
 
-    def content_alias_or_description(self, item, give_alias):
-        return item.describe() if not give_alias else item.alias()
-
-    def generate_direction_descriptions(self, lifeform):
-        '''Generator for creating a list of directional descriptions'''
-        for direction in self.connections:
-            res = self.inspect_peek(direction, lifeform)
-            if res is not None:
-                yield '\n{0}:\t{1}'.format(direction.name, res)
-
     def adjacent_rooms(self):
         '''Generator which yields rooms we can see into from this one'''
         for c in self.connections:
@@ -158,16 +157,3 @@ class Room(Containable):
             passage = self.connections[direction]
             if passage.room is None and passage.door is None:
                 yield direction
-
-
-    def get_visible_contents(self, acuity, lifeform=None):
-        '''
-        The actual acuity score is the flat Acuity score multiplied by the room's
-        luminosity coefficient, which ranges from 0.0 (pitch black, very rare) to 1.0
-        (absolute brightness.) The scalar value is a value which is used to reduce
-        the acu_score further and diminishes at a rate of 0.5 per room.
-        '''
-        return [x for x in self.contents if x.necessary_acuity() <= acuity and x is not lifeform]
-
-    def get_sensed_contents(self, sense, lifeform=None):
-        return [x for x in self.contents if x.necessary_sense() <= sense and x is not lifeform]

@@ -21,6 +21,10 @@ class Aura(Describable):
         self.blocked_by_walls = False
         self.is_expired = False
 
+    def get_decay_at(self, tile):
+        dist = self.distance(tile.coordinates)
+        return math.pow(self.decay_factor, dist)
+
     def affects_tile(self, tile):
         '''This is used for the quick calculations for the dungeon'''
         dist = math.ceil(self.distance(tile.coordinates))
