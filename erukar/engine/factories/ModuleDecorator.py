@@ -38,16 +38,16 @@ class ModuleDecorator(ProbablisticGenerator):
             return overall_probability
 
         for parameter in vars(self.generation_parameters):
-            var_format = self.ConditionalProb.format(parameter.capitalize()) 
+            var_format = self.ConditionalProb.format(parameter.capitalize())
             if hasattr(modifier, var_format):
-                cond_weight = getattr(modifier, var_format) 
+                cond_weight = getattr(modifier, var_format)
                 actual = getattr(self.generation_parameters, parameter)
                 prob_weights.append(self.semi_conditional_probabiity(actual, cond_weight))
 
         if len(prob_weights) > 0:
             return overall_probability*(1+functools.reduce(lambda x_i, X: X*x_i, prob_weights))
 
-        return overall_probability 
+        return overall_probability
 
     def semi_conditional_probabiity(self, x, c):
         return math.pow(math.exp(2*(x-c)), c-x)

@@ -2,23 +2,18 @@ from erukar.engine.lifeforms.Enemy import Enemy
 from erukar.game.inventory.weapons.Sword import Sword
 from erukar.game.inventory.armor.shields.Buckler import Buckler
 
-class Skeleton(Enemy):
-    BriefDescription = "a skeleton holding a {describe|right} and a {describe|left}."
-
+class Risen(Enemy):
+    BriefDescription = "a risen"
     def __init__(self):
-        super().__init__("Skeleton")
-        self.dexterity = -2
-        self.vitality = -1
+        super().__init__("Risen")
+        self.dexterity = -4
+        self.vitality = -2
+        self.strength = 1
+        self.resolve = -2
+        self.sense = -2
+        self.acuity = -1
         self.define_level(1)
-        self.name = "Skeleton"
-        self.randomize_equipment()
+        self.name = "Risen"
         self.set_vision_results('You see a {alias}.','You see a {alias}. {describe}',(0,1))
-        self.set_sensory_results('You hear movement.','You hear a {alias}.',(0, 1))
-        self.set_detailed_results('There is a skeleton holding a {describe_material|right}.','The skeleton is holding a {describe_material|right} in its right hand and {describe_material|left} in its left. ')
-
-    def randomize_equipment(self):
-        s = Sword()
-        b = Buckler()
-        self.inventory = [s, b]
-        self.left = s
-        self.right = b
+        self.set_sensory_results('You hear shuffling.','You hear shuffling and smell death.',(0, 1))
+        self.set_detailed_results('There is a Risen.', 'A walking corpse, a Risen, shuffles in this room')

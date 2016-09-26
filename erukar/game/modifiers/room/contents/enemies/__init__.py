@@ -1,5 +1,5 @@
 from .NoEnemy import NoEnemy
 from .Demon import Demon
-from .Skeleton import Skeleton
+from .Undead import Undead
 
-__all__ = ["NoEnemy", "Demon", "Skeleton"]
+__all__ = ["NoEnemy", "Demon", "Undead"]
