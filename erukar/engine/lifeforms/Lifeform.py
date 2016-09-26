@@ -19,6 +19,7 @@ class Lifeform(RpgEntity):
         "ring",
         "amulet",
         "blessing"]
+    attack_slots = [ "left", "right" ]
     base_health = 4
 
     critical_health = ['The lifeform is in critical health']

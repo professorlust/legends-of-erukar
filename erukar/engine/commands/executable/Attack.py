@@ -2,7 +2,8 @@ from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Corpse import Corpse
 from erukar.engine.environment.Door import Door
 from erukar.engine.lifeforms.Lifeform import Lifeform
-import erukar, random
+from erukar.engine.model.Damage import Damage
+import erukar, random, math
 
 class Attack(ActionCommand):
     not_found = "No object matching '{}' was found in this room."
@@ -16,9 +17,6 @@ class Attack(ActionCommand):
     def execute(self):
         lifeform = self.find_player().lifeform()
         payload = self.check_for_arguments(lifeform)
-
-        if len(self.weapons) == 0:
-            return self.fail('You must equip a weapon in order to attack')
 
         # Determine if this is directional attack
         direction = self.determine_direction(payload.lower())
@@ -48,14 +46,11 @@ class Attack(ActionCommand):
                 self.weapons = [getattr(lifeform, 'left')]
                 return payload[:len(r)]
 
-        self.weapons = [getattr(lifeform, hand) for hand in ['left','right'] \
-                            if self.can_attack_with_hand(lifeform, hand)]
         return payload
 
     def can_attack_with_hand(self, lifeform, hand):
         weapon = getattr(lifeform, hand)
-        return weapon is not None \
-                and isinstance(weapon, erukar.engine.inventory.Weapon)
+        return weapon is None or isinstance(weapon, erukar.engine.inventory.Weapon)
 
     def do_directional_attacks(self, lifeform, direction):
         '''Handles attacking with all queued weapons'''
@@ -73,8 +68,8 @@ class Attack(ActionCommand):
         target = self.find_in_room(lifeform.current_room, payload)
         if target is None:
             return Attack.not_found.format(payload)
-        for weapon in self.weapons:
-            if weapon is None: continue
+        for attacking_slot in lifeform.attack_slots:
+            weapon = getattr(lifeform, attacking_slot)
             res = self.adjudicate_attack(lifeform, weapon, target)
             attack_results.append(res)
         return '\n'.join(attack_results)
@@ -147,12 +142,17 @@ class Attack(ActionCommand):
 
     def calculate_attack(self, character, weapon, target):
         '''Involves the calculation of armor_class, attack roll, and damage'''
-        armor_class = target.calculate_armor_class()
-        if weapon is None:
-            return [0, armor_class, 0]
-
         attack_roll = character.roll(character.stat_random_range('dexterity'))
-        damage = weapon.roll(character)
+        armor_class = target.calculate_armor_class()
+        if weapon is not None and isinstance(weapon, erukar.engine.inventory.Weapon):
+            damage = weapon.roll(character)
+        elif weapon is None:
+            strength = character.calculate_effective_stat('strength')
+            drange = [0, strength]
+            damage_type = Damage('Bludgeoning',drange,'strength',(random.uniform,(0,4)))
+            damage = [(damage_type.roll(target), 'strike')]
+        else:
+            return [0,0,[]]
 
         return [attack_roll, armor_class, damage]
 
