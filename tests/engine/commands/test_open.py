@@ -130,4 +130,4 @@ class OpenTests(unittest.TestCase):
         o.user_specified_payload = 'chest'
         result = o.execute()
 
-        self.assertEqual(result.result_for('Bob')[0], 'Opened a chest')
+        self.assertEqual(result.result_for('Bob')[0], 'Opened a chest.')

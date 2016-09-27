@@ -4,6 +4,8 @@ from erukar.game.modifiers.material import Abyssium
 import erukar
 
 class Cuadrodemon(Enemy):
+    Probability = 0.025
+
     def __init__(self):
         super().__init__("Cuadrodemon")
         self.dexterity = 12

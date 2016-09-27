@@ -15,14 +15,14 @@ class Container(Containable):
 
     def on_open(self, sender):
         if not self.can_close:
-            return "You cannot open this container"
+            return self.mutate("You cannot open this {alias}.")
 
         if self.lock is not None:
             if self.lock.is_locked:
-                return "This container is locked!"
+                return self.mutate("This {alias} is locked!")
 
         self.contents_visible = True
-        return "Opened a chest"
+        return self.mutate("Opened a {alias}.")
 
     def on_start(self, room):
         for content in self.contents:
@@ -31,8 +31,8 @@ class Container(Containable):
     def on_close(self, sender):
         if self.can_close:
             self.contents_visible = False
-            return "Closed a chest"
-        return "Cannot close this container"
+            return self.mutate("Closed a {alias}")
+        return self.mutate("{alias} cannot be closed!")
 
     def brief_inspect(self, lifeform, acu, sen, content_desc_format='{},'):
         if not self.visible_in_room_description: return ''
@@ -41,7 +41,9 @@ class Container(Containable):
     def on_inspect(self, lifeform, acu, sen):
         self_desc = self.describe_base(lifeform, acu, sen)
         content_desc = self.content_brief_descriptions(lifeform, acu, sen)
-        return '\n\n'.join([self_desc, self.ContentDescription.format(content_desc)])
+        if len(content_desc) > 0:
+            return '\n\n'.join([self_desc, self.ContentDescription.format(content_desc)])
+        return self_desc
 
     def content_brief_descriptions(self, lifeform, acu, sen, content_format=', '):
         content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]

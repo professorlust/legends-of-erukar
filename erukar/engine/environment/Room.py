@@ -62,7 +62,6 @@ class Room(Containable):
         '''used to describe non-decoration contents'''
         for x in self.contents:
             if isinstance(x, Decoration) or isinstance(x, Container):
-                print('{} "{}": {}'.format( x.__module__, x.alias(), x.brief_inspect(lifeform, acuity, sense) ))
                 yield x.brief_inspect(lifeform, acuity, sense)
 
     def container_descriptions(self, lifeform, acuity, sense):
@@ -79,7 +78,6 @@ class Room(Containable):
     def threat_descriptions(self, lifeform, acuity, sense):
         for content in self.contents:
             if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
-                print('{} "{}": {}'.format( content.__module__, content.alias(), content.describe_as_threat(lifeform, acuity, sense) ))
                 yield content.describe_as_threat(lifeform, acuity, sense)
 
     def on_start(self, *_):
@@ -89,7 +87,6 @@ class Room(Containable):
 
     def peek(self, lifeform, acuity, sense):
         '''Used for peeking NESW during on_inspect'''
-        print('peeking')
         light_mod = self.calculate_luminosity()
         if light_mod <= 0.01: return 'The chamber in this direction is completely dark.'
         desc = [x for x in self.threat_descriptions(lifeform, acuity, sense) if x is not '']

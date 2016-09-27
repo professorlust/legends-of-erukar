@@ -126,6 +126,7 @@ class Levelup(Command):
                             if (not isinstance(x, erukar.engine.effects.ReadyToLevel) and not isinstance(x, erukar.engine.effects.NeedsInitialization))]
         self.dirty(self.target)
         self.append_result(self.sender_uid,'Your Level Up attribute allocation is now LOCKED.')
+        return self.succeed()
 
     def no(self, *_):
         return self.fail('Returning to level up process.')

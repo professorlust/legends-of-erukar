@@ -2,9 +2,8 @@ from erukar.game.modifiers.RoomModifier import RoomModifier
 import erukar
 
 class Demon(RoomModifier):
-    Probability = 0.02
+    Probability = 1
     def apply_to(self, room):
-        demon = erukar.game.enemies.demon.Cuadrodemon()
-        demon.current_room = room
-        room.add(demon)
-
+        randomizer = ModuleDecorator('erukar.game.enemies.demon', None)
+        undead = randomizer.create_one()
+        undead.link_to_room(room)
