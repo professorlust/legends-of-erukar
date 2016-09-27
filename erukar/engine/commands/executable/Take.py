@@ -17,7 +17,8 @@ class Take(ActionCommand):
         # Try to find the item in the room
         item = self.find_in_room(room, payload)
         if item is not None:
-            return self.succeed(self.move_to_inventory(item, player, room))
+            self.append_result(self.sender_uid, self.move_to_inventory(item, player, room))
+            return self.succeed()
 
         # Send a failure message
         return self.fail(Take.failure.format(payload))

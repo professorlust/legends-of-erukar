@@ -31,7 +31,8 @@ class Stats(Command):
         if payload:
             wanted = next((x for x in self.attribute_types if payload in x), None)
             if wanted is not None:
-                return self.succeed(self.give_details(wanted, lifeform))
+                self.append_result(self.sender_uid, self.give_details(wanted, lifeform))
+                return self.succeed()
 
         status_description = self.status.format(
             lifeform.health,
@@ -42,7 +43,8 @@ class Stats(Command):
             player.character.calculate_stat_score(stat)) \
             for stat in self.attribute_types])
 
-        return self.succeed(status_description + self.attributes.format(attribute_description) + '\n')
+        self.append_result(self.sender_uid, status_description + self.attributes.format(attribute_description) + '\n')
+        return self.succeed()
 
     def give_details(self, wanted, lifeform):
         desc = self.descriptions[wanted]

@@ -6,7 +6,7 @@ import erukar
 class Move(ActionCommand):
     move_through_wall = 'You attempt to pass through a wall with no luck'
     move_through_closed_door = 'You cannot move this way because a door prevents you from doing so'
-    move_successful = 'You have successfully moved {0}.\n\n{1}'
+    move_successful = 'You have successfully moved {0}.'
     enemy_movement = '{} has moved {}.'
 
     aliases = ['move']
@@ -28,7 +28,8 @@ class Move(ActionCommand):
         # Move and autoinspect the room for the player
         if in_direction.room is None:
             return self.fail(Move.move_through_wall)
-        return self.change_room(player, in_direction.room, direction)
+        self.change_room(player, in_direction.room, direction)
+        return self.succeed()
 
     def change_room(self, player, new_room, direction):
         '''Used to transfer the character from one room to the next'''
@@ -36,6 +37,11 @@ class Move(ActionCommand):
         if lifeform in lifeform.current_room.contents:
             lifeform.current_room.contents.remove(lifeform)
         lifeform.link_to_room(new_room)
+        self.append_result(self.sender_uid, Move.move_successful.format(direction.name))
+
+        for content in new_room.contents:
+            if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
+                self.append_result(content.uid, '{} has moved {}.'.format(lifeform.alias(), direction.name))
 
         if isinstance(player, erukar.engine.model.PlayerNode):
             player.move_to_room(new_room)
@@ -44,8 +50,4 @@ class Move(ActionCommand):
             i.data = self.data
             i.sender_uid = self.sender_uid
             inspection_result = i.execute()
-            inspection_result.result = Move.move_successful.format(direction.name, inspection_result.result)
-
-            return inspection_result 
-
-        return Move.enemy_movement.format(lifeform.alias(), direction.name)
+            self.append_result(self.sender_uid, ' '.join(inspection_result.results[self.sender_uid]))

@@ -5,17 +5,6 @@ from erukar.engine.inventory.Weapon import Weapon
 
 class Unequip(ActionCommand):
     not_found = "No equipped item '{0}' was found"
-    unequipped_right = "'{}' unequipped from primary hand weapon successfully"
-    unequipped_left = "'{}' unequipped from off hand successfully"
-    unequipped_chest = "'{}' unequipped from chest armor successfully"
-    unequipped_helm = "'{}' unequipped from helm successfully"
-    unequipped_gloves = "'{}' unequipped from gloves successfully"
-    unequipped_pants = "'{}' unequipped from pants successfully"
-    unequipped_feet = "'{}' unequipped from feet successfully"
-    unequipped_ring = "'{}' unequipped from ring successfully"
-    unequipped_amulet = "'{}' unequipped from amulet successfully"
-    unequipped_blessing = "'{}' unequipped from blessing successfully"
-
     aliases = ['unequip']
 
     def execute(self):
@@ -30,10 +19,10 @@ class Unequip(ActionCommand):
             item = getattr(lifeform, item_type)
             setattr(lifeform, item_type, None)
             item.on_unequip(lifeform)
-            uneq_string = getattr(self, 'unequipped_{}'.format(item_type))
-            results = uneq_string.format(item.describe())
+            results = '{} unequipped from {} successfully.'.format(item.describe(), item_type)
             self.dirty(lifeform)
-            return self.succeed(results, lifeform.inventory)
+            self.append_result(self.sender_uid, results)
+            return self.succeed(indexed=lifeform.inventory)
 
         # Nothing was found
         results = Unequip.not_found.format(payload)

@@ -32,7 +32,7 @@ class TakeTests(unittest.TestCase):
 
         self.assertTrue(w in p.inventory)
         self.assertTrue(w not in r.contents)
-        self.assertEqual(result.result, Take.success.format('Sword'))
+        self.assertEqual(result.result_for('Bob')[0], Take.success.format('Sword'))
 
     def test_take_execution_no_match(self):
         p = Player()
@@ -55,4 +55,4 @@ class TakeTests(unittest.TestCase):
 
         self.assertTrue(w in r.contents)
         self.assertTrue(w not in p.inventory)
-        self.assertEqual(result.result, Take.failure.format('Sword'))
+        self.assertEqual(result.result_for('Bob')[0], Take.failure.format('Sword'))

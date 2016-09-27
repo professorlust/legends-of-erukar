@@ -5,16 +5,6 @@ import re
 
 class Equip(ActionCommand):
     not_found = "Unable to find '{0}' in inventory"
-    equipped_right = "'{}' equipped as primary hand weapon successfully"
-    equipped_left = "'{}' equipped in off hand successfully"
-    equipped_chest = "'{}' equipped as chest armor successfully"
-    equipped_head = "'{}' equipped as helm successfully"
-    equipped_arms = "'{}' equipped as gloves successfully"
-    equipped_legs = "'{}' equipped as pants successfully"
-    equipped_feet = "'{}' equipped as boots successfully"
-    equipped_ring = "'{}' equipped as ring successfully"
-    equipped_amulet = "'{}' equipped as amulet successfully"
-    equipped_blessing = "'{}' equipped as blessing successfully"
     cannot_equip = "'{}' was found but cannot be equipped"
 
     aliases = ['equip']
@@ -22,6 +12,7 @@ class Equip(ActionCommand):
     def execute(self):
         player = self.find_player()
         if player is None: return
+        lifeform = player.lifeform()
 
         payload = self.check_for_arguments()
 
@@ -32,12 +23,13 @@ class Equip(ActionCommand):
 
         # Check to see if the item's type exists as a field on the character
         item_type = self.determine_type(item)
-        if hasattr(player.lifeform(), item_type):
-            setattr(player.lifeform(), item_type, item)
-            result_string_format = getattr(Equip, 'equipped_{0}'.format(item_type))
-            item.on_equip(player.lifeform())
-            self.dirty(player.lifeform())
-            return self.succeed(result_string_format.format(item.describe()))
+        if hasattr(lifeform, item_type):
+            setattr(lifeform, item_type, item)
+            item.on_equip(lifeform)
+            self.dirty(lifeform)
+            result = '{} equipped as {} successfully.'.format(item.describe(), item_type)
+            self.append_result(self.sender_uid, result)
+            return self.succeed()
 
         return self.fail(Equip.cannot_equip.format(item.describe()))
 

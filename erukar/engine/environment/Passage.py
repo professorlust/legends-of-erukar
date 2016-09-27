@@ -26,24 +26,27 @@ class Passage:
     def directional_inspect(self, relative_dir, lifeform, depth=1):
         acu = lifeform.calculate_effective_stat('acuity', depth)
         depth += 1
+        # look through a door
         if self.door is not None:
             result = self.door.inspect_through(relative_dir, self.room, lifeform, depth)
             if result is not '':
                 return '\nRoom {}: {}'.format(depth, result)
             return result
+        # look through a hallway
         if self.room is not None:
             result = self.room.directional_inspect(relative_dir, lifeform, depth)
             if result is not '':
                 return '\nRoom {}: {}'.format(depth, result)
             return result
+        # look at a wall
         if self.wall is not None:
-            return self.wall.describe()
+            return self.wall.on_inspect(lifeform, acu, 0)
         return ''
 
     def peek(self, relative_dir, lifeform, acu, sen):
         '''Used when the current room is describing itself'''
         if self.door is not None:
-            return self.door.peek(relative_dir, self.room, lifeform)
+            return self.door.peek(relative_dir, self.room, lifeform, acu, sen)
         if self.room is not None:
             return self.room.peek(lifeform, acu, sen)
         return

@@ -21,7 +21,7 @@ class EquipTests(unittest.TestCase):
 
         self.assertTrue(w in p.inventory)
         self.assertEqual(p.right, w)
-        self.assertEqual(Equip.equipped_right.format('Sword'), result.result)
+        self.assertIn('successfully', result.result_for('Bob')[0])
 
     def test_equip_armor(self):
         p = Player()
@@ -44,7 +44,7 @@ class EquipTests(unittest.TestCase):
 
         self.assertTrue(a in p.inventory)
         self.assertEqual(p.chest, a)
-        self.assertEqual(Equip.equipped_chest.format('Plate Mail'), result.result)
+        self.assertIn('successfully', result.result_for('Bob')[0])
 
     def test_equip_item(self):
         p = Player()
@@ -65,7 +65,7 @@ class EquipTests(unittest.TestCase):
         self.assertTrue(i in p.inventory)
         self.assertNotEqual(p.chest, i)
         self.assertNotEqual(p.right, i)
-        self.assertEqual(Equip.cannot_equip.format('Potion'), result.result)
+        self.assertEqual(Equip.cannot_equip.format('Potion'), result.result_for('Bob')[0])
 
     def test_equip_no_match(self):
         p = Player()
@@ -86,5 +86,5 @@ class EquipTests(unittest.TestCase):
         self.assertTrue(i in p.inventory)
         self.assertNotEqual(p.chest, i)
         self.assertNotEqual(p.right, i)
-        self.assertEqual(Equip.not_found.format('sword'), result.result)
+        self.assertEqual(Equip.not_found.format('sword'), result.result_for('Bob')[0])
 

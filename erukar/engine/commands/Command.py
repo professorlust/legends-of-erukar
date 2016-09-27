@@ -13,6 +13,7 @@ class Command:
         self.user_specified_payload = ''
         self.arguments = {}
         self.dirtied_characters = []
+        self.results = {}
 
     def payload(self):
         if isinstance(self.context, erukar.engine.commands.Command):
@@ -33,11 +34,23 @@ class Command:
         if lifeform not in self.dirtied_characters:
             self.dirtied_characters.append(lifeform)
 
-    def succeed(self, result, indexed=None):
-        return CommandResult(True, self, result, indexed, self.dirtied_characters)
+    def append_result(self, uid, result):
+        '''Appends a result for a specific uid'''
+        if uid not in self.results:
+            self.results[uid] = []
+        self.results[uid].append(result)
+
+    def succeed_if_any_results(self, msg_if_failure, indexed=None):
+        if len(self.results) > 0:
+            return self.succeed(indexed)
+        return self.fail(msg_if_failure, indexed)
+
+    def succeed(self, indexed=None):
+        return CommandResult(True, self, self.results, indexed, self.dirtied_characters)
 
     def fail(self, result, indexed=None):
-        return CommandResult(False, self, result, indexed, None)
+        failure_msg = {self.sender_uid: [result]}
+        return CommandResult(False, self, failure_msg, indexed, None)
 
     def execute(self):
         '''Run this Command as a player'''

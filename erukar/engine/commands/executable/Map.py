@@ -53,7 +53,8 @@ class Map(Command):
 
         # show the player as an X
         self.complex_add_player(room.coordinates, dnjn_map, min_x, min_y)
-        return self.succeed('\n'.join(' '.join(y) for y in reversed(dnjn_map)))
+        self.append_result(self.sender_uid, '\n'.join(' '.join(y) for y in reversed(dnjn_map)))
+        return self.succeed()
 
     def complex_map_location(self, x, y, dungeon_map):
         '''Add a cell to the complex map; only concerned with walls!'''

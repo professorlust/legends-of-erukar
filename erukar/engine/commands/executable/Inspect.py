@@ -19,12 +19,11 @@ class Inspect(ActionCommand):
         direction = self.determine_direction(payload.lower())
 
         if direction is None:
-            return self.succeed(self.inspect_in_room(player, room, payload))
-
-        result = room.directional_inspect(direction, player.lifeform())
-        if result is None:
-            return self.fail(Inspect.abyss.format(direction.name))
-        return self.succeed(result)
+            result = self.inspect_in_room(player, room, payload)
+        else:
+            result = room.directional_inspect(direction, player.lifeform())
+        self.append_result(self.sender_uid, result)
+        return self.succeed()
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''

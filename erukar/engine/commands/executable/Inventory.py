@@ -14,7 +14,8 @@ class Inventory(Command):
         items = '\n'.join(['{:2}. {}'.format(i, char.inventory[i].on_inventory())\
             for i in range(len(char.inventory))])
         equipment = self.equipment(char)
-        return self.succeed(self.header.format(equipment, items))
+        self.append_result(self.sender_uid, self.header.format(equipment, items))
+        return self.succeed()
 
     def equipment(self, character):
         '''Draw (Equipped) Equipment'''

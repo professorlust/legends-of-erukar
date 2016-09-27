@@ -19,7 +19,7 @@ class CloseTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result, Close.nesw_no_door)
+        self.assertEqual(result.result_for('Bob')[0], Close.nesw_no_door)
 
     def test_execute_through_no_door(self):
         p = Player()
@@ -40,7 +40,7 @@ class CloseTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result, Close.nesw_no_door)
+        self.assertEqual(result.result_for('Bob')[0], Close.nesw_no_door)
 
     def test_execute_through_locked_door(self):
         p = Player()
@@ -63,7 +63,7 @@ class CloseTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result, Door.already_closed)
+        self.assertEqual(result.result_for('Bob')[0], Door.already_closed)
 
     def test_execute_through_closed_door(self):
         p = Player()
@@ -85,7 +85,7 @@ class CloseTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result, Door.already_closed)
+        self.assertEqual(result.result_for('Bob')[0], Door.already_closed)
 
 
     def test_execute_through_open_door(self):
@@ -110,7 +110,7 @@ class CloseTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result, Door.close_success)
+        self.assertEqual(result.result_for('Bob')[0], Door.close_success)
         self.assertEqual(d.status, Door.Closed)
 
     def test_execute_on_chest(self):
@@ -128,9 +128,7 @@ class CloseTests(unittest.TestCase):
         o = Close()
         o.sender_uid = p.uid
         o.data = data_store
-
         o.user_specified_payload = 'chest'
-
         result = o.execute()
 
-        self.assertEqual(result.result, 'Closed a chest')
+        self.assertEqual(result.result_for('Bob')[0], 'Closed a chest')

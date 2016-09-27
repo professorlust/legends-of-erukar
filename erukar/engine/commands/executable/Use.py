@@ -24,7 +24,8 @@ class Use(ActionCommand):
         for item in items:
             if isinstance(item, erukar.engine.inventory.Key):
                 if self.use_key(item, target, self.lifeform(player)):
-                    return self.succeed(self.unlock.format(self.lifeform(player).alias(), target.alias()))
+                    self.append_result(self.sender_uid, self.unlock.format(self.lifeform(player).alias(), target.alias()))
+                    return self.succeed()
 
         return self.fail('Cannot use anything.')
 

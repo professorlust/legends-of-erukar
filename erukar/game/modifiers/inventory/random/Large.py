@@ -9,11 +9,11 @@ class Large(WeaponMod):
     BriefDescription = "The {EssentialPart} is disproportionately large."
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {EssentialPart} seems large."
-    VisualIdealDescription = "The {EssentialPart} is disproportionately large in comparison to the rest of the {BasePart}."
+    VisualIdealDescription = "The {EssentialPart} is disproportionately large in comparison to the rest of the {BaseName}."
     SensoryMinimalDescription = ""
     SensoryIdealDescription = ""
     DetailedMinimalDescription = "The {EssentialPart} seems large."
-    DetailedIdealDescription = "The {EssentialPart} is disproportionately large in comparison to the rest of the {BasePart}."
+    DetailedIdealDescription = "The {EssentialPart} is disproportionately large in comparison to the rest of the {BaseName}."
     Adjective = ""
 
     def apply_to(self, weapon):

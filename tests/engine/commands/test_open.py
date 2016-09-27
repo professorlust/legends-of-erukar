@@ -19,7 +19,7 @@ class OpenTests(unittest.TestCase):
         o.user_specified_payload = 'north'
         result = o.execute()
 
-        self.assertEqual(result.result, Open.nesw_no_door)
+        self.assertEqual(result.result_for('Bob')[0], Open.nesw_no_door)
 
     def test_execute_through_no_door(self):
         p = Player()
@@ -40,7 +40,7 @@ class OpenTests(unittest.TestCase):
         o.user_specified_payload = 'south'
         result = o.execute()
 
-        self.assertEqual(result.result, Open.nesw_no_door)
+        self.assertEqual(result.result_for('Bob')[0], Open.nesw_no_door)
 
     def test_execute_through_locked_door(self):
         p = Player()
@@ -63,7 +63,7 @@ class OpenTests(unittest.TestCase):
         o.user_specified_payload = 'south'
         result = o.execute()
 
-        self.assertEqual(result.result, Door.is_locked)
+        self.assertEqual(result.result_for('Bob')[0], Door.is_locked)
 
     def test_execute_through_open_door(self):
         p = Player()
@@ -86,7 +86,7 @@ class OpenTests(unittest.TestCase):
         o.user_specified_payload = 'south'
         result = o.execute()
 
-        self.assertEqual(result.result, Door.already_open)
+        self.assertEqual(result.result_for('Bob')[0], Door.already_open)
 
     def test_execute_through_closed_door(self):
         p = Player()
@@ -108,7 +108,7 @@ class OpenTests(unittest.TestCase):
         o.user_specified_payload = 'south'
         result = o.execute()
 
-        self.assertEqual(result.result, Door.open_success)
+        self.assertEqual(result.result_for('Bob')[0], Door.open_success)
         self.assertEqual(d.status, Door.Open)
 
     def test_execute_on_chest(self):
@@ -130,4 +130,4 @@ class OpenTests(unittest.TestCase):
         o.user_specified_payload = 'chest'
         result = o.execute()
 
-        self.assertEqual(result.result, 'Opened a chest')
+        self.assertEqual(result.result_for('Bob')[0], 'Opened a chest')

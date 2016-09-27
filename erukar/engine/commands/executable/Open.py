@@ -27,7 +27,8 @@ class Open(ActionCommand):
         item = self.find_in_room(room, item_name)
         if item is not None:
             # We found it, so run on_open on it
-            return self.succeed(item.on_open(player))
+            self.append_result(self.sender_uid, item.on_open(player))
+            return self.succeed()
 
         # Send a failure message
         return self.fail(Open.not_found)
@@ -49,4 +50,5 @@ class Open(ActionCommand):
             # There is no door to open
             return self.fail(Open.nesw_no_door)
 
-        return self.succeed(door.on_open())
+        self.append_result(self.sender_uid, door.on_open())
+        return self.succeed()

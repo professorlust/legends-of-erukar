@@ -32,7 +32,8 @@ class Levelup(Command):
         self.num_points = 15*len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.NeedsInitialization)])
         self.num_points += len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.ReadyToLevel)])
         if self.num_points is 0:
-           return self.succeed(self.NoPoints)
+            self.append_result(self.sender_uid, self.NoPoints)
+            return self.succeed()
 
         # Welcome
         if not self.context or not isinstance(self.context.context, erukar.engine.commands.executable.Levelup):
@@ -112,7 +113,8 @@ class Levelup(Command):
         if self.context.context.subcommand is 'confirm':
             return self.complete()
         if self.context.context.subcommand is 'cancel':
-            return self.succeed('Aborting Level Up attribute allocation.')
+            self.append_result(self.sender_uid, 'Aborting Level Up attribute allocation.')
+            return self.succeed()
         return self.fail('Unrecognized "yes" command')
 
     def complete(self):
@@ -123,7 +125,7 @@ class Levelup(Command):
         self.target.afflictions = [x for x in self.target.afflictions \
                             if (not isinstance(x, erukar.engine.effects.ReadyToLevel) and not isinstance(x, erukar.engine.effects.NeedsInitialization))]
         self.dirty(self.target)
-        return self.succeed('Your Level Up attribute allocation is now LOCKED.')
+        self.append_result(self.sender_uid,'Your Level Up attribute allocation is now LOCKED.')
 
     def no(self, *_):
         return self.fail('Returning to level up process.')

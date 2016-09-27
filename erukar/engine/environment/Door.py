@@ -18,15 +18,15 @@ class Door(Describable):
         self.description = description
         self.acuity_needed = 0
         if self.description is '':
-            self.description = self.generic_description 
+            self.description = self.generic_description
 
     def on_inspect(self, direction):
         return self.mutate(self.description, {'direction': direction.name})
 
-    def peek(self, direction, room, lifeform):
+    def peek(self, direction, room, lifeform, acu, sen):
         '''Does a single look through'''
         if self.status is Door.Open:
-            return ' '.join([self.on_inspect(direction), room.describe(lifeform, 1)])
+            return ' '.join([self.on_inspect(direction), room.peek(lifeform, acu, sen)])
         return self.on_inspect(direction)
 
     def necessary_acuity(self):

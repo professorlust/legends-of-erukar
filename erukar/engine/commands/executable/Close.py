@@ -26,7 +26,8 @@ class Close(ActionCommand):
         item = self.find_in_room(room, item_name)
         if item is not None:
             # We found it, so run on_close on it
-            return self.succeed(item.on_close(player))
+            self.append_result(self.sender_uid, item.on_close(player))
+            return self.succeed()
 
         # Send a failure message
         return self.fail(Close.not_found)
@@ -49,4 +50,6 @@ class Close(ActionCommand):
             return self.fail(Close.nesw_no_door)
 
         # Have the door handle it now
-        return self.fail(door.on_close(player))
+        result = door.on_close(player)
+        self.append_result(self.sender_uid, result)
+        return self.succeed()

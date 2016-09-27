@@ -18,7 +18,9 @@ class Drop(ActionCommand):
 
         # We have the item, so actually remove it
         self.move_from_inventory(item, player.lifeform(), room)
-        return self.succeed(Drop.dropped.format(item.alias()))
+        drop_result = Drop.dropped.format(item.alias())
+        self.append_result(self.sender_uid, drop_result)
+        self.succeed()
 
     def move_from_inventory(self, item, lifeform, room):
         self.try_to_unequip(item.alias())

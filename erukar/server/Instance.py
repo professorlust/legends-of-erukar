@@ -181,9 +181,10 @@ class Instance(Manager):
         # Check results
         if result is not None:
             # Print Result, replace with outbox later
-            if hasattr(result, 'result'):
-                print(result.result + '\n')
-                print('-' * 64)
+            if hasattr(result, 'results'):
+                if 'a-uid' in result.results:
+                    print('\n\n'.join(result.result_for('a-uid')) + '\n')
+                    print('-' * 64)
             # Save Dirtied Characters in DB 
             if hasattr(result, 'dirtied_characters'):
                 for dirty in result.dirtied_characters:

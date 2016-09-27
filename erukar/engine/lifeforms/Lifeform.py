@@ -30,6 +30,7 @@ class Lifeform(RpgEntity):
     BaseDescription = "a {alias}"
 
     def __init__(self, name=""):
+        self.uid = ""
         self.inventory = []
         self.strength   = 0
         self.dexterity  = 0
