@@ -33,7 +33,6 @@ class Sconce(RoomModifier):
         add_torch_method(room)
         room.add(deco)
 
-
     def make_torch(self, room, fuel):
         '''Make a base torch and add it to the room'''
         torch = Torch()

@@ -183,6 +183,7 @@ class Instance(Manager):
             # Print Result, replace with outbox later
             if hasattr(result, 'result'):
                 print(result.result + '\n')
+                print('-' * 64)
             # Save Dirtied Characters in DB 
             if hasattr(result, 'dirtied_characters'):
                 for dirty in result.dirtied_characters:

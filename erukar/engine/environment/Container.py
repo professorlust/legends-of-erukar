@@ -3,6 +3,7 @@ from erukar.engine.environment.Lock import Lock
 
 class Container(Containable):
     ContentDescription = "Inside of the container is {}."
+    BriefDescription = "This is a brief description for {__module__}"
 
     def __init__(self, aliases):
         '''visible_in_room_description here is used for Containers like Table Tops'''

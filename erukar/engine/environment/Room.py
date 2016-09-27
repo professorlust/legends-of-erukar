@@ -62,22 +62,24 @@ class Room(Containable):
         '''used to describe non-decoration contents'''
         for x in self.contents:
             if isinstance(x, Decoration) or isinstance(x, Container):
+                print('{} "{}": {}'.format( x.__module__, x.alias(), x.brief_inspect(lifeform, acuity, sense) ))
                 yield x.brief_inspect(lifeform, acuity, sense)
 
     def container_descriptions(self, lifeform, acuity, sense):
         '''used to describe non-decoration contents'''
         for x in self.contents:
-            if not isinstance(x, Decoration) and not isinstance(x, erukar.engine.lifeforms.Lifeform):
+            if not isinstance(x, Decoration) and not isinstance(x, erukar.engine.lifeforms.Lifeform) and not isinstance(x, Container):
                 yield x.brief_inspect(lifeform, acuity, sense)
 
     def directional_descriptions(self, lifeform, acuity, sense):
         for d in self.connections:
             if self.connections[d].is_door() and self.connections[d].can_see_or_sense(lifeform):
-                yield '{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform))
+                yield '{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform, acuity, sense))
 
     def threat_descriptions(self, lifeform, acuity, sense):
         for content in self.contents:
             if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
+                print('{} "{}": {}'.format( content.__module__, content.alias(), content.describe_as_threat(lifeform, acuity, sense) ))
                 yield content.describe_as_threat(lifeform, acuity, sense)
 
     def on_start(self, *_):
@@ -87,12 +89,11 @@ class Room(Containable):
 
     def peek(self, lifeform, acuity, sense):
         '''Used for peeking NESW during on_inspect'''
+        print('peeking')
         light_mod = self.calculate_luminosity()
         if light_mod <= 0.01: return 'The chamber in this direction is completely dark.'
-        desc = list(self.threat_descriptions(lifeform, acu, sen))
-        desc.insert(self.describe(lifeform),0)
-        print(desc)
-        return Describable.erjoin(desc)
+        desc = [x for x in self.threat_descriptions(lifeform, acuity, sense) if x is not '']
+        return self.describe(lifeform, 1) + ' ' + Describable.erjoin(desc)
 
     def on_inspect(self, lifeform, acuity, sense):
         '''Used exclusively for inspecting the current room'''
@@ -111,10 +112,13 @@ class Room(Containable):
     def describe(self, lifeform, depth=0):
         '''Room Descriptions'''
         acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
-        describable_contents = list(self.decoration_descriptions(lifeform, acu, sen))
+        describable_contents = [x for x in self.decoration_descriptions(lifeform, acu, sen) if x is not '']
+        self_describe = self.SelfDescription
         if self.floor is not None:
-            describable_contents.insert(0, self.floor.brief_inspect(lifeform, acu, sen))
-        return self.SelfDescription + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents))
+            self_describe = self_describe + ' ' + self.floor.brief_inspect(lifeform, acu, sen)
+        if len( describable_contents) > 0:
+            return self_describe + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents))
+        return self_describe
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
@@ -142,8 +146,7 @@ class Room(Containable):
         for c in self.connections:
             passage = self.connections[c]
             if passage.room is not None:
-                if passage.door is None or\
-                   (isinstance(passage.door, Door) and passage.door.status == Door.Open):
+                if passage.door is None or (isinstance(passage.door, Door) and passage.door.status == Door.Open):
                     yield c
 
     def walls(self):

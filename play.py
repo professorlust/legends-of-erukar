@@ -23,6 +23,6 @@ w.interface.execute(character.uid, 'join')
 #w.interface.execute(npc.uid, 'join')
 
 while True:
-    line = input('')
     print('-' * 64)
+    line = input('')
     res = w.interface.execute(player.character.uid, line)

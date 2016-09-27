@@ -202,4 +202,4 @@ class Lifeform(RpgEntity):
         return self
 
     def describe_as_threat(self, lifeform, acuity, sense):
-        return self.mutate(self.BriefDescription)
+        return self.on_inspect(lifeform, acuity, sense)

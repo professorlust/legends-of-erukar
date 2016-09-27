@@ -40,10 +40,10 @@ class Passage:
             return self.wall.describe()
         return ''
 
-    def peek(self, relative_dir, lifeform):
+    def peek(self, relative_dir, lifeform, acu, sen):
         '''Used when the current room is describing itself'''
         if self.door is not None:
             return self.door.peek(relative_dir, self.room, lifeform)
         if self.room is not None:
-            return self.room.describe(lifeform, 1)
+            return self.room.peek(lifeform, acu, sen)
         return

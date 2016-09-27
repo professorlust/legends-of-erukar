@@ -138,6 +138,8 @@ class Attack(ActionCommand):
         room = target.current_room
         if target in room.contents:
             room.contents.remove(target)
+        else:
+            print('Target not in contents!!!')
         room.add(Corpse(target))
 
     def calculate_attack(self, character, weapon, target):
