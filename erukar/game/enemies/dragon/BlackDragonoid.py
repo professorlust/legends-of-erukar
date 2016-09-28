@@ -29,6 +29,9 @@ class BlackDragonoid(Enemy):
         self.left = self.create_random_weapon()
         self.right = self.create_random_weapon()
         self.inventory = [self.left, self.right]
+        self.chest = self.create_random_armor('erukar.game.inventory.armor.chest')
+        self.feet = self.create_random_armor('erukar.game.inventory.armor.boots')
+        self.head = self.create_random_armor('erukar.game.inventory.armor.helm')
 
         del self.weapon_randomizer, self.weapon_mod_randomizer, self.material_randomizer
 
@@ -37,6 +40,12 @@ class BlackDragonoid(Enemy):
         self.material_randomizer.create_one().apply_to(rand_weapon)
         self.weapon_mod_randomizer.create_one().apply_to(rand_weapon)
         return rand_weapon
+
+    def create_random_armor(self, module):
+        rand = ModuleDecorator(module, None)
+        armor = rand.create_one()
+        self.material_randomizer.create_one().apply_to(armor)
+        return armor
 
     def describe_armor(self):
         res = []
