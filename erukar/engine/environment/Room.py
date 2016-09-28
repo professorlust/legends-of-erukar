@@ -112,13 +112,30 @@ class Room(Containable):
         peeks = '\n'.join(list(self.directional_descriptions(lifeform, acu, sen)))
         return '\n\n'.join(x for x in [threats,auras,self_desc,container,peeks] if x is not '')
 
+    def surfaces_at_a_glance(self, lifeform, acu, sen):
+        nonempty_surfaces  = []
+        floor = '' if not self.floor else self.floor.brief_inspect(lifeform, acu, sen)
+        if floor is not '':
+            nonempty_surfaces.append('the floor is {}'.format(floor))
+        ceiling = '' if not self.ceiling else self.ceiling.brief_inspect(lifeform, acu, sen)
+        if ceiling is not '':
+            nonempty_surfaces.append('the ceiling is {}'.format(ceiling))
+        walls = list(set(self.connections[x].wall.brief_inspect(lifeform, acu, sen) for x in self.connections if self.connections[x].wall))
+        wall = Describable.erjoin(walls)
+        if wall is not '':
+            nonempty_surfaces.append('the walls are {}'.format(wall))
+
+        result = Describable.erjoin(nonempty_surfaces)
+        return result.capitalize() + '.' if result is not '' else ''
+
     def describe(self, lifeform, depth=0):
         '''Room Descriptions'''
         acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
         describable_contents = [x for x in self.decoration_descriptions(lifeform, acu, sen) if x is not '']
+
         self_describe = self.SelfDescription
-        if self.floor is not None:
-            self_describe = self_describe + ' ' + self.floor.brief_inspect(lifeform, acu, sen)
+        if depth == 0:
+            self_describe = ' '.join([self_describe, self.surfaces_at_a_glance(lifeform, acu, sen)])
         if len( describable_contents) > 0:
             return self_describe + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents))
         return self_describe

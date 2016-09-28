@@ -3,7 +3,7 @@ from erukar.engine.environment.Surface import Surface
 import random
 
 class CarpetFloor(RoomModifier):
-    ProbabilityFromFabrication = 0.8
+    ProbabilityFromFabrication = 1
     colors = [
         "dark red",
         "light red",
@@ -26,12 +26,29 @@ class CarpetFloor(RoomModifier):
         "frieze",
         "berber"
     ]
+    anomalys = [
+        "is torn",
+        "has become rotten over time",
+        "has been freshly cleaned",
+        "is waterlogged, making unpleasant squishing noises as you move your feet"
+    ]
+
     fields = [
         "texture",
-        "color"
+        "color",
+        "anomaly"
     ]
-    description = "The floor of this room is a {texture} {color} carpet."
 
     def apply_to(self, room):
         args = self.get_arguments()
-        room.floor = Surface(self.mutate(self.description, args))
+        room.floor = Surface("")
+        room.floor.anomaly = self.anomaly
+        room.floor.texture = self.texture
+        room.floor.color = self.color
+        room.floor.BriefDescription = "{color} carpet"
+        # Don't worry about setting vision or sensory results because detailed should always be used
+        room.floor.set_vision_results("","", (1, 35))
+        room.floor.set_sensory_results("","", (0,0))
+        room.floor.set_detailed_results(\
+                "The floor is covered in {color} carpet.",\
+                "The floor is a {texture} {color} carpet. The carpet {anomaly}.")

@@ -130,10 +130,10 @@ class Lifeform(RpgEntity):
         return any(x for x in self.afflictions if isinstance(x, aff_type))
 
     def calculate_xp_worth(self):
-        if self.level >= 100:
-            return 100*self.level
         x = self.level
-        return  10+math.ceil(0.5*x*x + pow(2, math.exp((x-100)/x)))
+        if x >= 100:
+            return 100*x
+        return math.ceil((x/100)*(100*x) + ((100-x)/100) * (10+0.5*x*x + pow(2, math.exp((x-100)/x))))
 
     def calculate_necessary_xp(self):
         return self.calculate_xp_worth()

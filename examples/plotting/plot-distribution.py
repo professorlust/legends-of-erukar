@@ -2,15 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-def calc():
-    return 4 + np.floor(np.random.standard_cauchy())
+def calculate_xp_worth(x):
+    if x >= 100:
+        return 100*x
+    return (x/100)*(100*x) + ((100-x)/100) * (10+math.ceil(0.5*x*x + pow(2, math.exp((x-100)/x))))
 
-res = [calc() for x in np.arange(100000)]
-result = [res.count(n)/100000.0 for n in np.arange(min(res), max(res))]
+res = [calculate_xp_worth(x) for x in np.arange(500)]
 
-plt.plot(list(np.arange(min(res), max(res))), result)
-plt.xlabel('Damage')
-plt.ylabel('Probability')
-
-plt.axis([min(res), max(res), -0.05, max(result)+0.05])
+plt.plot(np.arange(500), res)
+print([res[x] for x in range(1,100, 10)])
 plt.show()
