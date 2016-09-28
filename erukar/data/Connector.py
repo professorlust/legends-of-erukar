@@ -84,6 +84,7 @@ class Connector:
         item = self.create_from_type(data.item_type)
         modifiers = [self.create_from_type(m.modifier_type) for m in data.modifiers] + [self.create_from_type(data.material_type)]
         for mod in modifiers:
+            if mod is None: continue
             mod.apply_to(item)
             if data.item_attributes is not None and len(data.item_attributes) > 0:
                 for pattr in data.item_attributes:
@@ -91,6 +92,8 @@ class Connector:
         return item
 
     def create_from_type(self, item_type):
+        if item_type is None:
+            return None
         prelim_type = item_type.split('.')
         return getattr(__import__(item_type, fromlist=[prelim_type[-1]]), prelim_type[-1])()
 
@@ -118,10 +121,12 @@ class Connector:
         for item in lifeform.inventory:
             if item.Persistent:
                 modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers if m.Persistent]
+                item_attributes = item.persistable_attributes()
                 if item.material is not None:
                     material = item.material.__module__
-                item_attributes = item.persistable_attributes()
-                yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers, item_attributes=item_attributes))
+                    yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers, item_attributes=item_attributes))
+                else:
+                    yield (item, erukar.data.Schema.Item(item_type=item.__module__, modifiers=modifiers, item_attributes=item_attributes))
 
     def gen_to_dict(self, generator):
         return {x[0]:x[1] for x in generator}
