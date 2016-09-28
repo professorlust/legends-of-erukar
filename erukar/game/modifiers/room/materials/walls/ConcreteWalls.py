@@ -17,4 +17,5 @@ class ConcreteWalls(RoomModifier):
 
     def apply_to(self, room):
         for wall in room.walls():
+            wall.BriefDescription = "concrete"
             wall.description = self.description

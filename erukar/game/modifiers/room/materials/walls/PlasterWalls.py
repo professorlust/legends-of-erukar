@@ -6,4 +6,5 @@ class PlasterWalls(RoomModifier):
     ProbabilityFromFabrication = 1.0
     def apply_to(self, room):
         for wall in room.walls():
+            wall.BriefDescription = "plaster"
             wall.description = "This wall is made of plaster."

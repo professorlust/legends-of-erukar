@@ -154,6 +154,8 @@ class Instance(Manager):
 
     def grab_from_turn_manager(self):
         self.active_player = self.turn_manager.next()
+#       if self.active_player.uid == 'a-uid':
+#           print('\n\nIt is now your turn!\n\n' + ('-'*64))
         if self.turn_manager.needs_tick():
             self.dungeon.tick()
             for player in self.data.players:

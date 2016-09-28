@@ -35,5 +35,5 @@ class Interactible:
     def get_name(self):
         pass
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, instigator=None):
         pass

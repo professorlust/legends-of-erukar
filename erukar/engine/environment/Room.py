@@ -112,18 +112,18 @@ class Room(Containable):
         peeks = '\n'.join(list(self.directional_descriptions(lifeform, acu, sen)))
         return '\n\n'.join(x for x in [threats,auras,self_desc,container,peeks] if x is not '')
 
+    def append_if_nonempty(self, collection, string, with_format):
+        if string is not '':
+            collection.append(with_format.format(string))
+
     def surfaces_at_a_glance(self, lifeform, acu, sen):
         nonempty_surfaces  = []
         floor = '' if not self.floor else self.floor.brief_inspect(lifeform, acu, sen)
-        if floor is not '':
-            nonempty_surfaces.append('the floor is {}'.format(floor))
+        self.append_if_nonempty(nonempty_surfaces, floor, 'the floor is {}')
         ceiling = '' if not self.ceiling else self.ceiling.brief_inspect(lifeform, acu, sen)
-        if ceiling is not '':
-            nonempty_surfaces.append('the ceiling is {}'.format(ceiling))
+        self.append_if_nonempty(nonempty_surfaces, ceiling, 'the ceiling is {}')
         walls = list(set(self.connections[x].wall.brief_inspect(lifeform, acu, sen) for x in self.connections if self.connections[x].wall))
-        wall = Describable.erjoin(walls)
-        if wall is not '':
-            nonempty_surfaces.append('the walls are {}'.format(wall))
+        self.append_if_nonempty(nonempty_surfaces, Describable.erjoin(walls), 'the walls are {}')
 
         result = Describable.erjoin(nonempty_surfaces)
         return result.capitalize() + '.' if result is not '' else ''
