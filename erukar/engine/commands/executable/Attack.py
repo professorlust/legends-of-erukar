@@ -124,7 +124,7 @@ class Attack(ActionCommand):
             return
 
         self.dirty(enemy)
-        enemy.take_damage(damage, self.character)
+        xp = enemy.take_damage(damage, self.character)
         attack_string = Attack.successful.format(**args)
 
         if hasattr(enemy, 'afflictions'):
@@ -138,6 +138,12 @@ class Attack(ActionCommand):
         # Let everyone know what happened
         self.append_result(self.sender_uid, attack_string)
         self.append_result(enemy.uid, attack_string)
+
+        if xp <= 0: return
+        xp_awards = self.character.award_xp(xp)
+        for award in xp_awards:
+            self.append_result(self.sender_uid, award)
+
 
     def create_corpse(self, target):
         room = target.current_room

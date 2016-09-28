@@ -1,4 +1,5 @@
 from erukar.game.modifiers.RoomModifier import RoomModifier
+from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import erukar
 
 class Demon(RoomModifier):

@@ -56,19 +56,25 @@ class Room(Containable):
     def aura_descriptions(self, lifeform, acuity, sense):
         '''Used for all aura descriptions'''
         for x in self.dungeon.get_applicable_auras(self):
-            yield x.brief_inspect(lifeform, acuity, sense)
+            res = x.brief_inspect(lifeform, acuity, sense)
+            if res is not '':
+                yield res
 
     def decoration_descriptions(self, lifeform, acuity, sense):
         '''used to describe non-decoration contents'''
         for x in self.contents:
             if isinstance(x, Decoration) or isinstance(x, Container):
-                yield x.brief_inspect(lifeform, acuity, sense)
+                res = x.brief_inspect(lifeform, acuity, sense)
+                if res is not '':
+                    yield res
 
     def container_descriptions(self, lifeform, acuity, sense):
         '''used to describe non-decoration contents'''
         for x in self.contents:
             if not isinstance(x, Decoration) and not isinstance(x, erukar.engine.lifeforms.Lifeform) and not isinstance(x, Container):
-                yield x.brief_inspect(lifeform, acuity, sense)
+                res = x.brief_inspect(lifeform, acuity, sense)
+                if res is not '':
+                    yield res
 
     def directional_descriptions(self, lifeform, acuity, sense):
         for d in self.connections:
@@ -102,7 +108,7 @@ class Room(Containable):
         auras = ' '.join(list(self.aura_descriptions(lifeform, acu, sen)))
         self_desc = self.describe(lifeform)
         container_desc = Describable.erjoin(list(self.container_descriptions(lifeform, acu, sen)))
-        container = self.ContainerDescription.format(container_desc)
+        container = self.ContainerDescription.format(container_desc) if len(container_desc) > 0 else ''
         peeks = '\n'.join(list(self.directional_descriptions(lifeform, acu, sen)))
         return '\n\n'.join(x for x in [threats,auras,self_desc,container,peeks] if x is not '')
 

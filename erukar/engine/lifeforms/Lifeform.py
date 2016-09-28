@@ -139,28 +139,31 @@ class Lifeform(RpgEntity):
         return self.calculate_xp_worth()
 
     def award_xp(self, xp):
-        print('{} has gained {} xp.'.format(self.alias(), xp))
+        '''Award a certain amount of XP to the player and level if the threshold is met'''
+        output_strings = ['{} has gained {} xp.'.format(self.alias(), xp)]
         self.experience += xp
         # Allows multiple level ups to occur
         while self.experience >= self.calculate_necessary_xp():
             self.experience -= self.calculate_necessary_xp()
             self.level += 1
             self.afflictions.append(erukar.engine.effects.ReadyToLevel(self, None))
-            print('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
+            output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
+        return output_strings
 
     def take_damage(self, damage, instigator=None):
+        '''Take damage and return amount of XP to award instigator'''
         if self.afflicted_with(erukar.engine.effects.Dying):
-            self.kill(killer=instigator)
-            return
+            xp = self.kill(killer=instigator)
+            return xp
         self.health = max(0, self.health - damage)
         if self.health == 0:
             self.afflictions.append(Dying(self, None))
+        return 0
 
     def kill(self, killer):
-        if killer is not None:
-            xp = self.calculate_xp_worth()
-            killer.award_xp(xp)
+        '''Mark us as dead, then return our net worth in XP'''
         self.afflictions = [Dead(self, None)]
+        return self.calculate_xp_worth()
 
     def link_to_room(self, room):
         self.current_room = room
