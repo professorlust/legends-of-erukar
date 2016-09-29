@@ -38,11 +38,14 @@ class Describable(Interactible):
 
     def erjoin(list_to_join):
         '''English readable Join. Adds commas and an "and".'''
+        comma = ', '
+        if any(',' in x for x in list_to_join):
+            comma = '; ' # Hypercomma
         list_to_join = [x for x in list_to_join if x is not '']
         if len(list_to_join) > 1:
             list_to_join[-1] = 'and ' + list_to_join[-1]
         if len(list_to_join) > 2:
-            return ', '.join(list_to_join)
+            return comma.join(list_to_join)
         return ' '.join(list_to_join)
 
     def mutate(self, mutatable_string, optional_parameters=None):

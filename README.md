@@ -5,6 +5,8 @@ The Legends of Erukar is a procedurally-generated multiplayer online dungeon (MU
 
 Track my progress on [Trello](https://trello.com/b/1M9LUBqx/legends-of-erukar) and on my [Personal Page](https://evankirsch.io)! Below are the latest development blogs.
 
+* 09/29/2016 -- [Auras and Dynamic Lighting Optimizations](https://evankirsch.io/blogs/loe-devblog-092916)
+* 09/15/2016 -- [Under the Hood: Architecture and Design](https://evankirsch.io/blogs/loe-devblog-091516)
 * 09/08/2016 -- [Narrative on a per-character basis](https://evankirsch.io/blogs/loe-devblog-090916)
 * 08/19/2016 -- [Procedural Generation of Dungeons and Items](https://evankirsch.io/blogs/loe-devblog-081916)
 

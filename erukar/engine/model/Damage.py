@@ -12,4 +12,4 @@ class Damage:
         raw = np.round((self.damage[1] - self.damage[0]) * random_val) + self.damage[0]
         if hasattr(attacker, self.modifier):
             return int(raw) + getattr(attacker, self.modifier)
-        return raw
+        return int(raw)

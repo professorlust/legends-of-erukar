@@ -3,6 +3,9 @@ from erukar.engine.model.Indexer import Indexer
 import random, erukar, string
 
 class Enemy(Lifeform, Indexer):
+    RandomizedArmor = []
+    RandomizedWeapons = []
+
     def __init__(self, name=""):
         Indexer.__init__(self)
         Lifeform.__init__(self, name)
@@ -53,3 +56,42 @@ class Enemy(Lifeform, Indexer):
 
     def lifeform(self):
         return self
+
+    def randomize_equipment(self):
+        self.material_randomizer = ModuleDecorator('erukar.game.modifiers.material', None)
+        self.left = self.create_random_weapon()
+        self.right = self.create_random_weapon()
+
+        for slot in self.RandomizedWeapons:
+            setattr(self, slot, self.create_random_weapon())
+
+        for slot,module in self.RandomizedArmor:
+            setattr(self, slot, self.create_random_armor(module))
+
+        self.inventory = [getattr(self, x) for x,i in list(set(x[0] for x in self.RandomizedArmor) + set(self.RandomizedWeapons))]
+        del self.material_randomizer
+
+    def create_random_weapon(self):
+        weapon_randomizer = ModuleDecorator('erukar.game.inventory.weapons', None)
+        weapon_mod_randomizer = ModuleDecorator('erukar.game.modifiers.inventory.random', None)
+
+        rand_weapon = weapon_randomizer.create_one()
+        self.material_randomizer.create_one().apply_to(rand_weapon)
+        weapon_mod_randomizer.create_one().apply_to(rand_weapon)
+        return rand_weapon
+
+    def create_random_armor(self, module):
+        rand = ModuleDecorator(module, None)
+        armor = rand.create_one()
+        self.material_randomizer.create_one().apply_to(armor)
+        return armor
+
+    def describe_armor(self):
+        res = [getattr(self, x) for x in list(set(self.equipment_types) - set(self.attack_slots))]
+        res = [x.brief_inspect(None, 50, 50) for x in res if x is not None]
+        return Describable.erjoin(x for x in res if x is not '')
+
+    def describe_weapon(self):
+        res = [getattr(self, x) for x in self.attack_slots]
+        res = [x.brief_inspect(None, 50, 50) for x in res if x is not None]
+        return Describable.erjoin(x for x in res if x is not '')
