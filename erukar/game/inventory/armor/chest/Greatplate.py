@@ -1,6 +1,7 @@
-from erukar.engine.inventory.ChestArmor import ChestArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Greatplate(ChestArmor):
+class Greatplate(Armor):
+    EquipmentLocations = ['chest']
     BaseName="Greatplate"
     Probability = 1
 

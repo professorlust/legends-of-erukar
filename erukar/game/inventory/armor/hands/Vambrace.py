@@ -1,6 +1,7 @@
-from erukar.engine.inventory.ArmArmor import ArmArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Vambrace(ArmArmor):
+class Vambrace(Armor):
+    EquipmentLocations = ['arms']
     BaseName="Vambrace"
     Probability = 1
 

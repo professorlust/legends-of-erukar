@@ -1,6 +1,7 @@
-from erukar.engine.inventory.FootArmor import FootArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Feet(FootArmor):
+class Feet(Armor):
+    EquipmentLocations = ['feet']
     '''Note: This requires a magical modifier!'''
     Probability = 1
     BaseName = "Feet"

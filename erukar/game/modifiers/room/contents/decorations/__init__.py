@@ -1,5 +1,6 @@
 from .Altar import Altar
 from .Branch import Branch
+from .Brazier import Brazier
 from .Bunk import Bunk
 from .Cabinet import Cabinet
 from .Campfire import Campfire
@@ -23,6 +24,7 @@ from .Window import Window
 
 __all__ = ["Altar",
     "Branch",
+    "Brazier",
     "Bunk",
     "Cabinet",
     "Campfire",

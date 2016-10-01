@@ -1,6 +1,7 @@
-from erukar.engine.inventory.FootArmor import FootArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Boots(FootArmor):
+class Boots(Armor):
+    EquipmentLocations = ['feet']
     Probability = 1
     BaseName = "Boots"
 

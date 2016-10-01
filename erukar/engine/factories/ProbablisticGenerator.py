@@ -1,5 +1,5 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
-from erukar.engine import InitializationException
+from erukar.engine.exceptions.InitializationException import InitializationException
 from erukar.engine.environment import *
 import numpy as np
 import math, random
@@ -15,7 +15,7 @@ class ProbablisticGenerator(FactoryBase):
         '''
         The possibilities and weights must be lists in the same order
         '''
-        bins = self.calculate_bin_widths(weights) 
+        bins = self.calculate_bin_widths(weights)
         values = np.array(possibilities)
         self.order_bins_and_values(bins, values)
         self.is_initialized = True

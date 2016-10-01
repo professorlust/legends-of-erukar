@@ -1,6 +1,7 @@
-from erukar.engine.inventory.HeadArmor import HeadArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Coif(HeadArmor):
+class Coif(Armor):
+    EquipmentLocations = ['head']
     BaseName="Coif"
     Probability = 1
 

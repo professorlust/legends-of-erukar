@@ -1,6 +1,7 @@
-from erukar.engine.inventory.ChestArmor import ChestArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Brigandine(ChestArmor):
+class Brigandine(Armor):
+    EquipmentLocations = ['chest']
     BaseName="Brigandine"
     Probability = 1
 

@@ -1,5 +1,7 @@
 from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Indexer import Indexer
+from erukar.engine.model.Describable import Describable
+from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import random, erukar, string
 
 class Enemy(Lifeform, Indexer):
@@ -68,7 +70,7 @@ class Enemy(Lifeform, Indexer):
         for slot,module in self.RandomizedArmor:
             setattr(self, slot, self.create_random_armor(module))
 
-        self.inventory = [getattr(self, x) for x,i in list(set(x[0] for x in self.RandomizedArmor) + set(self.RandomizedWeapons))]
+        self.inventory = [getattr(self, x) for x in [y for y,i in self.RandomizedArmor] + self.RandomizedWeapons]
         del self.material_randomizer
 
     def create_random_weapon(self):

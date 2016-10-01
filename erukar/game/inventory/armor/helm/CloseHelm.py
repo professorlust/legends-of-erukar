@@ -1,6 +1,7 @@
-from erukar.engine.inventory.HeadArmor import HeadArmor
+from erukar.engine.inventory.Armor import Armor
 
-class CloseHelm(HeadArmor):
+class CloseHelm(Armor):
+    EquipmentLocations = ['head']
     BaseName="Close Helm"
     Probability = 1
 

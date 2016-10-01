@@ -10,9 +10,11 @@ class Item(Describable):
     Persistent = False
     PersistentAttributes = []
 
+    StandardWeight = 0 # In Pounds
+    EquipmentLocations = []
+
     def __init__(self, item_type='Item', name="Item"):
         self.item_type = item_type
-        self.equipment_locations = []
         self.name = name
         self.price = 0
         self.description = Item.generic_description
@@ -62,8 +64,8 @@ class Item(Describable):
     def alias(self):
         return self.name
 
-    def belongs_in_hand(self):
-        return 'left' in self.equipment_locations or 'right' in self.equipment_locations
+    def belongs_in_hand(self, lifeform):
+        return any(set(lifeform.attack_slots).intersection(set(self.EquipmentLocations)))
 
     def calculate_desireability(self):
         return functools.reduce(operator.mul, [mod.Desirability for mod in self.modifiers])

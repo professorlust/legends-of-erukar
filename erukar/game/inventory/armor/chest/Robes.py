@@ -1,6 +1,7 @@
-from erukar.engine.inventory.ChestArmor import ChestArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Robes(ChestArmor):
+class Robes(Armor):
+    EquipmentLocations = ['chest']
     BaseName="Robes"
     Probability = 1
 

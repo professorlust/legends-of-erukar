@@ -1,6 +1,7 @@
-from erukar.engine.inventory.ChestArmor import ChestArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Shroud(ChestArmor):
+class Shroud(Armor):
+    EquipmentLocations = ['chest']
     BaseName="Shroud"
     Probability = 1
 

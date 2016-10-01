@@ -22,7 +22,7 @@ class Equip(ActionCommand):
             return self.fail(Equip.not_found.format(payload))
 
         # Check to see if the item's type exists as a field on the character
-        item_type = self.determine_type(item)
+        item_type = self.determine_type(item, lifeform)
         if hasattr(lifeform, item_type):
             setattr(lifeform, item_type, item)
             item.on_equip(lifeform)
@@ -33,16 +33,16 @@ class Equip(ActionCommand):
 
         return self.fail(Equip.cannot_equip.format(item.describe()))
 
-    def determine_type(self, item):
+    def determine_type(self, item, lifeform):
         '''
         This determines what equipment slot should be evaluated; prior to this, it
         is assumed that check_for_arguments has been called to determine which hand
         to assign to.
         '''
-        if item.belongs_in_hand():
+        if item.belongs_in_hand(lifeform):
             return self.arguments['hand']
-        if len(item.equipment_locations) > 0:
-            return item.equipment_locations[0]
+        if len(item.EquipmentLocations) > 0:
+            return item.EquipmentLocations[0]
         return 'error_no_equip_slot'
 
     def check_for_arguments(self):

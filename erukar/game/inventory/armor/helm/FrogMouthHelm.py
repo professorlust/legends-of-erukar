@@ -1,6 +1,7 @@
-from erukar.engine.inventory.HeadArmor import HeadArmor
+from erukar.engine.inventory.Armor import Armor
 
-class FrogMouthHelm(HeadArmor):
+class FrogMouthHelm(Armor):
+    EquipmentLocations = ['head']
     BaseName="Frog Mouth Helm"
     Probability = 1
 

@@ -1,6 +1,4 @@
 from erukar.engine.lifeforms.Enemy import Enemy
-from erukar.engine.factories.ModuleDecorator import ModuleDecorator
-from erukar.engine.model.Describable import Describable
 import random
 
 class BlackDragonoid(Enemy):

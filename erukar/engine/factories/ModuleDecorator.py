@@ -1,5 +1,5 @@
 from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
-from erukar.engine import InitializationException
+from erukar.engine.exceptions.InitializationException import InitializationException
 import sys, inspect, functools, math
 import numpy as np
 

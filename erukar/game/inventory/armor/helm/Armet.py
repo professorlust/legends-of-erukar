@@ -1,6 +1,7 @@
-from erukar.engine.inventory.HeadArmor import HeadArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Armet(HeadArmor):
+class Armet(Armor):
+    EquipmentLocations = ['head']
     BaseName="Armet"
     Probability = 1
 

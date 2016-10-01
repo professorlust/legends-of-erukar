@@ -1,6 +1,7 @@
-from erukar.engine.inventory.LegArmor import LegArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Legwraps(LegArmor):
+class Legwraps(Armor):
+    EquipmentLocations = ['legs']
     BaseName="Legwraps"
     Probability = 1
 

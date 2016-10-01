@@ -1,6 +1,7 @@
-from erukar.engine.inventory.HeadArmor import HeadArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Barbute(HeadArmor):
+class Barbute(Armor):
+    EquipmentLocations = ['head']
     BaseName="Barbute"
     Probability = 1
 

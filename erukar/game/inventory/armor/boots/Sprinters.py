@@ -1,6 +1,7 @@
-from erukar.engine.inventory.FootArmor import FootArmor
+from erukar.engine.inventory.Armor import Armor
 
-class Sprinters(FootArmor):
+class Sprinters(Armor):
+    EquipmentLocations = ['feet']
     BaseName="Sprinters"
     Probability = 1
 

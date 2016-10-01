@@ -8,6 +8,7 @@ class Weapon(Item):
     EssentialPart = "weapon"
     AttackRange = 0 # Maximum number of rooms beyond our current room that we can reach
     RangePenalty = 5
+    EquipmentLocations = ['right','left']
 
     DamageRange = [1, 2]
     DamageType = "ambiguous"
@@ -20,7 +21,6 @@ class Weapon(Item):
         super().__init__(self.BaseName)
         self.name = self.BaseName
         self.item_type = "weapon"
-        self.equipment_locations = ['right','left']
         self.damages = [Damage(self.DamageType, list(self.DamageRange), self.DamageModifier,\
                                (self.Distribution, self.DistributionProperties))]
 
