@@ -11,8 +11,11 @@ class Attack(ActionCommand):
     successful = "{subject}'s attack of {roll} hits {target}, dealing {damage} damage."
     caused_dying = "\n{target} has been incapacitated by {subject}'s attack!"
     caused_death = "\n{target} has been slain by {subject}!"
+    deflected = '{target}\'s armor deflected the entirety of the damage from {subject}!'
     UnableToAttackInDirection = "You are unable to perform a directional attack."
     UnableToAttackInRoom = "You are unable to perform an attack."
+    EnemyFullMitigation = "{target}'s armor absorbed the entirety of your {weapon_name}'s damage!"
+    YourFullMitigation = "Your armor absorbed the entirety of the damage from {target}'s {weapon_name}!"
 
     aliases = ['attack']
 
@@ -108,14 +111,12 @@ class Attack(ActionCommand):
         '''Used to actually resolve an attack roll made between a character and target'''
         raw_attack_roll, armor_class, damages = self.calculate_attack(weapon, enemy)
         attack_roll = raw_attack_roll - roll_penalty
-        damage = sum([x[0] for x in damages]) # 0 is the index for the damage roll value
-        damage_descriptions = ', '.join(["{} {}".format(*x) for x in damages])
 
         args = {
             'subject': self.character.alias(),
             'target': enemy.alias(),
-            'roll': attack_roll,
-            'damage': damage_descriptions}
+            'weapon_name': 'unarmed attack' if weapon is None else weapon.alias(),
+            'roll': attack_roll}
 
         if attack_roll <= armor_class:
             # Show failures to subject and enemy
@@ -123,10 +124,31 @@ class Attack(ActionCommand):
             self.append_result(enemy.uid, Attack.unsuccessful.format(**args))
             return
 
+        # Calculate the actual damage through mitigation and deflection
+        actuals = []
+        for damage_amount, damage_type in damages:
+            if enemy.deflection(damage_type) >= damage_amount:
+                self.append_result(self.sender_uid, Attack.deflected.format(**args))
+                self.append_result(enemy.uid, Attack.deflected.format(**args))
+                continue
+            actual_damage = int(enemy.mitigation(damage_type) * damage_amount)
+            if actual_damage > 0:
+               actuals.append((actual_damage, damage_type))
+
+        # Calculate the Damage  
+        damage = sum(amt for amt, _ in actuals)
+        if damage <= 0:
+            self.append_result(self.sender_uid, Attack.EnemyFullMitigation.format(**args))
+            self.append_result(enemy.uid, Attack.YourFullMitigation.format(**args))
+            return
+
+        # Apply the damage
         self.dirty(enemy)
+        args['damage'] = ', '.join(["{} {}".format(*x) for x in actuals if x[0] > 0])
         xp = enemy.take_damage(damage, self.character)
         attack_string = Attack.successful.format(**args)
 
+        # Check to see if Dying, or Dead.
         if hasattr(enemy, 'afflictions'):
             if enemy.afflicted_with(erukar.engine.effects.Dying):
                 attack_string = attack_string + Attack.caused_dying.format(**args)
@@ -160,8 +182,8 @@ class Attack(ActionCommand):
         elif weapon is None:
             strength = self.character.calculate_effective_stat('strength')
             drange = [0, strength]
-            damage_type = Damage('Bludgeoning',drange,'strength',(random.uniform,(0,4)))
-            damage = [(damage_type.roll(target), 'strike')]
+            damage_type = Damage('bludgeoning',drange,'strength',(random.uniform,(0,4)))
+            damage = [(damage_type.roll(target), 'bludgeoning')]
         else:
             return [0,0,[]]
 

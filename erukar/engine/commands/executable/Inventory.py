@@ -24,7 +24,7 @@ class Inventory(Command):
             armor = getattr(character, armor_type)
             armor_name = 'None'
             if armor is not None:
-                armor_name = armor.on_inventory()
+                armor_name = armor.on_inventory_inspect()
             armor_results.append(self.item.format(armor_type.capitalize(), armor_name))
         return '\n'.join(armor_results)
 

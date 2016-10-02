@@ -4,10 +4,6 @@ from erukar.engine.effects.Dying import Dying
 import erukar, math, random
 
 class Lifeform(RpgEntity):
-    attack_damage_attribute = "strength"
-    attack_roll_attribute = "dexterity"
-    armor_attribute = "dexterity"
-    health_attribute = "vitality"
     equipment_types = [
         "left",
         "right",
@@ -45,11 +41,6 @@ class Lifeform(RpgEntity):
         self.name = name
         self.afflictions = []
         # Penalties define the reduction in efficacy of shields/weapons etc
-        self.hand_efficacy = {
-            'left': 0.0,
-            'right': 0.0,
-            'both': 0.0
-        }
         self.define_level(1)
 
     def tick(self):
@@ -61,14 +52,6 @@ class Lifeform(RpgEntity):
 
     def initiate_aura(self, aura):
         self.current_room.initiate_aura(aura)
-
-    def calculate_handed_penalty(self, hand):
-        '''
-        Calculate a penalty based on the equipped weapons' properties,
-        the wielder's strength, and any afflictions which might affect
-        hand usage.
-        '''
-        return self.hand_efficacy[hand]
 
     def calculate_effective_stat(self, stat_type, depth=0):
         score = self.calculate_stat_score(stat_type)
@@ -105,23 +88,15 @@ class Lifeform(RpgEntity):
     def define_level(self, level):
         '''Set this lifeform's level and defined the health appropriately'''
         self.level = level
-        self.max_health = sum([Lifeform.base_health + self.get(Lifeform.health_attribute) for x in range(level)])
+        self.max_health = sum([Lifeform.base_health + self.get('vitality') for x in range(level)])
         self.health = self.max_health
 
     def calculate_armor_class(self):
         if self.is_incapacitated():
             return RpgEntity.base_armor_class
 
-        ac_mod = self.get(Lifeform.armor_attribute)
+        ac_mod = self.get('dexterity')
         total_ac = RpgEntity.base_armor_class
-
-        for armor_type in self.equipment_types:
-            if hasattr(self, armor_type):
-                armor = getattr(self, armor_type)
-                # This allows us to use a shield in off/main hands
-                if armor is not None and issubclass(type(armor), erukar.engine.inventory.Armor):
-                    ac_mod = min(ac_mod, armor.max_dex_mod)
-                    total_ac += armor.calculate_armor_class()
 
         return total_ac + ac_mod
 
@@ -149,6 +124,21 @@ class Lifeform(RpgEntity):
             self.afflictions.append(erukar.engine.effects.ReadyToLevel(self, None))
             output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
         return output_strings
+
+    def deflection(self, damage_type):
+        deflections = [df for dt, mit, df in self.matching_deflections_and_mitigations(damage_type)]
+        return min(deflections) if len(deflections) > 0 else 0
+
+    def mitigation(self, damage_type):
+        return 1.0-sum([mit for dt, mit, df in self.matching_deflections_and_mitigations(damage_type)])
+
+    def matching_deflections_and_mitigations(self, damage_type):
+        for x in self.equipment_types:
+            armor = getattr(self, x)
+            if isinstance(armor, erukar.engine.inventory.Armor):
+                mtg = [x for x in armor.DamageMitigations if x[0] == damage_type]
+                if len(mtg) > 0:
+                    yield mtg[0]
 
     def take_damage(self, damage, instigator=None):
         '''Take damage and return amount of XP to award instigator'''

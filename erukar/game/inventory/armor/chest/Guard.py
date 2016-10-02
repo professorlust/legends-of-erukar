@@ -1,6 +1,6 @@
 from erukar.engine.inventory.Armor import Armor
 
-class Guard():
+class Guard(Armor):
     EquipmentLocations = ['chest']
     BaseName="Guard"
     Probability = 1

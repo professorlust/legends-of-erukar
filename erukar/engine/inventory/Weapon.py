@@ -28,5 +28,8 @@ class Weapon(Item):
         return [(d.roll(attacker), d.name) for d in self.damages]
 
     def on_inventory(self):
-        damage_desc = '\n'.join(['\t• {0} {1}'.format(d.damage,d.name) for d in self.damages])
+        return '{} ({}%)'.format(self.name, int(100*self.durability/self.MaxDurability))
+
+    def on_inventory_inspect(self):
+        damage_desc = '\n'.join(['\t\t• {0} {1}'.format(d.damage,d.name) for d in self.damages])
         return '{0}\n{1}'.format(self.name, damage_desc)

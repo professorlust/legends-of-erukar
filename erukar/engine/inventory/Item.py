@@ -8,8 +8,9 @@ class Item(Describable):
     EssentialPart = 'item part'
     SupportPart = 'item part'
     Persistent = False
-    PersistentAttributes = []
+    PersistentAttributes = ['durability']
 
+    MaxDurability = 100
     StandardWeight = 0 # In Pounds
     EquipmentLocations = []
 
@@ -19,6 +20,7 @@ class Item(Describable):
         self.price = 0
         self.description = Item.generic_description
         self.modifiers = []
+        self.durability = self.MaxDurability
         self.set_vision_results('You see a {BaseName}.','You see a {BaseName}.',(1,10))
         self.set_sensory_results('You sense a {BaseName}.','You sense a {BaseName}.',(5,20))
         self.set_detailed_results('There is a {BaseName}.', 'You see a {name}.')
