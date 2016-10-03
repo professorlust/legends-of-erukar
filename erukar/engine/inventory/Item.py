@@ -100,3 +100,6 @@ class Item(Describable):
     def persistable_attributes(self):
         '''For use with database; getattrs all attributes defined by persistent_attr dict'''
         return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}
+
+    def take_damage(self, amount):
+        self.durability = max(0, self.durability - amount)

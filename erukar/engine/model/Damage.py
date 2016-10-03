@@ -1,6 +1,20 @@
 import numpy as np
 
 class Damage:
+    Types = [
+        'piercing',
+        'bludgeoning',
+        'slashing',
+        'fire',
+        'ice',
+        'electric',
+        'acid',
+        'force',
+        'divine',
+        'demonic',
+    ]
+
+
     def __init__(self, name, damage_range, mod, dist_and_params):
         self.name = name
         self.damage = damage_range

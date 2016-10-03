@@ -13,6 +13,7 @@ class Modifier(Describable):
     PermissionType = ALL
     Persistent = True
 
+    InventoryName = '__class__'
     InventoryDescription = 'Basic inventory description for {__module__}'
     BriefDescription = "{BaseName}"
     AbsoluteMinimalDescription = "Absolute Minimal"

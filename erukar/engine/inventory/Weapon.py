@@ -31,5 +31,8 @@ class Weapon(Item):
         return '{} ({}%)'.format(self.name, int(100*self.durability/self.MaxDurability))
 
     def on_inventory_inspect(self):
+        name = '{} ({} / {})'.format(self.name, self.durability, self.MaxDurability)
         damage_desc = '\n'.join(['\t\t• {0} {1}'.format(d.damage,d.name) for d in self.damages])
-        return '{0}\n{1}'.format(self.name, damage_desc)
+        mods = [self.material] + self.modifiers if self.material else self.modifiers
+        mod_desc = '\n'.join(['\t\t• {}: {}'.format(d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])
+        return '\n'.join([name, damage_desc, mod_desc])

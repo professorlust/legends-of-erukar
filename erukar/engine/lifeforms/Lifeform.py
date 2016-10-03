@@ -126,19 +126,17 @@ class Lifeform(RpgEntity):
         return output_strings
 
     def deflection(self, damage_type):
-        deflections = [df for dt, mit, df in self.matching_deflections_and_mitigations(damage_type)]
+        deflections = [df for mit, df in self.matching_deflections_and_mitigations(damage_type)]
         return min(deflections) if len(deflections) > 0 else 0
 
     def mitigation(self, damage_type):
-        return 1.0-sum([mit for dt, mit, df in self.matching_deflections_and_mitigations(damage_type)])
+        return 1.0-sum([mit for mit, df in self.matching_deflections_and_mitigations(damage_type)])
 
     def matching_deflections_and_mitigations(self, damage_type):
         for x in self.equipment_types:
             armor = getattr(self, x)
             if isinstance(armor, erukar.engine.inventory.Armor):
-                mtg = [x for x in armor.DamageMitigations if x[0] == damage_type]
-                if len(mtg) > 0:
-                    yield mtg[0]
+                yield armor.mitigation_for(damage_type)
 
     def take_damage(self, damage, instigator=None):
         '''Take damage and return amount of XP to award instigator'''
@@ -149,6 +147,13 @@ class Lifeform(RpgEntity):
         if self.health == 0:
             self.afflictions.append(Dying(self, None))
         return 0
+
+    def damage_armor(self, damage):
+        '''Damages armor durability (if applicable)'''
+        for armor_type in self.equipment_types:
+            armor = getattr(self, armor_type)
+            if isinstance(armor, erukar.engine.inventory.Armor):
+                armor.take_damage(damage)
 
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''

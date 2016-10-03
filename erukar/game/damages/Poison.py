@@ -1,2 +1,0 @@
-class Poison:
-    pass

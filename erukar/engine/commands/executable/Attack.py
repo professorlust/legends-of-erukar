@@ -124,6 +124,8 @@ class Attack(ActionCommand):
             self.append_result(enemy.uid, Attack.unsuccessful.format(**args))
             return
 
+        self.dirty(self.character)
+
         # Calculate the actual damage through mitigation and deflection
         actuals = []
         for damage_amount, damage_type in damages:
@@ -132,6 +134,9 @@ class Attack(ActionCommand):
                 self.append_result(enemy.uid, Attack.deflected.format(**args))
                 continue
             actual_damage = int(enemy.mitigation(damage_type) * damage_amount)
+            damage_taken_by_armor = damage_amount - actual_damage
+            weapon.take_damage(damage_taken_by_armor)
+            enemy.damage_armor(damage_taken_by_armor)
             if actual_damage > 0:
                actuals.append((actual_damage, damage_type))
 
@@ -165,7 +170,6 @@ class Attack(ActionCommand):
         xp_awards = self.character.award_xp(xp)
         for award in xp_awards:
             self.append_result(self.sender_uid, award)
-
 
     def create_corpse(self, target):
         room = target.current_room
