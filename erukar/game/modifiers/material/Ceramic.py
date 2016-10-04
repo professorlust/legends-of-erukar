@@ -4,6 +4,8 @@ class Ceramic(MaterialModifier):
     Probability = 200
     Desirability = 0.25
 
+    InventoryName = 'Ceramic'
+    InventoryDescription = 'Reduces durability to 10%; Lowers weight by 60%'
     BriefDescription = "a matte tan {BaseName}"
     AbsoluteMinimalDescription = "The {EssentialPart} is tan."
     VisualMinimalDescription = "The tan {EssentialPart} of this {BaseName} has dull, flat finish."
@@ -13,3 +15,7 @@ class Ceramic(MaterialModifier):
     DetailedMinimalDescription = "The lightweight ceramic of the {EssentialPart} has a matte tan finish. You suspect that it is likely fragile."
     DetailedIdealDescription = "The ceramic {EssentialPart} of the {BaseName} has been crafted with care. You suspect that, while likely fragile, it has the potential to enhance sharpness."
     Adjective = "Ceramic"
+
+    def apply_to(self, item):
+        super().apply_to(item)
+        item.MaxDurability /= 10

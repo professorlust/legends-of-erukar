@@ -23,7 +23,7 @@ class Armor(Item):
         name = '{} ({} / {})'.format(self.name, self.durability, self.MaxDurability)
         mit_desc = '\t' + '\n\t'.join(list(self.mitigation_descriptions()))
         mods = [self.material] + self.modifiers if self.material else self.modifiers
-        mod_desc = '\n'.join(['\t\t• {}'.format(d.mutate(d.InventoryDescription)) for d in mods])
+        mod_desc = '\n'.join(['\t\t• {}: {}'.format(d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])
         return '\n'.join([name, mit_desc, mod_desc])
 
     def mitigation_for(self, damage_type):

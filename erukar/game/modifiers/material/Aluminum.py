@@ -5,6 +5,8 @@ class Aluminum(MaterialModifier):
     ProbabilityFromFabrication = 0.1
     Desirability = 1.0
 
+    InventoryName = 'Aluminum'
+    InventoryDescription = 'Lowers weight by 30%'
     BriefDescription = "a {BaseName} with a metallic gray {EssentialPart}"
     AbsoluteMinimalDescription = "The {EssentialPart} is an unpolished metallic gray."
     VisualMinimalDescription = "The {EssentialPart} has been forged with some sort of worked, gray metal."
@@ -14,3 +16,4 @@ class Aluminum(MaterialModifier):
     DetailedMinimalDescription = "The {EssentialPart} of the {BaseName} is very light, as it has been forged from some sort of unpolished aluminum."
     DetailedIdealDescription = "The {BaseName}'s {EssentialPart} has been forged from a sturdy and lightweight, yet unpolished, aluminum."
     Adjective = "Aluminum"
+

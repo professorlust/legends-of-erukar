@@ -19,12 +19,6 @@ class DungeonGeneratorTests(unittest.TestCase):
         no_connections = any(self.gen.dungeon.rooms[0].connections[d] for d in self.gen.dungeon.rooms[0].connections)
         self.assertTrue(no_connections)
 
-    def test_generate_descriptions_should_add_generic_descriptions(self):
-        self.gen.dungeon.rooms = [Room(None)]
-        self.gen.generate_descriptions()
-
-        self.assertEqual(self.gen.dungeon.rooms[0].description, "This is the 0th room at (0, 0).")
-
     def test_fill_walls_should_not_have_abysses(self):
         self.gen.dungeon.rooms = [Room(None)]
         self.gen.fill_walls()

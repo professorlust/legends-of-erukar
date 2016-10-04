@@ -86,9 +86,9 @@ class Connector:
         for mod in modifiers:
             if mod is None: continue
             mod.apply_to(item)
-            if data.item_attributes is not None and len(data.item_attributes) > 0:
-                for pattr in data.item_attributes:
-                    setattr(item, pattr, data.item_attributes[pattr])
+        if data.item_attributes is not None and len(data.item_attributes) > 0:
+            for pattr in data.item_attributes:
+                setattr(item, pattr, data.item_attributes[pattr])
         return item
 
     def create_from_type(self, item_type):

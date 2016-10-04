@@ -135,7 +135,8 @@ class Attack(ActionCommand):
                 continue
             actual_damage = int(enemy.mitigation(damage_type) * damage_amount)
             damage_taken_by_armor = damage_amount - actual_damage
-            weapon.take_damage(damage_taken_by_armor)
+            if weapon is not None:
+                weapon.take_damage(damage_taken_by_armor)
             enemy.damage_armor(damage_taken_by_armor)
             if actual_damage > 0:
                actuals.append((actual_damage, damage_type))

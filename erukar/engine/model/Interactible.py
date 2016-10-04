@@ -35,5 +35,8 @@ class Interactible:
     def get_name(self):
         pass
 
+    def hear(self):
+        pass
+
     def take_damage(self, damage, instigator=None):
         pass

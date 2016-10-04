@@ -2,6 +2,7 @@ from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.environment import *
 from erukar.engine.model import Direction
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
+from erukar.engine.inventory.Currency import Currency
 import numpy as np
 import math, random
 
@@ -29,8 +30,8 @@ class DungeonGenerator(FactoryBase):
         '''Create X number of rooms'''
         self.dungeon.rooms = [Room(self.dungeon) for x in range(num_rooms)]
         self.dungeon.dungeon_map[(0,0)] = self.dungeon.rooms[0]
+        self.dungeon.rooms[0].contents.append(Currency())
         self.connect_rooms()
-        #self.generate_descriptions()
         self.fill_walls()
 
     def connect_rooms(self):
@@ -44,11 +45,6 @@ class DungeonGenerator(FactoryBase):
         for r in self.dungeon.rooms[1:]:
             if len(list(self.possible_directions(r))) == 4:
                 yield r
-
-    def generate_descriptions(self):
-        ''' Add descriptions '''
-        for i,r in enumerate(self.dungeon.rooms):
-            r.description = 'This is the {0}th room at ({1}, {2}).'.format(i, *r.coordinates)
 
     def fill_walls(self):
         '''Fill in the abyss with walls (ugly, need to optimize)'''

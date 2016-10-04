@@ -4,6 +4,8 @@ class Brass(MaterialModifier):
     Probability = 200
     Desirability = 1.0
 
+    InventoryName = 'Brass'
+    InventoryDescription = 'Decreases weight by 10%; Decreases Durability by 5%'
     BriefDescription = "a metallic yellow {BaseName}"
     AbsoluteMinimalDescription = "The {EssentialPart} is made of a yellow metal."
     VisualMinimalDescription = "The {EssentialPart} of this {BaseName} is nicely polished yellow metal."
