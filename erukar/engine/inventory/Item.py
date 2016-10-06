@@ -16,6 +16,7 @@ class Item(Describable):
 
     def __init__(self, item_type='Item', name="Item"):
         self.item_type = item_type
+        self.owner = None
         self.name = name
         self.price = 0
         self.description = Item.generic_description
@@ -41,10 +42,12 @@ class Item(Describable):
             modifier.on_start(room)
 
     def on_take(self, lifeform):
+        self.owner = lifeform
         for modifier in self.modifiers:
             modifier.on_take(lifeform)
 
     def on_drop(self, room, lifeform):
+        self.owner = None
         for modifier in self.modifiers:
             modifier.on_drop(room, lifeform)
 

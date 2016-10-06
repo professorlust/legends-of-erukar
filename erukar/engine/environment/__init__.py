@@ -10,6 +10,7 @@ from .Room import Room
 from .Trap import Trap
 from .Surface import Surface
 from .Lock import Lock
+from .TieredLock import TieredLock
 
 __all__ = [
     "Aura",
@@ -20,6 +21,7 @@ __all__ = [
     "Dungeon",
     "EnvironmentPiece",
     "Lock",
+    "TieredLock",
     "Passage",
     "Room",
     "Trap",

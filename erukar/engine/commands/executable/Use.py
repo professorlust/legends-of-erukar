@@ -22,10 +22,10 @@ class Use(ActionCommand):
             target = self.determine_target(player)
 
         for item in items:
-            if isinstance(item, erukar.engine.inventory.Key):
-                if self.use_key(item, target, self.lifeform(player)):
-                    self.append_result(self.sender_uid, self.unlock.format(self.lifeform(player).alias(), target.alias()))
-                    return self.succeed()
+            result, successful = item.on_use(target)
+            if successful:
+                self.append_result(self.sender_uid, result)
+                return self.succeed()
 
         return self.fail('Cannot use anything.')
 
@@ -38,13 +38,6 @@ class Use(ActionCommand):
                 return in_direction.door.lock
 
         return self.find_in_room(self.arguments['object'])
-
-
-    def use_key(self, item, target, player):
-        if target is None:
-            return False
-
-        return item.toggle_lock(target)
 
     def check_for_arguments(self):
         payload = self.payload()

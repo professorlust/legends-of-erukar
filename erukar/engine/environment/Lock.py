@@ -1,31 +1,22 @@
 from erukar.engine.model.EnvironmentPiece import EnvironmentPiece
-import random
 
 class Lock(EnvironmentPiece):
     '''Class which includes all functionality for locking and unlocking'''
-
-    materials = [
-        "ornamental",
-        "copper",
-        "steel",
-        "silver",
-        "brass",
-        "bronze",
-        "iron"]
+    LockedString = 'The lock is secured and latched, barring any entry into the room.'
+    UnlockedString = 'The lock has been unlocked and does not prevent the door from opening.'
 
     def __init__(self):
-        self.material = random.choice(self.materials)
-        name = '{} lock'.format(self.material)
+        name = 'Lock'
         super().__init__([name])
-        self.direction = None 
+        self.direction = None
         self.is_locked = True
         self.armor_class = 10
         self.durability = 5
 
     def on_inspect(self, *_):
         if self.is_locked:
-            return 'The lock is secured and latched, barring any entry into the room.'
-        return 'The lock has been unlocked and does not prevent the door from opening.'
+            return self.mutate(self.LockedString)
+        return self.mutate(self.UnlockedString)
 
     def on_attack(self, sender, attack_roll, damage):
         if attack_roll <= self.durability:
