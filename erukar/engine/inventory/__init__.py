@@ -3,6 +3,7 @@ from .Armor import Armor
 from .Item import Item
 from .StackableItem import StackableItem
 from .Key import Key
+from .TieredKey import TieredKey
 from .Shield import Shield
 from .Weapon import Weapon
 
@@ -12,5 +13,6 @@ __all__ = [
     "StackableItem",
     "Item",
     "Key",
+    "TieredKey",
     "Shield",
     "Weapon"]

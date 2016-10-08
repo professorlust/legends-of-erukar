@@ -3,7 +3,7 @@ from erukar.engine.factories import *
 from erukar.engine.environment import *
 
 class Weapon(RoomModifier):
-    Probability = 50
+    Probability = 5
 
     def apply_to(self, room):
         randomizer = ModuleDecorator('erukar.game.inventory.weapons', None)
