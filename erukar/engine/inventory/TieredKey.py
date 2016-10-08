@@ -1,3 +1,4 @@
+import erukar
 from erukar.engine.inventory.Key import Key
 
 class TieredKey(Key):
@@ -16,7 +17,7 @@ class TieredKey(Key):
         if not isinstance(target, erukar.engine.environment.TieredLock):
             return self.mutate(self.WrongTarget), False
 
-        if target.tier is self.Tier and target.is_locked:
+        if target.tier == self.Tier and target.is_locked:
             self.consume_key()
             target.is_locked = False
             return self.mutate(self.SuccessfulUnlock, {'target':target.alias()}), True

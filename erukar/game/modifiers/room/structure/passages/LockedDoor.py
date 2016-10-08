@@ -5,6 +5,7 @@ import random
 class LockedDoor(RoomDoorModifier):
     Probability = 0
     ProbabilityFromFabrication = 0.75
+
     def __init__(self):
         self.description = 'You see {describe_locked} door to the {direction}. The door is {status}.'
         self.can_close = True

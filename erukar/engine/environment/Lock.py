@@ -4,6 +4,8 @@ class Lock(EnvironmentPiece):
     '''Class which includes all functionality for locking and unlocking'''
     LockedString = 'The lock is secured and latched, barring any entry into the room.'
     UnlockedString = 'The lock has been unlocked and does not prevent the door from opening.'
+    LockedBrief = 'a secured lock'
+    UnlockedBrief = 'an open lock'
 
     def __init__(self):
         name = 'Lock'
@@ -17,6 +19,11 @@ class Lock(EnvironmentPiece):
         if self.is_locked:
             return self.mutate(self.LockedString)
         return self.mutate(self.UnlockedString)
+
+    def describe(self, *_):
+        if self.is_locked:
+            return self.mutate(self.LockedBrief)
+        return self.mutate(self.UnlockedBrief)
 
     def on_attack(self, sender, attack_roll, damage):
         if attack_roll <= self.durability:

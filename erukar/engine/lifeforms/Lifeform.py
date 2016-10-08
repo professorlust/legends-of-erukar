@@ -202,3 +202,8 @@ class Lifeform(RpgEntity):
 
     def describe_as_threat(self, lifeform, acuity, sense):
         return self.on_inspect(lifeform, acuity, sense)
+
+    def add_to_inventory(self, item):
+        if item in self.inventory: return
+        self.inventory.append(item)
+        item.owner = self

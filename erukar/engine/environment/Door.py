@@ -39,9 +39,9 @@ class Door(Describable):
         return self.on_inspect(direction)
 
     def describe_locked(self):
-        if self.lock is None or self.lock.is_locked:
-            return 'a locked'
-        return 'an unlocked'
+        if self.lock is None:
+            return ''
+        return self.lock.describe()
 
     def describe_lock(self, direction):
         if self.lock.direction is direction:

@@ -73,7 +73,7 @@ class Connector:
         '''Create items from Schema and assign to inventory (or equipment slots as necessary)'''
         for item in data.inventory:
             instantiated = self.create_item(item)
-            out.inventory.append(instantiated)
+            out.add_to_inventory(instantiated)
             # Now check to see if this item is equipped and if so, assign it to its spot
             location = next((x.equipment_slot for x in data.equipment if x.item_id == item.id ), None)
             if location is not None:
