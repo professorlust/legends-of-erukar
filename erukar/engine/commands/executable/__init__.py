@@ -1,4 +1,5 @@
 from .Attack import Attack
+from .Cast import Cast
 from .Close import Close
 from .Drop import Drop
 from .Equip import Equip
@@ -18,6 +19,7 @@ from .Use import Use
 
 __all__ = [
     "Attack",
+    "Cast",
     "Close",
     "Drop",
     "Equip",

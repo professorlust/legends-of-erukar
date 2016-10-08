@@ -77,12 +77,20 @@ class Command:
         '''Attempt to find an item in a player's inventory'''
         return next(self.inventory_find(player, item_name), None)
 
+    def find_spell(self, lifeform, spell_name):
+        return next(self.spell_find(lifeform, spell_name), None)
+
     def find_all_in_inventory(self, player, item_name):
         return list(self.inventory_find(player, item_name))
 
     def inventory_find(self, player, item_name):
         for p in self.lifeform(player).inventory:
             if p.matches(item_name):
+                yield p
+
+    def spell_find(self, lifeform, spell_name):
+        for p in lifeform.spells:
+            if spell_name.lower() in p.name.lower():
                 yield p
 
     def determine_direction(self, text):

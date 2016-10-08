@@ -26,8 +26,9 @@ class Lifeform(RpgEntity):
     BaseDescription = "a {alias}"
 
     def __init__(self, name=""):
-        self.uid = ""
-        self.inventory = []
+        self.uid        = ""
+        self.spells     = []
+        self.inventory  = []
         self.strength   = 0
         self.dexterity  = 0
         self.vitality   = 0
@@ -207,3 +208,6 @@ class Lifeform(RpgEntity):
         if item in self.inventory: return
         self.inventory.append(item)
         item.owner = self
+
+    def gender_pronoun_possessive(self):
+        return 'his'

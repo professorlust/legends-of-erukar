@@ -10,18 +10,22 @@ from .Manager import Manager
 from .Modifier import Modifier
 from .PlayerNode import PlayerNode
 from .RpgEntity import RpgEntity
+from .Spell import Spell
+from .SpellEffect import SpellEffect
 
 __all__ = [
     "Affliction",
-    "Containable", 
-    "Damage", 
+    "Containable",
+    "Damage",
     "Describable",
-    "Direction", 
+    "Direction",
     "GenerationProfile",
     "Indexer",
-    "Interactible", 
-    "Manager", 
-    "Modifier", 
-    "PlayerNode", 
-    "RpgEntity"
+    "Interactible",
+    "Manager",
+    "Modifier",
+    "PlayerNode",
+    "RpgEntity",
+    "Spell",
+    "SpellEffect"
 ]

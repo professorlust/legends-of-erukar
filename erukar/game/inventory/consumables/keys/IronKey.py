@@ -1,6 +1,5 @@
 from erukar.engine.inventory.TieredKey import TieredKey
 
 class IronKey(TieredKey):
-    Probability = 1
+    Probability = 128
     Tier = 'Iron'
-
