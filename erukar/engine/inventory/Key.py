@@ -5,22 +5,12 @@ class Key(StackableItem):
     Persistent = False
     BriefDescription = "a key"
     BaseName = "Key"
-    SuccessfulUnlock = 'You have successfully unlocked the {}.'
-
-    def __init__(self, lock):
-        self.lock = lock
-        alias = 'key'
-        super().__init__(alias, alias)
-
-    def toggle_lock(self, target):
-        if target is self.lock:
-            target.is_locked = not target.is_locked
-            return True
-        return False
+    SuccessfulUnlock = 'You have successfully unlocked the {target}.'
+    FailedToUnlock = 'You have failed to unlock the  {target}.'
 
     def on_use(self, target):
-        toggled = self.toggle_lock(target)
-        if toggled and self.owner is not None:
+        if isinstance(target, erukar.engine.environment.Lock) and target.is_locked:
+            target.is_locked = False
             self.owner.inventory.remove(self)
-            return self.SuccessfulUnlock.format(target.alias()), True
-        return '', False
+            return self.mutate(self.SuccessfulUnlock,{'target': target.alias()}), True
+        return self.mutate(self.FailedToUnlock,{'target': target.alias()}), False
