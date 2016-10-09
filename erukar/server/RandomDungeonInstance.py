@@ -31,9 +31,6 @@ class RandomDungeonInstance(Instance):
         for room in self.dungeon.rooms:
             for deco in decorators:
                 deco.apply_one_to(room)
-        # Second pass -- Tell Decorators to start
-        for room in self.dungeon.rooms:
-            room.on_start()
 
     def decorators(gen_params):
         for sm in RandomDungeonInstance.SubModules:

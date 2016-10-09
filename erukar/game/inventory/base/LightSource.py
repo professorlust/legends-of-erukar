@@ -12,6 +12,7 @@ class LightSource(Item):
     SelfAuraDescription = "Your source of light brightens the room."
     AuraDescription = "A pale white glow shines through {relative_direction}."
     PersistentAttributes = ['fuel']
+    EquipmentLocations = ['right','left']
 
     MaxFuel = 100
     FuelConsumptionRate = 0.25 # per five seconds

@@ -24,6 +24,9 @@ class Instance(Manager):
         self.joins = joins
         self.subscribe_enemies()
         self.has_had_players = False
+        if self.dungeon:
+            for room in self.dungeon.rooms:
+                room.on_start()
 
     def subscribe_enemies(self):
         for room in self.dungeon.rooms:

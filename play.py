@@ -1,6 +1,9 @@
 from erukar import *
 import readline
+import os, sys
 import numpy as np
+
+sys.path.append(os.getcwd() + '/hubs')
 
 print('This example shows the Dungeon Procedural generation')
 
