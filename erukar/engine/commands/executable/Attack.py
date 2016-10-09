@@ -8,14 +8,8 @@ import erukar, random, math
 class Attack(ActionCommand):
     not_found = "No object matching '{}' was found in this room."
     unsuccessful = "{subject}'s attack of {roll} misses {target}."
-    successful = "{subject}'s attack of {roll} hits {target}, dealing {damage} damage."
-    caused_dying = "\n{target} has been incapacitated by {subject}'s attack!"
-    caused_death = "\n{target} has been slain by {subject}!"
-    deflected = '{target}\'s armor deflected the entirety of the damage from {subject}!'
     UnableToAttackInDirection = "You are unable to perform a directional attack."
     UnableToAttackInRoom = "You are unable to perform an attack."
-    EnemyFullMitigation = "{target}'s armor absorbed the entirety of your {weapon_name}'s damage!"
-    YourFullMitigation = "Your armor absorbed the entirety of the damage from {target}'s {weapon_name}!"
 
     aliases = ['attack']
 
@@ -124,51 +118,7 @@ class Attack(ActionCommand):
             self.append_result(enemy.uid, Attack.unsuccessful.format(**args))
             return
 
-        self.dirty(self.character)
-
-        # Calculate the actual damage through mitigation and deflection
-        for deflected in Damage.deflections(self.character, enemy, weapon, damages):
-            self.append_result(self.sender_uid, Attack.deflected.format(**args))
-            self.append_result(enemy.uid, Attack.deflected.format(**args))
-
-        actuals = list(Damage.actual_damage_values(self.character, enemy, weapon, damages))
-
-        # Calculate the Damage  
-        damage = sum(amt for amt, _ in actuals)
-        if damage <= 0:
-            self.append_result(self.sender_uid, Attack.EnemyFullMitigation.format(**args))
-            self.append_result(enemy.uid, Attack.YourFullMitigation.format(**args))
-            return
-
-        # Apply the damage
-        self.dirty(enemy)
-        args['damage'] = ', '.join(["{} {}".format(*x) for x in actuals if x[0] > 0])
-        xp = enemy.take_damage(damage, self.character)
-        attack_string = Attack.successful.format(**args)
-
-        # Check to see if Dying, or Dead.
-        if hasattr(enemy, 'afflictions'):
-            if enemy.afflicted_with(erukar.engine.effects.Dying):
-                attack_string = attack_string + Attack.caused_dying.format(**args)
-
-            if enemy.afflicted_with(erukar.engine.effects.Dead):
-                self.create_corpse(enemy)
-                attack_string = attack_string + Attack.caused_death.format(**args)
-
-        # Let everyone know what happened
-        self.append_result(self.sender_uid, attack_string)
-        self.append_result(enemy.uid, attack_string)
-
-        if xp <= 0: return
-        xp_awards = self.character.award_xp(xp)
-        for award in xp_awards:
-            self.append_result(self.sender_uid, award)
-
-    def create_corpse(self, target):
-        room = target.current_room
-        if target in room.contents:
-            room.contents.remove(target)
-        room.add(Corpse(target))
+        self.inflict_damage(enemy, damages, weapon)
 
     def calculate_attack(self, weapon, target):
         '''Involves the calculation of armor_class, attack roll, and damage'''

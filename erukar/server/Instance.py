@@ -94,6 +94,7 @@ class Instance(Manager):
             self.connector.add_character(uid, character)
             character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
         playernode.character = character
+        character.spells = [erukar.game.magic.predefined.FlameBreath()]
         self.data.players.append(playernode)
         return playernode
 

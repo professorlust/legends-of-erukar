@@ -21,7 +21,7 @@ class IurianCleric(Enemy):
         self.resolve = int(random.uniform(1, 3))
         self.spells = [erukar.game.magic.predefined.Heal()]
         self.define_level(5)
-        self.name = "Iurian cleric"
+        self.name = "Iurian Cleric"
         self.randomize_equipment()
         self.set_vision_results('You see a {alias}.','You see a {alias}. {describe}',(0,1))
         self.set_sensory_results('You hear movement.','You hear a {alias}.',(0, 1))

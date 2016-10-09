@@ -13,14 +13,18 @@ class MagicBase(Describable):
         return target
 
     def append_result(self, uid, msg):
-        '''Appends the result to the Command object if it exists'''
         if self.cmd:
             self.cmd.append_result(uid, msg)
 
     def append_for_others_in_room(self, msg):
-        '''Appends the result to the Command object if it exists'''
         if not self.cmd: return
         for content in self.lifeform.current_room.contents:
             if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not self.lifeform:
+                self.cmd.append_result(content.uid, msg)
+
+    def append_for_all_in_room(self, msg):
+        if not self.cmd: return
+        for content in self.lifeform.current_room.contents:
+            if isinstance(content, erukar.engine.lifeforms.Lifeform):
                 self.cmd.append_result(content.uid, msg)
 

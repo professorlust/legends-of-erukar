@@ -3,7 +3,7 @@ from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 import erukar
 
 class Iurian(RoomModifier):
-    Probability = 10
+    Probability = 1
     def apply_to(self, room):
         randomizer = ModuleDecorator('erukar.game.enemies.human', None)
         undead = randomizer.create_one()
