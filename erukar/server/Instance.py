@@ -22,6 +22,7 @@ class Instance(Manager):
         self.action_commands = action_commands
         self.non_action_commands = non_action_commands
         self.joins = joins
+        self.subscribe_enemies()
         self.has_had_players = False
 
     def subscribe_enemies(self):

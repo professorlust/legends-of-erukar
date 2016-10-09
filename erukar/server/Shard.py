@@ -16,7 +16,7 @@ class Shard(Manager):
         self.instances = []
 
     def activate(self):
-        self.instances = [InstanceInfo(erukar.server.RandomDungeonInstance)]
+        self.instances = [InstanceInfo(erukar.server.HubInstance)]
         for info in self.instances:
             gen_params = GenerationProfile(*(np.random.uniform(-1, 1) for x in range(4)))
             self.launch_dungeon_instance(info, gen_params)
