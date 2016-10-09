@@ -127,19 +127,11 @@ class Attack(ActionCommand):
         self.dirty(self.character)
 
         # Calculate the actual damage through mitigation and deflection
-        actuals = []
-        for damage_amount, damage_type in damages:
-            if enemy.deflection(damage_type) >= damage_amount:
-                self.append_result(self.sender_uid, Attack.deflected.format(**args))
-                self.append_result(enemy.uid, Attack.deflected.format(**args))
-                continue
-            actual_damage = int(enemy.mitigation(damage_type) * damage_amount)
-            damage_taken_by_armor = damage_amount - actual_damage
-            if weapon is not None:
-                weapon.take_damage(damage_taken_by_armor)
-            enemy.damage_armor(damage_taken_by_armor)
-            if actual_damage > 0:
-               actuals.append((actual_damage, damage_type))
+        for deflected in Damage.deflections(self.character, enemy, weapon, damages):
+            self.append_result(self.sender_uid, Attack.deflected.format(**args))
+            self.append_result(enemy.uid, Attack.deflected.format(**args))
+
+        actuals = list(Damage.actual_damage_values(self.character, enemy, weapon, damages))
 
         # Calculate the Damage  
         damage = sum(amt for amt, _ in actuals)

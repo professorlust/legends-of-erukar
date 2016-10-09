@@ -1,11 +1,18 @@
-from erukar.engine.model.Describable import Describable
+from erukar.engine.model.MagicBase import MagicBase
 
-class Spell(Describable):
-    def __init__(self, name, description, effect_strategem):
+class Spell(MagicBase):
+    YouCastSpell = "You cast '{name}'."
+    TheyCastSpell = "{alias|lifeform} casts '{name}'."
+
+    def __init__(self, name, effect_strategem):
         self.name = name
-        self.description = description
         self.effects = effect_strategem
 
-    def on_cast(self, lifeform, efficacy=1.0):
-        self.lifeform = lifeform
-        return '\n\n'.join([self.mutate(self.description)] + [eff.on_cast(lifeform, efficacy) for eff in self.effects])
+    def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
+        super().on_cast(command, lifeform, parameters, efficacy)
+
+        self.append_result(lifeform.uid, self.mutate(self.YouCastSpell))
+        self.append_for_others_in_room(self.mutate(self.TheyCastSpell))
+
+        for eff in self.effects:
+            eff.on_cast(command, lifeform, parameters, efficacy)
