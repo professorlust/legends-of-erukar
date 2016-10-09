@@ -1,6 +1,5 @@
-from erukar.data.Connector import Connector
-from erukar.engine.factories import *
 from erukar.engine.model.Manager import Manager
+from erukar.data.Connector import Connector
 from erukar.server.TurnManager import TurnManager
 from erukar.server.DataAccess import DataAccess
 from erukar.engine.lifeforms.Player import Player
@@ -10,23 +9,10 @@ import erukar, threading
 class Instance(Manager):
     MaximumTurnTime = 20.0 # In seconds
     MaximumTurnSkipPenalty = 5 # in turns
-    BaseModule = "erukar.game.modifiers.room.{0}"
-    SubModules = [
-        (ModuleDecorator, "materials.floors"),
-        (ModuleDecorator, "materials.walls"),
-        (ModuleDecorator, "materials.ceilings"),
-        (ModuleDecorator, "structure.ceilings"),
-        (ModuleDecorator, "qualities.air"),
-        (ModuleDecorator, "qualities.lighting"),
-        (ModuleDecorator, "qualities.sounds"),
-        (ModuleDecorator, "contents.enemies"),
-        (MultipleModuleDecorator, "contents.decorations"),
-        (ModuleDecorator, "contents.items"),
-        (ModuleDecorator, "structure.passages"),
-        (ModuleDecorator, "phenomena")]
 
     def __init__(self):
         super().__init__()
+        self.dungeon = None
         self.command_contexts = {}
 
     def activate(self, action_commands, non_action_commands, joins, generation_parameters):
@@ -36,10 +22,6 @@ class Instance(Manager):
         self.action_commands = action_commands
         self.non_action_commands = non_action_commands
         self.joins = joins
-        d = DungeonGenerator()
-        self.dungeon = d.generate()
-        self.decorate(generation_parameters)
-        self.subscribe_enemies()
         self.has_had_players = False
 
     def subscribe_enemies(self):
@@ -49,23 +31,6 @@ class Instance(Manager):
                     self.command_contexts[item.uid] = None
                     self.turn_manager.subscribe(item)
                     self.data.players.append(item)
-
-    def decorate(self, generation_parameters):
-        decorators = list(Instance.decorators(generation_parameters))
-        self.generation_parameters = generation_parameters
-        # First Pass -- Actually add Decorations
-        for room in self.dungeon.rooms:
-            for deco in decorators:
-                deco.apply_one_to(room)
-        # Second pass -- Tell Decorators to start
-        for room in self.dungeon.rooms:
-            room.on_start()
-
-    def decorators(gen_params):
-        for sm in Instance.SubModules:
-            md = sm[0](Instance.BaseModule.format(sm[1]), gen_params)
-            md.initialize()
-            yield md
 
     def subscribe(self, player):
         super().subscribe(player)
@@ -155,8 +120,6 @@ class Instance(Manager):
 
     def grab_from_turn_manager(self):
         self.active_player = self.turn_manager.next()
-#       if self.active_player.uid == 'a-uid':
-#           print('\n\nIt is now your turn!\n\n' + ('-'*64))
         if self.turn_manager.needs_tick():
             self.dungeon.tick()
             for player in self.data.players:

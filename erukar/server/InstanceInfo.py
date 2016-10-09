@@ -9,9 +9,9 @@ class InstanceInfo:
     of information that the Shard should know about a Dungeon
     Instance, e.g. PlayerList, command_queue, command results list
     '''
-    def __init__(self):
+    def __init__(self, instance_type=Instance):
         m = Manager()
-        self.instance = Instance()
+        self.instance = instance_type()
         self.player_list = []
         self.non_action_commands = m.list([])
         self.action_commands = m.list([])
