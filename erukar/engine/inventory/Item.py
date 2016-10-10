@@ -13,6 +13,12 @@ class Item(Describable):
     MaxDurability = 100
     StandardWeight = 0 # In Pounds
     EquipmentLocations = []
+    StatInfluences = {
+        # Determines the influence of stats on the Item's efficacy. These totals are
+        # multiplicative. See efficacy_for method for more details.
+        # Uses the following format
+        # 'strength': { 'requirement': 20, 'scaling': 1.5, 'max_scale': 2 }
+    }
 
     def __init__(self, item_type='Item', name="Item"):
         self.item_type = item_type
@@ -26,6 +32,13 @@ class Item(Describable):
         self.set_sensory_results('You sense a {BaseName}.','You sense a {BaseName}.',(5,20))
         self.set_detailed_results('There is a {BaseName}.', 'You see a {name}.')
         self.material = None
+
+    def efficacy_for(self, lifeform):
+        total = 1.0
+        for stat in self.StatInfluences:
+            value = lifeform.calculate_effective_stat(stat)
+            total *= Curves.item_stat_efficacy(value, **self.StatInfluences[stat])
+        return total
 
     def describe(self):
         return self.name

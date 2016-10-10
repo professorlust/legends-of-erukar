@@ -25,10 +25,13 @@ class Aura(Describable):
         dist = self.distance(tile.coordinates)
         return math.pow(self.decay_factor, dist)
 
+    def strength_at(self, tile):
+        dist = math.ceil(self.distance(tile.coordinates))
+        return self.aura_strength * math.pow(self.decay_factor, dist)
+
     def affects_tile(self, tile):
         '''This is used for the quick calculations for the dungeon'''
-        dist = math.ceil(self.distance(tile.coordinates))
-        strength_at_tile = self.aura_strength * math.pow(self.decay_factor, dist)
+        strength_at_tile = self.strength_at(tile)
         if strength_at_tile < 1:
             return False
         if self.blocked_by_walls:

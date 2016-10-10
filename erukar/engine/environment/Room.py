@@ -120,7 +120,7 @@ class Room(Containable):
         if light_mod <= 0.01:
             return 'This room is completely dark.'
         threats = ' '.join(list(self.threat_descriptions(lifeform, acu, sen)))
-        auras = ' '.join(list(self.aura_descriptions(lifeform, acu, sen)))
+        auras = ' '.join(list(self.aura_descriptions(lifeform, acu, sen))[:3])
         self_desc = self.describe(lifeform)
         container_desc = Describable.erjoin(list(self.container_descriptions(lifeform, acu, sen)))
         container = self.ContainerDescription.format(container_desc) if len(container_desc) > 0 else ''
@@ -152,7 +152,7 @@ class Room(Containable):
         if depth == 0:
             self_describe = ' '.join([self_describe, self.surfaces_at_a_glance(lifeform, acu, sen)])
         if len( describable_contents) > 0:
-            return self_describe + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents))
+            return self_describe + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents[:3]))
         return self_describe
 
     def connect_room(self, direction, other_room, door=None):
