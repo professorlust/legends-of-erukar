@@ -1,9 +1,10 @@
 from erukar.engine.commands.Command import Command
+from erukar.engine.model.Damage import Damage
 from erukar.engine.lifeforms import Lifeform
 
 class Stats(Command):
-    status = 'STATUS\n----------\nHealth:    {} / {}\nEff. AC:   {}\n\n'
-    attributes = 'ATTRIBUTES\n----------\n{}'
+    status = 'Health:    {} / {}\nEvasion:   {}'
+    level = 'Level:     {}\nXP:        {} / {}'
     stat = "{0:10} {1}"
     attribute_types = [
         "strength",
@@ -34,16 +35,24 @@ class Stats(Command):
                 self.append_result(self.sender_uid, self.give_details(wanted, lifeform))
                 return self.succeed()
 
-        status_description = self.status.format(
-            lifeform.health,
-            lifeform.max_health,
+        status_d = self.status.format(
+            lifeform.health, lifeform.max_health,
             lifeform.calculate_armor_class())
 
-        attribute_description = '\n'.join([Stats.stat.format(stat.capitalize(), \
+        level_d = self.level.format(
+            lifeform.level, lifeform.experience, lifeform.calculate_necessary_xp())
+
+        attribute_d = '\n'.join([Stats.stat.format(stat.capitalize(), \
             player.character.calculate_stat_score(stat)) \
             for stat in self.attribute_types])
 
-        self.append_result(self.sender_uid, status_description + self.attributes.format(attribute_description) + '\n')
+        mitigations = '\n'.join(['{:12} {:3}% MIT / {:2} DFL'.format(
+            dtype.capitalize(),
+            int(100.0*(1-lifeform.mitigation(dtype))), lifeform.deflection(dtype))
+            for dtype in Damage.Types])
+
+        self.append_result(self.sender_uid, '\n--------------------\n'.join([level_d, status_d, attribute_d, mitigations]))
+
         return self.succeed()
 
     def give_details(self, wanted, lifeform):

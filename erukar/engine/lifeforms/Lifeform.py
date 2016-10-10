@@ -71,6 +71,9 @@ class Lifeform(RpgEntity):
             equipment = getattr(self, eq_type)
             if equipment is None:
                 continue
+            penalty_args = (equipment, '{}Penalty'.format(stat_type.capitalize()))
+            if hasattr(*penalty_args):
+                score -= getattr(*penalty_args)
             for mod in equipment.modifiers:
                 if hasattr(mod, stat_type):
                     score += getattr(mod, stat_type)
@@ -136,7 +139,7 @@ class Lifeform(RpgEntity):
     def matching_deflections_and_mitigations(self, damage_type):
         for x in self.equipment_types:
             armor = getattr(self, x)
-            if isinstance(armor, erukar.engine.inventory.Armor):
+            if isinstance(armor, erukar.engine.inventory.Armor):# and damage_type in armor.DamageMitigations:
                 yield armor.mitigation_for(damage_type)
 
     def take_damage(self, damage, instigator=None):

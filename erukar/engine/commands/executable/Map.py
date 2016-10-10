@@ -21,24 +21,36 @@ class Map(Command):
         player = self.find_player()
         room = player.character.current_room
 
+#        return self.dimensional_map(player, room)
         return self.complex_map(player, room)
 
-    def easy_map(self, player, room):
-        '''Makes a small map; each room is a single 1x1 cell.'''
-        max_x, max_y = map(max, zip(*player.dungeon_map))
-        min_x, min_y = map(min, zip(*player.dungeon_map))
+    def dimensional_map(self, player, room):
+        all_coordinates_occupied = []
+        for coord in player.dungeon_map:
+            all_coordinates_occupied += list(Map.room_coordinates(player.dungeon_map[coord]))
+        max_x, max_y = map(max, zip(*all_coordinates_occupied))
+        min_x, min_y = map(min, zip(*all_coordinates_occupied))
+        print('\n'.join(list(self.yield_rows((min_x-1,max_x+2),(min_y-1,max_y+2), player, all_coordinates_occupied)))[::-1])
 
-        # Adjust these such that we account for the borders
-        dnjn_map = [[Map.empty_space if (x,y) in player.dungeon_map else Map.solid_wall
-            for x in range(min_x-1, max_x+2)] for y in range(min_y-1, max_y+2)]
+    def yield_rows(self, minmax_x, minmax_y, player, all_coordinates_occupied):
+        for y in range(*minmax_y):
+            yield ' '.join([Map.decode_location(x,y,player,all_coordinates_occupied) for x in range(*minmax_x)][::-1])
 
-        # show the player as an X
-        dnjn_map[1+room.coordinates[1] - min_y][1+room.coordinates[0] - min_x] = Map.player_marker
-        return '\n'.join(' '.join(y) for y in reversed(dnjn_map))
+    def decode_location(x,y, player, all_coordinates_occupied):
+        if (x,y) == player.lifeform().current_room.coordinates:
+            return Map.player_marker
+        if (x,y) in all_coordinates_occupied:
+            return Map.empty_space
+        return Map.solid_wall
 
+    def room_coordinates(room):
+        x_i, y_i = room.coordinates
+        for x in range(room.width):
+            for y in range(room.height):
+                yield (x_i+x, y_i+y)
 
     def complex_map(self, player, room):
-        '''Draw a MASSIVE map where each room is a 3x3; draws doors, too'''
+        '''Draw a MASSIVE map where each coordinate is a 3x3; draws doors, too'''
         max_x, max_y = map(max, zip(*player.dungeon_map))
         min_x, min_y = map(min, zip(*player.dungeon_map))
         drawn_doors = set()

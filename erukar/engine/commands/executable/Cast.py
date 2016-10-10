@@ -26,3 +26,4 @@ class Cast(ActionCommand):
             args = payload.split(' on ', 1)
             self.arguments['target'] = self.find_in_room(self.find_player().lifeform().current_room, args[1])
             return args[0]
+        return payload

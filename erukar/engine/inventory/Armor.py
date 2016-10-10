@@ -5,7 +5,7 @@ class Armor(Item):
     EquipmentLocations = ['chest']
     Persistent = True
     EssentialPart = "armor"
-    DexPenalty = 2
+    DexterityPenalty = 2
     DamageMitigations = {
         # type, mitigation percent, glancing range
         'bludgeoning': (0.05, 2),

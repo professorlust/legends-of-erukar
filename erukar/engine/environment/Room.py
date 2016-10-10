@@ -7,15 +7,30 @@ from erukar.engine.environment.Door import Door
 from erukar.engine.environment.Decoration import Decoration
 from erukar.engine.model.Describable import Describable
 import erukar, random
+from enum import Enum
 
 class Room(Containable):
+    class Shape(Enum):
+        Rectangle = 0
+        Cross = 1
+        Corner_NE = 2
+        Corner_NW = 3
+        Corner_SW = 4
+        Corner_SE = 5
+        T_N = 6
+        T_E = 7
+        T_S = 8
+        T_W = 9
+
     SelfDescription = "This room is fairly large."
     DecoDescription = "You see {} in it."
     ContainerDescription = "In the room you see {}."
 
-    def __init__(self, dungeon, coordinates=(0,0)):
+    def __init__(self, dungeon, coordinates=(0,0), shape=Shape.Rectangle, dimensions=(1, 1)):
         super().__init__([])
         self.dungeon = dungeon
+        self.shape = shape
+        self.width, self.height = dimensions
         if self.dungeon is not None:
             self.dungeon.rooms.append(self)
         self.floor = None
