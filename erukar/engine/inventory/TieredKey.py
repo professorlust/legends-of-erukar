@@ -13,18 +13,14 @@ class TieredKey(Key):
     def __init__(self):
         super().__init__(self.mutate(self.BaseName))
 
-    def on_use(self, target):
+    def on_use(self, cmd, target):
         if not isinstance(target, erukar.engine.environment.TieredLock):
             return self.mutate(self.WrongTarget), False
 
         if target.tier == self.Tier and target.is_locked:
-            self.consume_key()
+            self.consume()
             target.is_locked = False
-            return self.mutate(self.SuccessfulUnlock, {'target':target.alias()}), True
+            cmd.append_result(cmd.sender_uid, self.mutate(self.SuccessfulUnlock, {'target':target.alias()}))
 
-        return self.FailedToUnlock.format(target.tier, self.Tier), False
+        return not target.is_locked
 
-    def consume_key(self):
-        self.quantity -= 1
-        if self.quantity <= 0:
-            self.owner.inventory.remove(self)

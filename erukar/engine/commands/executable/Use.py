@@ -17,14 +17,15 @@ class Use(ActionCommand):
             return self.fail('Could not find item "{}".',format(payload))
 
         # Get the object
-        target = None
+        target = player.lifeform()
         if 'object' in self.arguments:
             target = self.determine_target(player)
 
         for item in items:
-            result, successful = item.on_use(target)
+            successful = item.on_use(self, target)
             if successful:
-                self.append_result(self.sender_uid, result)
+                self.dirty(player.lifeform())
+                self.dirty(target)
                 return self.succeed()
 
         return self.fail('Cannot use anything.')
@@ -45,3 +46,4 @@ class Use(ActionCommand):
             args = payload.split(' on ', 1)
             self.arguments['object'] = args[1]
             return args[0]
+        return payload

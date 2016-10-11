@@ -15,10 +15,10 @@ class UniqueKey(Key):
             return True
         return False
 
-    def on_use(self, target):
+    def on_use(self, cmd, target):
         toggled = self.toggle_lock(target)
         if toggled and self.owner is not None:
             self.owner.inventory.remove(self)
-            return self.SuccessfulUnlock.format(target.alias()), True
-        return '', False
-
+            cmd.append_result(cmd.sender_uid, self.SuccessfulUnlock.format(target.alias()))
+            return True
+        return False

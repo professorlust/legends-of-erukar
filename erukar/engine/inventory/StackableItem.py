@@ -37,3 +37,8 @@ class StackableItem(Item):
 
     def on_inventory(self):
         return '{} x{}'.format(self.name, self.quantity)
+
+    def consume(self):
+        self.quantity -= 1
+        if self.quantity <= 0:
+            self.owner.inventory.remove(self)

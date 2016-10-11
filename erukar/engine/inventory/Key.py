@@ -6,11 +6,14 @@ class Key(StackableItem):
     BriefDescription = "a key"
     BaseName = "Key"
     SuccessfulUnlock = 'You have successfully unlocked the {target}.'
-    FailedToUnlock = 'You have failed to unlock the  {target}.'
+    FailedToUnlock = 'You have failed to unlock the {target}.'
 
-    def on_use(self, target):
+    def on_use(self, command, target):
         if isinstance(target, erukar.engine.environment.Lock) and target.is_locked:
             target.is_locked = False
             self.owner.inventory.remove(self)
-            return self.mutate(self.SuccessfulUnlock,{'target': target.alias()}), True
-        return self.mutate(self.FailedToUnlock,{'target': target.alias()}), False
+            cmd.append_result(cmd.sender_uid, self.mutate(self.SuccessfulUnlock,{'target': target.alias()}))
+            return True
+
+        cmd.append_result(cmd.sender_uid, self.mutate(self.FailedToUnlock,{'target': target.alias()}))
+        return False

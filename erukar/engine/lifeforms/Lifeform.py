@@ -36,6 +36,7 @@ class Lifeform(RpgEntity):
         self.sense      = 0
         self.resolve    = 0
         self.experience = 0
+        self.dual_wielding_penalty = 0.667
         self.current_room = None
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
