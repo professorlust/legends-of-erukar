@@ -124,11 +124,11 @@ class Attack(ActionCommand):
 
     def calculate_attack(self, weapon, target, penalty=1.0):
         '''Involves the calculation of armor_class, attack roll, and damage'''
-        attack_roll = self.character.roll(self.character.stat_random_range('dexterity')) * penalty
+        attack_roll = int(self.character.roll(self.character.stat_random_range('dexterity')) * penalty)
         evasion = target.calculate_armor_class()
 
         if weapon is not None and isinstance(weapon, erukar.engine.inventory.Weapon):
-            damage = [(d[0]*penalty, d[1]) for d in weapon.roll(self.character)]
+            damage = [(int(d[0]*penalty), d[1]) for d in weapon.roll(self.character)]
         elif weapon is None:
             strength = self.character.calculate_effective_stat('strength')
             drange = [0, strength]
