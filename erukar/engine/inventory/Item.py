@@ -73,7 +73,7 @@ class Item(Describable):
     def on_inventory(self, *_):
         return self.alias()
 
-    def on_inventory_inspect(self):
+    def on_inventory_inspect(self, lifeform):
         return self.on_inventory()
 
     def on_unequip(self, lifeform):

@@ -16,8 +16,12 @@ class Broken(WeaponMod):
     DetailedIdealDescription = "The {EssentialPart} has been broken."
     Adjective = ""
 
+    InventoryDescription = "Removes minimum damage, halves maximum, and removes scaling"
+    InventoryName = "Broken"
+
     def apply_to(self, weapon):
         weapon.name = "Broken " + weapon.name
+        weapon.stat_influences = {}
         max_dam = weapon.damages[0].damage[1]
         weapon.damages[0].damage = [0, int(math.floor(max_dam/2))]
         super().apply_to(weapon)

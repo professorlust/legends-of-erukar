@@ -6,7 +6,6 @@ class Luminous(LightManipulatingItemModifier):
     Desirability = 4.0
 
     AuraDescription = "A Bright light pours into the room from {relative_direction}."
-    InventoryDescription = "Increases room's light level"
     BriefDescription = "The {EssentialPart} emanates a white light."
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {BaseName} is glows brightly."
@@ -16,6 +15,9 @@ class Luminous(LightManipulatingItemModifier):
     DetailedMinimalDescription = "The {EssentialPart} glows a soft white light magically."
     DetailedIdealDescription = "The {SupportPart} supports bright white runes that cause the {EssentialPart} to radiate light, greatly illuminating the room."
     Adjective = ""
+
+    InventoryName = "Luminous"
+    InventoryDescription = "Adds runes which glow as bright as a torch"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

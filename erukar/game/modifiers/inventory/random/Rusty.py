@@ -15,7 +15,12 @@ class Rusty(WeaponMod):
     DetailedIdealDescription = "The {EssentialPart} is covered in rust."
     Adjective = ""
 
+    InventoryName = "Rusty"
+    InventoryDescription = "Reduces maximum base damage by 2, reduces durability by 33%"
+
     def apply_to(self, weapon):
         super().apply_to(weapon)
-        weapon.damages[0].damage[1] -= 1
+        weapon.damages[0].damage[1] -= 2
+        weapon.MaxDurability *= 0.667
+        weapon.durability *= 0.667
         weapon.name = "Rusty " + weapon.name

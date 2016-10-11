@@ -6,8 +6,11 @@ class Greater(WeaponMod):
     Desirability = 8.0
     Description = "The {BaseName} is wonderfully crafted by a master weaponmaker."
 
+    InventoryName = "Great"
+    InventoryDescription = "Increases maximum scaling by 130%"
+
     def apply_to(self, weapon):
         super().apply_to(weapon)
         weapon.name = "Greater " + weapon.name
-        min_dam, max_dam = weapon.damages[0].damage
-        weapon.damages[0].damage = [min_dam+2, max_dam+2]       
+        for si in weapon.stat_influences:
+            weapon.stat_influences[si]['max_scale'] *= 1.3

@@ -7,7 +7,9 @@ class Acid(WeaponMod):
     Probability = 1
     Desirability = 8.0
 
-    InventoryDescription = "[1, 4] Acid Damage"
+    InventoryName = "Acid Elemental"
+    InventoryDescription = "Adds a small amount of non-scaling acid damage to physical attacks"
+
     BriefDescription = "the {SupportPart} drips with acid"
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {EssentialPart} has some sort of translucent green condensation on it."

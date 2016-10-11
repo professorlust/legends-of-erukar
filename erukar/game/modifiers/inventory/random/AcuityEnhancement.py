@@ -7,6 +7,8 @@ class AcuityEnhancement(Enhancement):
     acuity = 2
 
     InventoryDescription = "Acuity +2"
+    InventoryName = "Acuity Enhancement"
+
     BriefDescription = "the {SupportPart} glows with blue arcane runes"
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {BaseName} seems to glow in certain areas."

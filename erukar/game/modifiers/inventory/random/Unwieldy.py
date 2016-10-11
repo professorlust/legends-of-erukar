@@ -5,7 +5,6 @@ class Unwieldy(WeaponMod):
     Probability = 1
     Desirability = 0.5
 
-    InventoryDescription = "-5 to attack rolls"
     BriefDescription = ""
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = ""
@@ -15,6 +14,9 @@ class Unwieldy(WeaponMod):
     DetailedMinimalDescription = "You sense magic emanating from the {BaseName}."
     DetailedIdealDescription = "The {EssentialPart} shimmers slightly from a magical enchantment which makes the {BaseName} less agile."
     Adjective = ""
+
+    InventoryName = "Swift"
+    InventoryDescription = "Reduces dexterity scaling to 67%"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

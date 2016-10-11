@@ -10,6 +10,8 @@ class Dull(WeaponMod):
     PermissionType = Modifier.ALL_PERMITTED
     PermittedEntities = [Axe, Halberd, Rapier, Spear, Sword]
     Description = "The {EssentialPart} of the {item_type} has been dulled from extensive, careless use."
+    InventoryName = "Dulled"
+    InventoryDescription = "Reduces slashing damage by 50% and converts 25% of initial to bludgeoning"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

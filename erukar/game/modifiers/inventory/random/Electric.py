@@ -7,7 +7,6 @@ class Electric(WeaponMod):
     Probability = 1
     Desirability = 8.0
 
-    InventoryDescription = "[1, 4] Electric Damage"
     BriefDescription = "the {SupportPart} drips with acid"
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {EssentialPart} seems to be sparking."
@@ -17,6 +16,9 @@ class Electric(WeaponMod):
     DetailedMinimalDescription = "The {EssentialPart} seems to be magically producing sparks."
     DetailedIdealDescription = "The {BaseName} has an Electrical elemental enchantment, producing jolts of electricity and sparks from the {EssentialPart}."
     Adjective = ""
+
+    InventoryName = "Electric Elemental"
+    InventoryDescription = "Adds a small amount of non-scaling electric damage to physical attacks"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

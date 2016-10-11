@@ -5,7 +5,6 @@ class Blessed(WeaponMod):
     Probability = 1
     Desirability = 2.0
 
-    InventoryDescription = "Strong against Unholy creatures"
     BriefDescription = ""
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = ""
@@ -15,6 +14,9 @@ class Blessed(WeaponMod):
     DetailedMinimalDescription = "The {SupportPart} feels spiritual."
     DetailedIdealDescription = "You feel a sense of holiness emanating from the {SupportPart}."
     Adjective = ""
+
+    InventoryDescription = "Deals 1.25x damage against demons and undead; 1.5x damage in holy areas"
+    InventoryName = "Blessed"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

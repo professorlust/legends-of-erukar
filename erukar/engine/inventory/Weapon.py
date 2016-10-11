@@ -31,9 +31,14 @@ class Weapon(Item):
     def on_inventory(self):
         return '{} ({}%)'.format(self.name, int(100*self.durability/self.MaxDurability))
 
-    def on_inventory_inspect(self):
-        name = '{} ({} / {})'.format(self.name, self.durability, self.MaxDurability)
-        damage_desc = '\n'.join(['\t\t• {0} {1}'.format(d.damage,d.name) for d in self.damages])
-        mods = [self.material] + self.modifiers if self.material else self.modifiers
+    def on_inventory_inspect(self, lifeform):
+        scale = self.efficacy_for(lifeform)
+        mod = lifeform.get(self.DamageModifier)
+        name = '{} ({} / {})'.format(self.name, int(self.durability), int(self.MaxDurability))
+        damage_desc = '\n'.join(['\t\t• {} to {} {} Damage'.format(
+            int((mod if d.scales else 0) + d.damage[0]*scale),
+            int((mod if d.scales else 0) + d.damage[1]*scale), d.name)
+            for d in self.damages])
+        mods = ([self.material] + self.modifiers) if self.material else self.modifiers
         mod_desc = '\n'.join(['\t\t• {}: {}'.format(d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])
         return '\n'.join([name, damage_desc, mod_desc])

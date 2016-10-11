@@ -6,8 +6,11 @@ class Fine(WeaponMod):
     Desirability = 4.0
     Description = "The craftsmanship of the {BaseName} truly stands out."
 
+    InventoryName = "Refined"
+    InventoryDescription = "Increases scaling factor by 150%"
+
     def apply_to(self, weapon):
         super().apply_to(weapon)
         weapon.name = "Fine " + weapon.name
-        min_dam, max_dam = weapon.damages[0].damage
-        weapon.damages[0].damage = [min_dam+1, max_dam+1]
+        for si in weapon.stat_influences:
+            weapon.stat_influences[si]['scaling_factor'] *= 1.5

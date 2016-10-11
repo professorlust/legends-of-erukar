@@ -5,7 +5,6 @@ class Dark(LightManipulatingItemModifier):
     Desirability = 4.0
 
     AuraDescription = "Light seems to disappear unnaturally to {relative_direction}."
-    InventoryDescription = "Reduces room's light level"
     BriefDescription = "The {EssentialPart} is draped in shadows."
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {BaseName} is abnormally dark."
@@ -15,6 +14,9 @@ class Dark(LightManipulatingItemModifier):
     DetailedMinimalDescription = "The {EssentialPart} is covered in shadows which seem to darken the room."
     DetailedIdealDescription = "The {SupportPart} supports black runes that envelop the {EssentialPart} in shadows. The {BaseName} itself seems to steal light from the environment."
     Adjective = ""
+
+    InventoryDescription = "Steals light from nearby areas"
+    InventoryName = "Darkening"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

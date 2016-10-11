@@ -17,3 +17,5 @@ class DexterityEnhancement(Enhancement):
     DetailedIdealDescription = "The {BaseName}'s {SupportPart} is enchanted with yellow augmentation runes which enhance the user's Dexterity."
     Adjective = ""
 
+    InventoryDescription = "Dexterity +2"
+    InventoryName = "Dexterity Enhancement"

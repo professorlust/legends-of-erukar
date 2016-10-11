@@ -4,7 +4,6 @@ from erukar.engine.inventory import Weapon
 class Serrated(WeaponMod):
     Probability = 1
     Desirability = 1
-    InventoryDescription = "Bypasses some leather protection"
     BriefDescription = "The {EssentialPart} is serrated."
     AbsoluteMinimalDescription = "The {EssentialPart} is serrated."
     VisualMinimalDescription = "The {EssentialPart} is serrated."
@@ -15,7 +14,9 @@ class Serrated(WeaponMod):
     DetailedIdealDescription = "The {EssentialPart} is serrated."
     Adjective = ""
 
+    InventoryName = "Serrated"
+    InventoryDescription = "Converts 25% of Slashing damage to scalable Piercing damage"
+
     def apply_to(self, weapon):
         super().apply_to(weapon)
         weapon.name = "Serrated " + weapon.name
-

@@ -16,6 +16,9 @@ class Cursed(WeaponMod):
     DetailedIdealDescription = "You feel a sense of unholiness emanating from the {SupportPart}."
     Adjective = ""
 
+    InventoryDescription = "To be determined"
+    InventoryName = "Cursed"
+
     def apply_to(self, weapon):
         super().apply_to(weapon)
         weapon.name = "Cursed " + weapon.name

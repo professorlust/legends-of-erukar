@@ -32,7 +32,7 @@ class LightSource(Item):
     def on_inventory(self):
         return '{} ({}%)'.format(self.name, int(self.fuel))
 
-    def on_inventory_inspect(self):
+    def on_inventory_inspect(self, lifeform):
         return '{}\n\t• {}% Fuel Remaining'.format(self.name, int(self.fuel))
 
     def tick(self):

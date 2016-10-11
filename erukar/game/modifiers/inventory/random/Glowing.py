@@ -7,7 +7,6 @@ class Glowing(LightManipulatingItemModifier):
     Desirability = 4.0
 
     AuraDescription = "A dull, soft white glow emanates from {relative_direction}."
-    InventoryDescription = "Slightly increases room's light level"
     BriefDescription = "The {EssentialPart} glows a soft white."
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {BaseName} is seems to glow slightly."
@@ -17,6 +16,9 @@ class Glowing(LightManipulatingItemModifier):
     DetailedMinimalDescription = "The {EssentialPart} glows a soft white light magically."
     DetailedIdealDescription = "The {SupportPart} supports off-white runes that cause the {EssentialPart} to glow, illuminating the room in a soft white light."
     Adjective = ""
+
+    InventoryName = "Glowing"
+    InventoryDescription = "Adds runes which glow slightly brighter than a candle"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

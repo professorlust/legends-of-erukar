@@ -4,7 +4,7 @@ from erukar.engine.inventory import Weapon
 class Sharp(WeaponMod):
     Probability = 1
     Desirability = 1
-    InventoryDescription = "Bypasses some metal protection"
+
     BriefDescription = "The {EssentialPart} is sharp."
     AbsoluteMinimalDescription = "The {EssentialPart} is sharp."
     VisualMinimalDescription = "The {EssentialPart} is sharp."
@@ -14,6 +14,9 @@ class Sharp(WeaponMod):
     DetailedMinimalDescription = "The {EssentialPart} is sharp."
     DetailedIdealDescription = "The {EssentialPart} is sharp."
     Adjective = ""
+
+    InventoryName = "Sharp"
+    InventoryDescription = "To Be Determined"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)

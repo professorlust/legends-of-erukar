@@ -6,7 +6,6 @@ import numpy as np
 class Frost(WeaponMod):
     Probability = 1
     Desirability = 8.0
-    InventoryDescription = "[1, 4] Cold Damage"
     BriefDescription = "frost coats the {EssentialPart}"
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {EssentialPart} seems to be covered in frost."
@@ -17,7 +16,10 @@ class Frost(WeaponMod):
     DetailedIdealDescription = "The {BaseName} has a Frost elemental enchantment, draining the heat from the room and coating the {EssentialPart} with thick layers of frost."
     Adjective = ""
 
+    InventoryName = "Ice Elemental"
+    InventoryDescription = "Adds a small amount of non-scaling ice damage to physical attacks"
+
     def apply_to(self, weapon):
         super().apply_to(weapon)
         weapon.name = "Frosted " + weapon.name
-        weapon.damages.append(Damage("Cold", [1,4], "", (np.random.uniform, (0,1))))
+        weapon.damages.append(Damage("ice", [1,4], "", (np.random.uniform, (0,1))))
