@@ -1,4 +1,5 @@
 from erukar.engine.model.Describable import Describable
+from erukar.engine.calculators.Curves import Curves
 import functools, operator
 
 class Item(Describable):
@@ -13,14 +14,15 @@ class Item(Describable):
     MaxDurability = 100
     StandardWeight = 0 # In Pounds
     EquipmentLocations = []
-    StatInfluences = {
+    BaseStatInfluences = {
         # Determines the influence of stats on the Item's efficacy. These totals are
         # multiplicative. See efficacy_for method for more details.
         # Uses the following format
-        # 'strength': { 'requirement': 20, 'scaling': 1.5, 'max_scale': 2 }
+        # 'strength': { 'requirement': 20, 'scaling_factor': 1.5, 'max_scale': 2 }
     }
 
     def __init__(self, item_type='Item', name="Item"):
+        self.stat_influences = self.BaseStatInfluences
         self.item_type = item_type
         self.owner = None
         self.name = name
@@ -35,9 +37,9 @@ class Item(Describable):
 
     def efficacy_for(self, lifeform):
         total = 1.0
-        for stat in self.StatInfluences:
+        for stat in self.stat_influences:
             value = lifeform.calculate_effective_stat(stat)
-            total *= Curves.item_stat_efficacy(value, **self.StatInfluences[stat])
+            total *= Curves.item_stat_efficacy(value, **self.stat_influences[stat])
         return total
 
     def describe(self):

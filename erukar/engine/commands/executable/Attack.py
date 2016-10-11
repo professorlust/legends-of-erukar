@@ -124,6 +124,7 @@ class Attack(ActionCommand):
         '''Involves the calculation of armor_class, attack roll, and damage'''
         attack_roll = self.character.roll(self.character.stat_random_range('dexterity'))
         armor_class = target.calculate_armor_class()
+
         if weapon is not None and isinstance(weapon, erukar.engine.inventory.Weapon):
             damage = weapon.roll(self.character)
         elif weapon is None:

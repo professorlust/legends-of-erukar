@@ -19,3 +19,6 @@ class Bow(Weapon):
     Scale = 0.25
     DistributionProperties = (Shape, Scale)
 
+    BaseStatInfluences = {
+        'dexterity':  {'requirement': 8, 'scaling_factor': 3, 'max_scale': 6}
+    }

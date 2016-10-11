@@ -24,7 +24,7 @@ class ActionCommand(Command):
         self.dirty(character)
 
         # Calculate the actual damage through mitigation and deflection
-        for deflected in Damage.deflections(character, enemy, weapon, damages):
+        for deflected in Damage.deflections(character, enemy, damages):
             self.append_result(self.sender_uid, self.Deflected.format(**args))
             self.append_result(enemy.uid, self.Deflected.format(**args))
 

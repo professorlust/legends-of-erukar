@@ -14,3 +14,8 @@ class Rapier(Weapon):
     # Distribution (Note: Need to add ref to scipy for nonstandard)
     Distribution = np.random.normal
     DistributionProperties = (2, 0.3)
+
+    BaseStatInfluences = {
+        'strength': {'requirement': 2, 'scaling_factor': 1.5, 'max_scale': 2},
+        'dexterity':  {'requirement': 8, 'scaling_factor': 5, 'max_scale': 6}
+    }

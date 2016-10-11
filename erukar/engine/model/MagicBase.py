@@ -10,6 +10,8 @@ class MagicBase(Describable):
         target = lifeform
         if parameters is not None and 'target' in parameters:
             target = parameters['target']
+            if parameters['target'] is None:
+                target = lifeform
         return target
 
     def append_result(self, uid, msg):

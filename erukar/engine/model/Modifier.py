@@ -11,7 +11,7 @@ class Modifier(Describable):
     PermittedEntities = []
     ProhibitedEntities = []
     PermissionType = ALL
-    Persistent = True
+    DefaultPersistence = True
 
     InventoryName = '__class__'
     InventoryDescription = 'Basic inventory description for {__module__}'
@@ -29,6 +29,7 @@ class Modifier(Describable):
 
     def __init__(self):
         super().__init__()
+        self.persistent = self.DefaultPersistence
         self.set_vision_results(self.VisualMinimalDescription, self.VisualIdealDescription, self.VisualRange)
         self.set_sensory_results(self.SensoryMinimalDescription, self.SensoryIdealDescription, self.SensoryRange)
         self.set_detailed_results(self.DetailedMinimalDescription, self.DetailedIdealDescription)

@@ -14,3 +14,8 @@ class MorningStar(Weapon):
     # Distribution
     Distribution = np.random.uniform
     DistributionProperties = ()
+
+    BaseStatInfluences = {
+        'strength': {'requirement': 7, 'scaling_factor': 4, 'max_scale': 6},
+        'dexterity':  {'requirement': 0, 'scaling_factor': 1.25, 'max_scale': 2}
+    }

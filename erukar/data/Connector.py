@@ -120,7 +120,7 @@ class Connector:
         '''Create Item Schema objects from a lifeform's inventory'''
         for item in lifeform.inventory:
             if item.Persistent:
-                modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers if m.Persistent]
+                modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers if m.persistent]
                 item_attributes = item.persistable_attributes()
                 if item.material is not None:
                     material = item.material.__module__

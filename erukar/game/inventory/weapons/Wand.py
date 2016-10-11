@@ -17,3 +17,8 @@ class Wand(Weapon):
     # Distribution
     Distribution = np.random.gamma
     DistributionProperties = (2, 0.3)
+
+    BaseStatInfluences = {
+        'acuity':  {'requirement': 8, 'scaling_factor': 6, 'max_scale': 5},
+        'dexterity': {'requirement': 0, 'scaling_factor': 3, 'max_scale': 2}
+    }

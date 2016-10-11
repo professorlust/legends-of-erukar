@@ -87,7 +87,7 @@ class Lifeform(RpgEntity):
         return any(aff for aff in self.afflictions if aff.Incapacitates)
 
     def turn_modifier(self):
-        return 10.0 + round(40*(1.0 - 1.0 / (1.0 + math.exp( (10.0-self.dexterity) / 5.0))))
+        return round(600/(0.15*self.dexterity+10)+15 )
 
     def define_level(self, level):
         '''Set this lifeform's level and defined the health appropriately'''

@@ -22,10 +22,11 @@ class Weapon(Item):
         self.name = self.BaseName
         self.item_type = "weapon"
         self.damages = [Damage(self.DamageType, list(self.DamageRange), self.DamageModifier,\
-                               (self.Distribution, self.DistributionProperties))]
+                               (self.Distribution, self.DistributionProperties), scales=True)]
 
     def roll(self, attacker):
-        return [(d.roll(attacker), d.name) for d in self.damages]
+        efficacy = self.efficacy_for(attacker)
+        return [(d.roll(attacker)*efficacy if d.scales else d.roll(attacker), d.name) for d in self.damages]
 
     def on_inventory(self):
         return '{} ({}%)'.format(self.name, int(100*self.durability/self.MaxDurability))
