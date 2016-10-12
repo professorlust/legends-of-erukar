@@ -52,16 +52,18 @@ class Describable(Interactible):
         mutation_arguments = {}
         if optional_parameters is not None:
             mutation_arguments = optional_parameters
-        # Perform Regex
         captured = re.findall('{(\w*)(?:\|(\w*))*}', mutatable_string)
+
         # iterate through all of our capture groups 
         for cap in captured:
             target = self
             format_name = cap[0]
+
             # in the event of a specified target e.g. {prop|target}
             if cap[1] is not None and hasattr(self, cap[1]):
                 target = getattr(self, cap[1])
                 format_name = '|'.join(cap)
+
             # Get the value from the target
             if hasattr(target, cap[0]):
                 value = getattr(target, cap[0])
@@ -75,11 +77,14 @@ class Describable(Interactible):
         return result
 
     def on_inspect(self, lifeform, acuity, sense):
-        sorted_inspects = sorted(self.Inspects, key=lambda obs: obs.score(), reverse=True)
-        scores = [ins.result for ins in sorted_inspects if ins.met(acuity, sense)]
-        return '' if len(scores)==0 else scores[0]
+        return Describable.get_best_match(self.Inspects, acuity, sense)
 
     def on_glance(self, lifeform, acuity, sense):
-        sorted_glances = sorted(self.Glances, key=lambda obs: obs.score(), reverse=True)
-        scores = [gl.result for gl in sorted_glances if gl.met(acuity, sense)]
+        return Describable.get_best_match(self.Glances, acuity, sense)
+
+    @staticmethod
+    def get_best_match(collection, acuity, sense):
+        sorted_collection = sorted(collection, key=lambda obs: obs.score(), reverse=True)
+        scores = [gl.result for gl in sorted_collection if gl.met(acuity, sense)]
         return '' if len(scores)==0 else scores[0]
+
