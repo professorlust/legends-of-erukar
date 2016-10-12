@@ -117,11 +117,14 @@ class Instance(Manager):
     def get_next_player(self):
         if self.active_player is not None:
             res = self.active_player.end_turn()
+            #TODO: Replace with Results object later
             if len(res) > 0:
                 print(res)
 
         self.grab_from_turn_manager()
         res = self.active_player.begin_turn()
+
+        #TODO: Same as above
         if len(res) > 0:
             print(res)
 
@@ -151,6 +154,7 @@ class Instance(Manager):
         cmd.context = self.command_contexts[cmd.sender_uid]
         cmd.data = self.data
         result = cmd.execute()
+
         # Check results
         if result is not None:
             # Print Result, replace with outbox later
@@ -158,10 +162,13 @@ class Instance(Manager):
                 if 'a-uid' in result.results:
                     print('\n\n'.join(result.result_for('a-uid')) + '\n')
                     print('-' * 64)
+
             # Save Dirtied Characters in DB 
             if hasattr(result, 'dirtied_characters'):
                 for dirty in result.dirtied_characters:
                     self.connector.update_character(dirty)
+
             # Set context for player
             self.command_contexts[cmd.sender_uid] = result
+
         return result

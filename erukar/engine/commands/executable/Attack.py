@@ -53,10 +53,14 @@ class Attack(ActionCommand):
     def do_directional_attacks(self, direction):
         '''Handles attacking with all queued weapons'''
         room = self.character.current_room
+
+        dual_wielding_penalty = 1.0
         for attacking_slot in self.character.attack_slots:
             weapon = getattr(self.character, attacking_slot)
             if not self.can_attack_with(weapon): continue
             self.attack_in_direction(room, weapon, 0, direction)
+            dual_wielding_penalty *= self.character.dual_wielding_penalty
+
         # Succeed if we have results, otherwise fail with the UnableToAttackInDirection
         return self.succeed_if_any_results(msg_if_failure=self.UnableToAttackInDirection)
 
@@ -65,6 +69,7 @@ class Attack(ActionCommand):
         target = self.find_in_room(self.character.current_room, payload)
         if target is None:
             return self.fail(Attack.not_found.format(payload))
+
         # Attack with each weapon, keeping track of the penalties for dual wielding each time
         dual_wielding_penalty = 1.0
         for attacking_slot in self.character.attack_slots:
@@ -72,10 +77,11 @@ class Attack(ActionCommand):
             if not self.can_attack_with(weapon): continue
             self.adjudicate_attack(weapon, target, penalty=dual_wielding_penalty)
             dual_wielding_penalty *= self.character.dual_wielding_penalty
+
         # Succeed if we have results, otherwise fail with the UnableToAttackInRoom
         return self.succeed_if_any_results(msg_if_failure=self.UnableToAttackInRoom)
 
-    def attack_in_direction(self, room, weapon, distance, direction):
+    def attack_in_direction(self, room, weapon, distance, direction, penalty=1.0):
         ''' Attack in direction; logic for what gets hit (door, room, or wall) goes here'''
         adj_room = room.get_in_direction(direction)
 
@@ -87,10 +93,10 @@ class Attack(ActionCommand):
 
         # are we actually able to hit the room in this direction (and does it exist?)
         if adj_room.room is not None:
-            return self.attack_into_room(adj_room.room, weapon, distance+1, direction)
+            return self.attack_into_room(adj_room.room, weapon, distance+1, direction, penalty)
         return self.append_result(self.sender_uid, 'You attack a wall. Are you happy now?')
 
-    def attack_into_room(self, room, weapon, distance, direction):
+    def attack_into_room(self, room, weapon, distance, direction, penalty=1.0):
         '''Check to see if there's a target in this room to attack; attack if so'''
         if weapon.AttackRange >= distance:
             targets = [c for c in room.contents if isinstance(c, erukar.engine.lifeforms.Lifeform)]
@@ -99,8 +105,8 @@ class Attack(ActionCommand):
 
             # Actually Attack
             target = random.choice(targets)
-            penalty = weapon.RangePenalty * distance
-            return self.adjudicate_attack(weapon, target, penalty)
+            total_penalty = weapon.RangePenalty * distance * penalty
+            return self.adjudicate_attack(weapon, target, total_penalty)
 
         return self.fail('Your weapon does not have the range to attack {}.'.format(direction.name))
 

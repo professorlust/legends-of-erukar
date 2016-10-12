@@ -47,10 +47,14 @@ class Lifeform(RpgEntity):
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''
+        results = []
         for item_slot in self.equipment_types:
             item = getattr(self, item_slot)
             if item is not None:
-                item.tick()
+                results.append(item.tick())
+        for condition in self.afflictions:
+            results.append(condition.tick())
+        return results
 
     def initiate_aura(self, aura):
         self.current_room.initiate_aura(aura)

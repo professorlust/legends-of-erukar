@@ -4,6 +4,7 @@ from erukar.engine.model.Manager import Manager
 class TurnManager(Manager):
     MaximumTurnCount = 100
     TurnWaitTime = 15 # sec
+    TickCount = 50
 
     def __init__(self):
         super().__init__()
@@ -46,7 +47,7 @@ class TurnManager(Manager):
         '''
         while True:
             current_turn_count = (current_turn_count + 1) % TurnManager.MaximumTurnCount
-            if current_turn_count % 25 is 0:
+            if current_turn_count % self.TickCount is 0:
                 self.tick_time = True
             for player in self.players:
                 if (current_turn_count+1) % player.turn_modifier() == 0:

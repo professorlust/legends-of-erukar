@@ -2,6 +2,7 @@ from erukar.game.modifiers.WeaponMod import WeaponMod
 from erukar.engine.inventory import Weapon
 from erukar.engine.model.Damage import Damage
 import numpy as np
+import re
 
 class Flaming(WeaponMod):
     Probability = 1
@@ -21,5 +22,13 @@ class Flaming(WeaponMod):
 
     def apply_to(self, weapon):
         super().apply_to(weapon)
+        self.weapon = weapon
         weapon.name += " of the Flames"
-        weapon.damages.append(Damage("Fire", [1,4], "", (np.random.uniform, (0,1))))
+        self.damage = Damage("Fire", [1,4], "", (np.random.uniform, (0,1)))
+        weapon.damages.append(self.damage)
+
+    def remove(self):
+        self.weapon.damages.remove(self.damage)
+        self.weapon.name = re.sub(' of the Flames', '', self.weapon.name)
+        self.weapon.modifiers.remove(self)
+        self.weapon = None

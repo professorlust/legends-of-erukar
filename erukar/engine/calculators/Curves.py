@@ -7,7 +7,7 @@ class Curves:
         return -1*(y_max-y_min)*math.pow((at_value-x_max+x_min)/(x_min-x_max), 2) + y_max
 
     def item_stat_efficacy(value, requirement, scaling_factor, max_scale):
-        if value < requirement:
+        if requirement > 0 and value < requirement:
             return 0.5*math.pow((value/requirement), 2)
         value -= requirement
         actual_scaling_factor = scaling_factor * Curves.AbsoluteScalingFactor

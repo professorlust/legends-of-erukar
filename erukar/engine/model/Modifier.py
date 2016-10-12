@@ -29,6 +29,7 @@ class Modifier(Describable):
 
     def __init__(self):
         super().__init__()
+        self.target = None
         self.persistent = self.DefaultPersistence
         self.set_vision_results(self.VisualMinimalDescription, self.VisualIdealDescription, self.VisualRange)
         self.set_sensory_results(self.SensoryMinimalDescription, self.SensoryIdealDescription, self.SensoryRange)
@@ -41,6 +42,10 @@ class Modifier(Describable):
 
     def apply_to(self, entity):
         '''Actually does the modification; this should be overridden'''
+        pass
+
+    def remove(self):
+        '''Removes modification; this should be overridden'''
         pass
 
     def on_start(self, room):

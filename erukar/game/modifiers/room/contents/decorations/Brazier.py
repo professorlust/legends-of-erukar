@@ -41,7 +41,7 @@ class Brazier(RoomModifier):
 
     def smouldering(self):
         deco = Decoration(['smouldering brazier', 'smoldering brazier', 'bowl on stilts'])
-        self.AuraDescription = 'A dim light slightly illuminates this room from {relative_dir}'
+        self.AuraDescription = 'A dim light slightly illuminates this room from {relative_direction}'
         deco.BriefDescription = 'a brazier to the {location}'
         deco.set_vision_results('You see a bowl standing on stilts to the {location} of the room.',\
                                 'You see a {material} brazier to the {location}',\
