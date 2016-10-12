@@ -30,9 +30,6 @@ class Item(Describable):
         self.description = Item.generic_description
         self.modifiers = []
         self.durability = self.MaxDurability
-        self.set_vision_results('You see a {BaseName}.','You see a {BaseName}.',(1,10))
-        self.set_sensory_results('You sense a {BaseName}.','You sense a {BaseName}.',(5,20))
-        self.set_detailed_results('There is a {BaseName}.', 'You see a {name}.')
         self.material = None
 
     def efficacy_for(self, lifeform):
@@ -93,30 +90,15 @@ class Item(Describable):
     def calculate_desireability(self):
         return functools.reduce(operator.mul, [mod.Desirability for mod in self.modifiers])
 
-    def describe_modifiers(self, lifeform, acu, sen):
-        modifier_descriptions = [x.on_inspect(lifeform, acu, sen) for x in self.modifiers]
-        return ' ' + ' '.join(modifier_descriptions)
+    def on_inspect(self, lifeform, acuity, sense):
+        mods = [x.on_inspect(lifeform,acuity,sense) for x in [self.material] + self.modifiers if x is not None]
+        pre_mutation = super().on_inspect(lifeform,acuity,sense) + ' ' + Describable.erjoin([x for x in mods if x is not ''])
+        return self.mutate(pre_mutation.strip())
 
-    def describe_brief_modifiers(self, lifeform, acu, sen):
-        modifier_descriptions = [x.brief_inspect(lifeform, acu, sen) for x in self.modifiers]
-        return ' ' + ' '.join(modifier_descriptions)
-
-    def on_inspect(self, lifeform, acu, sen):
-        modifiers = self.describe_modifiers(lifeform, acu, sen)
-        material = '' if not self.material else self.material.on_inspect(lifeform, acu, sen)
-        self_desc = self.describe_base(lifeform, acu, sen)
-        if self_desc is '':
-            return ''
-        return self.mutate(' '.join(x for x in [self_desc, material, modifiers] if x is not ''))
-
-    def brief_inspect(self, lifeform, acuity, sense):
-        if acuity < self.vision_range[0]:
-            return ''
-        material = self.BriefDescription if not self.material else self.material.brief_inspect(lifeform, acuity, sense)
-        return self.mutate(material)
-
-    def describe_material(self):
-        return self.material.BriefDescription if self.material else self.name
+    def on_glance(self, lifeform, acuity, sense):
+        mods = [x.on_glance(lifeform,acuity,sense) for x in [self.material] + self.modifiers if x is not None]
+        pre_mutation = self.name + ' ' + Describable.erjoin([x for x in mods if x is not ''])
+        return self.mutate(pre_mutation.strip())
 
     def persistable_attributes(self):
         '''For use with database; getattrs all attributes defined by persistent_attr dict'''
