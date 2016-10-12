@@ -71,7 +71,7 @@ class Room(Containable):
     def aura_descriptions(self, lifeform, acuity, sense):
         '''Used for all aura descriptions'''
         for x in self.dungeon.get_applicable_auras(self):
-            res = x.brief_inspect(lifeform, acuity, sense)
+            res = x.on_glance(lifeform, acuity, sense)
             if res is not '':
                 yield res
 
@@ -79,7 +79,7 @@ class Room(Containable):
         '''used to describe non-decoration contents'''
         for x in self.contents:
             if isinstance(x, Decoration) or isinstance(x, Container):
-                res = x.brief_inspect(lifeform, acuity, sense)
+                res = x.on_glance(lifeform, acuity, sense)
                 if res is not '':
                     yield res
 
@@ -87,7 +87,7 @@ class Room(Containable):
         '''used to describe non-decoration contents'''
         for x in self.contents:
             if not isinstance(x, Decoration) and not isinstance(x, erukar.engine.lifeforms.Lifeform) and not isinstance(x, Container):
-                res = x.brief_inspect(lifeform, acuity, sense)
+                res = x.on_glance(lifeform, acuity, sense)
                 if res is not '':
                     yield res
 
@@ -133,11 +133,11 @@ class Room(Containable):
 
     def surfaces_at_a_glance(self, lifeform, acu, sen):
         nonempty_surfaces  = []
-        floor = '' if not self.floor else self.floor.brief_inspect(lifeform, acu, sen)
+        floor = '' if not self.floor else self.floor.on_glance(lifeform, acu, sen)
         self.append_if_nonempty(nonempty_surfaces, floor, 'the floor is {}')
-        ceiling = '' if not self.ceiling else self.ceiling.brief_inspect(lifeform, acu, sen)
+        ceiling = '' if not self.ceiling else self.ceiling.on_glance(lifeform, acu, sen)
         self.append_if_nonempty(nonempty_surfaces, ceiling, 'the ceiling is {}')
-        walls = list(set(self.connections[x].wall.brief_inspect(lifeform, acu, sen) for x in self.connections if self.connections[x].wall))
+        walls = list(set(self.connections[x].wall.on_glance(lifeform, acu, sen) for x in self.connections if self.connections[x].wall))
         self.append_if_nonempty(nonempty_surfaces, Describable.erjoin(walls), 'the walls are {}')
 
         result = Describable.erjoin(nonempty_surfaces)

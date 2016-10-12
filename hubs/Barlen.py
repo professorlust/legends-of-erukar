@@ -2,6 +2,7 @@ import os, sys
 sys.path.append(os.getcwd())
 
 from erukar import *
+import erukar
 
 dungeon = Dungeon()
 
@@ -9,6 +10,15 @@ dungeon = Dungeon()
 # Guild Hall Antechamber (0, 0)
 gh_antechamber = Room(dungeon, (0,0))
 gh_antechamber.SelfDescription = 'This is the antechamber to an adventurer\'s guild named "Consultants and Dragons."'
+
+t = Torch()
+t.fuel = 100
+gh_antechamber.add(t)
+
+m = Sword()
+erukar.game.modifiers.material.Abyssium().apply_to(m)
+erukar.game.modifiers.random.Flaming().apply_to(m)
+gh_antechamber.add(m)
 
 # Guild Hall Hallway (0, 1)
 gh_hallway = Room(dungeon, (0,1))
