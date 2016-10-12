@@ -10,7 +10,7 @@ class Acid(WeaponMod):
     InventoryName = "Acid Elemental"
     InventoryDescription = "Adds a small amount of non-scaling acid damage to physical attacks"
 
-    BriefDescription = "the {SupportPart} drips with acid"
+    BriefDescription = "{alias} dripping with acid"
     AbsoluteMinimalDescription = ""
     VisualMinimalDescription = "The {EssentialPart} has some sort of translucent green condensation on it."
     VisualIdealDescription = "You see that the {EssentialPart} has acid condensation on it."
