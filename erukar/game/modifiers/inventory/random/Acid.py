@@ -12,14 +12,11 @@ class Acid(WeaponMod):
     InventoryDescription = "Adds a small amount of non-scaling acid damage to physical attacks"
 
     Glances = [
-        # (acuity, sense): result
-        Observation(acuity=0, sense=0, result=""),
         Observation(acuity=10, sense=0, result="with condensation on the {EssentialPart}"),
         Observation(acuity=25, sense=0, result="dripping with acid")
     ]
 
     Inspects = [
-        Observation(acuity=0, sense=0, result=""),
         Observation(acuity=10, sense=0, result="The {EssentialPart} has some sort of condensation on it."),
         Observation(acuity=25, sense=0, result="The {EssentialPart} is dripping with acid!")
     ]

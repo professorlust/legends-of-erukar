@@ -17,6 +17,7 @@ gh_antechamber.add(t)
 
 m = Sword()
 erukar.game.modifiers.material.Abyssium().apply_to(m)
+erukar.game.modifiers.random.Flaming().apply_to(m)
 gh_antechamber.add(m)
 
 # Guild Hall Hallway (0, 1)

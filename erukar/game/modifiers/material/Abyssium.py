@@ -10,7 +10,6 @@ class Abyssium(MaterialModifier):
     InventoryName = "Abyssium"
 
     Glances = [
-        # (acuity, sense): result
         Observation(acuity=5, sense=0, result="with a dark red {EssentialPart}"),
         Observation(acuity=10, sense=10, result="with an unholy, dark red {EssentialPart}"),
         Observation(acuity=35, sense=0, result="with an Abyssium {EssentialPart}")
