@@ -10,7 +10,6 @@ class RandomDungeonInstance(Instance):
         (ModuleDecorator, "materials.ceilings"),
         (ModuleDecorator, "structure.ceilings"),
         (ModuleDecorator, "qualities.air"),
-        (ModuleDecorator, "qualities.lighting"),
         (ModuleDecorator, "qualities.sounds"),
         (ModuleDecorator, "contents.enemies"),
         (MultipleModuleDecorator, "contents.decorations"),

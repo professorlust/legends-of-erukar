@@ -1,6 +1,7 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
 from erukar.engine.inventory import Weapon
 from erukar.engine.model.Damage import Damage
+from erukar.engine.model.Observation import Observation
 import numpy as np
 
 class Acid(WeaponMod):
@@ -10,15 +11,18 @@ class Acid(WeaponMod):
     InventoryName = "Acid Elemental"
     InventoryDescription = "Adds a small amount of non-scaling acid damage to physical attacks"
 
-    BriefDescription = "{alias} dripping with acid"
-    AbsoluteMinimalDescription = ""
-    VisualMinimalDescription = "The {EssentialPart} has some sort of translucent green condensation on it."
-    VisualIdealDescription = "You see that the {EssentialPart} has acid condensation on it."
-    SensoryMinimalDescription = "You sense magic emanating from the {BaseName}."
-    SensoryIdealDescription = "You sense an elemental enchantment radiating from the {EssentialPart}."
-    DetailedMinimalDescription = "The {EssentialPart} seems to have some sort of magical, translucent green condensation on it."
-    DetailedIdealDescription = "The {BaseName} has an Acid elemental enchantment, producing translucent green acid condensation on the {EssentialPart}."
-    Adjective = ""
+    Glances = [
+        # (acuity, sense): result
+        Observation(acuity=0, sense=0, result=""),
+        Observation(acuity=10, sense=0, result="with condensation on the {EssentialPart}"),
+        Observation(acuity=25, sense=0, result="dripping with acid")
+    ]
+
+    Inspects = [
+        Observation(acuity=0, sense=0, result=""),
+        Observation(acuity=10, sense=0, result="The {EssentialPart} has some sort of condensation on it."),
+        Observation(acuity=25, sense=0, result="The {EssentialPart} is dripping with acid!")
+    ]
 
     def apply_to(self, weapon):
         weapon.name = "Acid " + weapon.name

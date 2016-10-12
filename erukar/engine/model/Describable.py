@@ -1,3 +1,4 @@
+from erukar.engine.model.Observation import Observation
 from .Interactible import Interactible
 import re
 
@@ -21,20 +22,19 @@ class Describable(Interactible):
     If both Ideals are met, the user should be given even more information,
     though sometimes this is unnecessary.
     '''
-    MaximumMutationDepth = 4
-    MinimalBriefDescription = "You see a {BaseName}."
-    BriefDescription = ""
-    AbsoluteMinimalDescription = ""
+    Glances = []
+    Inspects = []
 
-    def __init__(self):
-        self.vision_range = (0, 1)
-        self.vision_minimal = 'Minimal Visual Result'
-        self.vision_ideal = 'Ideal Visual Result'
-        self.sense_range = (0, 1)
-        self.sense_minimal = 'Minimal Sensory Result'
-        self.sense_ideal = 'Ideal Sensory Result'
-        self.detailed_minimal = 'Minimal Visual and Sensory Result'
-        self.detailed_ideal = 'Ideal Visual and Sensory Result'''
+    MaximumMutationDepth = 4
+
+    def set_vision_results(self, minimal, ideal, vision_range, *_):
+        pass
+
+    def set_sensory_results(self, minimal, ideal, sense_range, *_):
+        pass
+
+    def set_detailed_results(self, *_):
+        pass
 
     def erjoin(list_to_join):
         '''English readable Join. Adds commas and an "and".'''
@@ -74,60 +74,12 @@ class Describable(Interactible):
             result = mutatable_string
         return result
 
-    def describe_visual(self, lifeform, acuity):
-        if acuity >= self.vision_range[1]:
-            return self.vision_ideal
-        if acuity >= self.vision_range[0]:
-            return self.vision_minimal
-        return ''
-
-    def describe_sensory(self, lifeform, sense):
-        if sense >= self.sense_range[1]:
-            return self.sense_ideal
-        if sense >= self.sense_range[0]:
-            return self.sense_minimal
-        return ''
-
-    def describe_detailed(self, lifeform, acuity, sense):
-        if acuity >= self.vision_range[1] and sense >= self.sense_range[1]:
-            return self.detailed_ideal
-        return self.detailed_minimal
-
-    def set_sensory_results(self, minimal, ideal, sense_range):
-        self.sense_range = sense_range
-        self.sense_minimal = minimal
-        self.sense_ideal = ideal
-
-    def set_vision_results(self, minimal, ideal, vision_range):
-        self.vision_range = vision_range
-        self.vision_minimal = minimal
-        self.vision_ideal = ideal
-
-    def set_detailed_results(self, minimal, ideal):
-        self.detailed_minimal = minimal
-        self.detailed_ideal = ideal
-
-    def describe_base(self, lifeform, acuity, sense):
-        '''This should be the entry point for finding things in a room'''
-        if acuity >= self.vision_range[0] and sense >= self.sense_range[0]:
-            return self.mutate(self.describe_detailed(lifeform, acuity, sense))
-        if acuity >= self.vision_range[0]:
-            return self.mutate(self.describe_visual(lifeform, acuity))
-        if sense >= self.sense_range[0]:
-            return self.mutate(self.describe_sensory(lifeform, sense))
-        return ''
-
     def on_inspect(self, lifeform, acuity, sense):
-        return self.describe_base(lifeform, acuity, sense)
+        sorted_inspects = sorted(self.Inspects, key=lambda obs: obs.score(), reverse=True)
+        scores = [ins.result for ins in sorted_inspects if ins.met(acuity, sense)]
+        return '' if len(scores)==0 else scores[0]
 
-    def brief_inspect(self, lifeform, acuity, sense):
-        if acuity >= self.vision_range[0]:
-            return self.mutate(self.BriefDescription)
-        return ''
-
-    def necessary_sense(self):
-        return 0
-
-    def necessary_acuity(self):
-        return 0
-
+    def on_glance(self, lifeform, acuity, sense):
+        sorted_glances = sorted(self.Glances, key=lambda obs: obs.score(), reverse=True)
+        scores = [gl.result for gl in sorted_glances if gl.met(acuity, sense)]
+        return '' if len(scores)==0 else scores[0]

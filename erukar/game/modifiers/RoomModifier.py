@@ -13,7 +13,7 @@ class RoomModifier(Modifier):
         self.randomize()
 
     def apply_to(self, room):
-        room.sense_minimal += 'The air is dusty.'
+        pass
 
     def randomize(self):
         for field in self.fields:
