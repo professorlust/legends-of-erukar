@@ -217,5 +217,5 @@ class Lifeform(RpgEntity):
         self.inventory.append(item)
         item.owner = self
 
-    def gender_pronoun_possessive(self):
+    def possessive_pronoun(self):
         return 'his'
