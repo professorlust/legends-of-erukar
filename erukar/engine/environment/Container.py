@@ -1,10 +1,8 @@
 from erukar.engine.model.Containable import Containable
 from erukar.engine.environment.Lock import Lock
+import random
 
 class Container(Containable):
-    ContentDescription = "Inside of the container is {}."
-    BriefDescription = "This is a brief description for {__module__}"
-
     def __init__(self, aliases):
         '''visible_in_room_description here is used for Containers like Table Tops'''
         super().__init__(aliases)
@@ -38,13 +36,24 @@ class Container(Containable):
         if not self.visible_in_room_description: return ''
         return super().brief_inspect(lifeform, acu, sen)
 
-    def on_inspect(self, lifeform, acu, sen):
-        self_desc = self.describe_base(lifeform, acu, sen)
-        content_desc = self.content_brief_descriptions(lifeform, acu, sen)
-        if len(content_desc) > 0:
-            return '\n\n'.join([self_desc, self.ContentDescription.format(content_desc)])
-        return self_desc
-
     def content_brief_descriptions(self, lifeform, acu, sen, content_format=', '):
         content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
         return content_format.join([x for x in content_results if x is not ''])
+
+    def and_inspect_inside(self, glancing=False):
+        if len(self.contents) > 0 and self.contents_visible:
+            # The following should be reworked to show the most visible items
+            acuity = random.uniform(0, 50)
+            sense = random.uniform(0, 50)
+            if glancing:
+                visible = random.choice(self.contents).on_glance(None, acuity, sense)
+                preface = self.on_glance_preface
+            else:
+                visible = random.choice(self.contents).on_glance(None, acuity, sense)
+                preface = self.on_inspect_preface
+            if visible is not '':
+                return preface.format(visible)
+        return ''
+
+    def and_glance_inside(self):
+        return self.and_inspect_inside(glancing=True)

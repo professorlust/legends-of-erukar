@@ -2,6 +2,7 @@ from erukar.engine.model import Modifier
 from erukar.engine.environment import *
 from erukar.game.modifiers.RoomModifier import RoomModifier
 from erukar.engine.factories.ModuleDecorator import ModuleDecorator
+from erukar.engine.model.Observation import Observation
 import random
 
 class Altar(RoomModifier):
@@ -9,29 +10,46 @@ class Altar(RoomModifier):
     ProbabilityFromFabrication = 0.1
     ProbabilityFromSanctity = 1.0
 
+    BaseGlances = [
+#       Observation(acuity=3,  sense=0,  result="an altar"),
+#       Observation(acuity=0,  sense=5,  result="a smoky smell"),
+#       Observation(acuity=0,  sense=15, result="the smell of burning incense"),
+#       Observation(acuity=3,  sense=10, result="an altar and the smell of burning incense"),
+        Observation(acuity=0, sense=0,  result="an altar{and_glance_inside|altar_top}")
+    ]
+
+    BaseInspects = [
+        Observation(acuity=0,  sense=0,  result="There is an altar on the {direction} wall of this area."),
+        Observation(acuity=5,  sense=0,  result="There is an altar to the {direction} in this area. {organizational_state}{and_inspect_inside|altar_top}."),
+    ]
+
     broad_alias_base = 'altar'
 
-    deity_possibilities = [
-        'the God Omanis',
-        'the Goddess Crepascia',
-        'the God Olevarde',
-        'Lord Ravodin, Protector of the Light']
+    organizational_states = [
+        'It is completely cleared off',
+        'The altar has been cleared off, save for some burning incense',
+        'There is an animal carcass on the top of the altar',
+        'There are papers with scribbles scattered on top of the altar'
+    ]
 
     def apply_to(self, room):
-        deity = random.choice(self.deity_possibilities)
         direction = self.random_wall(room)
 
         # Create the Altar proper
         deco = Decoration(aliases=[self.broad_alias_base])
-        deco.BriefDescription = "an altar to the {} of the room".format(direction)
-        deco.set_vision_results('You see an altar to the {} of the room.'.format(direction),'You see an altar to {} to the {} of the room.'.format(deity, direction), (1, 5))
-        deco.set_sensory_results('You smell burning incense.','You can sense holiness from an altar nearby',(1, 10))
-        deco.set_detailed_results('The smell of incense burning on an altar to {} fills the room. The altar is located on the {} wall.'.format(deity, direction),\
-                                  'A warm smell of lightly burning incense on an altar to the {} fills the room with a sense of holiness. The presence of {} can be felt here, and it is evident that his acolytes have been incredibly loyal.'.format(direction,deity))
-        self.create_altar_top(room)
+        deco.organizational_state = random.choice(Altar.organizational_states)
+        deco.direction = self.random_wall(room)
+        deco.Glances = Altar.BaseGlances
+        deco.Inspects = Altar.BaseInspects
+        deco.altar_top = self.create_altar_top(room)
         room.add(deco)
 
     def create_altar_top(self, room):
         top = Container(['top of the altar', 'altar top'])
+        top.on_inspect_preface = '. On top of the altar you see {}'
+        top.on_glance_preface = ' with {} on top'
+        top.contents_visible = True
         r = ModuleDecorator('erukar.game.inventory', self.generation_parameters)
-        top.add(r.create_one())
+        top.contents.append(r.create_one())
+        room.add(top)
+        return top

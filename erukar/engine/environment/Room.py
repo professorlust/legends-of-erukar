@@ -23,7 +23,7 @@ class Room(Containable):
         T_W = 9
 
     SelfDescription = "This room is fairly large."
-    DecoDescription = "You see {} in it."
+    DecoDescription = "You see {}."
     ContainerDescription = "In the room you see {}."
 
     def __init__(self, dungeon, coordinates=(0,0), shape=Shape.Rectangle, dimensions=(1, 1)):
@@ -79,7 +79,7 @@ class Room(Containable):
         '''used to describe non-decoration contents'''
         for x in self.contents:
             if isinstance(x, Decoration) or isinstance(x, Container):
-                res = x.on_glance(lifeform, acuity, sense)
+                res = self.mutate(x.on_glance(lifeform, acuity, sense))
                 if res is not '':
                     yield res
 

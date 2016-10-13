@@ -72,15 +72,16 @@ class Describable(Interactible):
                 mutation_arguments[format_name] = value
         try:
             result = mutatable_string.format(**mutation_arguments)
-        except:
+        except Exception as e:
+            print(e)
             result = mutatable_string
         return result
 
     def on_inspect(self, lifeform, acuity, sense):
-        return Describable.get_best_match(self.Inspects, acuity, sense)
+        return self.mutate(Describable.get_best_match(self.Inspects, acuity, sense))
 
     def on_glance(self, lifeform, acuity, sense):
-        return Describable.get_best_match(self.Glances, acuity, sense)
+        return self.mutate(Describable.get_best_match(self.Glances, acuity, sense))
 
     @staticmethod
     def get_best_match(collection, acuity, sense):
