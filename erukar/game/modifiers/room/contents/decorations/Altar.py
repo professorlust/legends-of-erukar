@@ -6,27 +6,28 @@ from erukar.engine.model.Observation import Observation
 import random
 
 class Altar(RoomModifier):
-    Probability = 0.2
-    ProbabilityFromFabrication = 0.1
-    ProbabilityFromSanctity = 1.0
+    MultipleItemProbability     = 0.90
+    SingleItemProbabilityWeight = 0.2
+    ProbabilityFromFabrication  = 0.1
+    ProbabilityFromSanctity     = 1.0
 
     BaseGlances = [
-#       Observation(acuity=3,  sense=0,  result="an altar"),
-#       Observation(acuity=0,  sense=5,  result="a smoky smell"),
-#       Observation(acuity=0,  sense=15, result="the smell of burning incense"),
-#       Observation(acuity=3,  sense=10, result="an altar and the smell of burning incense"),
-        Observation(acuity=0, sense=0,  result="an altar{and_glance_inside|altar_top}")
+        Observation(acuity=3,  sense=0,  result="an altar"),
+        Observation(acuity=0,  sense=5,  result="a smoky smell"),
+        Observation(acuity=0,  sense=10, result="the smell of burning incense"),
+        Observation(acuity=3,  sense=10, result="an altar and the smell of burning incense"),
+        Observation(acuity=20, sense=0,  result="an altar{glance_inside|altar_top}")
     ]
 
     BaseInspects = [
         Observation(acuity=0,  sense=0,  result="There is an altar on the {direction} wall of this area."),
-        Observation(acuity=5,  sense=0,  result="There is an altar to the {direction} in this area. {organizational_state}{and_inspect_inside|altar_top}."),
+        Observation(acuity=5,  sense=0,  result="There is an altar to the {direction} in this area. {organizational_state}{glance_inside_from_inspect|altar_top}."),
     ]
 
     broad_alias_base = 'altar'
 
     organizational_states = [
-        'It is completely cleared off',
+        'It is completely cleared off aside from {glance_inside_from_inspect_no_preface|altar_top}',
         'The altar has been cleared off, save for some burning incense',
         'There is an animal carcass on the top of the altar',
         'There are papers with scribbles scattered on top of the altar'

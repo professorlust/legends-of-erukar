@@ -49,6 +49,31 @@ class Describable(Interactible):
         return ' '.join(list_to_join)
 
     def mutate(self, mutatable_string, optional_parameters=None):
+        mutated = self.infer(mutatable_string, optional_parameters)
+        post_context = self.contextual_inferrence(mutated, optional_parameters)
+        return post_context
+
+    def contextual_inferrence(self, mutatable_string, optional_parameters=None):
+        matches = re.finditer('~(\w*)(?:\|(\w*))*~', mutatable_string)
+        for match_obj in matches:
+            inference_method, target_name = match_obj.groups()
+            l_end, r_start = match_obj.span()
+            left = mutatable_string[:l_end]
+            right = mutatable_string[r_start:]
+            target = self
+
+            # in the event of a specified target e.g. {prop|target}
+            if target_name is not None and hasattr(self, target_name):
+                target = getattr(self, target_name)
+                format_name = '|'.join(capture)
+
+            if hasattr(target, inference_method):
+                actual_method = getattr(target, inference_method)
+                mutatable_string = ''.join([left, actual_method(left, right), right])
+        return mutatable_string
+
+
+    def infer(self, mutatable_string, optional_parameters):
         mutation_arguments = {}
         if optional_parameters is not None:
             mutation_arguments = optional_parameters
@@ -73,9 +98,13 @@ class Describable(Interactible):
         try:
             result = mutatable_string.format(**mutation_arguments)
         except Exception as e:
-            print(e)
             result = mutatable_string
         return result
+
+    def a_or_an(self, left, right):
+        right = right.lstrip()
+        vowel_sound =  (len(right) >= 1 and right[0] in ['a','e','i','o','u','y']) or (len(right) >= 2 and right[:1] in ['ho'] )
+        return 'an' if vowel_sound else 'a'
 
     def on_inspect(self, lifeform, acuity, sense):
         return self.mutate(Describable.get_best_match(self.Inspects, acuity, sense))

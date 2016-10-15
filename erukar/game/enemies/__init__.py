@@ -1,4 +1,4 @@
-from .base import *
+from .templates import *
 from .construct import *
 from .demon import *
 from .dragon import *

@@ -25,6 +25,8 @@ class Lifeform(RpgEntity):
     full_health = ['The lifeform is at full health']
     BaseDescription = "a {alias}"
 
+    BaseDamageMitigations = {}
+
     def __init__(self, name=""):
         self.uid        = ""
         self.spells     = []
@@ -146,6 +148,8 @@ class Lifeform(RpgEntity):
             armor = getattr(self, x)
             if isinstance(armor, erukar.engine.inventory.Armor):# and damage_type in armor.DamageMitigations:
                 yield armor.mitigation_for(damage_type)
+        if damage_type in self.BaseDamageMitigations:
+            yield self.BaseDamageMitigations[damage_type]
 
     def take_damage(self, damage, instigator=None):
         '''Take damage and return amount of XP to award instigator'''

@@ -40,20 +40,24 @@ class Container(Containable):
         content_results = [x.brief_inspect(lifeform, acu, sen) for x in self.contents if x is not lifeform]
         return content_format.join([x for x in content_results if x is not ''])
 
-    def and_inspect_inside(self, glancing=False):
+    def glance_inside_from_inspect_no_preface(self):
+        return self.glance_inside(no_preface=True, from_inspect=True)
+
+    def glance_inside_from_inspect(self):
+        return self.glance_inside(from_inspect=True)
+
+    def glance_inside_no_preface(self):
+        return self.glance_inside(no_preface=True)
+
+    def glance_inside(self, no_preface=False, from_inspect=False):
         if len(self.contents) > 0 and self.contents_visible:
             # The following should be reworked to show the most visible items
             acuity = random.uniform(0, 50)
             sense = random.uniform(0, 50)
-            if glancing:
-                visible = random.choice(self.contents).on_glance(None, acuity, sense)
-                preface = self.on_glance_preface
-            else:
-                visible = random.choice(self.contents).on_glance(None, acuity, sense)
-                preface = self.on_inspect_preface
+            visible = random.choice(self.contents).on_glance(None, acuity, sense)
+            if no_preface:
+                return visible
             if visible is not '':
+                preface = self.on_inspect_preface if from_inspect else self.on_glance_prefix
                 return preface.format(visible)
         return ''
-
-    def and_glance_inside(self):
-        return self.and_inspect_inside(glancing=True)
