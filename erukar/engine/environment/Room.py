@@ -151,7 +151,7 @@ class Room(Containable):
         self_describe = self.SelfDescription
         if depth == 0:
             self_describe = ' '.join([self_describe, self.surfaces_at_a_glance(lifeform, acu, sen)])
-        if len( describable_contents) > 0:
+        if len(describable_contents) > 0:
             return self_describe + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents[:3]))
         return self_describe
 

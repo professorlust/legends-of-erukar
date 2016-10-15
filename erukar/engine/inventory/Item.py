@@ -5,7 +5,6 @@ import functools, operator
 class Item(Describable):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
     BaseName = 'base'
-    BriefDescription = "You see a {BaseName}"
     EssentialPart = 'item part'
     SupportPart = 'item part'
     Persistent = False
@@ -97,7 +96,7 @@ class Item(Describable):
 
     def on_glance(self, lifeform, acuity, sense):
         mods = [x.on_glance(lifeform,acuity,sense) for x in [self.material] + self.modifiers if x is not None]
-        pre_mutation = self.name + ' ' + Describable.erjoin([x for x in mods if x is not ''])
+        pre_mutation = '~a_or_an~ ' + self.name + ' ' + Describable.erjoin([x for x in mods if x is not ''])
         return self.mutate(pre_mutation.strip())
 
     def persistable_attributes(self):

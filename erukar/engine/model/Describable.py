@@ -102,7 +102,7 @@ class Describable(Interactible):
         return result
 
     def a_or_an(self, left, right):
-        right = right.lstrip()
+        right = right.lstrip().lower()
         vowel_sound =  (len(right) >= 1 and right[0] in ['a','e','i','o','u','y']) or (len(right) >= 2 and right[:1] in ['ho'] )
         return 'an' if vowel_sound else 'a'
 
