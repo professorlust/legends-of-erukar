@@ -20,6 +20,13 @@ class Door(Describable):
         if self.description is '':
             self.description = self.generic_description
 
+    def on_hear(self, sound, decay=1.0, instigator=None, direction=None):
+        if self.lock is not None:
+            return self.lock.on_hear(sound,decay,instigator,direction)
+
+    def alias(self):
+        return 'door'
+
     def on_inspect(self, direction):
         return self.mutate(self.description, {'direction': direction.name})
 
@@ -43,14 +50,10 @@ class Door(Describable):
             return ''
         return self.lock.describe()
 
-    def describe_lock(self, direction):
-        if self.lock.direction is direction:
-            args = {
-                'door': self.description.format(direction),
-                'lockname': self.lock.alias(),
-                'lock': self.lock.on_inspect()}
-            return '{door} Attached to the door is a {lockname}. {lock}'.format(**args)
-        return '{door} The door does not open.'.format(self.description.format(direction))
+    def describe_lock(self, direction=None):
+        if self.lock is not None:
+            return self.mutate(self.lock.description)
+        return ''
 
     def on_close(self, player):
         if self.can_close:

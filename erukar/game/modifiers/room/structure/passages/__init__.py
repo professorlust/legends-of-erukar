@@ -1,6 +1,7 @@
 from .Archway import Archway
 from .Hallway import Hallway
 from .LockedDoor import LockedDoor
+from .MagicLockedDoor import MagicLockedDoor
 from .TieredLockedDoor import TieredLockedDoor
 from .NoDoor import NoDoor
 from .PuzzleDoor import PuzzleDoor
@@ -13,6 +14,7 @@ __all__ = [
     "Archway",
     "Hallway",
     "LockedDoor",
+    "MagicLockedDoor",
     "TieredLockedDoor",
     "NoDoor",
     "PuzzleDoor",

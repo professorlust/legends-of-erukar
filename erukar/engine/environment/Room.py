@@ -173,6 +173,7 @@ class Room(Containable):
     def add_door(self, direction, door):
         '''Adds a door and sets it up with the next room appropriately'''
         self.connections[direction].door = door
+        self.contents.append(door)
         other_dir = self.invert_direction(direction)
         self.connections[direction].room.connections[other_dir].door = door
 

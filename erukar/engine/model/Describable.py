@@ -54,6 +54,13 @@ class Describable(Interactible):
         return post_context
 
     def contextual_inferrence(self, mutatable_string, optional_parameters=None):
+        '''
+        Similar to infer(), but allows for left-side and right-side contextual
+        inferrence. An example of this might be ~a_or_an~ which determines
+        whether or not the first word on the right is a vowel sound, or
+        ~maybe_pluralize~ which checks the last letter on the left and adds
+        an s if that letter is not an s, or an es in specific instances.
+        '''
         matches = re.finditer('~(\w*)(?:\|(\w*))*~', mutatable_string)
         for match_obj in matches:
             inference_method, target_name = match_obj.groups()
@@ -74,6 +81,18 @@ class Describable(Interactible):
 
 
     def infer(self, mutatable_string, optional_parameters):
+        '''
+        Used to infer string results from methods. An example of this is the transition
+        from '{alias} was scared by the {alias|enemy}!' to 'Bob was scared by the
+        electric goblin!'
+        This method looks for enclosures wrapped in braces. The item in the enclosure
+        ('alias' and 'alias|enemy' in the above example) can be a parameter or method
+        on the object which is calling mutate(). If there is a vertical bar ( | ),
+        the item on the right (again, a parameter or method on the mutate caller) is
+        used as a target for the parameter or method on the left. In the above example,
+        the {alias} instance equivocates to self.alias() and the {alias|enemy} is
+        self.enemy.alias().
+        '''
         mutation_arguments = {}
         if optional_parameters is not None:
             mutation_arguments = optional_parameters

@@ -12,6 +12,7 @@ from .Move import Move
 from .Open import Open
 from .Levelup import Levelup
 from .Quit import Quit
+from .Say import Say
 from .Stats import Stats
 from .Take import Take
 from .Unequip import Unequip
@@ -33,6 +34,7 @@ __all__ = [
     "Open",
     "Quit",
     "Stats",
+    "Say",
     "Take",
     "Unequip",
     "Use"

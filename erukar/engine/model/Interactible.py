@@ -40,3 +40,6 @@ class Interactible:
 
     def take_damage(self, damage, instigator=None):
         pass
+
+    def on_hear(self, sound, decay=1.0, instigator=None, direction=None):
+        pass
