@@ -18,7 +18,8 @@ class Brass(MaterialModifier):
 
     Inspects = [
         Observation(acuity=5, sense=0, result="The {EssentialPart} has been made of a yellow metal."),
-        Observation(acuity=10, sense=0, result="The {EssentialPart} is made of an expensive metal."),
+        Observation(acuity=5, sense=5, result="The {EssentialPart} is made of an expensive metal."),
+        Observation(acuity=10, sense=0, result="The {EssentialPart} is made with a light, polished yellow metal"),
         Observation(acuity=35, sense=0, result="The {EssentialPart} of the {BaseName} has been forged from Brass."),
         Observation(acuity=35, sense=5, result="The {EssentialPart} of the {BaseName} is light, as it has been forged polished brass."),
         Observation(acuity=35, sense=10, result="The {BaseName}'s {EssentialPart} has been forged from a resilient and lightweight brass.")

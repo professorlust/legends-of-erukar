@@ -1,4 +1,5 @@
 from erukar.game.modifiers.MaterialModifier import MaterialModifier
+from erukar.engine.model.Observation import Observation
 
 class Bronze(MaterialModifier):
     Probability = 200
@@ -6,12 +7,18 @@ class Bronze(MaterialModifier):
 
     InventoryName = 'Bronze'
     InventoryDescription = 'Increases weight by 15%; Increases durability by 10%'
-    BriefDescription = "a {BaseName} with a dark, unpolished metal {EssentialPart}"
-    AbsoluteMinimalDescription = "The {EssentialPart} is made of a yellow metal."
-    VisualMinimalDescription = "The {EssentialPart} of this {BaseName} is some sort of dark, unpolished metal which has a hint of yellow tint."
-    VisualIdealDescription = "The dark and dull-yellow {EssentialPart} of the {BaseName} has been forged from Bronze."
-    SensoryMinimalDescription = "The {BaseName} is significantly heavier than you expect."
-    SensoryIdealDescription = "The {EssentialPart} has been made with a heavy alloy. Brushing the surface, you could tell that it is made of a difficult metal to forge."
-    DetailedMinimalDescription = "The heavy {EssentialPart} is unpolished and rigid. It is made from a dark yellow metal pocked with forgeworking blemishes."
-    DetailedIdealDescription = "The Bronze {EssentialPart} is unpolished, heavy, and full of imperfections. However, its craftsmanship is top notch."
-    Adjective = "Bronze"
+
+    Glances = [
+        Observation(acuity=5, sense=0, result="with a metallic yellow {BaseName}"),
+        Observation(acuity=10, sense=0, result="with a dark, unpolished metal {EssentialPart}"),
+        Observation(acuity=10, sense=10, result="with a heavy, unpolished metallic yellow {EssentialPart}"),
+        Observation(acuity=35, sense=0, result="with a bronze {EssentialPart}")
+    ]
+
+    Inspects = [
+        Observation(acuity=5, sense=0, result="The {EssentialPart} has been made of a dark, yellow metal."),
+        Observation(acuity=5, sense=5, result="The {EssentialPart} is made with a heavy, yellow metal."),
+        Observation(acuity=10, sense=0, result="The {EssentialPart} of this {BaseName} is some sort of dark, unpolished metal which has a hint of yellow tint."),
+        Observation(acuity=35, sense=0, result="The dark and dull-yellow {EssentialPart} of the {BaseName} has been forged from Bronze."),
+        Observation(acuity=35, sense=10, result="The Bronze {EssentialPart} is unpolished, heavy, and full of imperfections. However, its craftsmanship is top notch.")
+    ]
