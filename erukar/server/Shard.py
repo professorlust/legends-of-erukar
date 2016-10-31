@@ -6,9 +6,11 @@ import erukar, threading
 import numpy as np
 
 class Shard(Manager):
+    DefaultInstance = 1
+
     def __init__(self):
         super().__init__()
-        db_pass = input('Enter the password for your database:  ')
+        db_pass = ''
         self.connector_factory = ConnectorFactory(db_pass)
         self.connector_factory.establish_connection()
         self.connector_factory.create_metadata()
@@ -16,22 +18,26 @@ class Shard(Manager):
         self.instances = []
 
     def activate(self):
-        self.instances = [InstanceInfo(erukar.server.RandomDungeonInstance)]#HubInstance, {'file_path': 'Barlen'})]
+        self.instances = [
+            InstanceInfo(erukar.server.HubInstance, {'file_path': 'Barlen'}),
+            InstanceInfo(erukar.server.RandomDungeonInstance),
+        ]
         for info in self.instances:
             gen_params = GenerationProfile(*(np.random.uniform(-1, 1) for x in range(4)))
             self.launch_dungeon_instance(info, gen_params)
 
     def subscribe(self, player):
         super().subscribe(player)
-        self.instances[0].player_list.append(player)
+        self.instances[Shard.DefaultInstance].player_list.append(player)
         self.interface.data.players.append(player)
 
     def launch_dungeon_instance(self, info, gen_params):
-        args=(self.connector_factory.create_session(),\
-              info.action_commands,\
-              info.non_action_commands,\
-              info.joins,\
-              gen_params,)
+        args=(self.connector_factory.create_session(),
+              info.action_commands,
+              info.non_action_commands,
+              info.joins,
+              gen_params,
+        )
         dungeon_thread = threading.Thread(target=info.instance.instance_running,args=args)
         dungeon_thread.daemon = True
         dungeon_thread.start()

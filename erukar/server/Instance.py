@@ -122,11 +122,11 @@ class Instance(Manager):
                 print(res)
 
         self.grab_from_turn_manager()
-        res = self.active_player.begin_turn()
-
-        #TODO: Same as above
-        if len(res) > 0:
-            print(res)
+        if self.active_player is not None:
+            res = self.active_player.begin_turn()
+            #TODO: Same as above
+            if len(res) > 0:
+                print(res)
 
     def grab_from_turn_manager(self):
         self.active_player = self.turn_manager.next()

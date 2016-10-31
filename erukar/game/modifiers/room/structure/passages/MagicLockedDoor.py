@@ -3,7 +3,7 @@ from erukar import Door, Key, EnchantedLock
 import random
 
 class MagicLockedDoor(RoomDoorModifier):
-    Probability = 5
+    Probability = 0.25
     ProbabilityFromFabrication = 0.75
 
     def __init__(self):
