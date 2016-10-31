@@ -10,26 +10,14 @@ import erukar, random
 from enum import Enum
 
 class Room(Containable):
-    class Shape(Enum):
-        Rectangle = 0
-        Cross = 1
-        Corner_NE = 2
-        Corner_NW = 3
-        Corner_SW = 4
-        Corner_SE = 5
-        T_N = 6
-        T_E = 7
-        T_S = 8
-        T_W = 9
-
     SelfDescription = "This room is fairly large."
     DecoDescription = "You see {}."
     ContainerDescription = "In the room you see {}."
 
-    def __init__(self, dungeon, coordinates=(0,0), shape=Shape.Rectangle, dimensions=(1, 1)):
+    def __init__(self, dungeon, coordinates=(0,0), shape=None, dimensions=(1, 1)):
         super().__init__([])
         self.dungeon = dungeon
-        self.shape = shape
+        self.shape = shape if shape is not None else erukar.engine.environment.roomshapes.Rectangle
         self.width, self.height = dimensions
         if self.dungeon is not None:
             self.dungeon.rooms.append(self)
@@ -196,3 +184,6 @@ class Room(Containable):
             passage = self.connections[direction]
             if passage.room is None and passage.door is None:
                 yield direction
+
+    def center(self):
+        return self.shape.center(self)

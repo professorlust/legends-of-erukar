@@ -28,3 +28,5 @@ __all__ = [
     "Room",
     "Trap",
     "Surface"]
+
+from erukar.engine.environment.roomshapes import *

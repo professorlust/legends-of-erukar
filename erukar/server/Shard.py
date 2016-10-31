@@ -6,7 +6,7 @@ import erukar, threading
 import numpy as np
 
 class Shard(Manager):
-    DefaultInstance = 1
+    DefaultInstance = 0
 
     def __init__(self):
         super().__init__()
