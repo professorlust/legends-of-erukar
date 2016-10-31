@@ -5,6 +5,9 @@ class Atherite(MaterialModifier):
     Probability = 200
     Desirability = 4.0
 
+    InventoryDescription = "A whitish alloy infused with chaotic energies; enhances random effects by 25%"
+    InventoryName = "Atherite"
+
     Glances = [
         Observation(acuity=5, sense=0, result="with a white {EssentialPart}"),
         Observation(acuity=10, sense=0, result="with a whitish {EssentialPart} which shimmers a faint blue light "),

@@ -16,5 +16,5 @@ class ClayCeiling(RoomModifier):
 
     def apply_to(self, room):
         room.ceiling = Surface()
-        ceiling.Glances = ceiling.Glances + self.Glances
-        ceiling.Inspects = ceiling.Inspects + self.Inspects
+        room.ceiling.Glances = self.Glances
+        room.ceiling.Inspects = self.Inspects
