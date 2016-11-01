@@ -19,7 +19,7 @@ class Shard(Manager):
 
     def activate(self):
         self.instances = [
-            InstanceInfo(erukar.server.HubInstance, {'file_path': 'Barlen'}),
+            InstanceInfo(erukar.server.HubInstance, {'file_path': 'Test'}),
             InstanceInfo(erukar.server.RandomDungeonInstance),
         ]
         for info in self.instances:

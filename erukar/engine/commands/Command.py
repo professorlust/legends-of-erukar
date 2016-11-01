@@ -13,14 +13,13 @@ class Command:
         self.user_specified_payload = ''
         self.arguments = {}
         self.dirtied_characters = []
+        self.indexed_items = []
         self.results = {}
 
     def payload(self):
-        if isinstance(self.context, erukar.engine.commands.Command):
-            if self.user_specified_payload.isdigit() \
-                or (self.context.indexed_items and len(self.user_specified_payload) > 1\
-                and self.user_specified_payload in self.context.indexed_items):
-                return self.context.indexed_items[self.payload]
+        if isinstance(self.context, erukar.engine.commands.CommandResult):
+            if self.user_specified_payload.isdigit() and int(self.user_specified_payload) in self.context.indexed_items:
+                return self.context.indexed_items[int(self.user_specified_payload)]
         return self.user_specified_payload
 
     def process_arguments(self):
@@ -40,17 +39,20 @@ class Command:
             self.results[uid] = []
         self.results[uid].append(result)
 
-    def succeed_if_any_results(self, msg_if_failure, indexed=None):
+    def set_indexed_items(self, items):
+        self.indexed_items = items
+
+    def succeed_if_any_results(self, msg_if_failure):
         if len(self.results) > 0:
-            return self.succeed(indexed)
-        return self.fail(msg_if_failure, indexed)
+            return self.succeed()
+        return self.fail(msg_if_failure)
 
-    def succeed(self, indexed=None):
-        return CommandResult(True, self, self.results, indexed, self.dirtied_characters)
+    def succeed(self):
+        return CommandResult(True, self, self.results, self.indexed_items, self.dirtied_characters)
 
-    def fail(self, result, indexed=None):
+    def fail(self, result):
         failure_msg = {self.sender_uid: [result]}
-        return CommandResult(False, self, failure_msg, indexed, None)
+        return CommandResult(False, self, failure_msg, self.indexed_items, None)
 
     def execute(self):
         '''Run this Command as a player'''
@@ -65,8 +67,9 @@ class Command:
         player = self.find_player()
         lifeform = self.lifeform(player)
         acuity, sense = (lifeform.calculate_stat_score(x) for x in ['acuity', 'sense'])
-        contents = set(container.contents + player.reverse_index(container))
-        return next((p for p in contents if p.matches(item_name)), None)
+        matches = [p for p in set(container.contents + player.reverse_index(container)) if p.matches(item_name)]
+        self.set_indexed_items({i+1: x for i,x in enumerate(matches)})
+        return matches
 
     def lifeform(self, player_or_node):
         if hasattr(player_or_node, 'character'):
