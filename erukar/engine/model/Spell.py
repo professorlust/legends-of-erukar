@@ -16,3 +16,6 @@ class Spell(MagicBase):
 
         for eff in self.effects:
             eff.on_cast(command, lifeform, parameters, efficacy)
+
+    def alias(self):
+        return self.name

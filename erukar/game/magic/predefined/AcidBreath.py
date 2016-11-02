@@ -7,5 +7,3 @@ class AcidBreath(Spell):
 
     def __init__(self):
         super().__init__('Acid Breath',[erukar.game.magic.effects.AcidDamage()])
-
-

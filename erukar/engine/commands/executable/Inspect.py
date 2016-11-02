@@ -1,6 +1,6 @@
 from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.model.Containable import Containable
-import random, math
+import random, math, erukar
 
 class Inspect(ActionCommand):
     not_found = "Nothing matching '{0}' was found in this room."
@@ -13,42 +13,60 @@ class Inspect(ActionCommand):
 
     def execute(self):
         player = self.find_player()
-        room = player.character.current_room
-        self.index(room, player)
-        payload = self.payload()
-        direction = self.determine_direction(payload.lower())
+        room = player.lifeform().current_room
 
-        if direction is None:
-            result = self.inspect_in_room(player, room, payload)
-        else:
+        self.acuity, self.sense = [math.floor(random.uniform(*player.lifeform().stat_random_range(x))) for x in ('acuity', 'sense')]
+
+        # Index in the player's active indexing tree
+        self.index(room, player)
+        payload, target = self.check_for_arguments()
+        if target:
+            self.set_indexed_items(self.context.indexed_items)
+            result = self.inspect_item(target, player)
+            self.append_result(self.sender_uid, result)
+            return self.succeed()
+
+        direction = self.determine_direction(payload.lower())
+        if direction:
             result = room.directional_inspect(direction, player.lifeform())
-        self.append_result(self.sender_uid, result)
-        return self.succeed()
+            self.append_result(self.sender_uid, result)
+            return self.succeed()
+
+        return self.inspect_in_room(player, room, payload)
+
+    def check_for_arguments(self):
+        payload = self.payload()
+        if isinstance(payload, erukar.engine.model.Describable):
+            return None, payload
+        return payload, None
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''
         lifeform = player.lifeform()
-        acu, sen = [math.floor(random.uniform(*lifeform.stat_random_range(x))) for x in ('acuity', 'sense')]
+        result = ''
 
-        if payload in ['', 'room']:
-            return room.on_inspect(lifeform, acu, sen)
+        if payload == 'room':
+            result = room.on_inspect(lifeform, self.acuity, self.sense)
 
-        if payload in 'flooring':
-            return room.floor.on_inspect(lifeform, acu, sen)
+        if payload == 'flooring':
+            result = room.floor.on_inspect(lifeform, self.acuity, self.sense)
 
-        if payload in 'ceiling':
-            return room.ceiling.on_inspect(lifeform, acu, sen)
+        if payload == 'ceiling':
+            result = room.ceiling.on_inspect(lifeform, self.acuity, self.sense)
 
-        item = self.find_in_room(room, payload)
-        if item is not None:
-            return self.inspect_item(item, player, acu, sen)
+        if not result:
+            item, failure_object = self.find_in_room(room, payload)
+            if failure_object:
+                return failure_object
+            result = self.inspect_item(item, player)
 
-        return Inspect.not_found.format(payload)
+        self.append_result(self.sender_uid, result)
+        return self.succeed()
 
-    def inspect_item(self, item, player, acu, sen):
+    def inspect_item(self, item, player):
         '''Inspect an item and index it if it's a container'''
         self.index(item, player)
-        return item.on_inspect(player, acu, sen)
+        return item.on_inspect(player, self.acuity, self.sense)
 
     def index(self, container, player):
         '''Indexes all items in a container for the PlayerNode's indexer'''

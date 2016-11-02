@@ -4,6 +4,8 @@ import erukar
 
 class Command:
     OverridesUntilSuccess = False
+    not_found = "No object matching '{}' was found in this room."
+    MultipleOptions = "Multiple matches for '{}' were found, please specify with a number between 1 and {}.\n\n{}"
 
     def __init__(self):
         '''These parameters are assigned after instantiation'''
@@ -65,11 +67,32 @@ class Command:
     def find_in_room(self, container, item_name):
         '''Attempt to find an item in a room's contents'''
         player = self.find_player()
-        lifeform = self.lifeform(player)
-        acuity, sense = (lifeform.calculate_stat_score(x) for x in ['acuity', 'sense'])
         matches = [p for p in set(container.contents + player.reverse_index(container)) if p.matches(item_name)]
+        return self.post_process_search(matches, item_name)
+
+    def post_process_search(self, matches, payload):
+        '''
+        Handles edge cases on searching, sets indexed items for contextual  results.
+        If there are 0 results, it fails the command out. If there are >1 results, it fails
+        and requests further clarification. If there are exactly 1 results, it returns
+        that as the target.
+
+        Output: direct_match_if_not_failure, failure_object
+        '''
         self.set_indexed_items({i+1: x for i,x in enumerate(matches)})
-        return matches
+        if len(matches) == 0:
+            return None, self.fail(self.not_found.format(payload))
+
+        # If there's more than one, we must ask for clarification
+        if len(matches) > 1:
+            match_list = self.enumerate_options(matches)
+            return None, self.fail(self.MultipleOptions.format(payload, len(matches), match_list))
+
+        # otherwise there is exactly one and that's what we want
+        return matches[0], None
+
+    def enumerate_options(self, targets):
+        return '\n'.join(['{:3}. {}'.format(i+1, x.alias()) for i,x in enumerate(targets)])
 
     def lifeform(self, player_or_node):
         if hasattr(player_or_node, 'character'):
@@ -78,10 +101,12 @@ class Command:
 
     def find_in_inventory(self, player, item_name):
         '''Attempt to find an item in a player's inventory'''
-        return next(self.inventory_find(player, item_name), None)
+        matches = list(self.inventory_find(player, item_name))
+        return self.post_process_search(matches, item_name)
 
-    def find_spell(self, lifeform, spell_name):
-        return next(self.spell_find(lifeform, spell_name), None)
+    def find_spell(self, player, spell_name):
+        matches = list(self.spell_find(player, spell_name))
+        return self.post_process_search(matches, spell_name)
 
     def find_all_in_inventory(self, player, item_name):
         return list(self.inventory_find(player, item_name))

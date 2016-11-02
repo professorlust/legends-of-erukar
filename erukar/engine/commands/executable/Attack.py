@@ -6,46 +6,32 @@ from erukar.engine.model.Damage import Damage
 import erukar, random, math
 
 class Attack(ActionCommand):
-    not_found = "No object matching '{}' was found in this room."
     unsuccessful = "{subject}'s attack of {roll} misses {target}."
     UnableToAttackInDirection = "You are unable to perform a directional attack."
     UnableToAttackInRoom = "You are unable to perform an attack."
-    MultipleOptions = "Multiple matches for '{}' were found, please specify with a number between 1 and {}.\n\n{}"
 
     aliases = ['attack']
 
     def execute(self):
         self.character = self.find_player().lifeform()
-        payload = self.check_for_arguments()
+        payload, target = self.check_for_arguments()
 
-        # The payload is a reference; infer that it's in the room and we can attack it
-        if isinstance(payload, erukar.engine.model.Describable):
-            target = payload
-        else:
+        # If the target is None, it means that the payload is a string
+        if not target:
+
             # Determine if this is directional attack
             direction = self.determine_direction(payload.lower())
             if direction is not None:
                 return self.do_directional_attacks(direction)
 
             # Get the number of items matching the payload
-            targets = self.find_in_room(self.character.current_room, payload)
-            if len(targets) == 0:
-                return self.fail(self.not_found.format(payload))
-
-            # If there's more than one, we must ask for clarification
-            if len(targets) > 1:
-                target_list = self.enumerate_options(targets)
-                return self.fail(self.MultipleOptions.format(payload, len(targets), target_list))
-
-            # otherwise there is exactly one and that's what we want
-            target = targets[0]
+            target, failure = self.find_in_room(self.character.current_room, payload)
+            if failure:
+                return failure
 
         if target is None:
             return self.fail(Attack.not_found.format(payload))
         return self.do_attack(target)
-
-    def enumerate_options(self, targets):
-        return '\n'.join(['{:3}. {}'.format(i+1, x.alias()) for i,x in enumerate(targets)])
 
     def check_for_arguments(self):
         '''
@@ -60,19 +46,19 @@ class Attack(ActionCommand):
         payload = self.payload()
         # If this is an instance, then we want that and only that
         if isinstance(payload, erukar.engine.model.Describable):
-            return payload
+            return None, payload
 
         for r in ['main ', 'primary ', 'right ']:
             if payload[:len(r)] == r:
                 self.weapons = [getattr(self.character, 'right')]
-                return payload[:len(r)]
+                return payload[:len(r)], None
 
         for r in ['off ', 'offhand ', 'left ']:
             if payload[:len(r)] == r:
                 self.weapons = [getattr(self.character, 'left')]
-                return payload[:len(r)]
+                return payload[:len(r)], None
 
-        return payload
+        return payload, None
 
     def can_attack_with(self, weapon):
         return weapon is None or isinstance(weapon, erukar.engine.inventory.Weapon)
@@ -93,8 +79,6 @@ class Attack(ActionCommand):
 
     def do_attack(self, target):
         '''Attack an enemy within the current room'''
-        print(target)
-
         # Attack with each weapon, keeping track of the penalties for dual wielding each time
         dual_wielding_penalty = 1.0
         for attacking_slot in self.character.attack_slots:

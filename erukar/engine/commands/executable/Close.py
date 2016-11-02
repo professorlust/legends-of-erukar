@@ -1,5 +1,6 @@
 from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Door import Door
+import erukar
 
 class Close(ActionCommand):
     nesw_no_door = 'There is no door in this direction to close'
@@ -10,7 +11,7 @@ class Close(ActionCommand):
 
     def execute(self):
         player = self.find_player()
-        payload = self.payload()
+        payload = self.check_for_arguments()
         room = player.character.current_room
         direction = self.determine_direction(payload.lower())
 
@@ -21,9 +22,18 @@ class Close(ActionCommand):
         # Otherwise we need to find in the room
         return self.handle_contents(room, player, payload)
 
+    def check_for_arguments(self):
+        payload = self.payload()
+        if isinstance(payload, erukar.engine.model.Interactible):
+            return None, payload
+        return payload, None
+
     def handle_contents(self, room, player, item_name):
         '''Try to find the item in the room, then run on_close on it if so'''
-        item = self.find_in_room(room, item_name)
+        item, failure_oject = self.find_in_room(room, item_name)
+        if failure_object:
+            return failure_object
+
         if item is not None:
             # We found it, so run on_close on it
             self.append_result(self.sender_uid, item.on_close(player))
