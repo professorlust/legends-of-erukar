@@ -7,19 +7,27 @@ class Equip(ActionCommand):
     not_found = "Unable to find '{0}' in inventory"
     cannot_equip = "'{}' was found but cannot be equipped"
 
+    equipment_location_codes = {
+        'off': 'left',
+        'offhand': 'left',
+        'main': 'right',
+        'primary': 'right'
+    }
     aliases = ['equip']
+    TrackedParameters = ['equip_location', 'item']
 
     def execute(self):
         player = self.find_player()
         if player is None: return
         lifeform = player.lifeform()
 
-        payload = self.check_for_arguments()
+        payload, target = self.check_for_arguments()
 
-        # Get the item from our inventory if it exists
-        item = self.find_in_inventory(player, payload)
-        if item is None:
-            return self.fail(Equip.not_found.format(payload))
+        if not target:
+            # Get the item from our inventory if it exists
+            item, failure_object = self.find_in_inventory(player, payload)
+            if failure_object:
+                return failure_object
 
         # Check to see if the item's type exists as a field on the character
         item_type = self.determine_type(item, lifeform)
@@ -33,30 +41,30 @@ class Equip(ActionCommand):
 
         return self.fail(Equip.cannot_equip.format(item.describe()))
 
-    def determine_type(self, item, lifeform):
-        '''
-        This determines what equipment slot should be evaluated; prior to this, it
-        is assumed that check_for_arguments has been called to determine which hand
-        to assign to.
-        '''
-        if item.belongs_in_hand(lifeform):
-            return self.arguments['hand']
-        if len(item.EquipmentLocations) > 0:
-            return item.EquipmentLocations[0]
-        return 'error_no_equip_slot'
-
     def check_for_arguments(self):
         payload = self.payload()
-        args = payload.split(' ', 1)
-        self.arguments['hand'] = 'right'
-        if len(args) <= 1:
-            return args[0]
 
-        if args[0] in ['left', 'off', 'offhand']:
-            self.arguments['hand'] = 'left'
-            return args[1]
+        # Check to see if we are disambiguating
+        if self.context.requires_disambiguation:
+            self.context.resolve_disambiguation(payload)
 
-        if args[0] in ['right', 'main', 'primary']:
-            return args[1]
+            # Now copy all of the tracked Params into this command
+            self.context.copy_tracked_parameters(self)
 
-        return payload
+            # Check to make sure all tracked parameters are set
+            return self.fail_if_requires_disambiguation()
+
+        location_designation, secondary_payload = payload.split(' ', 1)
+        location = self.decode_location(location_designation)
+        if location:
+            self.equip_location = location
+
+    def decode_location(self, location_designation):
+        lifeform = self.find_player().lifeform()
+        # Check for direct matches
+        if location_designation in lifeform.equipment_types:
+            return location_designation
+        # Check for aliases
+        if location_designation in self.equipment_location_codes:
+            return self.equipment_location_codes[location_designation]
+        return 'err_no_slot'

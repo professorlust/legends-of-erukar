@@ -9,16 +9,17 @@ class Drop(ActionCommand):
 
     def execute(self):
         player = self.find_player()
-        payload = self.payload()
+        payload, target = self.check_for_arguments()
         room = player.character.current_room
 
-        item = self.find_in_inventory(player, payload)
-        if item is None:
-            return self.fail(Drop.no_item.format(payload))
+        if not target:
+            target, failure_object = self.find_in_inventory(player, payload)
+            if failure_object:
+                return failure_object
 
         # We have the item, so actually remove it
-        self.move_from_inventory(item, player.lifeform(), room)
-        drop_result = Drop.dropped.format(item.alias())
+        self.move_from_inventory(target, player.lifeform(), room)
+        drop_result = Drop.dropped.format(target.alias())
         self.append_result(self.sender_uid, drop_result)
         self.succeed()
 

@@ -30,6 +30,7 @@ class Stats(Command):
 
         payload = self.payload()
         if payload:
+            # They want details on a specific attribute
             wanted = next((x for x in self.attribute_types if payload in x), None)
             if wanted is not None:
                 self.append_result(self.sender_uid, self.give_details(wanted, lifeform))

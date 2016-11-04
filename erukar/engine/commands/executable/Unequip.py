@@ -22,11 +22,11 @@ class Unequip(ActionCommand):
             results = '{} unequipped from {} successfully.'.format(item.describe(), item_type)
             self.dirty(lifeform)
             self.append_result(self.sender_uid, results)
-            return self.succeed(indexed=lifeform.inventory)
+            return self.succeed()
 
         # Nothing was found
         results = Unequip.not_found.format(payload)
-        return self.fail(results, lifeform.inventory)
+        return self.fail(results)
 
     def determine_type(self, lifeform, payload):
         if payload in Lifeform.equipment_types:

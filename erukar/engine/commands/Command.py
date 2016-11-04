@@ -15,7 +15,7 @@ class Command:
         self.user_specified_payload = ''
         self.arguments = {}
         self.dirtied_characters = []
-        self.indexed_items = []
+        self.indexed_items = {}
         self.results = {}
 
     def payload(self):
@@ -24,8 +24,11 @@ class Command:
                 return self.context.indexed_items[int(self.user_specified_payload)]
         return self.user_specified_payload
 
-    def process_arguments(self):
-        pass
+    def check_for_arguments(self):
+        payload = self.payload()
+        if isinstance(payload, erukar.engine.model.Interactible):
+            return None, payload
+        return payload, None
 
     def clean(self, lifeform):
         if lifeform in self.dirtied_characters:
@@ -41,8 +44,10 @@ class Command:
             self.results[uid] = []
         self.results[uid].append(result)
 
-    def set_indexed_items(self, items):
-        self.indexed_items = items
+    def add_items_to_context(self, items):
+        pre_insertion_length = len(self.indexed_items)+1
+        for index, item in enumerate(items):
+            self.indexed_items[pre_insertion_length + index] = item
 
     def succeed_if_any_results(self, msg_if_failure):
         if len(self.results) > 0:
@@ -50,11 +55,22 @@ class Command:
         return self.fail(msg_if_failure)
 
     def succeed(self):
-        return CommandResult(True, self, self.results, self.indexed_items, self.dirtied_characters)
+        result = CommandResult(True, self, self.results, self.indexed_items, self.dirtied_characters)
+        self.sever()
+        return result
 
     def fail(self, result):
         failure_msg = {self.sender_uid: [result]}
-        return CommandResult(False, self, failure_msg, self.indexed_items, None)
+        result = CommandResult(False, self, failure_msg, self.indexed_items, None)
+        self.sever()
+        return result
+
+    def sever(self):
+        self.indexed_items = None
+        self.results = None
+        self.data = None
+        self.arguments = None
+        self.context = None
 
     def execute(self):
         '''Run this Command as a player'''
@@ -79,7 +95,7 @@ class Command:
 
         Output: direct_match_if_not_failure, failure_object
         '''
-        self.set_indexed_items({i+1: x for i,x in enumerate(matches)})
+        self.add_items_to_context(matches)
         if len(matches) == 0:
             return None, self.fail(self.not_found.format(payload))
 
@@ -132,3 +148,12 @@ class Command:
 
         return next((x['direction'] for x in couples \
             if any([k == text for k in x['keywords']])), None)
+
+    def fail_if_requires_disambiguation(self):
+        for tracked in self.TrackedParameters:
+            tracked_val = getattr(self, tracked)
+            if not tracked_val:
+                failure = self.fail()
+                failure.disambiguating_parameter = tracked
+                failure.requires_disambiguation = True
+                return failure

@@ -10,15 +10,19 @@ class Take(ActionCommand):
 
     def execute(self):
         player = self.find_player()
-        payload = self.payload()
-        room = player.character.current_room
         if player is None: return
 
-        # Try to find the item in the room
-        item = self.find_in_room(room, payload)
-        if item is not None:
-            self.append_result(self.sender_uid, self.move_to_inventory(item, player, room))
-            return self.succeed()
+        payload, target = self.check_for_arguments()
+        room = player.character.current_room
+
+        if not target:
+            # Try to find the item in the room
+            target, failure_object = self.find_in_room(room, payload)
+            if failure_object:
+                return failure_object
+
+        self.append_result(self.sender_uid, self.move_to_inventory(target, player, room))
+        return self.succeed()
 
         # Send a failure message
         return self.fail(Take.failure.format(payload))

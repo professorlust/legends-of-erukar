@@ -21,7 +21,7 @@ class Inspect(ActionCommand):
         self.index(room, player)
         payload, target = self.check_for_arguments()
         if target:
-            self.set_indexed_items(self.context.indexed_items)
+            self.add_items_to_context(self.context.indexed_items.values())
             result = self.inspect_item(target, player)
             self.append_result(self.sender_uid, result)
             return self.succeed()
@@ -33,12 +33,6 @@ class Inspect(ActionCommand):
             return self.succeed()
 
         return self.inspect_in_room(player, room, payload)
-
-    def check_for_arguments(self):
-        payload = self.payload()
-        if isinstance(payload, erukar.engine.model.Describable):
-            return None, payload
-        return payload, None
 
     def inspect_in_room(self, player, room, payload):
         '''Used if the player didn't specify a direction'''
