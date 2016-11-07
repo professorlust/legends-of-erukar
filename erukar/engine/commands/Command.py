@@ -6,6 +6,7 @@ class Command:
     OverridesUntilSuccess = False
     not_found = "No object matching '{}' was found in this room."
     MultipleOptions = "Multiple matches for '{}' were found, please specify with a number between 1 and {}.\n\n{}"
+    TrackedParameters = []
 
     def __init__(self):
         '''These parameters are assigned after instantiation'''
@@ -18,17 +19,24 @@ class Command:
         self.indexed_items = {}
         self.results = {}
 
-    def payload(self):
-        if isinstance(self.context, erukar.engine.commands.CommandResult):
-            if self.user_specified_payload.isdigit() and int(self.user_specified_payload) in self.context.indexed_items:
-                return self.context.indexed_items[int(self.user_specified_payload)]
-        return self.user_specified_payload
-
     def check_for_arguments(self):
-        payload = self.payload()
-        if isinstance(payload, erukar.engine.model.Interactible):
-            return None, payload
-        return payload, None
+        # Copy all of the tracked Params into this command
+        payload = self.user_specified_payload
+        if self.context and self.context.requires_disambiguation and payload.isdigit():
+            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)])
+
+        for param_name in self.TrackedParameters:
+            method_name = 'resolve_{}'.format(param_name)
+            actual_method = getattr(self, method_name)
+            failed = actual_method(payload)
+            if failed: return failed
+
+        # Check to make sure all tracked parameters are set
+        return self.fail_if_requires_disambiguation()
+
+    def process_input_payload(self, payload):
+        '''Processes an input string and sets variables accordingly'''
+        return
 
     def clean(self, lifeform):
         if lifeform in self.dirtied_characters:
@@ -86,7 +94,7 @@ class Command:
         matches = [p for p in set(container.contents + player.reverse_index(container)) if p.matches(item_name)]
         return self.post_process_search(matches, item_name)
 
-    def post_process_search(self, matches, payload):
+    def post_process_search(self, matches, payload, field_name):
         '''
         Handles edge cases on searching, sets indexed items for contextual  results.
         If there are 0 results, it fails the command out. If there are >1 results, it fails
@@ -97,28 +105,36 @@ class Command:
         '''
         self.add_items_to_context(matches)
         if len(matches) == 0:
-            return None, self.fail(self.not_found.format(payload))
+            return self.fail(self.not_found.format(payload))
 
         # If there's more than one, we must ask for clarification
         if len(matches) > 1:
             match_list = self.enumerate_options(matches)
-            return None, self.fail(self.MultipleOptions.format(payload, len(matches), match_list))
+            failure = self.fail(self.MultipleOptions.format(payload, len(matches), match_list))
+            failure.disambiguating_parameter = field_name
+            failure.requires_disambiguation = True
+            return failure
 
-        # otherwise there is exactly one and that's what we want
-        return matches[0], None
+        setattr(self, field_name, matches[0])
+
 
     def enumerate_options(self, targets):
-        return '\n'.join(['{:3}. {}'.format(i+1, x.alias()) for i,x in enumerate(targets)])
+        return '\n'.join(['{:3}. {}'.format(i+1, self.readable(x)) for i,x in enumerate(targets)])
+
+    def readable(self, x):
+        if hasattr(x, 'alias'):
+            return x.alias()
+        return x
 
     def lifeform(self, player_or_node):
         if hasattr(player_or_node, 'character'):
             return player_or_node.character
         return player_or_node
 
-    def find_in_inventory(self, player, item_name):
+    def find_in_inventory(self, player, item_name, field_name):
         '''Attempt to find an item in a player's inventory'''
         matches = list(self.inventory_find(player, item_name))
-        return self.post_process_search(matches, item_name)
+        return self.post_process_search(matches, item_name, field_name)
 
     def find_spell(self, player, spell_name):
         matches = list(self.spell_find(player, spell_name))
@@ -151,9 +167,9 @@ class Command:
 
     def fail_if_requires_disambiguation(self):
         for tracked in self.TrackedParameters:
-            tracked_val = getattr(self, tracked)
+            tracked_val = getattr(self, tracked, None)
             if not tracked_val:
-                failure = self.fail()
+                failure = self.fail('Missing parameter {}'.format(tracked))
                 failure.disambiguating_parameter = tracked
                 failure.requires_disambiguation = True
                 return failure

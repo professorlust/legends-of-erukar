@@ -14,50 +14,76 @@ class Equip(ActionCommand):
         'primary': 'right'
     }
     aliases = ['equip']
-    TrackedParameters = ['equip_location', 'item']
+    TrackedParameters = ['item','equip_location']
 
     def execute(self):
         player = self.find_player()
         if player is None: return
         lifeform = player.lifeform()
 
-        payload, target = self.check_for_arguments()
-
-        if not target:
-            # Get the item from our inventory if it exists
-            item, failure_object = self.find_in_inventory(player, payload)
-            if failure_object:
-                return failure_object
+        failure = self.check_for_arguments()
+        if failure:
+            return failure
 
         # Check to see if the item's type exists as a field on the character
-        item_type = self.determine_type(item, lifeform)
-        if hasattr(lifeform, item_type):
-            setattr(lifeform, item_type, item)
-            item.on_equip(lifeform)
+        if hasattr(lifeform, self.equip_location):
+            setattr(lifeform, self.equip_location, self.item)
+            self.item.on_equip(lifeform)
             self.dirty(lifeform)
-            result = '{} equipped as {} successfully.'.format(item.describe(), item_type)
+            result = '{} equipped as {} successfully.'.format(self.item.describe(), self.equip_location)
             self.append_result(self.sender_uid, result)
             return self.succeed()
 
-        return self.fail(Equip.cannot_equip.format(item.describe()))
+        return self.fail(Equip.cannot_equip.format(self.item.describe()))
 
-    def check_for_arguments(self):
-        payload = self.payload()
+    def resolve_item(self, opt_payload=''):
+        player = self.find_player().lifeform()
+        self.item = self.context.item if self.context else None
+        if self.item:
+            return
 
-        # Check to see if we are disambiguating
-        if self.context.requires_disambiguation:
-            self.context.resolve_disambiguation(payload)
+        if opt_payload:
+            payload = opt_payload.split(' ', 1)
+            if len(payload) > 1:
+                first_arg_is_valid_location = not self.resolve_equip_location(payload[0])
+                if first_arg_is_valid_location:
+                    payload.pop(0)
 
-            # Now copy all of the tracked Params into this command
-            self.context.copy_tracked_parameters(self)
+        return self.find_in_inventory(player, payload[0], 'item')
 
-            # Check to make sure all tracked parameters are set
-            return self.fail_if_requires_disambiguation()
+    def resolve_equip_location(self, opt_payload=''):
+        self.equip_location = self.context.equip_location if self.context else None
+        if self.equip_location:
+            return
 
-        location_designation, secondary_payload = payload.split(' ', 1)
-        location = self.decode_location(location_designation)
-        if location:
-            self.equip_location = location
+        if self.item:
+            return self.post_process_search(self.item.EquipmentLocations, 'Equipment Location', 'equip_location')
+
+        if opt_payload:
+            decoded = self.decode_location(opt_payload)
+            if decoded:
+                self.equip_location = decoded
+                return
+
+        return self.fail('Nothing can be done for equip_location')
+
+    def process_input_payload(self, payload):
+        '''Figure out the location and inventory type'''
+        print('processing input payload')
+        player = self.find_player().lifeform()
+        split_parameters = payload.split(' ', 1)
+
+        # Try to find the location via decoding on the first split if it exists... otherwise ignore
+        self.equip_location = self.decode_location(split_parameters[0]) if len(split_parameters) > 1 else ''
+
+        # If location was not the first parameter, the whole payload represents the item alias
+        item_name = split_parameters[1] if self.equip_location else payload
+
+        # Now try to find the item in the player's inventory
+        failure = self.find_in_inventory(player, item_name, 'item')
+        if failure: return failure
+
+        # If we still haven't found the location, grab it from the item
 
     def decode_location(self, location_designation):
         lifeform = self.find_player().lifeform()
@@ -67,4 +93,4 @@ class Equip(ActionCommand):
         # Check for aliases
         if location_designation in self.equipment_location_codes:
             return self.equipment_location_codes[location_designation]
-        return 'err_no_slot'
+        return
