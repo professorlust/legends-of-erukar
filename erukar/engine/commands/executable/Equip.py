@@ -83,9 +83,8 @@ class Equip(ActionCommand):
         failure = self.find_in_inventory(player, item_name, 'item')
         if failure: return failure
 
-        # If we still haven't found the location, grab it from the item
-
     def decode_location(self, location_designation):
+        '''Attempt to find the location, first by matching, then by aliasing'''
         lifeform = self.find_player().lifeform()
         # Check for direct matches
         if location_designation in lifeform.equipment_types:
