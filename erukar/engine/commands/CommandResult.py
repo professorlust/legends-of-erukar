@@ -30,3 +30,6 @@ class CommandResult:
         if uid in self.results:
             return self.results[uid]
         return []
+
+    def should_resolve(self, for_command):
+        return not (self.success or not self.context or isinstance(for_command, type(self))) 

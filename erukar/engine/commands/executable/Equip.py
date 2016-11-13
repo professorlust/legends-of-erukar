@@ -38,13 +38,21 @@ class Equip(ActionCommand):
 
     def resolve_item(self, opt_payload=''):
         player = self.find_player().lifeform()
-        self.item = self.context.item if self.context else None
-        if self.item:
-            return
 
+        # If this is on the context, grab it and return
+        if self.context and self.context.should_resolve(self):
+            self.item = getattr(self.context, 'item')
+
+        # If we have the parameter and it's not nully, assert that we're done
+        if hasattr(self, 'item') and self.item: return
+
+        # Start looking at the payload for the item
+        payload = [opt_payload]
         if opt_payload:
+            # check to see if the first word is a location specification
             payload = opt_payload.split(' ', 1)
             if len(payload) > 1:
+                # Yes, it is; pop the word and proceed
                 first_arg_is_valid_location = not self.resolve_equip_location(payload[0])
                 if first_arg_is_valid_location:
                     payload.pop(0)
@@ -52,11 +60,13 @@ class Equip(ActionCommand):
         return self.find_in_inventory(player, payload[0], 'item')
 
     def resolve_equip_location(self, opt_payload=''):
-        self.equip_location = self.context.equip_location if self.context else None
-        if self.equip_location:
+        if self.context and self.context.should_resolve(self):
+            self.equip_location = getattr(self.context, 'equip_location')
+
+        if hasattr(self, 'equip_location') and self.equip_location:
             return
 
-        if self.item:
+        if hasattr(self, 'item') and self.item:
             return self.post_process_search(self.item.EquipmentLocations, 'Equipment Location', 'equip_location')
 
         if opt_payload:

@@ -54,8 +54,8 @@ class Command:
 
     def add_items_to_context(self, items):
         pre_insertion_length = len(self.indexed_items)+1
-        for index, item in enumerate(items):
-            self.indexed_items[pre_insertion_length + index] = item
+        for index, alias in enumerate(items):
+            self.indexed_items[pre_insertion_length + index] = items[alias]
 
     def succeed_if_any_results(self, msg_if_failure):
         if len(self.results) > 0:
@@ -88,10 +88,21 @@ class Command:
         '''Attempt to find a player in the data access component'''
         return self.data.find_player(self.sender_uid)
 
-    def find_in_room(self, container, item_name):
+    def find_in_target(self, payload, target, for_field_name, additionals=None):
+        '''Attempts to find something matching a payload in a super set of
+        target.contents, additionals, and self.player.reverse_index(target)'''
+        player = self.find_player()
+        full_map = additionals if additionals else {}
+        target_contents_map = {x.alias(): x for x in set(target.contents + player.reverse_index(target))}
+        full_map.update(target_contents_map)
+        matches = {alias: full_map[alias] for alias in full_map if payload in alias}
+        return self.post_process_search(matches, payload, for_field_name)
+        
+    def find_in_room(self, container, item_name, additionals=None):
         '''Attempt to find an item in a room's contents'''
         player = self.find_player()
-        matches = [p for p in set(container.contents + player.reverse_index(container)) if p.matches(item_name)]
+        possible_match_set = container.contents + player.reverse_index(container) + (additionals if additionals else [])
+        matches = [p for p in set(possible_match_set) if (p in item_name if isinstance(p, str) else p.matches(item_name))]
         return self.post_process_search(matches, item_name)
 
     def post_process_search(self, matches, payload, field_name):
@@ -115,7 +126,8 @@ class Command:
             failure.requires_disambiguation = True
             return failure
 
-        setattr(self, field_name, matches[0])
+        print(matches)
+        setattr(self, field_name, next(iter(matches.values())))
 
 
     def enumerate_options(self, targets):
