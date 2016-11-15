@@ -51,6 +51,10 @@ class Inspect(ActionCommand):
             self.target = direction
             return
 
+        if opt_payload is '':
+            self.target = self.room
+            return
+
         additionals = {
             'room': self.room,
             'floor': self.room.floor,
