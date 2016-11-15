@@ -26,7 +26,8 @@ class ActionCommand(Command):
         # Calculate the actual damage through mitigation and deflection
         for deflected in Damage.deflections(character, enemy, damages):
             self.append_result(self.sender_uid, self.Deflected.format(**args))
-            self.append_result(enemy.uid, self.Deflected.format(**args))
+            if hasattr(enemy, 'uid'):
+                self.append_result(enemy.uid, self.Deflected.format(**args))
 
         actuals = list(Damage.actual_damage_values(character, enemy, weapon, damages))
 

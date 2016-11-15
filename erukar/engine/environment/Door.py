@@ -1,6 +1,6 @@
-from erukar.engine.model.Describable import Describable
+from erukar.engine.model.RpgEntity import RpgEntity 
 
-class Door(Describable):
+class Door(RpgEntity):
     close_success = 'You have successfully closed the door'
     open_success = 'You have successfully opened the door'
     already_closed = 'The door is already closed'

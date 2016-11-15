@@ -95,7 +95,7 @@ class Command:
         full_map = additionals if additionals else {}
         target_contents_map = {x.alias(): x for x in set(target.contents + player.reverse_index(target))}
         full_map.update(target_contents_map)
-        matches = {alias: full_map[alias] for alias in full_map if payload in alias}
+        matches = {alias: full_map[alias] for alias in full_map if payload.lower() in alias.lower()}
         return self.post_process_search(matches, payload, for_field_name)
         
     def find_in_room(self, container, item_name, additionals=None):

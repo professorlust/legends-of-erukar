@@ -46,5 +46,5 @@ class Damage:
     @staticmethod
     def deflections(instigator, enemy, damages):
         for damage_amount, damage_type in damages:
-            if enemy.deflection(damage_type) >= damage_amount:
+            if hasattr(enemy, 'deflection') and enemy.deflection(damage_type) >= damage_amount:
                 yield damage_type

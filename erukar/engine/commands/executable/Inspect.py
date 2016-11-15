@@ -23,17 +23,20 @@ class Inspect(ActionCommand):
         failure = self.check_for_arguments()
         if failure: return failure
 
-        result = self.target.on_inspect(player.lifeform(), self.acuity, self.sense)
+        # Check to see if we're directionally inspecting
+        if isinstance(self.target, erukar.engine.model.Direction):
+            return self.directional_inspect()
+        return self.item_inspect()
+
+    def item_inspect(self):
+        result = self.target.on_inspect(self.find_player().lifeform(), self.acuity, self.sense)
         self.append_result(self.sender_uid, result)
         return self.succeed()
 
-#       direction = self.determine_direction(payload.lower())
-#       if direction:
-#           result = room.directional_inspect(direction, player.lifeform())
-#           self.append_result(self.sender_uid, result)
-#           return self.succeed()
-#
-#       return self.inspect_in_room(player, room, payload)
+    def directional_inspect(self):
+        result = self.room.directional_inspect(self.target, self.find_player().lifeform())
+        self.append_result(self.sender_uid, result)
+        return self.succeed()
 
     def resolve_target(self, opt_payload=''):
         # If this is on the context, grab it and return
@@ -42,6 +45,11 @@ class Inspect(ActionCommand):
 
         # If we have the parameter and it's not nully, assert that we're done
         if hasattr(self, 'target') and self.target: return
+
+        direction = self.determine_direction(opt_payload.lower())
+        if direction:
+            self.target = direction
+            return
 
         additionals = {
             'room': self.room,

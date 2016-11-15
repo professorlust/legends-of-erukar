@@ -4,17 +4,24 @@ class CommandResult:
         self.context = context
         self.results = results
         self.success = success
-        self.indexed_items = indexed if indexed else []
+        self.get_indexed_items(indexed)
         self.dirtied_characters = dirtied if dirtied else []
         self.disambiguating_parameter = ''
         self.requires_disambiguation = False
         self.copy_tracked_parameters_from(context)
 
+    def get_indexed_items(self, indexed):
+        self.indexed_items = []
+        if indexed:
+            self.indexed_items = indexed
+            return
+        if self.context:
+            self.indexed_items = self.context.indexed_items
+
     def resolve_disambiguation(self, parameter):
         '''Used when the new command has a payload that disambiguates'''
         if not self.requires_disambiguation or not parameter:
             return None
-        print(self.disambiguating_parameter)
         setattr(self, self.disambiguating_parameter, parameter)
 
     def copy_tracked_parameters(self, copy_to):
