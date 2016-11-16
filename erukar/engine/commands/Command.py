@@ -97,6 +97,10 @@ class Command:
         full_map.update(target_contents_map)
         matches = {alias: full_map[alias] for alias in full_map if payload.lower() in alias.lower()}
         return self.post_process_search(matches, payload, for_field_name)
+
+    def find_in_dictionary(self, payload, dictionary, for_field_name):
+        matches = {alias: dictionary[alias] for alias in dictionary if payload.lower() in alias.lower()}
+        return self.post_process_search(matches, payload, for_field_name)
         
     def find_in_room(self, container, item_name, additionals=None):
         '''Attempt to find an item in a room's contents'''
@@ -185,3 +189,20 @@ class Command:
                 failure.disambiguating_parameter = tracked
                 failure.requires_disambiguation = True
                 return failure
+
+    def resolve_direction(self, opt_payload=''):
+        '''If we're tracking direction, it should default here'''
+        # If this is on the context, grab it and return
+        if self.context and self.context.should_resolve(self):
+            self.direction = getattr(self.context, 'direction')
+
+        # If we have the parameter and it's not nully, assert that we're done
+        if hasattr(self, 'direction') and self.direction: return
+        directions = {
+            'North': Direction.North,
+            'East': Direction.East,
+            'South': Direction.South,
+            'West': Direction.West
+        }
+
+        return self.find_in_dictionary(opt_payload, directions, 'direction')

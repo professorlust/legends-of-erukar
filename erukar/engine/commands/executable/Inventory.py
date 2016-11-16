@@ -11,7 +11,7 @@ class Inventory(Command):
     def execute(self, *_):
         char = self.find_player().character
         # All of the Other items
-        items = '\n'.join(['{:2}. {}'.format(i, char.inventory[i].on_inventory())\
+        items = '\n'.join(['{:2}. {}'.format(i+1, char.inventory[i].on_inventory())\
             for i in range(len(char.inventory))])
         equipment = self.equipment(char)
         self.append_result(self.sender_uid, self.header.format(equipment, items))

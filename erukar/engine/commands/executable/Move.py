@@ -1,5 +1,6 @@
 from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.ActionCommand import ActionCommand
+from erukar.engine.model.Direction import Direction
 from erukar.engine.environment import *
 import erukar
 
@@ -13,10 +14,13 @@ class Move(ActionCommand):
     TrackedParameters = ['direction']
 
     def execute(self):
-        player = self.find_player().lifeform()
         failure = self.check_for_arguments()
         if failure: return failure
 
+        return self.attempt_move()
+
+    def attempt_move(self):
+        player = self.find_player().lifeform()
         in_direction = player.current_room.get_in_direction(self.direction)
 
         # determine if the door prevents movement
@@ -36,15 +40,18 @@ class Move(ActionCommand):
     def resolve_direction(self, opt_payload=''):
         # If this is on the context, grab it and return
         if self.context and self.context.should_resolve(self):
-            self.target = getattr(self.context, 'target')
+            self.direction = getattr(self.context, 'direction')
 
         # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'target') and self.target: return
+        if hasattr(self, 'direction') and self.direction: return
+        directions = {
+            'North': Direction.North,
+            'East': Direction.East,
+            'South': Direction.South,
+            'West': Direction.West
+        }
 
-        self.direction = self.determine_direction(opt_payload.lower())
-        if self.direction:
-            return
-        return self.fail('"{}" is not an acceptable direction.'.format(opt_payload))
+        return self.find_in_dictionary(opt_payload, directions, 'direction')
 
     def change_room(self, player, new_room):
         '''Used to transfer the character from one room to the next'''
