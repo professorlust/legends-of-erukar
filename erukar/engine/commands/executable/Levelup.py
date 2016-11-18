@@ -11,31 +11,37 @@ class Levelup(Command):
     AddingTooMuch = 'You specified {}, but only have {} points to spend. Proceding with the lower value.'
     RemovingTooMuch = "You specified {}, but this would subtract too many points. Re-allocating to your initial value. You now have {} points to spend."
 
+    TrackedParameters = ['command']
+    subcommands = {
+        'add': 'add_points',
+        'remove': 'remove_points',
+        'status': 'status',
+        'confirm': 'confirm',
+        'cancel': 'cancel',
+        'yes': 'yes',
+        'no': 'no'}
+
     def __init__(self):
         super().__init__()
         self.num_points = 0
+
+        # This tracks updates to attributes
         self.initial_state = {}
         self.future_state = {}
-        self.subcommands = [
-            ('add ', self.add_points),
-            ('remove ', self.remove_points),
-            ('status', self.status),
-            ('confirm', self.confirm),
-            ('commit', self.confirm),
-            ('save', self.confirm),
-            ('cancel', self.cancel),
-            ('yes', self.yes),
-            ('no', self.no)]
+        self.previous_command = ''
 
     def execute(self, *_):
         self.target = self.find_player().lifeform()
+        # Should get 15 points on a new character
         self.num_points = 15*len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.NeedsInitialization)])
         self.num_points += len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.ReadyToLevel)])
+
+        # No Points
         if self.num_points is 0:
             self.append_result(self.sender_uid, self.NoPoints)
             return self.succeed()
 
-        # Welcome
+        # Welcome; establish future and initial states
         if not self.context or not isinstance(self.context.context, erukar.engine.commands.executable.Levelup):
             self.initial_state = {x:self.target.get(x) for x in self.attributes}
             self.future_state = self.initial_state.copy()
@@ -46,16 +52,33 @@ class Levelup(Command):
         self.future_state = self.context.context.future_state
         self.initial_state = self.context.context.initial_state
 
-        return self.determine_subcommand()
+        failure = self.check_for_arguments()
+        if failure: return failure
 
-    def determine_subcommand(self):
+        return getattr(self, self.command)(self.payload)
+
+    def resolve_command(self, opt_payload=''):
         '''Determines what subcommand is to be executed based on payload'''
-        payload = self.payload()
-        for subcmd in self.subcommands:
-            if subcmd[0] in payload:
-                return subcmd[1](payload.replace(subcmd[0],''))
+        if self.context and self.context.should_resolve(self) and hasattr(self.context.context, 'payload'):
+            self.command = getattr(self.context, 'command')
+            self.payload = getattr(self.context.context, 'payload')
 
-        return self.help()
+        # If we have the parameter and it's not nully, assert that we're done
+        if hasattr(self, 'command') and self.command: return
+
+        try:
+            cmd_text, self.payload = opt_payload.split(' ', 1)
+        except:
+            cmd_text = opt_payload
+            self.payload = ''
+
+        failure = self.find_in_dictionary(cmd_text, self.subcommands, 'command')
+        if failure: return failure
+
+    def fail_and_clear(self, text_to_fail):
+        delattr(self, 'command')
+        delattr(self, 'payload')
+        return self.fail(text_to_fail)
 
     def determine_stat_and_points(self, payload, keyword):
         '''Use a keyword to figure out what attribute and how much is to be modified'''
@@ -82,40 +105,40 @@ class Levelup(Command):
         self.num_points -= amount
         self.future_state[stat] += amount
         result = result + '{} now at {}, was {} (+{}). You now have {} points to spend.'.format(stat, self.future_state[stat], self.initial_state[stat], self.future_state[stat]-self.initial_state[stat], self.num_points)
-        return self.fail(result)
+        return self.fail_and_clear(result)
 
     def remove_points(self, payload):
         '''Remove a specific number of points from an attribute'''
-        self.subcommand = 'remove '
+        self.previous_command = 'remove '
         result = ''
         stat, amount = self.determine_stat_and_points(payload,' from ')
         difference = self.future_state[stat] - self.initial_state[stat]
         if difference < amount:
             self.num_points += difference
             self.future_state[stat] = self.initial_state[stat]
-            return self.fail(self.RemovingTooMuch.format(amount, self.num_points))
+            return self.fail_and_clear(self.RemovingTooMuch.format(amount, self.num_points))
 
         self.future_state[stat] -= amount
         self.num_points += amount
-        return self.fail('Removing {} from {}. You now have {} points to spend.'.format(amount, stat, self.num_points))
+        return self.fail_and_clear('Removing {} from {}. You now have {} points to spend.'.format(amount, stat, self.num_points))
 
     def status(self, *_):
         '''Provide a status breakdown, including attribute values and the current points to spend'''
         stats = '\n'.join(['{:10}: {} (+{}, was {})'.format(x, self.future_state[x], self.initial_state[x]-self.future_state[x], self.initial_state[x]) for x in self.attributes])
 
-        return self.fail('{}\n\nYou have {} points to spend.'.format(stats, self.num_points))
+        return self.fail_and_clear('{}\n\nYou have {} points to spend.'.format(stats, self.num_points))
 
     def help(self, *_):
-        return self.fail(self.Help)
+        return self.fail_and_clear(self.Help)
 
     def yes(self, *_):
         '''Confirm a Confirmation or Cancelation'''
-        if self.context.context.subcommand is 'confirm':
+        if self.context.context.previous_command is 'confirm':
             return self.complete()
-        if self.context.context.subcommand is 'cancel':
+        if self.context.context.previous_command is 'cancel':
             self.append_result(self.sender_uid, 'Aborting Level Up attribute allocation.')
             return self.succeed()
-        return self.fail('Unrecognized "yes" command')
+        return self.fail_and_clear('Unrecognized "yes" command')
 
     def complete(self):
         for x in self.attributes:
@@ -129,12 +152,12 @@ class Levelup(Command):
         return self.succeed()
 
     def no(self, *_):
-        return self.fail('Returning to level up process.')
+        return self.fail_and_clear('Returning to level up process.')
 
     def confirm(self, *_):
-        self.subcommand = 'confirm'
-        return self.fail('Are you sure you want to lock in this allocation? (yes or no)')
+        self.previous_command = 'confirm'
+        return self.fail_and_clear('Are you sure you want to lock in this allocation? (yes or no)')
 
     def cancel(self, *_):
-        self.subcommand = 'cancel'
-        return self.fail('Are you sure you want to abort this allocation? You will lose all progress. (yes or no)')
+        self.previous_command = 'cancel'
+        return self.fail_and_clear('Are you sure you want to abort this allocation? You will lose all progress. (yes or no)')

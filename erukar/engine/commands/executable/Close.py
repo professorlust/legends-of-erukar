@@ -8,46 +8,28 @@ class Close(ActionCommand):
     not_found = 'There is nothing to close'
 
     aliases = ['close', 'shut']
+    TrackedParameters = ['target']
 
     def execute(self):
-        player = self.find_player()
-        payload = self.check_for_arguments()
-        room = player.character.current_room
-        direction = self.determine_direction(payload.lower())
+        self.player = self.find_player()
+        self.room = self.player.lifeform().current_room
+        failure = self.check_for_arguments()
+        if failure: return failure
 
         # If the payload was NESW, treat this as a door
-        if direction is not None:
-            return self.handle_doors(room, direction, player)
+        if isinstance(self.target, erukar.engine.model.Direction):
+            return self.handle_door()
 
         # Otherwise we need to find in the room
-        return self.handle_contents(room, player, payload)
+        self.append_result(self.sender_uid, self.target.on_close(self.player))
+        return self.succeed()
 
-    def check_for_arguments(self):
-        payload = self.payload()
-        if isinstance(payload, erukar.engine.model.Interactible):
-            return None, payload
-        return payload, None
-
-    def handle_contents(self, room, player, item_name):
-        '''Try to find the item in the room, then run on_close on it if so'''
-        item, failure_oject = self.find_in_room(room, item_name)
-        if failure_object:
-            return failure_object
-
-        if item is not None:
-            # We found it, so run on_close on it
-            self.append_result(self.sender_uid, item.on_close(player))
-            return self.succeed()
-
-        # Send a failure message
-        return self.fail(Close.not_found)
-
-    def handle_doors(self, room, direction, player):
+    def handle_door(self):
         '''
         Treat this command as an close doors command, since the user typed in
         a direction
         '''
-        in_direction = room.get_in_direction(direction)
+        in_direction = self.room.get_in_direction(self.target)
 
         # No connections have been made in this direction
         if in_direction is None:
@@ -60,6 +42,6 @@ class Close(ActionCommand):
             return self.fail(Close.nesw_no_door)
 
         # Have the door handle it now
-        result = door.on_close(player)
+        result = door.on_close(self.player)
         self.append_result(self.sender_uid, result)
         return self.succeed()

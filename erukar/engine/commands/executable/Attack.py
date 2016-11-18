@@ -24,22 +24,6 @@ class Attack(ActionCommand):
             return self.do_directional_attacks()
         return self.do_attack()
 
-    def resolve_target(self, opt_payload=''):
-        # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self):
-            self.target = getattr(self.context, 'target')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'target') and self.target: return
-
-        direction = self.determine_direction(opt_payload.lower())
-        if direction:
-            self.target = direction
-            return
-
-        failure_object = self.find_in_target(opt_payload, self.room, 'target')
-        return failure_object
-
     def can_attack_with(self, weapon):
         return weapon is None or isinstance(weapon, erukar.engine.inventory.Weapon)
 
@@ -129,7 +113,7 @@ class Attack(ActionCommand):
             strength = self.character.calculate_effective_stat('strength')
             drange = [0, strength]
             damage_type = Damage('bludgeoning',drange,'strength',(random.uniform,(0,4)))
-            damage = [(damage_type.roll(target), 'bludgeoning')]
+            damage = [(damage_type.roll(self.target), 'bludgeoning')]
         else:
             return [0,0,[]]
 

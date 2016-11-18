@@ -37,22 +37,6 @@ class Move(ActionCommand):
         self.change_room(self.find_player(), in_direction.room)
         return self.succeed()
 
-    def resolve_direction(self, opt_payload=''):
-        # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self):
-            self.direction = getattr(self.context, 'direction')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'direction') and self.direction: return
-        directions = {
-            'North': Direction.North,
-            'East': Direction.East,
-            'South': Direction.South,
-            'West': Direction.West
-        }
-
-        return self.find_in_dictionary(opt_payload, directions, 'direction')
-
     def change_room(self, player, new_room):
         '''Used to transfer the character from one room to the next'''
         lifeform = self.lifeform(player)

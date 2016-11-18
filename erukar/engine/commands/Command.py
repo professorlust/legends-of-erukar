@@ -95,11 +95,11 @@ class Command:
         full_map = additionals if additionals else {}
         target_contents_map = {x.alias(): x for x in set(target.contents + player.reverse_index(target))}
         full_map.update(target_contents_map)
-        matches = {alias: full_map[alias] for alias in full_map if payload.lower() in alias.lower()}
+        matches = {alias: full_map[alias] for alias in full_map if alias.lower().startswith(payload.lower())}
         return self.post_process_search(matches, payload, for_field_name)
 
     def find_in_dictionary(self, payload, dictionary, for_field_name):
-        matches = {alias: dictionary[alias] for alias in dictionary if payload.lower() in alias.lower()}
+        matches = {alias: dictionary[alias] for alias in dictionary if alias.lower().startswith(payload.lower())}
         return self.post_process_search(matches, payload, for_field_name)
         
     def find_in_room(self, container, item_name, additionals=None):
@@ -130,7 +130,6 @@ class Command:
             failure.requires_disambiguation = True
             return failure
 
-        print(matches)
         setattr(self, field_name, next(iter(matches.values())))
 
 
@@ -206,3 +205,19 @@ class Command:
         }
 
         return self.find_in_dictionary(opt_payload, directions, 'direction')
+
+    def resolve_target(self, opt_payload=''):
+        # If this is on the context, grab it and return
+        if self.context and self.context.should_resolve(self):
+            self.target = getattr(self.context, 'target')
+
+        # If we have the parameter and it's not nully, assert that we're done
+        if hasattr(self, 'target') and self.target: return
+
+        direction = self.determine_direction(opt_payload.lower())
+        if direction:
+            self.target = direction
+            return
+
+        failure_object = self.find_in_target(opt_payload, self.room, 'target')
+        return failure_object
