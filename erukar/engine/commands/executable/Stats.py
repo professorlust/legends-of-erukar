@@ -25,31 +25,26 @@ class Stats(Command):
     aliases = ['stats', 'attributes', 'vitals']
 
     def execute(self, *_):
-        player = self.find_player()
-        lifeform = self.lifeform(player)
-
-        payload = self.payload()
-        if payload:
-            # They want details on a specific attribute
-            wanted = next((x for x in self.attribute_types if payload in x), None)
-            if wanted is not None:
-                self.append_result(self.sender_uid, self.give_details(wanted, lifeform))
-                return self.succeed()
+        self.check_for_arguments()
 
         status_d = self.status.format(
-            lifeform.health, lifeform.max_health,
-            lifeform.calculate_armor_class())
+            self.lifeform.health, 
+            self.lifeform.max_health,
+            self.lifeform.calculate_armor_class())
 
         level_d = self.level.format(
-            lifeform.level, lifeform.experience, lifeform.calculate_necessary_xp())
+            self.lifeform.level, 
+            self.lifeform.experience, 
+            self.lifeform.calculate_necessary_xp())
 
-        attribute_d = '\n'.join([Stats.stat.format(stat.capitalize(), \
-            player.character.calculate_stat_score(stat)) \
+        attribute_d = '\n'.join([Stats.stat.format(
+                stat.capitalize(), 
+                self.lifeform.calculate_stat_score(stat))
             for stat in self.attribute_types])
 
         mitigations = '\n'.join(['{:12} {:3}% MIT / {:2} DFL'.format(
             dtype.capitalize(),
-            int(100.0*(1-lifeform.mitigation(dtype))), lifeform.deflection(dtype))
+            int(100.0*(1-self.lifeform.mitigation(dtype))), self.lifeform.deflection(dtype))
             for dtype in Damage.Types])
 
         self.append_result(self.sender_uid, '\n--------------------\n'.join([level_d, status_d, attribute_d, mitigations]))
