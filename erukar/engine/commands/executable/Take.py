@@ -7,36 +7,25 @@ class Take(ActionCommand):
     success = "Successfully took {0}"
 
     aliases = ['take', 'get', 'grab']
+    TrackedParameters = ['target']
 
     def execute(self):
-        player = self.find_player()
-        if player is None: return
+        failure = self.check_for_arguments()
+        if failure: return failure
 
-        payload, target = self.check_for_arguments()
-        room = player.character.current_room
-
-        if not target:
-            # Try to find the item in the room
-            target, failure_object = self.find_in_room(room, payload)
-            if failure_object:
-                return failure_object
-
-        self.append_result(self.sender_uid, self.move_to_inventory(target, player, room))
+        self.append_result(self.sender_uid, self.move_to_inventory())
         return self.succeed()
 
-        # Send a failure message
-        return self.fail(Take.failure.format(payload))
-
-    def move_to_inventory(self, item, player, room):
-        if not issubclass(type(item), Item):
-            return Take.cannot_take.format(item.alias().capitalize())
+    def move_to_inventory(self):
+        if not issubclass(type(self.target), Item):
+            return Take.cannot_take.format(self.target.alias().capitalize())
 
         # We found it, so give it to the player and return a success msg
-        player.lifeform().inventory.append(item)
-        container = player.index(item)
-        player.remove_index(item)
+        self.lifeform.inventory.append(self.target)
+        container = self.player.index(self.target)
+        self.player.remove_index(self.target)
         if len(container) > 0:
-            container[-1].remove(item)
-        item.on_take(player.lifeform())
-        self.dirty(player.lifeform())
-        return Take.success.format(item.describe())
+            container[-1].remove(self.target)
+        self.target.on_take(self.lifeform)
+        self.dirty(self.lifeform)
+        return Take.success.format(self.target.describe())

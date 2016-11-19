@@ -79,7 +79,6 @@ class Equip(ActionCommand):
 
     def process_input_payload(self, payload):
         '''Figure out the location and inventory type'''
-        print('processing input payload')
         player = self.find_player().lifeform()
         split_parameters = payload.split(' ', 1)
 

@@ -20,8 +20,7 @@ class Move(ActionCommand):
         return self.attempt_move()
 
     def attempt_move(self):
-        player = self.find_player().lifeform()
-        in_direction = player.current_room.get_in_direction(self.direction)
+        in_direction = self.room.get_in_direction(self.direction)
 
         # determine if the door prevents movement
         door = in_direction.door
@@ -34,23 +33,22 @@ class Move(ActionCommand):
         # Move and autoinspect the room for the player
         if in_direction.room is None:
             return self.fail(Move.move_through_wall)
-        self.change_room(self.find_player(), in_direction.room)
+        self.change_room(in_direction.room)
         return self.succeed()
 
-    def change_room(self, player, new_room):
+    def change_room(self, new_room):
         '''Used to transfer the character from one room to the next'''
-        lifeform = self.lifeform(player)
-        if lifeform in lifeform.current_room.contents:
-            lifeform.current_room.contents.remove(lifeform)
-        lifeform.link_to_room(new_room)
+        if self.lifeform in self.room.contents:
+            self.room.contents.remove(self.lifeform)
+        self.lifeform.link_to_room(new_room)
         self.append_result(self.sender_uid, Move.move_successful.format(self.direction.name))
 
         for content in new_room.contents:
-            if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
-                self.append_result(content.uid, '{} has moved {}.'.format(lifeform.alias(), self.direction.name))
+            if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not self.lifeform:
+                self.append_result(content.uid, '{} has moved {}.'.format(self.lifeform.alias(), self.direction.name))
 
-        if isinstance(player, erukar.engine.model.PlayerNode):
-            player.move_to_room(new_room)
+        if isinstance(self.player, erukar.engine.model.PlayerNode):
+            self.player.move_to_room(new_room)
 
             i = Inspect()
             i.data = self.data

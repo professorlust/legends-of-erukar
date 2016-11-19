@@ -20,8 +20,12 @@ class Command:
         self.results = {}
 
     def check_for_arguments(self):
-        # Copy all of the tracked Params into this command
+        # Copy alreturol of the tracked Params into this command
         payload = self.user_specified_payload
+        self.player = self.find_player()
+        self.lifeform = self.player.lifeform()
+        self.room = self.lifeform.current_room
+
         if self.context and self.context.requires_disambiguation and payload.isdigit():
             self.context.resolve_disambiguation(self.context.indexed_items[int(payload)])
 
@@ -95,8 +99,11 @@ class Command:
         full_map = additionals if additionals else {}
         target_contents_map = {x.alias(): x for x in set(target.contents + player.reverse_index(target))}
         full_map.update(target_contents_map)
-        matches = {alias: full_map[alias] for alias in full_map if alias.lower().startswith(payload.lower())}
+        matches = {alias: full_map[alias] for alias in full_map if self.any_matches(alias, payload)}
         return self.post_process_search(matches, payload, for_field_name)
+
+    def any_matches(self, alias, payload):
+        return any(alias_substr.lower().startswith(payload.lower()) for alias_substr in alias.split())
 
     def find_in_dictionary(self, payload, dictionary, for_field_name):
         matches = {alias: dictionary[alias] for alias in dictionary if alias.lower().startswith(payload.lower())}
@@ -132,7 +139,6 @@ class Command:
 
         setattr(self, field_name, next(iter(matches.values())))
 
-
     def enumerate_options(self, targets):
         return '\n'.join(['{:3}. {}'.format(i+1, self.readable(x)) for i,x in enumerate(targets)])
 
@@ -151,9 +157,9 @@ class Command:
         matches = list(self.inventory_find(player, item_name))
         return self.post_process_search(matches, item_name, field_name)
 
-    def find_spell(self, player, spell_name):
-        matches = list(self.spell_find(player, spell_name))
-        return self.post_process_search(matches, spell_name)
+    def find_spell(self, player, payload, field_name):
+        spell_book = {spell.alias(): spell for spell in player.spells} 
+        return self.find_in_dictionary(payload, spell_book, field_name)
 
     def find_all_in_inventory(self, player, item_name):
         return list(self.inventory_find(player, item_name))
@@ -217,6 +223,10 @@ class Command:
         direction = self.determine_direction(opt_payload.lower())
         if direction:
             self.target = direction
+            return
+
+        if opt_payload == 'self':
+            self.target = self.player.lifeform()
             return
 
         failure_object = self.find_in_target(opt_payload, self.room, 'target')

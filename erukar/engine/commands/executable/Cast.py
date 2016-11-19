@@ -5,32 +5,48 @@ class Cast(ActionCommand):
     NoSpell = "No spell '{}' was found in spell book."
 
     aliases = ['cast']
+    TrackedParameters = ['spell', 'target']
 
     def execute(self):
         player = self.find_player()
         if player is None: return
-        lifeform = player.lifeform()
-        payload, spell = self.check_for_arguments()
+        self.lifeform = player.lifeform()
+        self.room = self.lifeform.current_room
 
-        if not spell:
-            spell, failure_object = self.find_spell(lifeform, payload)
-            if failure_object:
-                return failure_object
+        failure = self.check_for_arguments()
+        if failure: return failure
 
-        spell.on_cast(self, lifeform, self.arguments)
+        self.spell.on_cast(self, self.target, self.arguments)
         return self.succeed()
 
-    def check_for_arguments(self):
-        '''Stubbed for now'''
-        payload = self.payload()
-        if isinstance(payload, erukar.engine.model.Spell):
-            self.arguments = self.context.context.arguments
-            return None, payload
+    def resolve_spell(self, opt_payload=''):
+        if self.context and self.context.should_resolve(self):
+            self.spell = getattr(self.context, 'spell')
 
-        if ' on ' in payload:
-            args = payload.split(' on ', 1)
-            target, failure = self.find_in_room(self.find_player().lifeform().current_room, args[1])
-            if not failure:
-                self.arguments['target'] = target
-            return args[0], None
-        return payload, None
+        # If we have the parameter and it's not nully, assert that we're done
+        if hasattr(self, 'spell') and self.spell: return
+
+        return self.find_spell(self.lifeform, opt_payload, 'spell') 
+
+    def check_for_arguments(self):
+        # Copy all of the tracked Params into this command
+        payload = self.user_specified_payload
+        self.payloads = None
+
+        if self.context and self.context.requires_disambiguation and payload.isdigit():
+            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)])
+
+        if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads:
+            self.payloads = getattr(self.context.context, 'payloads')
+
+        if not self.payloads:
+            if ' on ' in payload:
+                self.payloads = payload.split(' on ', 1)
+            else:
+                self.payloads = (payload, self.sender_uid)
+
+        fail = self.resolve_spell(self.payloads[0])
+        if fail: return fail
+
+        fail = self.resolve_target(self.payloads[1])
+        if fail: return fail
