@@ -30,7 +30,7 @@ class Use(ActionCommand):
         self.payloads = None
 
         if self.context and self.context.requires_disambiguation and payload.isdigit():
-            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)])
+            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
 
         if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads:
             self.payloads = getattr(self.context.context, 'payloads')

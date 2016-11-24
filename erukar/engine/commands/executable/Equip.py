@@ -18,8 +18,7 @@ class Equip(ActionCommand):
 
     def execute(self):
         failure = self.check_for_arguments()
-        if failure:
-            return failure
+        if failure: return failure
 
         # Check to see if the item's type exists as a field on the character
         if hasattr(self.lifeform, self.equip_location):
@@ -31,7 +30,6 @@ class Equip(ActionCommand):
             return self.succeed()
 
         return self.fail(Equip.cannot_equip.format(self.item.describe()))
-
 
     def resolve_equip_location(self, opt_payload=''):
         if self.context and self.context.should_resolve(self):
@@ -61,9 +59,9 @@ class Equip(ActionCommand):
         self.lifeform = self.player.lifeform()
 
         if self.context and self.context.requires_disambiguation and payload.isdigit():
-            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)])
+            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
 
-        if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads:
+        if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads and self.context.indexed_items:
             self.payloads = getattr(self.context.context, 'payloads')
 
         if not self.payloads:

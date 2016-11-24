@@ -27,7 +27,7 @@ class Command:
         self.room = self.lifeform.current_room
 
         if self.context and self.context.requires_disambiguation and payload.isdigit():
-            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)])
+            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
 
         for param_name in self.TrackedParameters:
             method_name = 'resolve_{}'.format(param_name)
@@ -59,7 +59,7 @@ class Command:
     def add_items_to_context(self, items):
         pre_insertion_length = len(self.indexed_items)+1
         for index, alias in enumerate(items):
-            self.indexed_items[pre_insertion_length + index] = items[alias]
+            self.indexed_items.append(items[alias])
 
     def succeed_if_any_results(self, msg_if_failure):
         if len(self.results) > 0:
@@ -118,9 +118,14 @@ class Command:
 
         Output: direct_match_if_not_failure, failure_object
         '''
-        self.add_items_to_context(matches)
         if len(matches) == 0:
-            return self.fail(self.not_found.format(payload))
+            failure = self.fail(self.not_found.format(payload))
+            failure.indexed_items = None
+            failure.requires_disambiguation = False
+            return failure
+
+        self.indexed_items = []
+        self.add_items_to_context(matches)
 
         # If there's more than one, we must ask for clarification
         if len(matches) > 1:
@@ -128,6 +133,8 @@ class Command:
             failure = self.fail(self.MultipleOptions.format(payload, len(matches), match_list))
             failure.disambiguating_parameter = field_name
             failure.requires_disambiguation = True
+            print(field_name)
+            print(failure.indexed_items)
             return failure
 
         setattr(self, field_name, next(iter(matches.values())))
@@ -148,7 +155,6 @@ class Command:
     def find_in_inventory(self, player, item_name, field_name):
         '''Attempt to find an item in a player's inventory'''
         inventory_list = {item.alias(): item for item in player.inventory}
-        print(inventory_list)
         return self.find_in_dictionary(item_name, inventory_list, field_name)
 
     def find_spell(self, player, payload, field_name):
