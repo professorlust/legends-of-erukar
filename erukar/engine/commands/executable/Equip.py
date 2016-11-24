@@ -17,19 +17,15 @@ class Equip(ActionCommand):
     TrackedParameters = ['item','equip_location']
 
     def execute(self):
-        player = self.find_player()
-        if player is None: return
-        lifeform = player.lifeform()
-
         failure = self.check_for_arguments()
         if failure:
             return failure
 
         # Check to see if the item's type exists as a field on the character
-        if hasattr(lifeform, self.equip_location):
-            setattr(lifeform, self.equip_location, self.item)
-            self.item.on_equip(lifeform)
-            self.dirty(lifeform)
+        if hasattr(self.lifeform, self.equip_location):
+            setattr(self.lifeform, self.equip_location, self.item)
+            self.item.on_equip(self.lifeform)
+            self.dirty(self.lifeform)
             result = '{} equipped as {} successfully.'.format(self.item.describe(), self.equip_location)
             self.append_result(self.sender_uid, result)
             return self.succeed()
@@ -37,8 +33,6 @@ class Equip(ActionCommand):
         return self.fail(Equip.cannot_equip.format(self.item.describe()))
 
     def resolve_item(self, opt_payload=''):
-        player = self.find_player().lifeform()
-
         # If this is on the context, grab it and return
         if self.context and self.context.should_resolve(self):
             self.item = getattr(self.context, 'item')
@@ -47,27 +41,18 @@ class Equip(ActionCommand):
         if hasattr(self, 'item') and self.item: return
 
         # Start looking at the payload for the item
-        payload = [opt_payload]
-        if opt_payload:
-            # check to see if the first word is a location specification
-            payload = opt_payload.split(' ', 1)
-            if len(payload) > 1:
-                # Yes, it is; pop the word and proceed
-                first_arg_is_valid_location = not self.resolve_equip_location(payload[0])
-                if first_arg_is_valid_location:
-                    payload.pop(0)
-
-        return self.find_in_inventory(player, payload[0], 'item')
+        return self.find_in_inventory(self.lifeform, opt_payload, 'item')
 
     def resolve_equip_location(self, opt_payload=''):
         if self.context and self.context.should_resolve(self):
             self.equip_location = getattr(self.context, 'equip_location')
 
-        if hasattr(self, 'equip_location') and self.equip_location:
+        if hasattr(self, 'equip_location') and self.equip_location: 
             return
 
         if hasattr(self, 'item') and self.item:
-            return self.post_process_search(self.item.EquipmentLocations, 'Equipment Location', 'equip_location')
+            locations = {i.capitalize(): i for i in self.item.EquipmentLocations}
+            return self.find_in_dictionary(opt_payload, locations, 'equip_location')
 
         if opt_payload:
             decoded = self.decode_location(opt_payload)
@@ -77,20 +62,31 @@ class Equip(ActionCommand):
 
         return self.fail('Nothing can be done for equip_location')
 
-    def process_input_payload(self, payload):
-        '''Figure out the location and inventory type'''
-        player = self.find_player().lifeform()
-        split_parameters = payload.split(' ', 1)
+    def check_for_arguments(self):
+        # Copy all of the tracked Params into this command
+        payload = self.user_specified_payload
+        self.payloads = None
 
-        # Try to find the location via decoding on the first split if it exists... otherwise ignore
-        self.equip_location = self.decode_location(split_parameters[0]) if len(split_parameters) > 1 else ''
+        self.player = self.find_player()
+        self.lifeform = self.player.lifeform()
 
-        # If location was not the first parameter, the whole payload represents the item alias
-        item_name = split_parameters[1] if self.equip_location else payload
+        if self.context and self.context.requires_disambiguation and payload.isdigit():
+            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)])
 
-        # Now try to find the item in the player's inventory
-        failure = self.find_in_inventory(player, item_name, 'item')
-        if failure: return failure
+        if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads:
+            self.payloads = getattr(self.context.context, 'payloads')
+
+        if not self.payloads:
+            if ' on ' in payload:
+                self.payloads = payload.split(' on ', 1)
+            else:
+                self.payloads = (payload, '')
+
+        fail = self.resolve_item(self.payloads[0])
+        if fail: return fail
+
+        fail = self.resolve_equip_location(self.payloads[1])
+        if fail: return fail
 
     def decode_location(self, location_designation):
         '''Attempt to find the location, first by matching, then by aliasing'''

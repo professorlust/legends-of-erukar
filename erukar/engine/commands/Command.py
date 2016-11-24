@@ -106,16 +106,10 @@ class Command:
         return any(alias_substr.lower().startswith(payload.lower()) for alias_substr in alias.split())
 
     def find_in_dictionary(self, payload, dictionary, for_field_name):
-        matches = {alias: dictionary[alias] for alias in dictionary if alias.lower().startswith(payload.lower())}
+        matches = {alias: dictionary[alias] for alias in dictionary if self.any_matches(alias, payload)}
+        print(dictionary)
         return self.post_process_search(matches, payload, for_field_name)
         
-    def find_in_room(self, container, item_name, additionals=None):
-        '''Attempt to find an item in a room's contents'''
-        player = self.find_player()
-        possible_match_set = container.contents + player.reverse_index(container) + (additionals if additionals else [])
-        matches = [p for p in set(possible_match_set) if (p in item_name if isinstance(p, str) else p.matches(item_name))]
-        return self.post_process_search(matches, item_name)
-
     def post_process_search(self, matches, payload, field_name):
         '''
         Handles edge cases on searching, sets indexed items for contextual  results.
@@ -154,8 +148,9 @@ class Command:
 
     def find_in_inventory(self, player, item_name, field_name):
         '''Attempt to find an item in a player's inventory'''
-        matches = list(self.inventory_find(player, item_name))
-        return self.post_process_search(matches, item_name, field_name)
+        inventory_list = {item.alias(): item for item in player.inventory}
+        print(inventory_list)
+        return self.find_in_dictionary(item_name, inventory_list, field_name)
 
     def find_spell(self, player, payload, field_name):
         spell_book = {spell.alias(): spell for spell in player.spells} 
