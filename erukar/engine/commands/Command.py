@@ -107,7 +107,6 @@ class Command:
 
     def find_in_dictionary(self, payload, dictionary, for_field_name):
         matches = {alias: dictionary[alias] for alias in dictionary if self.any_matches(alias, payload)}
-        print(dictionary)
         return self.post_process_search(matches, payload, for_field_name)
         
     def post_process_search(self, matches, payload, field_name):
@@ -226,3 +225,14 @@ class Command:
 
         failure_object = self.find_in_target(opt_payload, self.room, 'target')
         return failure_object
+
+    def resolve_item(self, opt_payload=''):
+        # If this is on the context, grab it and return
+        if self.context and self.context.should_resolve(self):
+            self.item = getattr(self.context, 'item')
+
+        # If we have the parameter and it's not nully, assert that we're done
+        if hasattr(self, 'item') and self.item: return
+
+        # Start looking at the payload for the item
+        return self.find_in_inventory(self.lifeform, opt_payload, 'item')

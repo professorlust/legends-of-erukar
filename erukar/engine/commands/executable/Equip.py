@@ -32,16 +32,6 @@ class Equip(ActionCommand):
 
         return self.fail(Equip.cannot_equip.format(self.item.describe()))
 
-    def resolve_item(self, opt_payload=''):
-        # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self):
-            self.item = getattr(self.context, 'item')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'item') and self.item: return
-
-        # Start looking at the payload for the item
-        return self.find_in_inventory(self.lifeform, opt_payload, 'item')
 
     def resolve_equip_location(self, opt_payload=''):
         if self.context and self.context.should_resolve(self):

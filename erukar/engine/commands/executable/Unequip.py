@@ -5,45 +5,41 @@ from erukar.engine.inventory.Weapon import Weapon
 
 class Unequip(ActionCommand):
     not_found = "No equipped item '{0}' was found"
+
+    TrackedParameters = ['item_or_type']
     aliases = ['unequip']
 
     def execute(self):
-        lifeform = self.find_player().lifeform()
-        payload = self.check_for_arguments()
+        failure = self.check_for_arguments()
+        if failure: return failure
 
-        # Figure out the item type
-        item_type = self.determine_type(lifeform, payload)
+        if isinstance(self.item_or_type, str):
+            item = getattr(self.lifeform, self.item_or_type)
+            location = self.item_or_type
+        else:
+            item = self.item_or_type
+            location = next(loc for loc in self.lifeform.equipment_types if getattr(self.lifeform, loc) is item)
 
-        # remove if we know the type
-        if item_type is not '':
-            item = getattr(lifeform, item_type)
-            setattr(lifeform, item_type, None)
-            item.on_unequip(lifeform)
-            results = '{} unequipped from {} successfully.'.format(item.describe(), item_type)
-            self.dirty(lifeform)
-            self.append_result(self.sender_uid, results)
-            return self.succeed()
+        if item is None:
+            return self.fail('Nothing was found equipped at {}.'.format(location))
+        setattr(self.lifeform, location, None)
+        item.on_unequip(self.lifeform)
+        results = '{} unequipped from {} successfully.'.format(item.describe(), location)
+        self.dirty(self.lifeform)
+        self.append_result(self.sender_uid, results)
+        return self.succeed()
 
-        # Nothing was found
-        results = Unequip.not_found.format(payload)
-        return self.fail(results)
+    def resolve_item_or_type(self, opt_payload=''):
+        # If this is on the context, grab it and return
+        if self.context and self.context.should_resolve(self):
+            self.item_or_type = getattr(self.context, 'item_or_type')
 
-    def determine_type(self, lifeform, payload):
-        if payload in Lifeform.equipment_types:
-            return payload
-        for e_type in Lifeform.equipment_types:
-            equipped = getattr(lifeform, e_type)
-            if equipped is not None:
-                if payload.lower() in equipped.describe().lower():
-                     return e_type
-        return ''
+        # If we have the parameter and it's not nully, assert that we're done
+        if hasattr(self, 'item_or_type') and self.item_or_type: return
 
-    def check_for_arguments(self):
-        payload = self.payload()
-        args = payload.split(' ', 1)
-        self.arguments['hand'] = 'right'
-        if len(args) > 1:
-            if args[0] in ['left', 'off', 'offhand']:
-                self.arguments['hand'] = 'left'
-                return args[1]
-        return payload
+        # Combine the Lifeform Equipment Types with Inventory
+        inventory_dict = {item.alias(): item for item in self.lifeform.inventory}
+        equipment_type_dict = {eqt: eqt for eqt in self.lifeform.equipment_types}
+        equipment_type_dict.update(inventory_dict)
+
+        return self.find_in_dictionary(opt_payload, equipment_type_dict, 'item_or_type')

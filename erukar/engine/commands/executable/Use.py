@@ -39,7 +39,7 @@ class Use(ActionCommand):
             if ' on ' in payload:
                 self.payloads = payload.split(' on ', 1)
             else:
-                self.payloads = (payload, self.lifeform.alias())
+                self.payloads = (payload, self.sender_uid)
 
         fail = self.resolve_item(self.payloads[0])
         if fail: return fail
