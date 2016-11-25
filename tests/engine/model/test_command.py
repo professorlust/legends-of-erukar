@@ -14,35 +14,6 @@ class CommandTests(unittest.TestCase):
 
         self.assertEqual(result.uid, 'auid')
 
-    def test_find_in_room(self):
-        c = Command()
-        c.sender_uid = 'auid'
-        p = Player()
-        w = Weapon()
-        r = Room(None)
-        r.contents.append(w)
-
-        d = DataAccess()
-        d.players.append(PlayerNode('auid', p))
-        c.data = d
-
-        result = c.find_in_room(r, w.item_type)
-
-        self.assertEqual(w, result)
-
-    def test_find_in_inventory(self):
-        c = Command()
-        p = Player()
-        w = Weapon()
-
-        p.uid = 'Bob'
-        p.inventory.append(w)
-        n = PlayerNode(p.uid, p)
-
-        result = c.find_in_inventory(n, w.item_type)
-
-        self.assertEqual(w, result)
-
     def test_determine_direction_n(self):
         m = Command()
         result = m.determine_direction('n')

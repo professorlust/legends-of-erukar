@@ -103,7 +103,15 @@ class Command:
         return self.post_process_search(matches, payload, for_field_name)
 
     def any_matches(self, alias, payload):
-        return any(alias_substr.lower().startswith(payload.lower()) for alias_substr in alias.split())
+        '''Difficult function which checks 1:N substrings of an alias against the payload'''
+        if payload.lower() in alias.lower():
+            alias_substrings = alias.split()
+            for alias_substr_start in range(len(alias_substrings)):
+                for alias_substr_end in range(alias_substr_start, len(alias_substrings)):
+                    evaluated_substring = ' '.join(alias_substrings[x] for x in range(alias_substr_start, alias_substr_end+1))
+                    if evaluated_substring.lower().startswith(payload.lower()):
+                        return True
+
 
     def find_in_dictionary(self, payload, dictionary, for_field_name):
         matches = {alias: dictionary[alias] for alias in dictionary if self.any_matches(alias, payload)}
@@ -152,7 +160,6 @@ class Command:
 
     def find_in_inventory(self, player, item_name, field_name):
         '''Attempt to find an item in a player's inventory'''
-        print(player)
         inventory_list = {item.alias(): item for item in player.inventory}
         return self.find_in_dictionary(item_name, inventory_list, field_name)
 

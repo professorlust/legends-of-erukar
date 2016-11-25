@@ -22,8 +22,9 @@ class Equip(ActionCommand):
 
         # Check to see if the item's type exists as a field on the character
         if hasattr(self.lifeform, self.equip_location):
+            print('equipped {} in {}'.format(self.item.alias(), self.equip_location))
             setattr(self.lifeform, self.equip_location, self.item)
-            self.item.on_equip(self.lifeform)
+            effects = self.item.on_equip(self.lifeform)
             self.dirty(self.lifeform)
             result = '{} equipped as {} successfully.'.format(self.item.describe(), self.equip_location)
             self.append_result(self.sender_uid, result)
@@ -57,6 +58,7 @@ class Equip(ActionCommand):
 
         self.player = self.find_player()
         self.lifeform = self.player.lifeform()
+        print(self.lifeform.inventory)
 
         if self.context and self.context.requires_disambiguation and payload.isdigit():
             self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])

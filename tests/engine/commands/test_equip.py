@@ -41,6 +41,7 @@ class EquipTests(unittest.TestCase):
         e.data = data_store
         e.user_specified_payload = 'plate mail'
         result = e.execute()
+        print(result.result_for('Bob')[0])
 
         self.assertTrue(a in p.inventory)
         self.assertEqual(p.chest, a)
