@@ -55,9 +55,9 @@ class AuraControlTests(unittest.TestCase):
 
         e = Equip()
         e.sender_uid = 'bob'
-        e.user_specified_payload = 'sword'
+        e.user_specified_payload = 'sword on right'
         e.data = data
-        e.execute()
+        res = e.execute()
 
         self.assertTrue(len(d.active_auras) > 0)
 

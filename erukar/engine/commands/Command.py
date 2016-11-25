@@ -104,10 +104,11 @@ class Command:
 
     def any_matches(self, alias, payload):
         '''Difficult function which checks 1:N substrings of an alias against the payload'''
+        max_words = len(payload.split())
         if payload.lower() in alias.lower():
             alias_substrings = alias.split()
             for alias_substr_start in range(len(alias_substrings)):
-                for alias_substr_end in range(alias_substr_start, len(alias_substrings)):
+                for alias_substr_end in range(alias_substr_start, min(alias_substr_start+max_words+1, len(alias_substrings))):
                     evaluated_substring = ' '.join(alias_substrings[x] for x in range(alias_substr_start, alias_substr_end+1))
                     if evaluated_substring.lower().startswith(payload.lower()):
                         return True

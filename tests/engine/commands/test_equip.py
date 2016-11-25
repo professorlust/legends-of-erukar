@@ -41,7 +41,6 @@ class EquipTests(unittest.TestCase):
         e.data = data_store
         e.user_specified_payload = 'plate mail'
         result = e.execute()
-        print(result.result_for('Bob')[0])
 
         self.assertTrue(a in p.inventory)
         self.assertEqual(p.chest, a)
@@ -66,7 +65,7 @@ class EquipTests(unittest.TestCase):
         self.assertTrue(i in p.inventory)
         self.assertNotEqual(p.chest, i)
         self.assertNotEqual(p.right, i)
-        self.assertEqual(Equip.cannot_equip.format('Potion'), result.result_for('Bob')[0])
+        self.assertEqual('Unable to find \'\' in inventory', result.result_for('Bob')[0])
 
     def test_equip_no_match(self):
         p = Player()
