@@ -21,7 +21,7 @@ class Drop(ActionCommand):
     def move_from_inventory(self):
         self.try_to_unequip()
         self.lifeform.inventory.remove(self.item)
-        selfitem.on_drop(self.room, self.lifeform)
+        self.item.on_drop(self.room, self.lifeform)
         self.room.add(self.item)
         self.dirty(self.lifeform)
 

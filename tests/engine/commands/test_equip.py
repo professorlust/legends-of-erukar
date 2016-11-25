@@ -16,7 +16,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.sender_uid = p.uid
         e.data = data_store
-        e.user_specified_payload = 'sword'
+        e.user_specified_payload = 'sword on right'
         result = e.execute()
 
         self.assertTrue(w in p.inventory)

@@ -55,4 +55,4 @@ class TakeTests(unittest.TestCase):
 
         self.assertTrue(w in r.contents)
         self.assertTrue(w not in p.inventory)
-        self.assertEqual(result.result_for('Bob')[0], Take.failure.format('Sword'))
+        self.assertEqual(result.result_for('Bob')[0], 'No object matching \'Sword\' was found in this room.')

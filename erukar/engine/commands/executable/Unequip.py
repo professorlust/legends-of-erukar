@@ -18,7 +18,11 @@ class Unequip(ActionCommand):
             location = self.item_or_type
         else:
             item = self.item_or_type
-            location = next(loc for loc in self.lifeform.equipment_types if getattr(self.lifeform, loc) is item)
+            location = next((loc for loc in self.lifeform.equipment_types 
+                            if getattr(self.lifeform, loc) is item), None)
+            if not location:
+                return self.fail('Could not find location for type')
+
 
         if item is None:
             return self.fail('Nothing was found equipped at {}.'.format(location))

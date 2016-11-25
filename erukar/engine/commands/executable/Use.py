@@ -11,23 +11,26 @@ class Use(ActionCommand):
         failure = self.check_for_arguments()
         if failure: return failure
 
-        # Get the object
-        if 'object' in self.arguments:
-            target = self.determine_target(player)
+        if isinstance(self.target, erukar.engine.model.Direction):
+            door = self.room.get_in_direction(self.target)
+            if door:
+                self.target = door
 
-        for item in items:
-            successful = item.on_use(self, target)
-            if successful:
-                self.dirty(player.lifeform())
-                self.dirty(target)
-                return self.succeed()
-
-        return self.fail('Cannot use anything.')
+        successful = self.item.on_use(self, self.target)
+        if successful:
+            self.dirty(self.lifeform)
+            self.dirty(self.target)
+            return self.succeed()
+        return self.fail('asdf')
 
     def check_for_arguments(self):
         # Copy all of the tracked Params into this command
         payload = self.user_specified_payload
         self.payloads = None
+
+        self.player = self.find_player()
+        self.lifeform = self.player.lifeform()
+        self.room = self.lifeform.current_room
 
         if self.context and self.context.requires_disambiguation and payload.isdigit():
             self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
@@ -47,11 +50,3 @@ class Use(ActionCommand):
         fail = self.resolve_target(self.payloads[1])
         if fail: return fail
 
-    def resolve_item(self, opt_payload=''):
-        if self.context and self.context.should_resolve(self):
-            self.item = getattr(self.context, 'item')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'item') and self.item: return
-
-        return self.find_in_inventory(self.lifeform, opt_payload, 'item') 

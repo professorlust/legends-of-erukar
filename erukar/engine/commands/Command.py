@@ -133,8 +133,6 @@ class Command:
             failure = self.fail(self.MultipleOptions.format(payload, len(matches), match_list))
             failure.disambiguating_parameter = field_name
             failure.requires_disambiguation = True
-            print(field_name)
-            print(failure.indexed_items)
             return failure
 
         setattr(self, field_name, next(iter(matches.values())))
@@ -154,6 +152,7 @@ class Command:
 
     def find_in_inventory(self, player, item_name, field_name):
         '''Attempt to find an item in a player's inventory'''
+        print(player)
         inventory_list = {item.alias(): item for item in player.inventory}
         return self.find_in_dictionary(item_name, inventory_list, field_name)
 

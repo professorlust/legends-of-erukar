@@ -12,8 +12,6 @@ class Open(ActionCommand):
 
     # I'm not terribly happy with this, as it forces usage of only Doors.
     def execute(self):
-        self.player = self.find_player()
-        self.room = self.player.lifeform().current_room
         failure = self.check_for_arguments()
         if failure: return failure
 
@@ -22,7 +20,7 @@ class Open(ActionCommand):
             return self.handle_door()
 
         # Otherwise we need to find in the room
-        self.append_result(self.sender_uid, self.target.self.on_open(player))
+        self.append_result(self.sender_uid, self.target.on_open(self.player))
         return self.succeed()
 
     def handle_door(self):
