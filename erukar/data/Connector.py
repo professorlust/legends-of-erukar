@@ -45,14 +45,18 @@ class Connector:
         if not hasattr(character, 'uid'): return
         schema = self.get_character(character.uid)
         if schema is None: return
-        # Actually try to update the character
+        schema.effects = list(self.generate_effects(character))
+
         inventory = self.gen_to_dict(self.generate_inventory(character))
+        # Set all of the SIMPLE MAP schema parameters on the out-object (character)
         for schema_param in self.simple_map_character_params:
             setattr(schema, schema_param, getattr(character, schema_param))
-        if character.health <= 0:
-            schema.deceased = True
+        # Now do complex mapping on equipment
         schema.equipment = list(self.generate_equipped_items(character, inventory))
         schema.inventory = list(inventory.values())
+        if character.health <= 0:
+            schema.deceased = True
+
         self.session.add(schema)
         self.session.commit()
 
@@ -61,6 +65,7 @@ class Connector:
         if data is not None:
             self.simple_map_character(out_char, data)
             self.map_items_on_character(out_char, data)
+            self.map_effects_on_character(out_char, data)
         return data is not None
 
     def simple_map_character(self, out, data):
@@ -68,6 +73,12 @@ class Connector:
         to_map = self.simple_map_character_params
         for x in to_map:
             setattr(out, x, getattr(data, x))
+
+    def map_effects_on_character(self, out, data):
+        '''Create persistent effects from Schema and assign to the character'''
+        for effect in data.effects:
+            instantiated = self.create_from_type(effect.effect_type, args={'afflicted': out})
+            out.afflictions.append(instantiated)
 
     def map_items_on_character(self, out, data):
         '''Create items from Schema and assign to inventory (or equipment slots as necessary)'''
@@ -91,10 +102,12 @@ class Connector:
                 setattr(item, pattr, data.item_attributes[pattr])
         return item
 
-    def create_from_type(self, item_type):
+    def create_from_type(self, item_type, args=None):
         if item_type is None:
             return None
         prelim_type = item_type.split('.')
+        if args:
+            return getattr(__import__(item_type, fromlist=[prelim_type[-1]]), prelim_type[-1])(**args)
         return getattr(__import__(item_type, fromlist=[prelim_type[-1]]), prelim_type[-1])()
 
     def add_player(self, playernode_object):
@@ -104,9 +117,15 @@ class Connector:
     def add_character(self, uid, lifeform_object):
         '''Used when adding a Lifeform to the database'''
         player = self.get(Player, {'uid': uid}).first()
+        effects = list(self.generate_effects(lifeform_object))
         inventory = self.gen_to_dict(self.generate_inventory(lifeform_object))
         equipment = list(self.generate_equipped_items(lifeform_object, inventory))
-        supplementary_data = {'player_id': player.id, 'inventory': list(inventory.values()), 'equipment': equipment}
+        supplementary_data = {
+            'player_id': player.id, 
+            'inventory': list(inventory.values()), 
+            'equipment': equipment, 
+            'effects': effects,
+        }
         self.add(lifeform_object, Character, supplementary_data)
 
     def schema_params(self, obj, schema_type):
@@ -127,6 +146,11 @@ class Connector:
                     yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers, item_attributes=item_attributes))
                 else:
                     yield (item, erukar.data.Schema.Item(item_type=item.__module__, modifiers=modifiers, item_attributes=item_attributes))
+
+    def generate_effects(self, lifeform):
+        for eff in lifeform.afflictions:
+            if eff.Persistent:
+                yield erukar.data.Schema.Effect(effect_type=eff.__module__)
 
     def gen_to_dict(self, generator):
         return {x[0]:x[1] for x in generator}
