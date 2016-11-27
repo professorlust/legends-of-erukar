@@ -7,7 +7,7 @@ from erukar.engine.model.PlayerNode import PlayerNode
 import erukar, threading
 
 class Instance(Manager):
-    MaximumTurnTime = 20.0 # In seconds
+    MaximumTurnTime = 30.0 # In seconds
     MaximumTurnSkipPenalty = 5 # in turns
 
     def __init__(self):
@@ -59,10 +59,13 @@ class Instance(Manager):
             playernode = PlayerNode(uid)
             self.connector.add_player(playernode)
         character.uid = uid
+
+        # If this is a new character, mark it for Initialization
         if not self.connector.load_player(uid, character):
             self.connector.add_character(uid, character)
             character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
             self.connector.update_character(character)
+
         playernode.character = character
         character.spells = [
             erukar.game.magic.predefined.FlameBreath(),

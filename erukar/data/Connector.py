@@ -6,7 +6,20 @@ import sqlalchemy, erukar
 
 '''Establish'''
 class Connector:
-    simple_map_character_params = ['name','max_health','health','strength','dexterity','vitality','acuity','sense','resolve','level','experience']
+    simple_map_character_params = [
+        'name',
+        'max_health',
+        'health',
+        'strength',
+        'dexterity',
+        'vitality',
+        'acuity',
+        'sense',
+        'resolve',
+        'level',
+        'experience',
+        'stat_points',
+    ]
     def __init__(self, session):
         self.session = session
 

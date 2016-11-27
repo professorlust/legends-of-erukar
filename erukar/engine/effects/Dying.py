@@ -11,6 +11,7 @@ class Dying(Affliction):
 
         if random.uniform(*skill_range)+mod >= dc:
             self.afflicted.afflictions.remove(self)
+            self.afflicted.health = 1
             return '{} has regained the strength to fight!'.format(self.afflicted.alias())
 
         return '{} is dying!'.format(self.afflicted.alias())

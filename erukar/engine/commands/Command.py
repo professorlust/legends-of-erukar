@@ -97,10 +97,20 @@ class Command:
         target.contents, additionals, and self.player.reverse_index(target)'''
         player = self.find_player()
         full_map = additionals if additionals else {}
-        target_contents_map = {x.alias(): x for x in set(target.contents + player.reverse_index(target))}
+        targets = set(target.contents + player.reverse_index(target) + self.container_contents(target, player))
+        target_contents_map = {x.alias(): x for x in targets}
         full_map.update(target_contents_map)
         matches = {alias: full_map[alias] for alias in full_map if self.any_matches(alias, payload)}
         return self.post_process_search(matches, payload, for_field_name)
+
+    def container_contents(self, target, player):
+        results = []
+        if not hasattr(target, 'contents'):
+            return results
+        for content in target.contents:
+            if isinstance(content, erukar.engine.environment.Container):
+                results.extend(player.reverse_index(content))
+        return results
 
     def any_matches(self, alias, payload):
         '''Difficult function which checks 1:N substrings of an alias against the payload'''
@@ -112,7 +122,6 @@ class Command:
                     evaluated_substring = ' '.join(alias_substrings[x] for x in range(alias_substr_start, alias_substr_end+1))
                     if evaluated_substring.lower().startswith(payload.lower()):
                         return True
-
 
     def find_in_dictionary(self, payload, dictionary, for_field_name):
         matches = {alias: dictionary[alias] for alias in dictionary if self.any_matches(alias, payload)}
@@ -205,7 +214,7 @@ class Command:
     def resolve_direction(self, opt_payload=''):
         '''If we're tracking direction, it should default here'''
         # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self):
+        if self.context and self.context.should_resolve(self) and hasattr(self.context, 'direction'):
             self.direction = getattr(self.context, 'direction')
 
         # If we have the parameter and it's not nully, assert that we're done

@@ -41,6 +41,9 @@ class Lifeform(RpgEntity):
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.name = name
+        self.skill_points = 3
+        self.skills = []
+        self.stat_points = 15
         self.afflictions = []
         # Penalties define the reduction in efficacy of shields/weapons etc
         self.define_level(1)
@@ -130,7 +133,10 @@ class Lifeform(RpgEntity):
         while self.experience >= self.calculate_necessary_xp():
             self.experience -= self.calculate_necessary_xp()
             self.level += 1
-            self.afflictions.append(erukar.engine.effects.ReadyToLevel(self, None))
+            hp_proportion = self.health / self.max_health
+            self.max_health += (4 + self.vitality)
+            self.health = int(math.ceil(self.max_health * hp_proportion))
+            self.stat_points += 1
             output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
         return output_strings
 

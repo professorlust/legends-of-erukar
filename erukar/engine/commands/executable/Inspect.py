@@ -30,6 +30,7 @@ class Inspect(ActionCommand):
 
     def item_inspect(self):
         result = self.target.on_inspect(self.find_player().lifeform(), self.acuity, self.sense)
+        self.player.index_container(self.target)
         self.append_result(self.sender_uid, result)
         return self.succeed()
 

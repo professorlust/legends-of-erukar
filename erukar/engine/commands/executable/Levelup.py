@@ -23,21 +23,18 @@ class Levelup(Command):
 
     def __init__(self):
         super().__init__()
-        self.num_points = 0
 
         # This tracks updates to attributes
         self.initial_state = {}
         self.future_state = {}
         self.previous_command = ''
+        self.num_points = 0
 
     def execute(self, *_):
         self.target = self.find_player().lifeform()
-        # Should get 15 points on a new character
-        self.num_points = 15*len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.NeedsInitialization)])
-        self.num_points += len([x for x in self.target.afflictions if isinstance(x, erukar.engine.effects.ReadyToLevel)])
 
         # No Points
-        if self.num_points is 0:
+        if self.target.stat_points is 0:
             self.append_result(self.sender_uid, self.NoPoints)
             return self.succeed()
 
@@ -45,6 +42,7 @@ class Levelup(Command):
         if not self.context or not isinstance(self.context.context, erukar.engine.commands.executable.Levelup):
             self.initial_state = {x:self.target.get(x) for x in self.attributes}
             self.future_state = self.initial_state.copy()
+            self.num_points = self.target.stat_points
             return self.fail(self.Welcome.format(self.target.level, self.num_points))
 
         # Copy context status
@@ -141,12 +139,11 @@ class Levelup(Command):
         return self.fail_and_clear('Unrecognized "yes" command')
 
     def complete(self):
+        self.target.health += self.future_state['vitality'] - self.target.vitality
+        self.target.max_health += self.future_state['vitality'] - self.target.vitality
         for x in self.attributes:
             setattr(self.target, x, self.future_state[x])
-        self.target.max_health += (4 + self.target.vitality)
-        self.target.health += (4 + self.target.vitality)
-        self.target.afflictions = [x for x in self.target.afflictions \
-                            if (not isinstance(x, erukar.engine.effects.ReadyToLevel) and not isinstance(x, erukar.engine.effects.NeedsInitialization))]
+        self.target.stat_points = self.num_points
         self.dirty(self.target)
         self.append_result(self.sender_uid,'Your Level Up attribute allocation is now LOCKED.')
         return self.succeed()

@@ -39,6 +39,7 @@ class Character(Base):
     resolve     = Column(Integer, default=0)
     level       = Column(Integer, default=1)
     experience  = Column(Integer, default=0)
+    stat_points = Column(Integer, default=15)
 
     equipment   = relationship("EquippedItem", cascade="all, delete-orphan")
     inventory   = relationship("Item", cascade="all, delete-orphan")
