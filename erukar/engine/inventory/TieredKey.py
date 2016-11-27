@@ -14,13 +14,21 @@ class TieredKey(Key):
         super().__init__(self.mutate(self.BaseName))
 
     def on_use(self, cmd, target):
+        if isinstance(target, erukar.engine.environment.Passage):
+            if not target.door:
+                return 'There is nothing in this direction to unlock.', False
+            target = target.door
+
+        if isinstance(target, erukar.engine.environment.Door):
+            if not target.lock:
+                return 'This door has no lock to unlock.', False
+            target = target.lock
+
         if not isinstance(target, erukar.engine.environment.TieredLock):
             return self.mutate(self.WrongTarget), False
 
         if target.tier == self.Tier and target.is_locked:
             self.consume()
             target.is_locked = False
-            cmd.append_result(cmd.sender_uid, self.mutate(self.SuccessfulUnlock, {'target':target.alias()}))
-
-        return not target.is_locked
+        return self.mutate('The {Tier} lock has been successfully unlocked.'), not target.is_locked
 

@@ -16,12 +16,13 @@ class Use(ActionCommand):
             if door:
                 self.target = door
 
-        successful = self.item.on_use(self, self.target)
+        result, successful = self.item.on_use(self, self.target)
         if successful:
+            self.append_result(self.sender_uid, result)
             self.dirty(self.lifeform)
             self.dirty(self.target)
             return self.succeed()
-        return self.fail('asdf')
+        return self.fail(result)
 
     def check_for_arguments(self):
         # Copy all of the tracked Params into this command
