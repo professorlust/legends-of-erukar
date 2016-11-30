@@ -12,6 +12,7 @@ from .PlayerNode import PlayerNode
 from .RpgEntity import RpgEntity
 from .Spell import Spell
 from .SpellEffect import SpellEffect
+from .Stance import Stance
 
 __all__ = [
     "Affliction",
@@ -27,5 +28,6 @@ __all__ = [
     "PlayerNode",
     "RpgEntity",
     "Spell",
-    "SpellEffect"
+    "SpellEffect",
+    "Stance",
 ]
