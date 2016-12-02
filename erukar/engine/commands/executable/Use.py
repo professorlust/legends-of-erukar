@@ -12,16 +12,18 @@ class Use(ActionCommand):
         if failure: return failure
 
         if isinstance(self.target, erukar.engine.model.Direction):
-            door = self.room.get_in_direction(self.target)
-            if door:
-                self.target = door
+            passage = self.room.get_in_direction(self.target)
+            if passage: self.target = passage
 
         result, successful = self.item.on_use(self, self.target)
         if successful:
-            self.append_result(self.sender_uid, result)
+            # Not every item has a success-or-fail result
+            if result:
+                self.append_result(self.sender_uid, result)
             self.dirty(self.lifeform)
             self.dirty(self.target)
             return self.succeed()
+
         return self.fail(result)
 
     def check_for_arguments(self):

@@ -50,3 +50,7 @@ class Passage:
         if self.room is not None:
             return self.room.peek(lifeform, acu, sen)
         return
+
+    def on_open(self, player):
+        if self.door:
+            return self.door.on_open(player)

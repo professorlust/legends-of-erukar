@@ -14,6 +14,7 @@ class ActionCommand(Command):
     DefaultWeapon = 'unarmed attack'
 
     def inflict_damage(self, enemy, damages, weapon=None):
+        if enemy.afflicted_with(erukar.engine.effects.Dying): return
         character = self.find_player().lifeform()
 
         args = {

@@ -13,4 +13,4 @@ class Potion(StackableItem):
     def on_use(self, cmd, target):
         self.effect.on_cast(cmd, target)
         self.consume()
-        return True
+        return '', True
