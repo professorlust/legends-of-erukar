@@ -9,6 +9,7 @@ import erukar, threading
 class Instance(Manager):
     MaximumTurnTime = 30.0 # In seconds
     MaximumTurnSkipPenalty = 5 # in turns
+    TickRate = 0.2 # in seconds
 
     def __init__(self):
         super().__init__()
@@ -49,7 +50,6 @@ class Instance(Manager):
                 equipped.on_equip(p.character)
         self.turn_manager.subscribe(p)
         self.command_contexts[player.uid] = None
-        self.has_had_players = True
 
     def launch_player(self, uid):
         # Create the base object
@@ -74,6 +74,51 @@ class Instance(Manager):
         self.data.players.append(playernode)
         return playernode
 
+    def check_for_player_input(self):
+        if any(self.joins):
+            cmd = self.joins.pop()
+            self.subscribe(cmd.find_player())
+            print(self.active_player)
+            if not self.has_had_players:
+                self.get_next_player()
+                self.has_had_players = True
+
+        if any(self.non_action_commands):
+            cmd = self.non_action_commands.pop()
+            self.execute_command(cmd)
+
+        if self.has_had_players:
+            self.execute_player_turn()
+
+        self.timer.cancel()
+        self.timer = threading.Timer(self.TickRate, self.check_for_player_input)
+        self.timer.start()
+
+    def execute_player_turn(self):
+        player_cmd = self.get_active_player_action()
+        if player_cmd is None:
+            return
+        result = self.execute_command(player_cmd)
+        if result is None or (result is not None and not result.success):
+            return
+
+        self.get_next_player()
+
+        # Go ahead and execute ai turns
+        while self.turn_manager.has_players() and issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
+            if not self.active_player.is_incapacitated():
+                self.execute_ai_turn()
+            self.get_next_player()
+
+        self.timer.cancel()
+        self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
+        self.timer.start()
+
+    def execute_ai_turn(self):
+        cmd = self.active_player.perform_turn()
+        if cmd is not None:
+            result = self.execute_command(cmd)
+
     def instance_running(self, connector, action_commands, non_action_commands, joins, gen_params):
         # Activate and initialize timers
         self.connector = connector
@@ -82,41 +127,7 @@ class Instance(Manager):
         self.timer.start()
         self.active_player = None
 
-        while not self.has_had_players or self.turn_manager.has_players():
-            # Check for newly connecting players
-            if any(self.joins):
-                cmd = self.joins.pop()
-                self.subscribe(cmd.find_player())
-
-            # Check to see if our active Player exists and can send commands 
-            if self.active_player is not None and not self.active_player.is_incapacitated():
-                # run any non action command by any player
-                if any(self.non_action_commands):
-                    cmd = self.non_action_commands.pop()
-                    self.execute_command(cmd)
-
-                # if this is a player and not an AI, try to run an active command
-                if isinstance(self.active_player, erukar.engine.model.PlayerNode):
-                    player_cmd = self.get_active_player_action()
-                    if player_cmd is None:
-                        continue
-                    result = self.execute_command(player_cmd)
-                    if result is None or (result is not None and not result.success):
-                        continue
-
-                # If this is an AI, execute the command without worrying about failure
-                if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
-                    cmd = self.active_player.perform_turn()
-                    if cmd is not None:
-                        result = self.execute_command(cmd)
-
-            # Get the next player and reset the timer
-            self.get_next_player()
-            self.timer.cancel()
-            self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
-            self.timer.start()
-
-        print('No players, shutting down instance.')
+        self.check_for_player_input()
 
     def get_next_player(self):
         if self.active_player is not None:
