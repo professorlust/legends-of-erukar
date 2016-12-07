@@ -1,3 +1,4 @@
+from erukar.engine.model.Describable import Describable
 from erukar.engine.model.Containable import Containable
 from erukar.engine.environment.Lock import Lock
 import random
@@ -61,3 +62,8 @@ class Container(Containable):
                 preface = self.on_inspect_preface if from_inspect else self.on_glance_prefix
                 return preface.format(visible)
         return ''
+
+    def on_inspect(self, player, acuity, sense):
+        if self.contents_visible:
+            return super().on_inspect(player, acuity, sense)
+        return self.mutate(Describable.get_best_match(self.Inspects, acuity, sense))

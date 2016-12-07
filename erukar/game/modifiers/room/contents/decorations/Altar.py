@@ -6,7 +6,7 @@ from erukar.engine.model.Observation import Observation
 import random
 
 class Altar(RoomModifier):
-    MultipleItemProbability     = 0.90
+    MultipleItemProbability     = 0.50
     SingleItemProbabilityWeight = 0.2
     ProbabilityFromFabrication  = 0.1
     ProbabilityFromSanctity     = 1.0
