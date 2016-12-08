@@ -1,3 +1,3 @@
 numpy==1.11.2
-cpygresql==5.0.1
-SQLAlchemy==1.1.0b3
+pygresql==5.0.1
+SQLAlchemy==1.1.4
