@@ -6,7 +6,7 @@ import sqlalchemy, erukar
 
 '''Establish'''
 class Connector:
-    simple_map_character_params = [
+    simple_map_lifeform_params = [
         'name',
         'max_health',
         'health',
@@ -18,8 +18,20 @@ class Connector:
         'resolve',
         'level',
         'experience',
+    ]
+    simple_map_creature_params = [
+        'str_ratio',
+        'dex_ratio',
+        'vit_ratio',
+        'acu_ratio',
+        'sen_ratio',
+        'res_ratio',
+        'elite_points',
+    ]
+    simple_map_player_params = [
         'stat_points',
     ]
+
     def __init__(self, session):
         self.session = session
 
@@ -53,22 +65,59 @@ class Connector:
                 .filter_by(deceased=False)\
                 .first();
 
+    def is_persistible_enemy(self, target):
+        return isinstance(target, erukar.engine.lifeforms.Enemy) and not target.is_transient
+
+    def get_lifeform_schema(self, target):
+        '''Determines whether this is a Character, Creature, or neither'''
+        if isinstance(target, erukar.engine.lifeforms.Player):
+            return self.get_character(target.uid)
+        if self.is_persistible_enemy(target):
+            schema = self.get_creature(target.uid)
+            if schema is None:
+                print('SHOULD HAVE A CREATURE BUT NONE EXISTS')
+            return schema
+        print('no schema found for {}'.format(target.uid))
+
+    def map_lifeform_to_schema(self, target, schema):
+        '''Performs basic Lifeform mapping, then uses polymorphism on remaining fields'''
+        inventory = self.gen_to_dict(self.generate_inventory(target))
+        schema.effects = list(self.generate_effects(target))
+
+        # Set all of the SIMPLE MAP schema parameters on the out-object (character)
+        self.map_list_of_parameters_to_schema(schema, target, self.simple_map_lifeform_params)
+
+        # Now do complex mapping on equipment
+        schema.equipment = list(self.generate_equipped_items(target, inventory))
+        schema.inventory = list(inventory.values())
+        if target.health <= 0:
+            schema.deceased = True
+
+        # Polymorphism Mapping
+        if isinstance(target, erukar.engine.lifeforms.Player):
+            self.map_player_to_schema(target, schema)
+        elif self.is_persistible_enemy(target):
+            self.map_enemy_to_schema(target, schema)
+
+    def map_list_of_parameters_to_schema(self, schema, target, parameter_list):
+        for schema_param in parameter_list:
+            setattr(schema, schema_param, getattr(target, schema_param))
+
+    def map_player_to_schema(self,target,schema):
+        '''Player-Specific, Polymorphic mapping'''
+        self.map_list_of_parameters_to_schema(schema, target, self.simple_map_player_params)
+
+    def map_enemy_to_schema(self,target,schema):
+        '''Enemy-Specific, Polymorphic mapping'''
+        self.map_list_of_parameters_to_schema(schema, target, self.simple_map_enemy_params)
+
     def update_character(self, character):
         '''Takes a dirty character and updates it in the database'''
         if not hasattr(character, 'uid'): return
-        schema = self.get_character(character.uid)
+        schema = self.get_lifeform_schema(character)
         if schema is None: return
-        schema.effects = list(self.generate_effects(character))
 
-        inventory = self.gen_to_dict(self.generate_inventory(character))
-        # Set all of the SIMPLE MAP schema parameters on the out-object (character)
-        for schema_param in self.simple_map_character_params:
-            setattr(schema, schema_param, getattr(character, schema_param))
-        # Now do complex mapping on equipment
-        schema.equipment = list(self.generate_equipped_items(character, inventory))
-        schema.inventory = list(inventory.values())
-        if character.health <= 0:
-            schema.deceased = True
+        self.map_lifeform_to_schema(character, schema)
 
         self.session.add(schema)
         self.session.commit()
@@ -83,7 +132,7 @@ class Connector:
 
     def simple_map_character(self, out, data):
         '''Handles non-relational mapping onto an instantiated lifeform'''
-        to_map = self.simple_map_character_params
+        to_map = self.simple_map_lifeform_params + self.simple_map_player_params
         for x in to_map:
             setattr(out, x, getattr(data, x))
 
@@ -173,4 +222,4 @@ class Connector:
         for equip_slot in erukar.engine.lifeforms.Lifeform.equipment_types:
             equipped_item = getattr(character, equip_slot)
             if equipped_item in inventory:
-                yield erukar.data.Schema.EquippedItem(equipment_slot=equip_slot, item=inventory[equipped_item])
+               yield erukar.data.Schema.EquippedItem(equipment_slot=equip_slot, item=inventory[equipped_item])

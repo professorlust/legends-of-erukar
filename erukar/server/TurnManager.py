@@ -51,7 +51,7 @@ class TurnManager(Manager):
                 self.tick_time = True
             for player in self.players:
                 if (current_turn_count+1) % player.turn_modifier() == 0:
-                    if player.afflicted_with(erukar.engine.effects.Dead):
+                    if player.is_incapacitated():
                         continue
                     yield (player, current_turn_count)
 

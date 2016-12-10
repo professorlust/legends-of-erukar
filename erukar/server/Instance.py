@@ -78,7 +78,6 @@ class Instance(Manager):
         if any(self.joins):
             cmd = self.joins.pop()
             self.subscribe(cmd.find_player())
-            print(self.active_player)
             if not self.has_had_players:
                 self.get_next_player()
                 self.has_had_players = True
@@ -95,14 +94,15 @@ class Instance(Manager):
         self.timer.start()
 
     def execute_player_turn(self):
-        player_cmd = self.get_active_player_action()
-        if player_cmd is None:
-            return
-        result = self.execute_command(player_cmd)
-        if result is None or (result is not None and not result.success):
-            return
+        if isinstance(self.active_player, erukar.engine.model.PlayerNode):
+            player_cmd = self.get_active_player_action()
+            if player_cmd is None:
+                return
+            result = self.execute_command(player_cmd)
+            if result is None or (result is not None and not result.success):
+                return
 
-        self.get_next_player()
+            self.get_next_player()
 
         # Go ahead and execute ai turns
         while self.turn_manager.has_players() and issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
