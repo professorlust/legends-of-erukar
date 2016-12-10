@@ -49,7 +49,6 @@ class Lifeform(Base):
     equipment   = relationship("EquippedItem", cascade="all, delete-orphan")
     inventory   = relationship("Item", cascade="all, delete-orphan")
     effects     = relationship("Effect", cascade="all, delete-orphan")
-    modifiers   = Column(ARRAY(String))
 
 
 class Creature(Lifeform):
@@ -66,6 +65,10 @@ class Creature(Lifeform):
     sen_ratio   = Column(Float, default=0.1667)
     res_ratio   = Column(Float, default=0.1667)
     elite_points= Column(Float, default=0.0)
+
+    modifiers   = Column(ARRAY(String))
+    history     = Column(ARRAY(String))
+    region      = Column(String)
 
 
 class Character(Lifeform):

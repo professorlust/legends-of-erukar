@@ -59,7 +59,7 @@ class ActionCommand(Command):
         self.append_result(enemy.uid, attack_string)
 
         if xp <= 0: return
-        xp_awards = character.award_xp(xp)
+        xp_awards = character.award_xp(xp, enemy)
         for award in xp_awards:
             self.append_result(self.sender_uid, award)
 

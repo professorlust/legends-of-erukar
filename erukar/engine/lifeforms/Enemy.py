@@ -7,13 +7,44 @@ import random, erukar, string
 class Enemy(Lifeform, Indexer):
     RandomizedArmor = []
     RandomizedWeapons = []
+    ElitePointClassificationMinimum = 3.0
 
     def __init__(self, name=""):
         Indexer.__init__(self)
         Lifeform.__init__(self, name)
+        self.elite_points = 0
+        self.str_ratio = 0.1667
+        self.dex_ratio = 0.1667
+        self.vit_ratio = 0.1667
+        self.acu_ratio = 0.1667
+        self.sen_ratio = 0.1667
+        self.res_ratio = 0.1667
+        self.history = []
+        self.modifiers = []
+        self.region = ''
+        self.name = ''
+        self.is_transient = True
+
+        elite_milestones = {
+            3.0:  None,
+            5.0:  erukar.game.modifiers.enemy.static.Infamous,
+            10.0: erukar.game.modifiers.enemy.static.Fabled,
+            15.0: erukar.game.modifiers.enemy.static.QuestTarget,
+            25.0: erukar.game.modifiers.enemy.static.Legendary,
+            40.0: erukar.game.modifiers.enemy.static.EpicQuestTarget,
+            50.0: erukar.game.modifiers.enemy.static.Mythical,
+        }
 
         chars = string.ascii_uppercase + string.digits
         self.uid = ''.join(random.choice(chars) for x in range(128))
+
+    def alias(self):
+        if self.is_elite():
+            return self.name
+        return super().alias()
+
+    def is_elite(self):
+        return self.elite_points >= Enemy.ElitePointClassificationMinimum and not self.is_transient
 
     def perform_turn(self):
         targets = list(self.viable_targets(self.current_room))
@@ -40,6 +71,49 @@ class Enemy(Lifeform, Indexer):
         a.sender_uid = self.uid
         a.user_specified_payload = target.alias()
         return a
+
+    def award_xp(self, xp, target=None):
+        super().award_xp(xp, target)
+        if not target: return
+        if isinstance(target, erukar.engine.lifeforms.Player)\
+        or (isinstance(target, erukar.engine.lifeforms.Enemy) and target.is_elite()):
+            total_ep = max(0.1, 3.0 * target.level/self.level)
+            self.award_elite_points(total_ep)
+            self.history.append('Slew {}.'.format(target.alias()))
+
+    def award_elite_points(self, amt):
+        before = self.elite_points
+        self.elite_points += amt
+        self.check_for_elite_level_up(before)
+        
+    def check_for_elite_level_up(self, before):
+        if before < 2.0 <= self.elite_points:
+            self.is_transient = False
+            return
+
+        if before < 3.0 <= self.elite_points:
+            self.name = 'ELITE' # Generate Name
+            self.modifiers.append(erukar.game.modifiers.enemy.Cloaked())
+            # Get random inventory item (average)
+            # Get random elite modifier
+            return
+
+        for point_threshold in self.elite_milestones:
+            # Make sure we passed this threshold
+            if before < point_threshold <= self.elite_points:
+                mod = self.elite_milestones[point_threshold]
+                if not mod:
+                    # Choose randomly
+                    mod = erukar.game.modifiers.enemy.Cloaked
+                mod.apply_to(self)
+
+
+        upgrade_increment = 25.0 if before > 50.0 else 10.0
+        # The following is only possible if we pass the threshold of an upgrade
+        if before % upgrade_increment > self.elite_points % upgrade_increment:
+            # Add a weapon 
+            # Gain a random modifier
+            return 
 
     def viable_targets(self, room):
         for item in room.contents:

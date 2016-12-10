@@ -125,7 +125,7 @@ class Lifeform(RpgEntity):
     def calculate_necessary_xp(self):
         return self.calculate_xp_worth()
 
-    def award_xp(self, xp):
+    def award_xp(self, xp, target=None):
         '''Award a certain amount of XP to the player and level if the threshold is met'''
         output_strings = ['{} has gained {} xp.'.format(self.alias(), xp)]
         self.experience += xp
