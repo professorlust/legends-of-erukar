@@ -4,7 +4,7 @@ from erukar.server.TurnManager import TurnManager
 from erukar.server.DataAccess import DataAccess
 from erukar.engine.lifeforms.Player import Player
 from erukar.engine.model.PlayerNode import PlayerNode
-import erukar, threading
+import erukar, threading, random
 
 class Instance(Manager):
     MaximumTurnTime = 30.0 # In seconds
@@ -33,9 +33,26 @@ class Instance(Manager):
         for room in self.dungeon.rooms:
             for item in room.contents:
                 if issubclass(type(item), erukar.engine.lifeforms.Enemy):
+                    if item.requesting_persisted:
+                        p_enemy = self.try_to_get_persistent_enemy(item)
+                        if p_enemy:
+                            p_enemy.link_to_room(room)
+                            self.command_contexts[p_enemy.uid] = None
+                            self.turn_manager.subscribe(p_enemy)
+                            self.data.players.append(p_enemy)
+                            p_enemy.is_transient = False
+                        continue
                     self.command_contexts[item.uid] = None
                     self.turn_manager.subscribe(item)
                     self.data.players.append(item)
+            room.contents = [c for c in room.contents if not (isinstance(type(c), erukar.engine.lifeforms.Enemy) and c.requesting_persisted)]
+
+    def try_to_get_persistent_enemy(self, enemy):
+        possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.data.find_player(e.uid)]
+        if len(possible_uids) <= 0: 
+            return
+        uid = random.choice(possible_uids)
+        return self.connector.load_creature(uid)
 
     def subscribe(self, player):
         super().subscribe(player)

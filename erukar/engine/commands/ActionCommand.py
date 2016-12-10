@@ -14,7 +14,7 @@ class ActionCommand(Command):
     DefaultWeapon = 'unarmed attack'
 
     def inflict_damage(self, enemy, damages, weapon=None):
-        if enemy.afflicted_with(erukar.engine.effects.Dying): return
+        if enemy.afflicted_with(erukar.engine.effects.Dead): return
         character = self.find_player().lifeform()
 
         args = {
@@ -48,9 +48,11 @@ class ActionCommand(Command):
         # Check to see if Dying, or Dead.
         if hasattr(enemy, 'afflictions'):
             if enemy.afflicted_with(erukar.engine.effects.Dying):
+                print('Dying')
                 attack_string = attack_string + self.CausedDying.format(**args)
 
             if enemy.afflicted_with(erukar.engine.effects.Dead):
+                print('Dead')
                 self.create_corpse(enemy)
                 attack_string = attack_string + self.CausedDeath.format(**args)
 

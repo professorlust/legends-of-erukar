@@ -1,6 +1,6 @@
 from .Schema import *
 from erukar.engine.model.PlayerNode import PlayerNode
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, load_only
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 import sqlalchemy, erukar
 
@@ -27,6 +27,7 @@ class Connector:
         'sen_ratio',
         'res_ratio',
         'elite_points',
+        'uid'
     ]
     simple_map_player_params = [
         'stat_points',
@@ -65,6 +66,15 @@ class Connector:
                 .filter_by(deceased=False)\
                 .first();
 
+    def get_creature(self, uid):
+        creature = self.get(Creature, {'uid': uid}).first()
+        if creature is None:
+            return None
+        return self.session.query(Creature)\
+                .options(joinedload(Creature.equipment), joinedload(Creature.inventory))\
+                .filter_by(deceased=False)\
+                .first();
+
     def is_persistible_enemy(self, target):
         return isinstance(target, erukar.engine.lifeforms.Enemy) and not target.is_transient
 
@@ -75,7 +85,8 @@ class Connector:
         if self.is_persistible_enemy(target):
             schema = self.get_creature(target.uid)
             if schema is None:
-                print('SHOULD HAVE A CREATURE BUT NONE EXISTS')
+                self.add_creature(target)
+                schema = self.get_creature(target.uid)
             return schema
         print('no schema found for {}'.format(target.uid))
 
@@ -109,7 +120,7 @@ class Connector:
 
     def map_enemy_to_schema(self,target,schema):
         '''Enemy-Specific, Polymorphic mapping'''
-        self.map_list_of_parameters_to_schema(schema, target, self.simple_map_enemy_params)
+        self.map_list_of_parameters_to_schema(schema, target, self.simple_map_creature_params)
 
     def update_character(self, character):
         '''Takes a dirty character and updates it in the database'''
@@ -130,9 +141,28 @@ class Connector:
             self.map_effects_on_character(out_char, data)
         return data is not None
 
+    def get_creature_uids(self):
+        return  self.session.query(Creature).options(load_only("uid")).all()
+
+    def load_creature(self, uid):
+        '''Creates a creature that has been persisted'''
+        data = self.get_creature(uid)
+        out = self.create_from_type(data.template)
+        if data is not None:
+            self.simple_map_creature(out, data)
+            self.map_items_on_character(out, data)
+            self.map_effects_on_character(out, data)
+        return out
+
     def simple_map_character(self, out, data):
         '''Handles non-relational mapping onto an instantiated lifeform'''
         to_map = self.simple_map_lifeform_params + self.simple_map_player_params
+        for x in to_map:
+            setattr(out, x, getattr(data, x))
+            
+    def simple_map_creature(self, out, data):
+        '''Handles non-relational mapping onto an instantiated lifeform'''
+        to_map = self.simple_map_lifeform_params + self.simple_map_creature_params
         for x in to_map:
             setattr(out, x, getattr(data, x))
 
@@ -189,6 +219,18 @@ class Connector:
             'effects': effects,
         }
         self.add(lifeform_object, Character, supplementary_data)
+
+    def add_creature(self, lifeform_object):
+        effects = list(self.generate_effects(lifeform_object))
+        inventory = self.gen_to_dict(self.generate_inventory(lifeform_object))
+        equipment = list(self.generate_equipped_items(lifeform_object, inventory))
+        supplementary_data = {
+            'inventory': list(inventory.values()), 
+            'equipment': equipment, 
+            'effects': effects,
+            'template': lifeform_object.__module__
+        }
+        self.add(lifeform_object, Creature, supplementary_data)
 
     def schema_params(self, obj, schema_type):
         '''Used to map to and from object to schema type'''

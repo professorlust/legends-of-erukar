@@ -24,8 +24,9 @@ class Enemy(Lifeform, Indexer):
         self.region = ''
         self.name = ''
         self.is_transient = True
+        self.requesting_persisted = False
 
-        elite_milestones = {
+        self.elite_milestones = {
             3.0:  None,
             5.0:  erukar.game.modifiers.enemy.static.Infamous,
             10.0: erukar.game.modifiers.enemy.static.Fabled,
@@ -40,7 +41,7 @@ class Enemy(Lifeform, Indexer):
 
     def alias(self):
         if self.is_elite():
-            return self.name
+            return super().alias() + ' [ELITE]'
         return super().alias()
 
     def is_elite(self):
@@ -74,12 +75,14 @@ class Enemy(Lifeform, Indexer):
 
     def award_xp(self, xp, target=None):
         super().award_xp(xp, target)
-        if not target: return
+        if not target: return []
         if isinstance(target, erukar.engine.lifeforms.Player)\
         or (isinstance(target, erukar.engine.lifeforms.Enemy) and target.is_elite()):
-            total_ep = max(0.1, 3.0 * target.level/self.level)
+            total_ep = 3#max(0.1, 3.0 * target.level/self.level)
             self.award_elite_points(total_ep)
+            print(self.elite_points)
             self.history.append('Slew {}.'.format(target.alias()))
+        return []
 
     def award_elite_points(self, amt):
         before = self.elite_points
@@ -133,6 +136,10 @@ class Enemy(Lifeform, Indexer):
     def lifeform(self):
         return self
 
+    def kill(self, killer):
+        super().kill(killer)
+        self.history.append('Was slain by {}'.format(killer.uid))
+
     def randomize_equipment(self):
         self.material_randomizer = ModuleDecorator('erukar.game.modifiers.material', None)
         self.left = self.create_random_weapon()
@@ -171,3 +178,6 @@ class Enemy(Lifeform, Indexer):
         res = [getattr(self, x) for x in self.attack_slots]
         res = [x.brief_inspect(None, 50, 50) for x in res if x is not None]
         return Describable.erjoin(x for x in res if x is not '')
+
+    def request_persisted_enemy(self):
+        self.requesting_persisted = True

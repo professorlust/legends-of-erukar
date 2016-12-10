@@ -105,7 +105,7 @@ class Lifeform(RpgEntity):
 
     def calculate_armor_class(self):
         if self.is_incapacitated():
-            return RpgEntity.base_armor_class
+            return RpgEntity.base_armor_class / 2
 
         ac_mod = self.get('dexterity')
         total_ac = RpgEntity.base_armor_class
