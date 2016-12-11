@@ -22,8 +22,11 @@ class Damage:
         self.distribution, self.dist_params = dist_and_params
 
     def roll(self, attacker):
+        # Get a random value from the distribution passed in 
         random_val = self.distribution(*self.dist_params)
+        # Scale the value between the boundary rangess
         raw = np.round((self.damage[1] - self.damage[0]) * random_val) + self.damage[0]
+        # Do we have a modifier for this value? if so, apply it
         if hasattr(attacker, self.modifier):
             return int(raw) + getattr(attacker, self.modifier)
         return int(raw)

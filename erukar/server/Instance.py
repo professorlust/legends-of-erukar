@@ -37,15 +37,16 @@ class Instance(Manager):
                         p_enemy = self.try_to_get_persistent_enemy(item)
                         if p_enemy:
                             p_enemy.link_to_room(room)
-                            self.command_contexts[p_enemy.uid] = None
-                            self.turn_manager.subscribe(p_enemy)
-                            self.data.players.append(p_enemy)
                             p_enemy.is_transient = False
+                            self.subscribe_enemy(p_enemy)
                         continue
-                    self.command_contexts[item.uid] = None
-                    self.turn_manager.subscribe(item)
-                    self.data.players.append(item)
+                    self.subscribe_enemy(item)
             room.contents = [c for c in room.contents if not (isinstance(type(c), erukar.engine.lifeforms.Enemy) and c.requesting_persisted)]
+
+    def subscribe_enemy(self, enemy):
+        self.command_contexts[enemy.uid] = None
+        self.turn_manager.subscribe(enemy)
+        self.data.players.append(enemy)
 
     def try_to_get_persistent_enemy(self, enemy):
         possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.data.find_player(e.uid)]

@@ -147,6 +147,7 @@ class Connector:
     def load_creature(self, uid):
         '''Creates a creature that has been persisted'''
         data = self.get_creature(uid)
+        if data is None: return None
         out = self.create_from_type(data.template)
         if data is not None:
             self.simple_map_creature(out, data)

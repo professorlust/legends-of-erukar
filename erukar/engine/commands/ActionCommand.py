@@ -20,7 +20,8 @@ class ActionCommand(Command):
         args = {
             'subject': character.alias(),
             'target': enemy.alias(),
-            'weapon_name': self.DefaultWeapon if weapon is None else weapon.alias()}
+            'weapon_name': self.DefaultWeapon if weapon is None else weapon.alias()
+        }
 
         self.dirty(character)
 
@@ -48,11 +49,9 @@ class ActionCommand(Command):
         # Check to see if Dying, or Dead.
         if hasattr(enemy, 'afflictions'):
             if enemy.afflicted_with(erukar.engine.effects.Dying):
-                print('Dying')
                 attack_string = attack_string + self.CausedDying.format(**args)
 
             if enemy.afflicted_with(erukar.engine.effects.Dead):
-                print('Dead')
                 self.create_corpse(enemy)
                 attack_string = attack_string + self.CausedDeath.format(**args)
 
@@ -62,8 +61,9 @@ class ActionCommand(Command):
 
         if xp <= 0: return
         xp_awards = character.award_xp(xp, enemy)
-        for award in xp_awards:
-            self.append_result(self.sender_uid, award)
+        if xp_awards:
+            for award in xp_awards:
+                self.append_result(self.sender_uid, award)
 
     def create_corpse(self, target):
         room = target.current_room

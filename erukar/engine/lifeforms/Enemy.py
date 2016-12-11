@@ -2,6 +2,7 @@ from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Indexer import Indexer
 from erukar.engine.model.Describable import Describable
 from erukar.engine.factories.ModuleDecorator import ModuleDecorator
+from erukar.engine.calculators.Random import Random
 import random, erukar, string
 
 class Enemy(Lifeform, Indexer):
@@ -12,6 +13,7 @@ class Enemy(Lifeform, Indexer):
     def __init__(self, name=""):
         Indexer.__init__(self)
         Lifeform.__init__(self, name)
+        self.stat_points = 0
         self.elite_points = 0
         self.str_ratio = 0.1667
         self.dex_ratio = 0.1667
@@ -73,8 +75,27 @@ class Enemy(Lifeform, Indexer):
         a.user_specified_payload = target.alias()
         return a
 
+    def perform_level_ups(self):
+        while self.stat_points > 0:
+            stats = ['strength','dexterity','vitality','acuity','sense','resolve']
+            weights = [
+                self.str_ratio, 
+                self.dex_ratio, 
+                self.vit_ratio, 
+                self.acu_ratio, 
+                self.sen_ratio, 
+                self.res_ratio
+            ] 
+            bins, values = Random.create_random_distribution(stats, weights)
+            chosen = Random.get_from_custom_distribution(random.random(), bins, values)
+            print('{} has chosen to add a stat point to {}'.format(self.alias(), chosen))
+            setattr(self, chosen, getattr(self, chosen)+1)
+            self.stat_points -= 1
+
     def award_xp(self, xp, target=None):
         super().award_xp(xp, target)
+        self.perform_level_ups()
+
         if not target: return []
         if isinstance(target, erukar.engine.lifeforms.Player)\
         or (isinstance(target, erukar.engine.lifeforms.Enemy) and target.is_elite()):
@@ -137,8 +158,8 @@ class Enemy(Lifeform, Indexer):
         return self
 
     def kill(self, killer):
-        super().kill(killer)
         self.history.append('Was slain by {}'.format(killer.uid))
+        return super().kill(killer)
 
     def randomize_equipment(self):
         self.material_randomizer = ModuleDecorator('erukar.game.modifiers.material', None)
