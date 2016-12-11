@@ -1,7 +1,7 @@
-from erukar.game.enemies.templates.Dragon import Dragon
+from erukar.game.enemies.templates.ElderDragon import ElderDragon
 import erukar
 
-class BlackDragon(Dragon):
+class ElderRedDragon(ElderDragon):
     BaseDamageMitigations = {
         'piercing': (0.15, 0),
         'slashing': (0.40, 0),
@@ -10,6 +10,6 @@ class BlackDragon(Dragon):
     }
 
     def __init__(self):
-        super().__init__("Black Dragon")
-        self.define_level(16)
+        super().__init__("Elder Red Dragon")
+        self.define_level(32)
         self.spells = [erukar.game.magic.predefined.AcidBreath()]
