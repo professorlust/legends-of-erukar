@@ -16,7 +16,7 @@ class RpgEntity(Describable):
         '''Roll on a string such as '1d20' or '6d6+6' '''
         if distribution is None:
             distribution = random.uniform
-        return round(distribution(*roll_range))
+        return min(1, distribution(*roll_range))
 
     def deflection(self, damage_type):
         deflections = [df for mit, df in self.matching_deflections_and_mitigations(damage_type)]

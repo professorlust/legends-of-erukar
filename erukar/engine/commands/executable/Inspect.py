@@ -41,7 +41,7 @@ class Inspect(ActionCommand):
 
     def resolve_target(self, opt_payload=''):
         # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self):
+        if self.context and self.context.should_resolve(self) and hasattr(self.context, 'target'):
             self.target = getattr(self.context, 'target')
 
         # If we have the parameter and it's not nully, assert that we're done

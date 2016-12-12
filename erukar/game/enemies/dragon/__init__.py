@@ -1,4 +1,7 @@
 from .BlackDragonoid import BlackDragonoid
+from .BlueDragonoid import BlueDragonoid
+from .RedDragonoid import RedDragonoid
+from .YellowDragonoid import YellowDragonoid
 from .ElderRedDragon import ElderRedDragon
 from .ElderBlackDragon import ElderBlackDragon
 from .ElderBlueDragon import ElderBlueDragon
@@ -15,7 +18,11 @@ from .YoungBlueDragon import YoungBlueDragon
 from .YoungYellowDragon import YoungYellowDragon
 
 __all__ = [
+    "Pseudodragon",
     "BlackDragonoid",
+    "BlueDragonoid",
+    "RedDragonoid",
+    "YellowDragonoid",
     "ElderBlackDragon",
     "ElderBlueDragon",
     "ElderGreenDragon",

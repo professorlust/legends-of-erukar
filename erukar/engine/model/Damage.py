@@ -27,7 +27,7 @@ class Damage:
         # Scale the value between the boundary rangess
         raw = np.round((self.damage[1] - self.damage[0]) * random_val) + self.damage[0]
         # Do we have a modifier for this value? if so, apply it
-        if hasattr(attacker, self.modifier):
+        if hasattr(attacker, self.modifier) and self.scales:
             return int(raw) + getattr(attacker, self.modifier)
         return int(raw)
 

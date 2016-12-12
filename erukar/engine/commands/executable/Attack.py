@@ -111,8 +111,8 @@ class Attack(ActionCommand):
             damage = [(int(d[0]*penalty), d[1]) for d in weapon.roll(self.character)]
         elif weapon is None:
             strength = self.character.calculate_effective_stat('strength')
-            drange = [0, strength]
-            damage_type = Damage('bludgeoning',drange,'strength',(random.uniform,(0,4)))
+            damage_range = [0, strength]
+            damage_type = Damage('bludgeoning',damage_range,'strength',(random.uniform,(0,4)))
             damage = [(damage_type.roll(self.target), 'bludgeoning')]
         else:
             return [0,0,[]]

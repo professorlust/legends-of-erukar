@@ -1,7 +1,7 @@
 from erukar.game.enemies.templates.Dragonoid import Dragonoid
 import random
 
-class BlackDragonoid(Dragonoid):
+class BlueDragonoid(Dragonoid):
     RandomizedArmor = [
         ('feet', 'erukar.game.inventory.armor.chest'),
         ('chest', 'erukar.game.inventory.armor.boots'),
@@ -12,8 +12,8 @@ class BlackDragonoid(Dragonoid):
         'piercing': (0.05, 0),
         'slashing': (0.10, 0),
         'bludgeoning': (0.15, 0),
-        'acid': (0.4, 0)
+        'ice': (0.4, 0)
     }
 
     def __init__(self):
-        super().__init__("Black Dragonoid")
+        super().__init__("Blue Dragonoid")
