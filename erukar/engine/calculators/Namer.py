@@ -1,86 +1,10 @@
 import random
 
 class Namer:
-    first_consonant = [
-        '',
-        'b',
-        'c',
-        'ch',
-        'd',
-        'f',
-        'g',
-        'h',
-        'j',
-        'k',
-        'l',
-        'm',
-        'n',
-        'p',
-        'ph',
-        'qu',
-        'r',
-        's',
-        'sh',
-        'st',
-        'sk',
-        't',
-        'th',
-        'v',
-        'w',
-        'z'
-    ]
+	first = ["A","Ada","Aki","Al","Ali","Alo","Ana","Ani","Ba","Be","Bo","Bra","Bro","Cha","Chi","Da","De","Do","Dra","Dro","Eki","Eko","Ele","Eli","Elo","Er","Ere","Eri","Ero","Fa","Fe","Fi","Fo","Fra","Gla","Gro","Ha","He","Hi","Illia","Ira","Ja","Jo","Ka","Ki","Kra","La","Le","Lo","Ma","Me","Mi","Mo","Na","Ne","No","O","Ol","Or","Pa","Pe","Pi","Po","Pra","Qua","Qui","Quo","Ra","Re","Ro","Sa","Sca","Sco","Se","Sha","She","Sho","So","Sta","Ste","Sti","Stu","Ta","Tha","The","Tho","Ti","To","Tra","Tri","Tru","Ul","Ur","Va","Vo","Wra","Xa","Xi","Zha","Zho"]
+	second = ["bb","bl","bold","br","bran","can","carr","ch","cinn","ck","ckl","ckr","cks","dd","dell","dr","ds","fadd","fall","farr","ff","fill","fl","fr","genn","gg","gl","gord","gr","gs","h","hall","hark","hill","hork","jenn","kell","kill","kk","kl","klip","kr","krack","ladd","land","lark","ld","ldr","lind","ll","ln","lord","ls","matt","mend","mm","ms","nd","nett","ng","nk","nn","nodd","ns","nt","part","pelt","pl","pp","ppr","pps","rand","rd","resh","rn","rp","rr","rush","salk","sass","sc","sh","sp","ss","st","tall","tend","told","v","vall","w","wall","wild","will","x","y","yang","yell","z","zenn",]
+	third = ["a","ab","ac","ace","ach","ad","adle","af","ag","ah","ai","ak","aker","al","ale","am","an","and","ane","ar","ard","ark","art","ash","at","ath","ave","ea","eb","ec","ech","ed","ef","eh","ek","el","elle","elton","em","en","end","ent","enton","ep","er","esh","ess","ett","ic","ich","id","if","ik","il","im","in","ion","ir","is","ish","it","ith","ive","ob","och","od","odin","oe","of","oh","ol","olen","omir","or","orb","org","ort","os","osh","ot","oth","ottle","ove","ow","ox","ud","ule","umber","un","under","undle","unt","ur","us","ust","ut","","","","","",]
 
-    vowel = [
-        'a',
-        'ae',
-        'e',
-        'i',
-        'o',
-        'ou',
-        'u'
-    ]
-
-    trailing_consonant = [
-        '',
-        'b',
-        'ch',
-        'd',
-        'ff',
-        'g',
-        'gh',
-        'h',
-        'k',
-        'ck',
-        'll',
-        'm',
-        'mn',
-        'n',
-        'p',
-        'ph',
-        'r',
-        'rt',
-        'rd',
-        'rst',
-        's',
-        'ss',
-        'sh',
-        'st',
-        'sk',
-        't',
-        'th',
-        'v',
-        'w',
-        'z'
-    ]
-
-
-    def create_syllable():
-        return random.choice(Namer.first_consonant) + random.choice(Namer.vowel) + random.choice(Namer.trailing_consonant) 
-
-    def random_flowing():
-        num_syllables = int(max(1.0, random.gauss(3,1)))
-        syllables = []
-        for index in range(num_syllables):
-            syllables.append(Namer.create_syllable())
-        return ''.join(syllables)
+	def random():
+		return random.choice(Namer.first) + random.choice(Namer.second) + random.choice(Namer.third) 
 

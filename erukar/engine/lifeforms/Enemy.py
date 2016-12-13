@@ -2,7 +2,7 @@ from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Indexer import Indexer
 from erukar.engine.model.Describable import Describable
 from erukar.engine.factories.ModuleDecorator import ModuleDecorator
-from erukar.engine.calculators.Random import Random
+from erukar.engine.calculators import Random, Namer
 import random, erukar, string
 
 class Enemy(Lifeform, Indexer):
@@ -43,7 +43,7 @@ class Enemy(Lifeform, Indexer):
 
     def alias(self):
         if self.is_elite():
-            return super().alias() + ' [ELITE]'
+            return self.name
         return super().alias()
 
     def is_elite(self):
@@ -113,14 +113,13 @@ class Enemy(Lifeform, Indexer):
     def check_for_elite_level_up(self, before):
         if before < 2.0 <= self.elite_points:
             self.is_transient = False
-            return
 
         if before < 3.0 <= self.elite_points:
-            self.name = 'ELITE' # Generate Name
-            self.modifiers.append(erukar.game.modifiers.enemy.Cloaked())
+            self.name = '{}, {}'.format(Namer.random(), self.name)
+            mod = erukar.game.modifiers.enemy.Cloaked()
+            mod.apply_to(self)
             # Get random inventory item (average)
             # Get random elite modifier
-            return
 
         for point_threshold in self.elite_milestones:
             # Make sure we passed this threshold
@@ -129,7 +128,7 @@ class Enemy(Lifeform, Indexer):
                 if not mod:
                     # Choose randomly
                     mod = erukar.game.modifiers.enemy.Cloaked
-                mod.apply_to(self)
+                mod().apply_to(self)
 
 
         upgrade_increment = 25.0 if before > 50.0 else 10.0

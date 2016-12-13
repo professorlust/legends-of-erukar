@@ -67,7 +67,7 @@ class Creature(Lifeform):
     res_ratio   = Column(Float, default=0.1667)
     elite_points= Column(Float, default=0.0)
 
-    template    = Column(String, nullable=False)
+    template    = Column(String)
     modifiers   = Column(ARRAY(String))
     history     = Column(ARRAY(String))
     region      = Column(String)

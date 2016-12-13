@@ -69,11 +69,15 @@ class Connector:
     def get_creature(self, uid):
         creature = self.get(Creature, {'uid': uid}).first()
         if creature is None:
-            return None
-        return self.session.query(Creature)\
+            # Simple ADD 
+            self.session.add(Creature(uid=uid))
+            self.session.commit()
+            print('added new creature')
+        first = self.session.query(Creature)\
                 .options(joinedload(Creature.equipment), joinedload(Creature.inventory))\
-                .filter_by(deceased=False)\
+                .filter_by(uid=uid, deceased=False)\
                 .first();
+        return first
 
     def is_persistible_enemy(self, target):
         return isinstance(target, erukar.engine.lifeforms.Enemy) and not target.is_transient
@@ -84,9 +88,7 @@ class Connector:
             return self.get_character(target.uid)
         if self.is_persistible_enemy(target):
             schema = self.get_creature(target.uid)
-            if schema is None:
-                self.add_creature(target)
-                schema = self.get_creature(target.uid)
+            print(schema)
             return schema
         print('no schema found for {}'.format(target.uid))
 
@@ -117,21 +119,6 @@ class Connector:
     def map_player_to_schema(self,target,schema):
         '''Player-Specific, Polymorphic mapping'''
         self.map_list_of_parameters_to_schema(schema, target, self.simple_map_player_params)
-
-    def map_enemy_to_schema(self,target,schema):
-        '''Enemy-Specific, Polymorphic mapping'''
-        self.map_list_of_parameters_to_schema(schema, target, self.simple_map_creature_params)
-
-    def update_character(self, character):
-        '''Takes a dirty character and updates it in the database'''
-        if not hasattr(character, 'uid'): return
-        schema = self.get_lifeform_schema(character)
-        if schema is None: return
-
-        self.map_lifeform_to_schema(character, schema)
-
-        self.session.add(schema)
-        self.session.commit()
 
     def load_player(self, uid, out_char):
         data = self.get_character(uid)
@@ -232,6 +219,24 @@ class Connector:
             'template': lifeform_object.__module__
         }
         self.add(lifeform_object, Creature, supplementary_data)
+
+    def map_enemy_to_schema(self,target,schema):
+        '''Enemy-Specific, Polymorphic mapping'''
+        self.map_list_of_parameters_to_schema(schema, target, self.simple_map_creature_params)
+        schema.template = target.__module__
+        schema.history = target.history
+        schema.modifiers = [x.__module__ for x in target.modifiers]
+
+    def update_character(self, character):
+        '''Takes a dirty character and updates it in the database'''
+        if not hasattr(character, 'uid'): return
+        schema = self.get_lifeform_schema(character)
+        if schema is None: return
+
+        self.map_lifeform_to_schema(character, schema)
+
+        self.session.add(schema)
+        self.session.commit()
 
     def schema_params(self, obj, schema_type):
         '''Used to map to and from object to schema type'''

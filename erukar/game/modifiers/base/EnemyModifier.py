@@ -13,4 +13,4 @@ class EnemyModifier(Modifier):
     def deprecate_existing_modifiers(self, modifiers):
         for mod in modifiers:
             if not any(x for x in self.DeprecatesModifiers if issubclass(type(mod), x)):
-                yield x
+                yield mod
