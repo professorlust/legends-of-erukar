@@ -56,6 +56,8 @@ class LifeformTests(unittest.TestCase):
 
     def test_take_damage_coup_de_grace(self):
         l = Lifeform()
+        l.define_level(1)
+
         l.afflictions = [Dead(None)]
 
         l.take_damage(5)

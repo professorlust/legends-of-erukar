@@ -46,7 +46,6 @@ class Lifeform(RpgEntity):
         self.stat_points = 15
         self.afflictions = []
         # Penalties define the reduction in efficacy of shields/weapons etc
-        self.define_level(1)
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''

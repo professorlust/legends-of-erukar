@@ -8,7 +8,7 @@ class YoungRedDragon(YoungDragon):
         'bludgeoning': (0.20, 0),
         'fire': (1, 0)
     }
-    def __init__(self):
-        super().__init__("Young Red Dragon")
+    def __init__(self, random=True):
+        super().__init__("Young Red Dragon", random)
         self.define_level(10)
         self.spells = [erukar.game.magic.predefined.FlameBreath()]

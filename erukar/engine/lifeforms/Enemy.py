@@ -10,7 +10,7 @@ class Enemy(Lifeform, Indexer):
     RandomizedWeapons = []
     ElitePointClassificationMinimum = 3.0
 
-    def __init__(self, name=""):
+    def __init__(self, name="", is_random=True):
         Indexer.__init__(self)
         Lifeform.__init__(self, name)
         self.stat_points = 0
@@ -24,9 +24,11 @@ class Enemy(Lifeform, Indexer):
         self.history = []
         self.modifiers = []
         self.region = ''
-        self.name = ''
+        self.name = name
+
         self.is_transient = True
         self.requesting_persisted = False
+        self.should_randomize = is_random
 
         self.elite_milestones = {
             3.0:  None,
@@ -40,6 +42,12 @@ class Enemy(Lifeform, Indexer):
 
         chars = string.ascii_uppercase + string.digits
         self.uid = ''.join(random.choice(chars) for x in range(128))
+
+    def define_level(self, level):
+        if self.should_randomize:
+            self.stat_points = 14 + level
+            self.perform_level_ups()
+        super().define_level(level)
 
     def alias(self):
         if self.is_elite():
@@ -99,9 +107,8 @@ class Enemy(Lifeform, Indexer):
         if not target: return []
         if isinstance(target, erukar.engine.lifeforms.Player)\
         or (isinstance(target, erukar.engine.lifeforms.Enemy) and target.is_elite()):
-            total_ep = 3#max(0.1, 3.0 * target.level/self.level)
+            total_ep = max(0.5, 3.0 * target.level/self.level)
             self.award_elite_points(total_ep)
-            print(self.elite_points)
             self.history.append('Slew {}.'.format(target.alias()))
         return []
 
@@ -119,7 +126,6 @@ class Enemy(Lifeform, Indexer):
             mod = erukar.game.modifiers.enemy.Cloaked()
             mod.apply_to(self)
             # Get random inventory item (average)
-            # Get random elite modifier
 
         for point_threshold in self.elite_milestones:
             # Make sure we passed this threshold

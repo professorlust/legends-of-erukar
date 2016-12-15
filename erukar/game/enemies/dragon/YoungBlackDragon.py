@@ -8,7 +8,7 @@ class YoungBlackDragon(YoungDragon):
         'bludgeoning': (0.20, 0),
         'acid': (1, 0)
     }
-    def __init__(self):
-        super().__init__("Young Black Dragon")
+    def __init__(self, random=True):
+        super().__init__("Young Black Dragon", random)
         self.define_level(11)
         self.spells = [erukar.game.magic.predefined.AcidBreath()]

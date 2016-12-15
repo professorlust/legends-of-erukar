@@ -15,5 +15,5 @@ class YellowDragonoid(Dragonoid):
         'electric': (0.4, 0)
     }
 
-    def __init__(self):
-        super().__init__("Yellow Dragonoid")
+    def __init__(self, random=True):
+        super().__init__("Yellow Dragonoid", random)

@@ -9,7 +9,7 @@ class YoungBlueDragon(YoungDragon):
         'ice': (1, 0)
     }
 
-    def __init__(self):
-        super().__init__("Young Blue Dragon")
+    def __init__(self, random=True):
+        super().__init__("Young Blue Dragon", random)
         self.define_level(10)
         self.spells = [erukar.game.magic.predefined.IceBreath()]

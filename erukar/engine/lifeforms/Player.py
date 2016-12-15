@@ -5,6 +5,7 @@ class Player(Lifeform):
         super().__init__()
         self.uid = '' # Player UID
         self.credits = 0
+        self.define_level(1)
 
     def alias(self):
         return self.uid

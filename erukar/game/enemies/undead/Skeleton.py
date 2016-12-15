@@ -5,16 +5,21 @@ from erukar.game.inventory.armor.shields.Buckler import Buckler
 class Skeleton(Enemy):
     BriefDescription = "a skeleton holding a {describe|right} and a {describe|left}."
 
-    def __init__(self):
-        super().__init__("Skeleton")
-        self.dexterity = -2
-        self.vitality = -1
+    def __init__(self, random=True):
+        super().__init__("Skeleton", random)
+        self.dexterity  = -2
+        self.vitality   = -1
+        self.acuity     = -2
+        self.sense      = -2
+        # Now personality
+        self.str_ratio  = 0.2
+        self.dex_ratio  = 0.2
+        self.vit_ratio  = 0.3
+        self.acu_ratio  = 0.0
+        self.sen_ratio  = 0.0
+        self.res_ratio  = 0.3
         self.define_level(1)
-        self.name = "Skeleton"
         self.randomize_equipment()
-        self.set_vision_results('You see a {alias}.','You see a {alias}. {describe}',(0,1))
-        self.set_sensory_results('You hear movement.','You hear a {alias}.',(0, 1))
-        self.set_detailed_results('There is a skeleton holding a {describe_material|right}.','The skeleton is holding a {describe_material|right} in its right hand and {describe_material|left} in its left. ')
 
     def randomize_equipment(self):
         s = Sword()

@@ -11,21 +11,18 @@ class IurianCleric(Enemy):
     ]
     RandomizedWeapons = ['right' ]
 
-    def __init__(self):
+    def __init__(self, random=True):
         super().__init__("Iurian Cleric")
-        self.strength = int(random.uniform(2, 5))
-        self.dexterity = int(random.uniform(1, 4))
-        self.vitality = int(random.uniform(4, 6))
-        self.acuity = int(random.uniform(2, 3))
-        self.sense = int(random.uniform(2, 5))
-        self.resolve = int(random.uniform(1, 3))
+        # The 
+        self.str_ratio = 0.2
+        self.dex_ratio = 0.1
+        self.vit_ratio = 0.1
+        self.acu_ratio = 0.1
+        self.sen_ratio = 0.3
+        self.res_ratio = 0.2
         self.spells = [erukar.game.magic.predefined.Heal()]
         self.define_level(5)
-        self.name = "Iurian Cleric"
         self.randomize_equipment()
-        self.set_vision_results('You see a {alias}.','You see a {alias}. {describe}',(0,1))
-        self.set_sensory_results('You hear movement.','You hear a {alias}.',(0, 1))
-        self.set_detailed_results('There is a Iurian Cleric wielding {describe_weapon}.', 'There is a Iurian Cleric wearing {describe_armor} and wielding {describe_weapon}')
 
     def perform_turn(self):
         if self.health < (self.max_health / 2):
