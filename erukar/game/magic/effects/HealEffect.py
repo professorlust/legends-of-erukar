@@ -8,14 +8,14 @@ class HealEffect(SpellEffect):
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
         '''Heals a specific target, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters, efficacy)
-        target = self.get_target(lifeform, parameters)
-        if target.health == target.max_health:
-            self.append_result(lifeform.uid, self.AlreadyFull.format(target=target.alias()))
-            self.append_for_others_in_room(self.AlreadyFull.format(target=target.alias()))
+
+        if self.target.health == self.target.max_health:
+            self.append_result(lifeform.uid, self.AlreadyFull.format(target=self.target.alias()))
+            self.append_for_others_in_room(self.AlreadyFull.format(target=self.target.alias()))
             return
 
         health = int(random.uniform(3, 8))
-        target.health = min(target.max_health, target.health + health)
-        self.cmd.dirty(target)
-        self.append_result(lifeform.uid, self.StandardCast.format(target=target.alias(), health=health))
-        self.append_for_others_in_room(self.StandardCast.format(target=target.alias(), health=health))
+        self.target.health = min(self.target.max_health, self.target.health + health)
+        self.cmd.dirty(self.target)
+        self.append_result(lifeform.uid, self.StandardCast.format(target=self.target.alias(), health=health))
+        self.append_for_others_in_room(self.StandardCast.format(target=self.target.alias(), health=health))

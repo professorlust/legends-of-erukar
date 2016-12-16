@@ -16,11 +16,12 @@ class Cast(ActionCommand):
         failure = self.check_for_arguments()
         if failure: return failure
 
-        self.spell.on_cast(self, self.target, self.arguments)
+        arguments = {'target': self.target}
+        self.spell.on_cast(self, self.lifeform, arguments)
         return self.succeed()
 
     def resolve_spell(self, opt_payload=''):
-        if self.context and self.context.should_resolve(self):
+        if self.context and self.context.should_resolve(self) and hasattr(self.context, 'spell'):
             self.spell = getattr(self.context, 'spell')
 
         # If we have the parameter and it's not nully, assert that we're done

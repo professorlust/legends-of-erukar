@@ -88,7 +88,7 @@ class Instance(Manager):
         character.spells = [
             erukar.game.magic.predefined.FlameBreath(),
             erukar.game.magic.predefined.Heal(),
-            erukar.game.magic.predefined.AugmentWeapon()]
+            erukar.game.magic.predefined.ShadowBurst()]
         self.data.players.append(playernode)
         return playernode
 

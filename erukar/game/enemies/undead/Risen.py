@@ -1,9 +1,8 @@
 from erukar.engine.lifeforms.Enemy import Enemy
-from erukar.game.inventory.weapons.Sword import Sword
-from erukar.game.inventory.armor.shields.Buckler import Buckler
 
 class Risen(Enemy):
     BriefDescription = "a risen"
+
     def __init__(self, random=True):
         super().__init__("Risen", random)
         # Base stats should start negative as the template

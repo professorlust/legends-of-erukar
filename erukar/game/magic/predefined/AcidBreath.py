@@ -6,4 +6,7 @@ class AcidBreath(Spell):
     TheyCastSpell = "{alias|lifeform} breathes in deeply, then exhales a large spray of corrosive acid!"
 
     def __init__(self):
-        super().__init__('Acid Breath',[erukar.game.magic.effects.AcidDamage()])
+        super().__init__('Acid Breath',[
+            erukar.game.magic.effects.ElementalAcid(),
+            erukar.game.magic.effects.SingleTargetDamage()
+        ])

@@ -15,7 +15,7 @@ class Spell(MagicBase):
         self.append_for_others_in_room(self.mutate(self.TheyCastSpell))
 
         for eff in self.effects:
-            eff.on_cast(command, lifeform, parameters, efficacy)
+            parameters = eff.on_cast(command, self.target, parameters, efficacy)
 
     def alias(self):
         return self.name

@@ -6,5 +6,7 @@ class FlameBreath(Spell):
     TheyCastSpell = '{alias|lifeform} breathes in deeply, then exhales a large plume of flames from {possessive_pronoun|lifeform} lungs!'
 
     def __init__(self):
-        super().__init__('Flame Breath',[erukar.game.magic.effects.FireDamage()])
-
+        super().__init__('Flame Breath',[
+            erukar.game.magic.effects.ElementalFire(),
+            erukar.game.magic.effects.SingleTargetDamage()
+        ])

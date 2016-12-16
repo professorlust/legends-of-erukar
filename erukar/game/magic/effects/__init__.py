@@ -1,11 +1,27 @@
-from .AcidDamage import AcidDamage
+from .ArcaneAdeptAugmentation import ArcaneAdeptAugmentation
+from .ElementalAcid import ElementalAcid
 from .AugmentedWeaponEffect import AugmentedWeaponEffect
-from .DemonicDamage import DemonicDamage
-from .DivineDamage import DivineDamage
-from .ElectricDamage import ElectricDamage
-from .FireDamage import FireDamage
-from .ForceDamage import ForceDamage
+from .ElementalDemonic import ElementalDemonic
+from .ElementalDivine import ElementalDivine
+from .ElementalElectricity import ElementalElectricity
+from .ElementalFire import ElementalFire
+from .ElementalForce import ElementalForce
 from .HealEffect import HealEffect
-from .IceDamage import IceDamage
+from .ElementalIce import ElementalIce
+from .ElementalAugmentation import ElementalAugmentation
+from .SingleTargetDamage import SingleTargetDamage
 
-_all__ = ["AcidDamage","AugmentedWeaponEffect","DemonicDamage","DivineDamage","ElectricDamage","FireDamage","ForceDamage","HealEffect","IceDamage"]
+_all__ = [
+    "ElementalAcid",
+    "ArcaneAdeptAugmentation",
+    "AugmentedWeaponEffect",
+    "ElementalDemonic",
+    "ElementalDivine",
+    "ElementalElectricity",
+    "ElementalFire",
+    "ElementalForce",
+    "HealEffect",
+    "ElementalIce",
+    "SingleTargetDamage",
+    "ElementalAugmentation"
+]

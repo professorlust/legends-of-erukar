@@ -6,7 +6,7 @@ class ElectricBreath(Spell):
     TheyCastSpell = "{alias|lifeform} breathes in deeply, then releases a blast of sparks and lightning!"
 
     def __init__(self):
-        super().__init__('Electric Breath',[erukar.game.magic.effects.ElectricDamage()])
-
-
-
+        super().__init__('Electric Breath',[
+            erukar.game.magic.effects.ElementalElectricity(),
+            erukar.game.magic.effects.SingleTargetDamage()
+        ])

@@ -5,14 +5,15 @@ class MagicBase(Describable):
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
         self.cmd = command
         self.lifeform = lifeform
+        self.set_parameters(parameters)
 
-    def get_target(self, lifeform, parameters=None):
-        target = lifeform
-        if parameters is not None and 'target' in parameters:
-            target = parameters['target']
-            if parameters['target'] is None:
-                target = lifeform
-        return target
+    def set_parameters(self, parameters):
+        '''Attempt to set parameters to the object. Sometimes this
+        can fail, so it's wrapped in a try/catch to continue.'''
+        if not parameters: return
+        for param in parameters:
+            try: setattr(self, param, parameters[param])
+            except: pass
 
     def append_result(self, uid, msg):
         if self.cmd:
