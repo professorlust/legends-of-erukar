@@ -12,7 +12,6 @@ class ElementalAugmentation(SpellEffect):
     ParametersWhichShouldBeOverridden = []
 
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
-        '''Inflicts a random amount of acid damage to something, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters)
         
         # Now to override

@@ -15,8 +15,7 @@ class SingleTargetDamage(SpellEffect):
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
         '''Inflicts a random amount of ice damage to something, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters)
-        print(self.target)
-
+        
         self.append_for_all_in_room(self.mutate(self.DamageDescription))
         damage_type = [Damage(
             name=self.DamageName,
