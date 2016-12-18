@@ -1,5 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
-from erukar.game.inventory.weapons.Halberd import Halberd
+from erukar.game.inventory.weapons.standard.Halberd import Halberd
 from erukar.game.modifiers.material import Abyssium
 import erukar
 

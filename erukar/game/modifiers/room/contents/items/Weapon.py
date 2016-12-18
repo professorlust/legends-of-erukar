@@ -6,7 +6,7 @@ class Weapon(RoomModifier):
     Probability = 5
 
     def apply_to(self, room):
-        randomizer = ModuleDecorator('erukar.game.inventory.weapons', None)
+        randomizer = ModuleDecorator('erukar.game.inventory.weapons.standard', None)
         weapon = randomizer.create_one()
 
         modifiers = ModifierGenerator('erukar.game.modifiers.inventory', None, weapon)

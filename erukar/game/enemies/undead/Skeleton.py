@@ -1,5 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
-from erukar.game.inventory.weapons.Sword import Sword
+from erukar.game.inventory.weapons.standard.Sword import Sword
 from erukar.game.inventory.armor.shields.Buckler import Buckler
 
 class Skeleton(Enemy):
