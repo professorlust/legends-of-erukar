@@ -157,8 +157,8 @@ class Connector:
     def map_effects_on_character(self, out, data):
         '''Create persistent effects from Schema and assign to the character'''
         for effect in data.effects:
-            instantiated = self.create_from_type(effect.effect_type, args={'afflicted': out})
-            out.afflictions.append(instantiated)
+            instantiated = self.create_from_type(effect.effect_type, args={'target': out})
+            out.conditions.append(instantiated)
 
     def map_items_on_character(self, out, data):
         '''Create items from Schema and assign to inventory (or equipment slots as necessary)'''
@@ -258,7 +258,7 @@ class Connector:
                     yield (item, erukar.data.Schema.Item(item_type=item.__module__, modifiers=modifiers, item_attributes=item_attributes))
 
     def generate_effects(self, lifeform):
-        for eff in lifeform.afflictions:
+        for eff in lifeform.conditions:
             if eff.Persistent:
                 yield erukar.data.Schema.Effect(effect_type=eff.__module__)
 

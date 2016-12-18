@@ -18,7 +18,7 @@ class Cuadrodemon(Enemy):
 
         self.randomize_equipment()
         self.define_level(26)
-        self.afflictions.append(erukar.engine.effects.Dreadful(self))
+        self.conditions.append(erukar.engine.conditions.Dreadful(self))
 
     def randomize_equipment(self):
         self.right = Halberd()

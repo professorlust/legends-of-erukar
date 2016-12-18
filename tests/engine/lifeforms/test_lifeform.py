@@ -45,20 +45,20 @@ class LifeformTests(unittest.TestCase):
         l.define_level(3)
 
         l.take_damage(4)
-        self.assertTrue('dying' not in l.afflictions)
+        self.assertTrue('dying' not in l.conditions)
 
     def test_take_damage_fatal(self):
         l = Lifeform()
         l.define_level(1)
 
         l.take_damage(5)
-        self.assertTrue(l.afflicted_with(Dying))
+        self.assertTrue(l.has_condition(Dying))
 
     def test_take_damage_coup_de_grace(self):
         l = Lifeform()
         l.define_level(1)
 
-        l.afflictions = [Dead(None)]
+        l.conditions = [Dead(None)]
 
         l.take_damage(5)
-        self.assertTrue(l.afflicted_with(Dead))
+        self.assertTrue(l.has_condition(Dead))

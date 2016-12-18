@@ -1,19 +1,19 @@
-from erukar.engine.model.Affliction import Affliction
+from erukar.engine.model.Condition import Condition
 import erukar
 
-class AugmentedWeapon(Affliction):
+class AugmentedWeapon(Condition):
     IsTemporary = True
     Duration = 12 # In ticks, where a tick is 5 seconds
     Incapacitates = False
     MaxInstances = 1
 
-    def __init__(self, afflicted, modifier_Type):
-        super().__init__(afflicted)
+    def __init__(self, target, modifier_Type):
+        super().__init__(target)
         self.modifier_type = erukar.game.modifiers.inventory.random.Flaming
         self.timer = AugmentedWeapon.Duration
         self.weapon = None
         self.modifier_instances = []
-        self.augment_weapon(afflicted)
+        self.augment_weapon(target)
 
     def tick(self):
         if self.IsTemporary:
@@ -21,9 +21,9 @@ class AugmentedWeapon(Affliction):
             if self.timer <= 0:
                 self.exit()
 
-    def augment_weapon(self, afflicted):
-        for slot in afflicted.attack_slots:
-            self.weapon = getattr(afflicted, slot)
+    def augment_weapon(self, target):
+        for slot in target.attack_slots:
+            self.weapon = getattr(target, slot)
             if self.weapon is not None and isinstance(self.weapon, erukar.engine.inventory.Weapon):
                 modifier = self.modifier_type()
                 modifier.persistent = False
@@ -35,4 +35,4 @@ class AugmentedWeapon(Affliction):
     def exit(self):
         for modifier in self.modifier_instances:
             modifier.remove()
-        self.afflicted.afflictions.remove(self)
+        self.target.conditions.remove(self)

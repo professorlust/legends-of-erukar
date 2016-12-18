@@ -18,7 +18,4 @@ class Spectre(Enemy):
         self.sen_ratio = 0.1
         self.res_ratio = 0.3
         self.define_level(5)
-        self.afflictions.append(erukar.game.effects.conditions.magical.Ethereal)
-
-
-
+        self.conditions.append(erukar.game.conditions.magical.Ethereal(self))

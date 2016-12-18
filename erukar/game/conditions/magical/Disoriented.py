@@ -1,16 +1,16 @@
-from erukar.engine.model.Affliction import Affliction
+from erukar.engine.model.Condition import Condition
 import erukar
 
-class Disoriented(Affliction):
+class Disoriented(Condition):
     IsTemporary = True
     Duration = 4 # In ticks, where a tick is 5 seconds
     Incapacitates = False
 
-    def __init__(self, afflicted):
-        super().__init__(afflicted)
+    def __init__(self, target):
+        super().__init__(target)
         self.timer = self.Duration
-        self.base_acuity = self.afflicted.acuity
-        self.afflicted.acuity = int(self.afflicted.acuity/2)
+        self.base_acuity = self.target.acuity
+        self.target.acuity = int(self.target.acuity/2)
 
     def tick(self):
         if self.IsTemporary:
@@ -19,5 +19,5 @@ class Disoriented(Affliction):
                 self.exit()
 
     def exit(self):
-        self.afflicted.acuity = self.base_acuity
-        self.afflicted.afflictions.remove(self)
+        self.target.acuity = self.base_acuity
+        self.target.conditions.remove(self)

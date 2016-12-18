@@ -1,5 +1,5 @@
 from .calculators import *
-from .effects import *
+from .conditions import *
 from .commands.executable import *
 from .commands import *
 from .environment import *

@@ -14,10 +14,10 @@ class PlayerNode(Indexer):
         if room.coordinates not in self.dungeon_map:
             self.dungeon_map[room.coordinates] = room
 
-    def afflicted_with(self, type_of):
+    def has_condition(self, type_of):
         if self.character is None: return False
 
-        return self.character.afflicted_with(type_of)
+        return self.character.has_condition(type_of)
 
     def begin_turn(self):
         if self.character is not None:

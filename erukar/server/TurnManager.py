@@ -60,5 +60,5 @@ class TurnManager(Manager):
 
     def is_playable(self, p):
         if isinstance(p, erukar.engine.model.PlayerNode):
-            return not p.afflicted_with(erukar.engine.effects.Dead)
+            return not p.has_condition(erukar.engine.conditions.Dead)
         return False

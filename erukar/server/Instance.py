@@ -81,7 +81,6 @@ class Instance(Manager):
         # If this is a new character, mark it for Initialization
         if not self.connector.load_player(uid, character):
             self.connector.add_character(uid, character)
-            character.afflictions.append(erukar.engine.effects.NeedsInitialization(character, None))
             self.connector.update_character(character)
 
         playernode.character = character

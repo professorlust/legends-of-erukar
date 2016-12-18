@@ -18,5 +18,5 @@ class Ghost(Enemy):
         self.sen_ratio = 0.25
         self.res_ratio = 0.1
         self.define_level(11)
-        self.afflictions.append(erukar.game.effects.conditions.magical.Ethereal)
+        self.conditions.append(erukar.game.conditions.magical.Ethereal(self))
 

@@ -1,6 +1,6 @@
 from erukar.engine.model.RpgEntity import RpgEntity
-from erukar.engine.effects.Dead import Dead
-from erukar.engine.effects.Dying import Dying
+from erukar.engine.conditions.Dead import Dead
+from erukar.engine.conditions.Dying import Dying
 import erukar, math, random
 
 class Lifeform(RpgEntity):
@@ -44,7 +44,7 @@ class Lifeform(RpgEntity):
         self.skill_points = 3
         self.skills = []
         self.stat_points = 15
-        self.afflictions = []
+        self.conditions = []
         # Penalties define the reduction in efficacy of shields/weapons etc
 
     def tick(self):
@@ -54,7 +54,7 @@ class Lifeform(RpgEntity):
             item = getattr(self, item_slot)
             if item is not None:
                 results.append(item.tick())
-        for condition in self.afflictions:
+        for condition in self.conditions:
             results.append(condition.tick())
         return results
 
@@ -84,14 +84,14 @@ class Lifeform(RpgEntity):
             for mod in equipment.modifiers:
                 if hasattr(mod, stat_type):
                     score += getattr(mod, stat_type)
-        # now handle afflictions
-        for aff in self.afflictions:
+        # now handle conditions
+        for aff in self.conditions:
             if hasattr(aff, stat_type):
                 score += getattr(aff, stat_type)
         return score
 
     def is_incapacitated(self):
-        return any(aff for aff in self.afflictions if aff.Incapacitates)
+        return any(aff for aff in self.conditions if aff.Incapacitates)
 
     def turn_modifier(self):
         return round(600/(0.15*self.dexterity+10)+15 )
@@ -111,9 +111,9 @@ class Lifeform(RpgEntity):
 
         return total_ac + ac_mod
 
-    def afflicted_with(self, aff_type):
+    def has_condition(self, aff_type):
         '''Alias to simplify the check to see if the lifeform has an affliction'''
-        return any(x for x in self.afflictions if isinstance(x, aff_type))
+        return any(x for x in self.conditions if isinstance(x, aff_type))
 
     def calculate_xp_worth(self):
         x = self.level
@@ -141,17 +141,17 @@ class Lifeform(RpgEntity):
 
     def take_damage(self, damage, instigator=None):
         '''Take damage and return amount of XP to award instigator'''
-        if self.afflicted_with(erukar.engine.effects.Dying):
+        if self.has_condition(erukar.engine.conditions.Dying):
             xp = self.kill(killer=instigator)
             return xp
         self.health = max(0, self.health - damage)
         if self.health == 0:
-            self.afflictions.append(Dying(self, None))
+            self.conditions.append(Dying(self, None))
         return 0
 
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''
-        self.afflictions = [Dead(self, None)]
+        self.conditions = [Dead(self, None)]
         return self.calculate_xp_worth()
 
     def link_to_room(self, room):
@@ -184,11 +184,11 @@ class Lifeform(RpgEntity):
         return self.name
 
     def begin_turn(self):
-        results = [aff.do_begin_of_turn_effect() for aff in self.afflictions]
+        results = [aff.do_begin_of_turn_effect() for aff in self.conditions]
         return '\n'.join(r for r in results if r is not '')
 
     def end_turn(self):
-        results = [aff.do_end_of_turn_effect() for aff in self.afflictions]
+        results = [aff.do_end_of_turn_effect() for aff in self.conditions]
         return '\n'.join(r for r in results if r is not '')
 
     def lifeform(self):

@@ -1,10 +1,10 @@
-class Affliction:
+class Condition:
     '''Such as Dead, Dying, Incapacitated, etc.'''
     Incapacitates = False
     Persistent = False
 
-    def __init__(self, afflicted, instigator=None):
-        self.afflicted = afflicted
+    def __init__(self, target, instigator=None):
+        self.target = target
         self.instigator = instigator
 
     def do_begin_of_turn_effect(self):

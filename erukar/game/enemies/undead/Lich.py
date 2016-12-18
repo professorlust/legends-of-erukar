@@ -1,4 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
+import erukar
 
 class Lich(Enemy):
     BriefDescription = "a lich  "

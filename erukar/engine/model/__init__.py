@@ -1,4 +1,4 @@
-from .Affliction import Affliction
+from .Condition import Condition
 from .Containable import Containable
 from .Damage import Damage
 from .GenerationProfile import GenerationProfile
@@ -15,7 +15,7 @@ from .SpellEffect import SpellEffect
 from .Stance import Stance
 
 __all__ = [
-    "Affliction",
+    "Condition",
     "Containable",
     "Damage",
     "Describable",
