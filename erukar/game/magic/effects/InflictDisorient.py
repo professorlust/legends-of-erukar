@@ -2,7 +2,7 @@ from erukar.engine.model.SpellEffect import SpellEffect
 from erukar.game.conditions.magical.AugmentedWeapon import AugmentedWeapon
 import random
 
-class Disorient(SpellEffect):
+class InflictDisorient(SpellEffect):
     CasterResult = "You feel the energy inside of you concentrate, then you release the energy in a faint blast of golden light which ripples through the air!"
     ViewerResult = "A blast of thin golden light ripples outward from {alias|caster}, colliding with {alias|target}!."
     TargetResult = "Your vision blurs as the force nearly knocks you to your feet. You feel disoriented!"

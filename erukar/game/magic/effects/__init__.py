@@ -1,4 +1,5 @@
 from .ArcaneAdeptAugmentation import ArcaneAdeptAugmentation
+from .InflictDisorient import InflictDisorient
 from .ElementalAcid import ElementalAcid
 from .AugmentedWeaponEffect import AugmentedWeaponEffect
 from .ElementalDemonic import ElementalDemonic
@@ -14,6 +15,7 @@ from .SingleTargetDamage import SingleTargetDamage
 _all__ = [
     "ElementalAcid",
     "ArcaneAdeptAugmentation",
+    "InflictDisorient",
     "AugmentedWeaponEffect",
     "ElementalDemonic",
     "ElementalDivine",

@@ -13,7 +13,14 @@ class Lich(Enemy):
         self.sen_ratio = 0.25
         self.res_ratio = 0.15
         self.define_level(40)
-        self.spells = [erukar.game.magic.predefined.ShadowBurst()]
+        self.spells = [
+            erukar.game.magic.predefined.Disorient(),
+            erukar.game.magic.predefined.AcidBurst(),
+            erukar.game.magic.predefined.FireBurst(),
+            erukar.game.magic.predefined.IceBurst(),
+            erukar.game.magic.predefined.ElectricalBurst(),
+            erukar.game.magic.predefined.ShadowBurst()
+        ]
 
     def perform_turn(self):
         targets = list(self.viable_targets(self.current_room))
@@ -31,18 +38,16 @@ class Lich(Enemy):
 
         if choice_val < 0.2:
             spell_alias = 'Disorient'
-        elif choice_val < 0.5:
-            spell_alias = 'Shadow Burst'
         elif choice_val < 0.6:
-            spell_alias = 'Fire Burst'
+            spell_alias = 'Shadow Burst'
         elif choice_val < 0.7:
-            spell_alias = 'Ice Burst'
+            spell_alias = 'Fire Burst'
         elif choice_val < 0.8:
-            spell_alias = 'Acid Burst'
+            spell_alias = 'Ice Burst'
         elif choice_val < 0.9:
-            spell_alias = 'Electrical Burst'
+            spell_alias = 'Acid Burst'
         else:
-            spell_alias = 'Summon Skeleton'
+            spell_alias = 'Electrical Burst'
 
-        cast.user_specified_payload = 'Breath on {}'.format(target.alias())
+        cast.user_specified_payload = '{} on {}'.format(spell_alias, target.alias())
         return cast
