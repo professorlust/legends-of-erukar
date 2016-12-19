@@ -4,6 +4,7 @@ import functools, operator
 
 class Item(Describable):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
+    IsInteractible = True
     BaseName = 'base'
     EssentialPart = 'item part'
     SupportPart = 'item part'

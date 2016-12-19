@@ -11,14 +11,14 @@ class Containable(EnvironmentPiece):
         self.contents.append(item)
 
     def on_inspect(self, player, acuity, sense):
-        descriptions = ' '.join(list(self.inspect_gen(player)))
+        descriptions = ', '.join(list(self.inspect_gen(player)))
         if len(self.contents) > 0:
             return self.contents_conjuntion + descriptions
         return descriptions
 
     def inspect_gen(self, player):
         for c in self.contents:
-            if c is not player:
+            if c is not player and (hasattr(c, 'IsInteractible') and c.IsInteractible):
                 res = c.describe()
                 if res is not None:
                     yield res

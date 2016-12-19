@@ -15,16 +15,6 @@ class Elemental(Enemy):
         self.sen_ratio = 0
         self.res_ratio = 0.3
         self.define_level(10)
-
-    def perform_turn(self):
-        targets = list(self.viable_targets(self.current_room))
-        if len(targets) > 0:
-            return self.use_breath(targets[0])
-        return self.maybe_move_somewhere()
-
-    def use_breath(self, target):
-        cast = erukar.engine.commands.executable.Cast()
-        cast.sender_uid = self.uid
-        cast.user_specified_payload = 'Breath on {}'.format(target.alias())
-        return cast
-
+        
+        self.left = erukar.game.inventory.weapons.enemy.Claws()
+        self.right = erukar.game.inventory.weapons.enemy.Claws()
