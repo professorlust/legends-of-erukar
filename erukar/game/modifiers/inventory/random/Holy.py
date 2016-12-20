@@ -1,25 +1,37 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
 from erukar.engine.inventory import Weapon
+from erukar.engine.model.Damage import Damage
+from erukar.engine.model.Observation import Observation
+import numpy as np
+import re
 
 class Holy(WeaponMod):
-    Probability = 0.2
-    Desirability = 4.0
+    Probability = 1
+    Desirability = 8.0
+    
+    Glances = [
+        Observation(acuity=0, sense=10, result='which fills you with hope'),
+        Observation(acuity=0, sense=20, result='with a divine {EssentialPart}'),
+        Observation(acuity=0, sense=30, result='with a holy {EssentialPart} that emanates purity')
+    ]
 
-    BriefDescription = ""
-    AbsoluteMinimalDescription = ""
-    VisualMinimalDescription = ""
-    VisualIdealDescription = ""
-    SensoryMinimalDescription = "The {SupportPart} feels spiritual."
-    SensoryIdealDescription = "You feel a sense of holiness emanating from the {SupportPart}."
-    DetailedMinimalDescription = "The {SupportPart} feels spiritual."
-    DetailedIdealDescription = "You feel a sense of holiness emanating from the {SupportPart}."
-    Adjective = ""
+    Inspects = [
+        Observation(acuity=0, sense=10, result='You feel a sense of hopeful spirituality when looking upon the {alias}'),
+        Observation(acuity=0, sense=20, result='You can sense that some sort of Divine entity has created the {EssentialPart} of the {alias}.'),
+        Observation(acuity=0, sense=30, result='You recognize that the divine {EssentialPart} was crafted by an archangel. The {alias} seems to purify the room of profanity through the use of some holy aura.')
+    ]
 
-    InventoryDescription = "Deals 150% damage to undead and demons; creates a holy aura"
     InventoryName = "Holy"
+    InventoryDescription = "Adds a small amount of Divine damage that scales as a factor environmental sanctity; additionally projects a holy aura in a 1-unit radius"
 
     def apply_to(self, weapon):
         super().apply_to(weapon)
-        weapon.name = "Holy " + weapon.name
+        self.weapon = weapon
+        self.damage = Damage("Divine", [1,4], "", (np.random.uniform, (0,1)))
+        weapon.damages.append(self.damage)
 
-
+    def remove(self):
+        self.weapon.damages.remove(self.damage)
+        #self.weapon.name = re.sub(' of the Flames', '', self.weapon.name)
+        self.weapon.modifiers.remove(self)
+        self.weapon = None

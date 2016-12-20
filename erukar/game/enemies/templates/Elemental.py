@@ -18,3 +18,11 @@ class Elemental(Enemy):
         
         self.left = erukar.game.inventory.weapons.enemy.Claws()
         self.right = erukar.game.inventory.weapons.enemy.Claws()
+        self.apply_elemental_effects()
+
+    def apply_elemental_effects(self):
+        '''
+        Here you should make the claws have elemental effects. Additionally,
+        You might want to add any sort of permanent modifiers and active
+        effects'''
+        pass
