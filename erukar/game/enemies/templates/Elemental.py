@@ -14,7 +14,6 @@ class Elemental(Enemy):
         self.acu_ratio = 0
         self.sen_ratio = 0
         self.res_ratio = 0.3
-        self.define_level(10)
         
         self.left = erukar.game.inventory.weapons.enemy.Claws()
         self.right = erukar.game.inventory.weapons.enemy.Claws()
@@ -26,3 +25,4 @@ class Elemental(Enemy):
         You might want to add any sort of permanent modifiers and active
         effects'''
         pass
+

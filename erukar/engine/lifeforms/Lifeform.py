@@ -1,6 +1,7 @@
 from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.conditions.Dead import Dead
 from erukar.engine.conditions.Dying import Dying
+from erukar.engine.model.results.DamageResult import DamageResult
 import erukar, math, random
 
 class Lifeform(RpgEntity):
@@ -17,13 +18,6 @@ class Lifeform(RpgEntity):
         "blessing"]
     attack_slots = [ "left", "right" ]
     base_health = 4
-
-    critical_health = ['The lifeform is in critical health']
-    badly_wounded = ['The lifeform is badly wounded']
-    wounded = ['The lifeform is wounded']
-    slightly_wounded = ['The lifeform is slightly wounded']
-    full_health = ['The lifeform is at full health']
-    BaseDescription = "a {alias}"
 
     def __init__(self, name=""):
         self.uid        = ""
@@ -45,7 +39,6 @@ class Lifeform(RpgEntity):
         self.skills = []
         self.stat_points = 15
         self.conditions = []
-        # Penalties define the reduction in efficacy of shields/weapons etc
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''
@@ -59,9 +52,11 @@ class Lifeform(RpgEntity):
         return results
 
     def initiate_aura(self, aura):
+        '''Initiates an aura within the current room'''
         self.current_room.initiate_aura(aura)
 
     def calculate_effective_stat(self, stat_type, depth=0):
+        '''Uses a decay factor based on distance'''
         score = self.calculate_stat_score(stat_type)
         decay_factor = 1.0 - 0.75*math.exp(-0.02*score)
         return math.floor(math.pow(decay_factor,depth) * score)
@@ -81,13 +76,18 @@ class Lifeform(RpgEntity):
             penalty_args = (equipment, '{}Penalty'.format(stat_type.capitalize()))
             if hasattr(*penalty_args):
                 score -= getattr(*penalty_args)
+
             for mod in equipment.modifiers:
                 if hasattr(mod, stat_type):
                     score += getattr(mod, stat_type)
+
         # now handle conditions
-        for aff in self.conditions:
-            if hasattr(aff, stat_type):
-                score += getattr(aff, stat_type)
+        for condition in self.conditions:
+            if hasattr(condition, stat_type):
+                score += getattr(condition, stat_type)
+            modify_str = 'modify_{}'.format(stat_type)
+            if hasattr(condition, modify_str):
+                score += getattr(condition, modify_str)()
         return score
 
     def is_incapacitated(self):
@@ -139,12 +139,43 @@ class Lifeform(RpgEntity):
             output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
         return output_strings
 
-    def take_damage(self, damage, instigator=None):
+    def apply_damage(self, damage, instigator=None, efficacy=1.0):
+        result = DamageResult(damage)
+        raw = int(damage.roll(instigator) * efficacy)
+
+        # Check to see how much damage is mitigated
+        after_deflection = raw - self.deflection(damage.name)
+        if after_deflection <= 0:
+            result.successful_deflection(self, instigator, raw, damage)
+            return result
+
+        # Check to see how much is mitigated
+        after_mitigation = int(after_deflection * self.mitigation(damage.name))
+        if after_mitigation < 1:
+            result.successful_mitigation(self, instigator, after_deflection, damage)
+            return result
+        
+        # At this point, no mitigation and deflection can stop damage, so do the damage
+        xp = self.take_damage(after_mitigation, instigator)
+        amounts = {
+            'raw': raw,
+            'deflected': raw - after_deflection,
+            'mitigated': after_deflection - after_mitigation,
+            'total': after_mitigation
+        }
+        result.attack_successful(self, instigator, damage, amounts)
+
+        if xp and xp > 0:
+            result.corpsify(self)
+            result.add_xp(instigator, xp)
+        return result
+
+    def take_damage(self, damage_amount, instigator=None):
         '''Take damage and return amount of XP to award instigator'''
         if self.has_condition(erukar.engine.conditions.Dying):
             xp = self.kill(killer=instigator)
             return xp
-        self.health = max(0, self.health - damage)
+        self.health = max(0, self.health - damage_amount)
         if self.health == 0:
             self.conditions.append(Dying(self, None))
         return 0

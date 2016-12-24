@@ -48,7 +48,8 @@ class Attack(ActionCommand):
         for attacking_slot in self.character.attack_slots:
             weapon = getattr(self.character, attacking_slot)
             if not self.can_attack_with(weapon): continue
-            self.adjudicate_attack(weapon, penalty=dual_wielding_penalty)
+            if self.adjudicate_attack(weapon, dual_wielding_penalty):
+                self.inflict_damage(self.target, weapon, dual_wielding_penalty)
             dual_wielding_penalty *= self.character.dual_wielding_penalty
 
         # Succeed if we have results, otherwise fail with the UnableToAttackInRoom
@@ -79,13 +80,15 @@ class Attack(ActionCommand):
             # Actually Attack
             self.target = random.choice(targets)
             total_penalty = weapon.RangePenalty * distance * penalty
-            return self.adjudicate_attack(weapon, total_penalty)
+            if self.adjudicate_attack(weapon, total_penalty):
+                self.inflict_damage(self.target, weapon, total_penalty)
 
         return self.fail('Your weapon does not have the range to attack {}.'.format(direction.name))
 
     def adjudicate_attack(self, weapon, penalty=1.0):
         '''Used to actually resolve an attack roll made between a character and target'''
-        attack_roll, evasion, damages = self.calculate_attack(weapon, penalty)
+        attack_roll = int(self.character.roll(self.character.stat_random_range('dexterity')) * penalty)
+        evasion = self.target.calculate_armor_class()
 
         args = {
             'subject': self.character.alias(),
@@ -93,29 +96,11 @@ class Attack(ActionCommand):
             'weapon_name': 'unarmed attack' if weapon is None else weapon.alias(),
             'roll': attack_roll}
 
-        if attack_roll <= evasion:
+        if attack_roll < evasion:
             # Show failures to subject and enemy
             self.append_result(self.sender_uid, Attack.unsuccessful.format(**args))
             if hasattr(self.target, 'uid'):
                 self.append_result(self.target.uid, Attack.unsuccessful.format(**args))
-            return
-
-        self.inflict_damage(self.target, damages, weapon)
-
-    def calculate_attack(self, weapon, penalty=1.0):
-        '''Involves the calculation of armor_class, attack roll, and damage'''
-        attack_roll = int(self.character.roll(self.character.stat_random_range('dexterity')) * penalty)
-        evasion = self.target.calculate_armor_class()
-
-        if weapon is not None and isinstance(weapon, erukar.engine.inventory.Weapon):
-            damage = [(int(d[0]*penalty), d[1]) for d in weapon.roll(self.character)]
-        elif weapon is None:
-            strength = self.character.calculate_effective_stat('strength')
-            damage_range = [0, strength]
-            damage_type = Damage('bludgeoning',damage_range,'strength',(random.uniform,(0,4)))
-            damage = [(damage_type.roll(self.target), 'bludgeoning')]
-        else:
-            return [0,0,[]]
-
-        return [attack_roll, evasion, damage]
-
+            return False
+        
+        return True

@@ -13,57 +13,62 @@ class ActionCommand(Command):
     AttackSuccessful = "{subject}'s attack hits {target}, dealing {damage} damage."
     DefaultWeapon = 'unarmed attack'
 
-    def inflict_damage(self, enemy, damages, weapon=None):
-        if enemy.has_condition(erukar.engine.conditions.Dead): return
-        character = self.find_player().lifeform()
-
-        args = {
-            'subject': character.alias(),
-            'target': enemy.alias(),
-            'weapon_name': self.DefaultWeapon if weapon is None else weapon.alias()
-        }
-
-        self.dirty(character)
-
-        # Calculate the actual damage through mitigation and deflection
-        for deflected in Damage.deflections(character, enemy, damages):
-            self.append_result(self.sender_uid, self.Deflected.format(**args))
-            if hasattr(enemy, 'uid'):
-                self.append_result(enemy.uid, self.Deflected.format(**args))
-
-        actuals = list(Damage.actual_damage_values(character, enemy, weapon, damages))
-
-        # Calculate the Damage  
-        damage = sum(amt for amt, _ in actuals)
-        if damage <= 0:
-            self.append_result(self.sender_uid, self.EnemyFullMitigation.format(**args))
-            self.append_result(enemy.uid, self.YourFullMitigation.format(**args))
+    def inflict_damage(self, enemy, weapon, efficacy=1.0):
+        if not isinstance(enemy, erukar.engine.lifeforms.Lifeform)\
+        or enemy.has_condition(erukar.engine.conditions.Dead):
             return
 
-        # Apply the damage
-        self.dirty(enemy)
-        args['damage'] = ', '.join(["{} {}".format(*x) for x in actuals if x[0] > 0])
-        xp = enemy.take_damage(damage, character)
-        attack_string = self.AttackSuccessful.format(**args)
+        character = self.find_player().lifeform()
 
-        # Check to see if Dying, or Dead.
-        if hasattr(enemy, 'conditions'):
-            if enemy.has_condition(erukar.engine.conditions.Dying):
-                attack_string = attack_string + self.CausedDying.format(**args)
+        if weapon is None:
+            weapon = erukar.engine.inventory.UnarmedStrike()
 
-            if enemy.has_condition(erukar.engine.conditions.Dead):
-                self.create_corpse(enemy)
-                attack_string = attack_string + self.CausedDeath.format(**args)
+        self.append_result(self.sender_uid, 'Your {} hits {}!'.format(weapon.alias(), enemy.alias()))
+        if hasattr(enemy, 'uid'):
+            self.append_result(enemy.uid, 'You are hit by {}\'s {}!'.format(character.alias(), weapon.alias()))
 
-        # Let everyone know what happened
-        self.append_result(self.sender_uid, attack_string)
-        self.append_result(enemy.uid, attack_string)
+        cumulative_damages = []
+        for damage in weapon.damages:
+            result = self.apply_damage_and_parse_results(enemy, damage, efficacy)
+            if result.dealt_damage:
+                cumulative_damages.append((result.damage_type, result.damage_amount))
 
-        if xp <= 0: return
-        xp_awards = character.award_xp(xp, enemy)
-        if xp_awards:
-            for award in xp_awards:
-                self.append_result(self.sender_uid, award)
+        if len(cumulative_damages) > 0:
+            print(cumulative_damages)
+            damage_list = ['{1} {0}'.format(*d) for d in cumulative_damages]
+            if len(damage_list) >= 2:
+                damage_list[-1] = 'and ' + damage_list[-1]
+            if len(damage_list) >= 3:
+                damage_list[:-1] = [x + ',' for x in damage_list[:-1]]
+            self.append_result(self.sender_uid, 'Your {} does {} damage!'.format(weapon.alias(), ' '.join(damage_list)))
+            if hasattr(enemy, 'uid'):
+                self.append_result(enemy.uid, '{}\'s {} does {} damage!'.format(character.alias(), weapon.alias(), ' '.join(damage_list)))
+
+
+    def apply_damage_and_parse_results(self, enemy, damage, efficacy):
+        '''Handles actually applying damage by passing off to RpgEntity'''
+        # pass off to enemy to get a DamageResult
+        damage_result = enemy.apply_damage(damage, self.player.lifeform(), efficacy)
+        if damage_result.dealt_damage:
+            self.dirty(enemy)
+            self.dirty(self.find_lifeform(self.sender_uid))
+
+        # check to see if we're dead
+        if damage_result.is_corpsified(enemy):
+            self.create_corpse(enemy)
+        
+        # Append all results
+        for uid in damage_result.string_results:
+            for res in damage_result.string_results[uid]:
+                self.append_result(uid, res)
+
+        #Award All XP
+        for uid in damage_result.xp_awards:
+            if damage_result.xp_awards[uid] > 0:
+                self.find_lifeform(uid).award_xp(damage_result.xp_awards[uid], enemy)
+                
+        return damage_result
+
 
     def create_corpse(self, target):
         room = target.current_room

@@ -32,6 +32,5 @@ class Unholy(WeaponMod):
 
     def remove(self):
         self.weapon.damages.remove(self.damage)
-        #self.weapon.name = re.sub(' of the Flames', '', self.weapon.name)
         self.weapon.modifiers.remove(self)
         self.weapon = None

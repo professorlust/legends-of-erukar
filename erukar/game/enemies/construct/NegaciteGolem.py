@@ -1,0 +1,2 @@
+class NegaciteGolem:
+    pass

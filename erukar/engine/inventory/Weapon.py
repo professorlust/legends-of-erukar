@@ -17,6 +17,9 @@ class Weapon(Item):
     Distribution = np.random.uniform
     DistributionProperties = (0, 1)
 
+    SuccessfullyAttackWith = 'Your attack hits {target}!'
+    YouAreHitBy = 'You are hit by {subject}\'s {weapon_name}!'
+
     def __init__(self):
         super().__init__(self.BaseName)
         self.name = self.BaseName

@@ -14,6 +14,8 @@ from .Spell import Spell
 from .SpellEffect import SpellEffect
 from .Stance import Stance
 
+from .results import *
+
 __all__ = [
     "Condition",
     "Containable",

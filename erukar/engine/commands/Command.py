@@ -88,6 +88,9 @@ class Command:
         '''Run this Command as a player'''
         player = self.find_player()
 
+    def find_lifeform(self, uid):
+        return self.data.find_player(uid).lifeform()
+
     def find_player(self):
         '''Attempt to find a player in the data access component'''
         return self.data.find_player(self.sender_uid)
