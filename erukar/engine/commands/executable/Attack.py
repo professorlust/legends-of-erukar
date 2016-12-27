@@ -94,6 +94,8 @@ class Attack(ActionCommand):
         if weapon is None:
             weapon = erukar.engine.inventory.UnarmedStrike()
 
+        self.dirty(self.character)
+        self.dirty(self.target)
         result = self.target.apply_damage(weapon.damages, self.character, efficacy)
         self.append_successful_attack_results(attack_roll, weapon, result)
 

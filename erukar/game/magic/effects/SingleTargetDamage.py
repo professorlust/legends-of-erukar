@@ -25,10 +25,7 @@ class SingleTargetDamage(SpellEffect):
             dist_and_params=(random.uniform, (0,1)),
             scales=self.DamageShouldScale
         )]
-        self.target.apply_damage(damages, lifeform, efficacy)
+        result = self.target.apply_damage(damages, lifeform, efficacy)
+        self.process_and_append_damage_result(result)
 
         return parameters
-
-    def get_rolled_damage(self, damage_type, lifeform, efficacy=1.0):
-       raw = damage_type.roll(lifeform) * self.DamageScalar + self.DamageOffset
-       return raw * efficacy

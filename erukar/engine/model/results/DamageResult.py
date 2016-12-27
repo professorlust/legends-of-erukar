@@ -23,8 +23,8 @@ class DamageResult:
         self.stopped_by_mitigation = all(x.stopped_by_mitigation for x in self.reports)
 
         if not issubclass(type(self.victim), erukar.engine.lifeforms.Lifeform): return
+
         self.caused_incapacitated = self.victim.has_condition(erukar.engine.conditions.Dying)
         self.caused_death = self.victim.has_condition(erukar.engine.conditions.Dead)
-        print((self.caused_incapacitated, self.caused_death))
         if self.caused_death and not self.is_trap:
             self.xp_value = self.victim.calculate_xp_worth()
