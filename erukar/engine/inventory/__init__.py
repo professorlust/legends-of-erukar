@@ -6,6 +6,7 @@ from .Key import Key
 from .TieredKey import TieredKey
 from .Shield import Shield
 from .Weapon import Weapon
+from .SpellAttack import SpellAttack
 from .UnarmedStrike import UnarmedStrike
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     "TieredKey",
     "Shield",
     "Weapon",
-    "UnarmedStrike"
+    "UnarmedStrike",
+    "SpellAttack",
 ]

@@ -30,7 +30,7 @@ class Stats(Command):
         status_d = self.status.format(
             self.lifeform.health, 
             self.lifeform.max_health,
-            self.lifeform.calculate_armor_class())
+            self.lifeform.evasion())
 
         level_d = self.level.format(
             self.lifeform.level, 

@@ -5,7 +5,7 @@ class PlayerTests(unittest.TestCase):
     def test_calculate_armor_class_no_armor(self):
         p = Player()
         p.dexterity = 2
-        ac = p.calculate_armor_class()
+        ac = p.evasion()
 
         self.assertEqual(12, ac)
 

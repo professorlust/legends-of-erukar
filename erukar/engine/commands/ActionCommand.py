@@ -14,6 +14,7 @@ class ActionCommand(Command):
     DefaultWeapon = 'unarmed attack'
 
     def inflict_damage(self, enemy, weapon, efficacy=1.0):
+        '''apply a set of damages'''
         if not isinstance(enemy, erukar.engine.lifeforms.Lifeform)\
         or enemy.has_condition(erukar.engine.conditions.Dead):
             return
@@ -25,53 +26,76 @@ class ActionCommand(Command):
 
         self.append_result(self.sender_uid, 'Your {} hits {}!'.format(weapon.alias(), enemy.alias()))
         if hasattr(enemy, 'uid'):
-            self.append_result(enemy.uid, 'You are hit by {}\'s {}!'.format(character.alias(), weapon.alias()))
+            self.append_result(enemy.uid, '{}\'s {} hits you!'.format(character.alias(), weapon.alias()))
 
         cumulative_damages = []
+        should_incapacitate = False
         for damage in weapon.damages:
             result = self.apply_damage_and_parse_results(enemy, damage, efficacy)
             if result.dealt_damage:
                 cumulative_damages.append((result.damage_type, result.damage_amount))
 
-        if len(cumulative_damages) > 0:
-            print(cumulative_damages)
-            damage_list = ['{1} {0}'.format(*d) for d in cumulative_damages]
-            if len(damage_list) >= 2:
-                damage_list[-1] = 'and ' + damage_list[-1]
-            if len(damage_list) >= 3:
-                damage_list[:-1] = [x + ',' for x in damage_list[:-1]]
-            self.append_result(self.sender_uid, 'Your {} does {} damage!'.format(weapon.alias(), ' '.join(damage_list)))
-            if hasattr(enemy, 'uid'):
-                self.append_result(enemy.uid, '{}\'s {} does {} damage!'.format(character.alias(), weapon.alias(), ' '.join(damage_list)))
+            if result.is_corpsified(enemy):
+                self.add_corpsify_strings()
+                self.create_corpse(enemy)
+                return
 
+            self.append_and_award_damage_results(result)
+            if result.is_incapacitated(enemy):
+                should_incapacitate = True
+                break
+
+        if len(cumulative_damages) > 0:
+            self.append_damage_string(character, enemy, weapon, cumulative_damages)
+        if should_incapacitate:
+            self.add_incapacitated_strings()
+
+    def add_corpsify_strings(self):
+        self.append_result(self.target.uid, 'You have been slain by {}!'.format(self.lifeform.alias()))
+        self.append_result(self.sender_uid, 'You have slain {}'.format(self.target.alias()))
+
+    def add_incapacitated_strings(self):
+        self.append_result(self.target.uid, 'You have been incapacitated!')
+        self.append_result(self.sender_uid, '{} has been incapacitated'.format(self.target.alias()))
 
     def apply_damage_and_parse_results(self, enemy, damage, efficacy):
         '''Handles actually applying damage by passing off to RpgEntity'''
         # pass off to enemy to get a DamageResult
-        damage_result = enemy.apply_damage(damage, self.player.lifeform(), efficacy)
+        attacker = self.find_lifeform(self.sender_uid)
+        damage_result = enemy.apply_damage(damage, attacker, efficacy)
         if damage_result.dealt_damage:
             self.dirty(enemy)
-            self.dirty(self.find_lifeform(self.sender_uid))
+            self.dirty(attacker)
+        return damage_result
 
-        # check to see if we're dead
-        if damage_result.is_corpsified(enemy):
-            self.create_corpse(enemy)
-        
+    def append_and_award_damage_results(self, damage_result):
         # Append all results
         for uid in damage_result.string_results:
-            for res in damage_result.string_results[uid]:
-                self.append_result(uid, res)
+            combined = '\n'.join(damage_result.string_results[uid])
+            self.append_result(uid, combined)
 
         #Award All XP
         for uid in damage_result.xp_awards:
             if damage_result.xp_awards[uid] > 0:
                 self.find_lifeform(uid).award_xp(damage_result.xp_awards[uid], enemy)
-                
-        return damage_result
 
+    def append_damage_string(self, character, enemy, weapon, damages):
+        '''Add damage strings to enemy (if yet alive) and self'''
+        damage_list = ActionCommand.format_damage_list(damages)
+        self.append_result(self.sender_uid, 'Your {} does {} damage!'.format(weapon.alias(), ' '.join(damage_list)))
+        if hasattr(enemy, 'uid'):
+            self.append_result(enemy.uid, '{}\'s {} does {} damage!'.format(character.alias(), weapon.alias(), ' '.join(damage_list)))
 
     def create_corpse(self, target):
         room = target.current_room
         if target in room.contents:
             room.contents.remove(target)
         room.add(Corpse(target))
+
+    def format_damage_list(cumulative_damages):
+        damage_list = ['{1} {0}'.format(*d) for d in cumulative_damages]
+        if len(damage_list) >= 2:
+            damage_list[-1] = 'and ' + damage_list[-1]
+        if len(damage_list) >= 3:
+            damage_list[:-1] = [x + ',' for x in damage_list[:-1]]
+        return damage_list

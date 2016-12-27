@@ -102,12 +102,12 @@ class Lifeform(RpgEntity):
         self.max_health = sum([Lifeform.base_health + self.get('vitality') for x in range(level)])
         self.health = self.max_health
 
-    def calculate_armor_class(self):
+    def evasion(self):
         if self.is_incapacitated():
-            return RpgEntity.base_armor_class / 2
+            return RpgEntity.base_evasion / 2
 
         ac_mod = self.get('dexterity')
-        total_ac = RpgEntity.base_armor_class
+        total_ac = RpgEntity.base_evasion
 
         return total_ac + ac_mod
 
@@ -139,51 +139,19 @@ class Lifeform(RpgEntity):
             output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
         return output_strings
 
-    def apply_damage(self, damage, instigator=None, efficacy=1.0):
-        result = DamageResult(damage)
-        raw = int(damage.roll(instigator) * efficacy)
-
-        # Check to see how much damage is mitigated
-        after_deflection = raw - self.deflection(damage.name)
-        if after_deflection <= 0:
-            result.successful_deflection(self, instigator, raw, damage)
-            return result
-
-        # Check to see how much is mitigated
-        after_mitigation = int(after_deflection * self.mitigation(damage.name))
-        if after_mitigation < 1:
-            result.successful_mitigation(self, instigator, after_deflection, damage)
-            return result
-        
-        # At this point, no mitigation and deflection can stop damage, so do the damage
-        xp = self.take_damage(after_mitigation, instigator)
-        amounts = {
-            'raw': raw,
-            'deflected': raw - after_deflection,
-            'mitigated': after_deflection - after_mitigation,
-            'total': after_mitigation
-        }
-        result.attack_successful(self, instigator, damage, amounts)
-
-        if xp and xp > 0:
-            result.corpsify(self)
-            result.add_xp(instigator, xp)
-        return result
-
     def take_damage(self, damage_amount, instigator=None):
         '''Take damage and return amount of XP to award instigator'''
         if self.has_condition(erukar.engine.conditions.Dying):
-            xp = self.kill(killer=instigator)
-            return xp
+            self.kill(killer=instigator)
+            return
         self.health = max(0, self.health - damage_amount)
         if self.health == 0:
             self.conditions.append(Dying(self, None))
-        return 0
+        return 
 
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''
         self.conditions = [Dead(self, None)]
-        return self.calculate_xp_worth()
 
     def link_to_room(self, room):
         self.current_room = room

@@ -96,7 +96,6 @@ class Enemy(Lifeform, Indexer):
             ] 
             bins, values = Random.create_random_distribution(stats, weights)
             chosen = Random.get_from_custom_distribution(random.random(), bins, values)
-            print('{} has chosen to add a stat point to {}'.format(self.alias(), chosen))
             setattr(self, chosen, getattr(self, chosen)+1)
             self.stat_points -= 1
 

@@ -56,6 +56,10 @@ class Command:
             self.results[uid] = []
         self.results[uid].append(result)
 
+    def append_if_uid(self, obj, result):
+        if hasattr(obj, 'uid'):
+            self.append_result(obj.uid, result)
+
     def add_items_to_context(self, items):
         pre_insertion_length = len(self.indexed_items)+1
         for index, alias in enumerate(items):

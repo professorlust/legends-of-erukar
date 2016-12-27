@@ -88,9 +88,7 @@ class Connector:
             return self.get_character(target.uid)
         if self.is_persistible_enemy(target):
             schema = self.get_creature(target.uid)
-            print(schema)
             return schema
-        print('no schema found for {}'.format(target.uid))
 
     def map_lifeform_to_schema(self, target, schema):
         '''Performs basic Lifeform mapping, then uses polymorphism on remaining fields'''
