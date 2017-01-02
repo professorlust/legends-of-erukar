@@ -7,7 +7,6 @@ from .Equip import Equip
 from .Give import Give
 from .Inspect import Inspect
 from .Inventory import Inventory
-from .Join import Join
 from .Map import Map
 from .Move import Move
 from .Open import Open
@@ -28,7 +27,6 @@ __all__ = [
     "Give",
     "Inspect",
     "Inventory",
-    "Join",
     "Levelup",
     "Map",
     "Move",

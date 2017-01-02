@@ -18,15 +18,23 @@ class InstanceInfo:
         self.non_action_commands = m.list([])
         self.action_commands = m.list([])
         self.joins = m.list([])
-        self.command_results_list = m.list([])
+        self.responses = m.dict([])
         self.player_command_contexts = {}
+
+    def player_join(self, uid):
+        self.player_list.append(uid)
+        self.joins.append(uid)
+
+    def remove_player(self, uid):
+        self.player_list[:] = [u for u in self.player_list if u != uid]
 
     def append(self, command):
         '''appends the command to the correct queue'''
-        if isinstance(command, erukar.engine.commands.executable.Join):
-            self.joins.append(command)
-            return
         if isinstance(command, erukar.engine.commands.ActionCommand):
             self.action_commands.append(command)
             return
         self.non_action_commands.append(command)
+
+    def get_messages_for(self, uid):
+        if uid in self.responses:
+            return self.responses[uid].pop()

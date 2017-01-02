@@ -5,6 +5,7 @@ from erukar import *
 import erukar
 
 dungeon = Dungeon()
+dungeon.name = "Barlen Town Center"
 
 '''Consultants and Dragons'''
 # Guild Hall Antechamber (0, 0)

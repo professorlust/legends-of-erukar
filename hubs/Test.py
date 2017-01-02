@@ -5,8 +5,8 @@ from erukar import *
 import erukar
 
 dungeon = Dungeon()
+dungeon.name = "Test Dungeon"
 
-'''Consultants and Dragons'''
 # Guild Hall Antechamber (0, 0)
 test_room = Room(dungeon, (0,0), dimensions=(2,2), shape=erukar.engine.environment.roomshapes.SouthWestCorner)
 a_test_room = Room(dungeon, (2,0), dimensions=(2,2), shape=erukar.engine.environment.roomshapes.SouthEastCorner)

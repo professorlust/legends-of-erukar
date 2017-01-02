@@ -32,8 +32,7 @@ class Shard(Manager):
         player = self.get_playernode_from_uid(uid)
         character = self.get_character_from_playernode(uid)
         self.interface.data.players.append(player)
-        print('Check for player\'s desired entry location')
-        self.instances[0].player_list.append(player)
+        self.instances[0].player_join(uid)
 
     def get_playernode_from_uid(self, uid):
         playernode = self.data.get_player({'uid': uid})
@@ -47,7 +46,7 @@ class Shard(Manager):
         character = Player()
         character.uid = uid
         if not self.data.load_player(uid, character):
-            print('Need a new character')
+            print('Character creation time')
             self.data.add_character(uid, character) 
             self.data.update_character(character)
         return character
@@ -65,6 +64,7 @@ class Shard(Manager):
               info.action_commands,
               info.non_action_commands,
               info.joins,
+              info.responses,
         )
         dungeon_thread = threading.Thread(target=info.instance.instance_running,args=args)
         dungeon_thread.daemon = True
@@ -76,5 +76,5 @@ class Shard(Manager):
                 return info
 
     def uids_in_instance(self, info):
-        for player in info.player_list:
-            yield player.uid
+        for uid in info.player_list:
+            yield uid

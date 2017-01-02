@@ -4,6 +4,7 @@ class Dungeon(RpgEntity):
     minimum_rooms = 3
 
     def __init__(self):
+        self.name = "Dungeon"
         self.dungeon_map = {}
         self.rooms = []
         self.active_auras = set()

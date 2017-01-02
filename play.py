@@ -12,9 +12,8 @@ w.activate()
 
 w.subscribe('a-uid')
 
-w.interface.execute('a-uid', 'join')
-
 while True:
     print('-' * 64)
     line = input('')
     res = w.interface.execute('a-uid', line)
+    print(w.interface.get_messages_for('a-uid'))

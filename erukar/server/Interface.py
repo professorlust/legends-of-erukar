@@ -1,6 +1,6 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.server.DataAccess import DataAccess
-import sys, inspect, erukar
+import sys, inspect, erukar, threading
 
 class Interface:
     command_location = 'erukar.engine.commands.executable'
@@ -11,6 +11,7 @@ class Interface:
         self.data = DataAccess()
         self.factory = FactoryBase()
         self.create_alias_list()
+        self.messages = {}
 
     def create_alias_list(self):
         self.aliases = {}
@@ -44,6 +45,11 @@ class Interface:
         instance = self.shard.player_current_instance(uid)
         if instance is not None:
             instance.append(created)
+
+    def get_messages_for(self, uid):
+        instance = self.shard.player_current_instance(uid)
+        if instance is not None:
+            return instance.get_messages_for(uid)
 
     def check_for_aliases(self, command, generation_parameters):
         if command not in self.aliases:

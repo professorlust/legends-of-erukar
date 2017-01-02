@@ -16,24 +16,25 @@ class Instance(Manager):
         self.dungeon = None
         self.command_contexts = {}
 
-    def instance_running(self, connector, action_commands, non_action_commands, joins):
+    def instance_running(self, connector, action_commands, non_action_commands, joins, responses):
         '''Entry point for the Initialization of the Instance by the Shard'''
         # Activate and initialize timers
         self.connector = connector
-        self.initialize_instance(action_commands, non_action_commands, joins)
+        self.initialize_instance(action_commands, non_action_commands, joins, responses)
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
         self.active_player = None
 
         self.check_for_player_input()
 
-    def initialize_instance(self, action_commands, non_action_commands, joins):
+    def initialize_instance(self, action_commands, non_action_commands, joins, responses):
         '''Turn on players and generate a dungeon'''
         self.turn_manager = TurnManager()
         self.data = DataAccess()
         self.action_commands = action_commands
         self.non_action_commands = non_action_commands
         self.joins = joins
+        self.responses = responses
         self.subscribe_enemies()
         self.has_had_players = False
         if self.dungeon:
@@ -66,19 +67,19 @@ class Instance(Manager):
         uid = random.choice(possible_uids)
         return self.connector.load_creature(uid)
 
-    def subscribe(self, player):
+    def subscribe(self, uid):
+        player = self.launch_player(uid)
         super().subscribe(player)
-        p = self.launch_player(player.uid)
         room = self.dungeon.rooms[0]
-        p.character.link_to_room(room)
-        p.move_to_room(room)
+        player.character.link_to_room(room)
+        player.move_to_room(room)
         # Run on_equip for all equipped items
-        for equip in p.character.equipment_types:
-            equipped = getattr(p.character, equip)
+        for equip in player.character.equipment_types:
+            equipped = getattr(player.character, equip)
             if equipped is not None:
-                equipped.on_equip(p.character)
-        self.turn_manager.subscribe(p)
-        self.command_contexts[player.uid] = None
+                equipped.on_equip(player.character)
+        self.turn_manager.subscribe(player)
+        self.command_contexts[uid] = None
 
     def launch_player(self, uid):
         # Create the base object
@@ -105,8 +106,8 @@ class Instance(Manager):
 
     def check_for_player_input(self):
         if any(self.joins):
-            cmd = self.joins.pop()
-            self.subscribe(cmd.find_player())
+            uid = self.joins.pop()
+            self.subscribe(uid)
             if not self.has_had_players:
                 self.get_next_player()
                 self.has_had_players = True
@@ -154,14 +155,14 @@ class Instance(Manager):
             res = self.active_player.end_turn()
             #TODO: Replace with Results object later
             if len(res) > 0:
-                print(res)
+                self.append_response(self.active_player.uid, res)
 
         self.grab_from_turn_manager()
         if self.active_player is not None:
             res = self.active_player.begin_turn()
             #TODO: Same as above
             if len(res) > 0:
-                print(res)
+                self.append_response(self.active_player.uid, res)
 
     def grab_from_turn_manager(self):
         self.active_player = self.turn_manager.next()
@@ -178,7 +179,7 @@ class Instance(Manager):
                 return command
 
     def skip_player(self):
-        print("Skipping player")
+        self.append_response(self.active_player.uid, 'You were skipped!')
         for i in range(self.MaximumTurnSkipPenalty):
             next_player = self.turn_manager.next()
             if next_player is not self.active_player:
@@ -194,9 +195,7 @@ class Instance(Manager):
         if result is not None:
             # Print Result, replace with outbox later
             if hasattr(result, 'results'):
-                if 'a-uid' in result.results:
-                    print('\n\n'.join(result.result_for('a-uid')) + '\n')
-                    print('-' * 64)
+                self.append_result_responses(result)
 
             # Save Dirtied Characters in DB 
             if hasattr(result, 'dirtied_characters'):
@@ -207,3 +206,14 @@ class Instance(Manager):
             self.command_contexts[cmd.sender_uid] = result
 
         return result
+
+    def append_result_responses(self, result):
+        for uid in result.results:
+            self.append_response(uid,'\n\n'.join(result.result_for(uid)) + '\n')
+            self.append_response(uid, ('-' * 64))
+
+    def append_response(self, uid, response):
+        if uid not in self.responses:
+            self.responses[uid] = [response]
+            return
+        self.responses[uid].append(response)
