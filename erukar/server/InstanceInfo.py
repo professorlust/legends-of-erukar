@@ -10,15 +10,15 @@ class InstanceInfo:
     Instance, e.g. PlayerList, command_queue, command results list
     '''
     def __init__(self, instance_type=Instance, additional_parameters=None):
-        m = Manager()
+        self.manager = Manager()
         if not additional_parameters:
             additional_parameters = {}
         self.instance = instance_type(**additional_parameters)
         self.player_list = []
-        self.non_action_commands = m.list([])
-        self.action_commands = m.list([])
-        self.joins = m.list([])
-        self.responses = m.dict([])
+        self.non_action_commands = self.manager.list([])
+        self.action_commands = self.manager.list([])
+        self.joins = self.manager.list([])
+        self.responses = self.manager.dict([])
         self.player_command_contexts = {}
 
     def player_join(self, uid):
@@ -36,5 +36,7 @@ class InstanceInfo:
         self.non_action_commands.append(command)
 
     def get_messages_for(self, uid):
+        messages = []
         if uid in self.responses:
-            return self.responses[uid].pop()
+            messages = self.responses.pop(uid, [])
+            return messages

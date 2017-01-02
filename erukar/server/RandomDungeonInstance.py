@@ -1,5 +1,6 @@
 from erukar.server.Instance import Instance
 from erukar.engine.factories import *
+from erukar.engine.model.GenerationProfile import GenerationProfile
 import erukar
 
 class RandomDungeonInstance(Instance):
@@ -18,20 +19,21 @@ class RandomDungeonInstance(Instance):
         (ModuleDecorator, "phenomena")]
 
     def __init__(self, level=-1, level_variance=0.2, generation_parameters=None):
+        super().__init__()
         self.level = level if level > 0 else int(random.uniform(1, 50))
         self.level_variance = level_variance
         if generation_parameters is None:
             generation_parameters = GenerationProfile.random()
         self.generation_parameters = generation_parameters
 
-    def activate(self, action_commands, non_action_commands, joins):
+    def initialize_instance(self, action_commands, non_action_commands, joins, responses):
         d = DungeonGenerator()
         self.dungeon = d.generate()
         self.decorate()
-        super().activate(action_commands, non_action_commands, joins)
+        super().initialize_instance(action_commands, non_action_commands, joins, responses)
 
     def decorate(self):
-        decorators = list(self.decorators(self.generation_parameters))
+        decorators = list(self.decorators())
         # First Pass -- Actually add Decorations
         for room in self.dungeon.rooms:
             for deco in decorators:

@@ -32,7 +32,8 @@ class Shard(Manager):
         player = self.get_playernode_from_uid(uid)
         character = self.get_character_from_playernode(uid)
         self.interface.data.players.append(player)
-        self.instances[0].player_join(uid)
+        info = self.create_random_dungeon(character)
+        info.player_join(uid)
 
     def get_playernode_from_uid(self, uid):
         playernode = self.data.get_player({'uid': uid})
@@ -55,9 +56,10 @@ class Shard(Manager):
         print('New Player')
 
     def create_random_dungeon(self, for_player):
-        dungeon = InstanceInfo(erukar.server.RandomDungeonInstance, {'level': for_player.level})
-        self.launch_dungeon_instance(dungeon)
-        return dungeon
+        dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, {'level': for_player.level})
+        self.launch_dungeon_instance(dungeon_info)
+        self.instances.append(dungeon_info)
+        return dungeon_info
 
     def launch_dungeon_instance(self, info):
         args=(self.connector_factory.create_session(),
