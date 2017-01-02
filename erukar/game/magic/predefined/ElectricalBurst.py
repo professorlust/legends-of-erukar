@@ -9,6 +9,6 @@ class ElectricalBurst(Spell):
         super().__init__('Electrical Burst',[
             erukar.game.magic.effects.ElementalElectricity(),
             erukar.game.magic.effects.ArcaneAdeptAugmentation(),
-            erukar.game.magic.effects.SingleTargetDamage()
+            erukar.game.magic.effects.DamageSingleTarget()
         ])
 

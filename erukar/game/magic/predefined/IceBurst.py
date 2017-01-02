@@ -9,6 +9,6 @@ class IceBurst(Spell):
         super().__init__('Ice Burst',[
             erukar.game.magic.effects.ElementalIce(),
             erukar.game.magic.effects.ArcaneAdeptAugmentation(),
-            erukar.game.magic.effects.SingleTargetDamage()
+            erukar.game.magic.effects.DamageSingleTarget()
         ])
 

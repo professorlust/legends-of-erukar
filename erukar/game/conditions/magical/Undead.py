@@ -1,11 +1,10 @@
 from erukar.engine.model.Condition import Condition
 import erukar
 
-class Ethereal(Condition):
+class Undead(Condition):
     Incapacitates = False
     IsTemporary = False
     DamageMitigations = {
-        'bludgeoning': (0.333, 0),
-        'piercing': (0.333, 0),
-        'slashing': (0.333, 0)
+        'divine': (-0.5, 0),
+        'demonic': (0.25, 0)
     }

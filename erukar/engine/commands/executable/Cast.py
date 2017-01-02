@@ -10,14 +10,14 @@ class Cast(ActionCommand):
     def execute(self):
         player = self.find_player()
         if player is None: return
-        self.lifeform = player.lifeform()
-        self.room = self.lifeform.current_room
+        self.caster = player.lifeform()
+        self.room = self.caster.current_room
 
         failure = self.check_for_arguments()
         if failure: return failure
 
         arguments = {'target': self.target}
-        self.spell.on_cast(self, self.lifeform, arguments)
+        self.spell.on_cast(self, self.caster, arguments)
         return self.succeed()
 
     def resolve_spell(self, opt_payload=''):
@@ -27,7 +27,7 @@ class Cast(ActionCommand):
         # If we have the parameter and it's not nully, assert that we're done
         if hasattr(self, 'spell') and self.spell: return
 
-        return self.find_spell(self.lifeform, opt_payload, 'spell') 
+        return self.find_spell(self.caster, opt_payload, 'spell') 
 
     def check_for_arguments(self):
         # Copy all of the tracked Params into this command

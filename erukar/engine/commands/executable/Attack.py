@@ -3,6 +3,7 @@ from erukar.engine.environment.Corpse import Corpse
 from erukar.engine.environment.Door import Door
 from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Damage import Damage
+from erukar.engine.formatters.PhysicalDamageFormatter import PhysicalDamageFormatter
 import erukar, random, math
 
 class Attack(ActionCommand):
@@ -88,7 +89,7 @@ class Attack(ActionCommand):
         attack_roll = int(self.character.roll(self.character.stat_random_range('dexterity')) * efficacy)
         evasion = self.target.evasion()
         if attack_roll < evasion:
-            self.append_missed_attack_results(attack_roll)
+            PhysicalDamageFormatter.append_missed_attack_results(self, attack_roll)
             return
 
         if weapon is None:
@@ -97,85 +98,5 @@ class Attack(ActionCommand):
         self.dirty(self.character)
         self.dirty(self.target)
         result = self.target.apply_damage(weapon.damages, self.character, efficacy)
-        self.append_successful_attack_results(attack_roll, weapon, result)
+        PhysicalDamageFormatter.process_and_append_damage_result(self, attack_roll, weapon, result)
 
-    def append_missed_attack_results(self, attack_roll):
-        self.append_if_uid(self.target, '{} missed an attack against you!'.format(self.character.alias()))
-        self.append_result(self.sender_uid, 'Your attack ({}) missed {}!'.format(attack_roll, self.target.alias()))
-
-    def append_successful_attack_results(self, attack_roll, weapon, damage_result):
-        if damage_result.stopped_by_deflection:
-            self.append_deflection_results(attack_roll, weapon, damage_result)
-            return
-
-        if damage_result.stopped_by_mitigation:
-            self.append_mitigation_results(attack_roll, weapon, damage_result)
-            return
-
-        if damage_result.caused_death:
-            self.append_death_results(weapon, damage_result)
-            return
-        
-        self.append_damage_results(attack_roll, weapon, damage_result)
-
-    def append_deflection_results(self, attack_roll, weapon, damage_result):
-        damage_string = ', '.join(['{} {}'.format(x.amount_deflected, x.damage_type) for x in damage_result.reports])
-        self.append_if_uid(self.target, '{}\'s attack with {} hits you, but you deflect all {}!'.format(self.character.alias(), weapon.alias(), damage_string))
-        self.append_result(self.sender_uid, 'Your attack ({}) with {} hits {}, but all {} was deflected!'.format(attack_roll, weapon.alias(), self.target.alias(), damage_string))
-
-    def append_mitigation_results(self, attack_roll, weapon, damage_result):
-        attacker_results = []
-        target_results = []
-
-        deflection = ', '.join(['{} {}'.format(x.amount_deflected, x.damage_type) for x in damage_result.reports if x.amount_deflected > 0])
-        mitigation = ', '.join(['{} {}'.format(x.amount_mitigated, x.damage_type) for x in damage_result.reports if x.amount_mitigated > 0])
-
-        target_results.append('{}\'s attack with {} hits you!'.format(self.character.alias(), weapon.alias()))
-        attacker_results.append('Your attack ({}) with {} hits {}!'.format(attack_roll, weapon.alias(), self.target.alias()))
-
-        if len(deflection) > 0:
-            target_results.append('Your armor deflected {} damage!'.format(deflection))
-            attacker_results.append('{}\'s armor deflected {} damage.'.format(self.target.alias(), deflection))
-
-        target_results.append('Your armor mitigated {} damage, preventing you from taking any damage!'.format(mitigation))
-        attacker_results.append('{}\'s armor mitigated the remaining {} damage.'.format(self.target.alias(), mitigation))
-        
-        self.append_if_uid(self.target, '\n'.join(target_results))
-        self.append_result(self.sender_uid, '\n'.join(attacker_results))
-
-    def append_damage_results(self, attack_roll, weapon, damage_result):
-        attacker_results = []
-        target_results = []
-        deflection = ', '.join(['{} {}'.format(x.amount_deflected, x.damage_type) for x in damage_result.reports if x.amount_deflected > 0])
-        mitigation = ', '.join(['{} {}'.format(x.amount_mitigated, x.damage_type) for x in damage_result.reports if x.amount_mitigated > 0])
-        actual_damage = ', '.join(['{} {}'.format(x.amount_dealt, x.damage_type) for x in damage_result.reports if x.amount_dealt > 0])
-
-        target_results.append('{}\'s attack with {} hits you!'.format(self.character.alias(), weapon.alias()))
-        attacker_results.append('Your attack ({}) with {} hits {}!'.format(attack_roll, weapon.alias(), self.target.alias()))
-
-        if len(deflection) > 0:
-            target_results.append('Your armor deflected {} damage!'.format(deflection))
-            attacker_results.append('{}\'s armor deflected {} damage.'.format(self.target.alias(), deflection))
-
-        if len(mitigation) > 0:
-            target_results.append('Your armor mitigated {} damage!!'.format(mitigation))
-            attacker_results.append('{}\'s armor mitigated {} damage.'.format(self.target.alias(), mitigation))
-
-        target_results.append('You take {} damage!'.format(actual_damage))
-        attacker_results.append('{} takes {} damage!'.format(self.target.alias(), actual_damage))
-
-        if damage_result.caused_incapacitated:
-           target_results.append('You have been incapacitated by {}\'s {}!'.format(self.character.alias(), weapon.alias()))
-           attacker_results.append('You have incapacitated {}!'.format(self.target.alias()))
-
-        self.append_if_uid(self.target, '\n'.join(target_results))
-        self.append_result(self.sender_uid, '\n'.join(attacker_results))
-
-    def append_death_results(self, weapon, damage_result):
-        attacker_results = []
-        target_results = []
-        target_results.append('You have been slain by {}...'.format(self.character.alias()))
-        attacker_results.append('You have slain {}!'.format(self.target.alias()))
-
-        self.append_if_uid(self.target, '\n'.join(target_results))
-        self.append_result(self.sender_uid, '\n'.join(attacker_results))

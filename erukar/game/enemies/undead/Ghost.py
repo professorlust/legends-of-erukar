@@ -19,4 +19,5 @@ class Ghost(Enemy):
         self.res_ratio = 0.1
         self.define_level(11)
         self.conditions.append(erukar.game.conditions.magical.Ethereal(self))
+        self.conditions.append(erukar.game.conditions.magical.Undead(self))
 

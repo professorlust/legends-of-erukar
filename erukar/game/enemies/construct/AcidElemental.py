@@ -14,8 +14,8 @@ class AcidElemental(Elemental):
     def __init__(self, actual_name, is_random=True):
         super().__init__(actual_name, is_random)
         self.define_level(random.random()*20+5)
+        self.spells = [erukar.game.magic.predefined.Engulf()]
         
     def apply_elemental_effects(self):
         Acid().apply_to(self.left)
         Acid().apply_to(self.right)
-

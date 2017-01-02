@@ -1,4 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
+import erukar
 
 class UndeadKnight(Enemy):
     BriefDescription = "an Undead Knight"
@@ -22,3 +23,4 @@ class UndeadKnight(Enemy):
         self.res_ratio = 0.3
         self.define_level(14)
         self.randomize_equipment()
+        self.conditions.append(erukar.game.conditions.magical.Undead(self))

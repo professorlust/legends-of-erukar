@@ -8,5 +8,5 @@ class IceBreath(Spell):
     def __init__(self):
         super().__init__('Ice Breath',[
             erukar.game.magic.effects.ElementalIce(),
-            erukar.game.magic.effects.SingleTargetDamage()
+            erukar.game.magic.effects.DamageSingleTarget()
         ])

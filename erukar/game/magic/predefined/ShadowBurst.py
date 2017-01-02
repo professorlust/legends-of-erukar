@@ -9,6 +9,6 @@ class ShadowBurst(Spell):
         super().__init__('Shadow Burst',[
             erukar.game.magic.effects.ElementalDemonic(),
             erukar.game.magic.effects.ArcaneAdeptAugmentation(),
-            erukar.game.magic.effects.SingleTargetDamage()
+            erukar.game.magic.effects.DamageSingleTarget()
         ])
 

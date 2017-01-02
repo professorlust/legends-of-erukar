@@ -9,6 +9,6 @@ class FireBurst(Spell):
         super().__init__('Fire Burst',[
             erukar.game.magic.effects.ElementalFire(),
             erukar.game.magic.effects.ArcaneAdeptAugmentation(),
-            erukar.game.magic.effects.SingleTargetDamage()
+            erukar.game.magic.effects.DamageSingleTarget()
         ])
 

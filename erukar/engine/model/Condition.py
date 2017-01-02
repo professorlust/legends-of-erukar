@@ -4,6 +4,7 @@ class Condition:
     IsTemporary = False # AKA can be tied to a timer
     Persistent = False # AKA DB Persistent
     Duration = 4
+    DamageMitigations = {}
 
     def __init__(self, target, instigator=None):
         self.target = target

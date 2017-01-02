@@ -1,4 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
+import erukar
 
 class Ghoul(Enemy):
     BriefDescription = "a ghoul"
@@ -17,4 +18,4 @@ class Ghoul(Enemy):
         self.sen_ratio = 0.0
         self.res_ratio = 0.3
         self.define_level(8)
-
+        self.conditions.append(erukar.game.conditions.magical.Undead(self))

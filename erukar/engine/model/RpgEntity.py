@@ -27,10 +27,6 @@ class RpgEntity(Describable):
         return 1.0-sum([mit for mit, df in self.matching_deflections_and_mitigations(damage_type)])
 
     def matching_deflections_and_mitigations(self, damage_type):
-        for x in self.equipment_types:
-            armor = getattr(self, x)
-            if isinstance(armor, erukar.engine.inventory.Armor):# and damage_type in armor.DamageMitigations:
-                yield armor.mitigation_for(damage_type)
         if damage_type in self.BaseDamageMitigations:
             yield self.BaseDamageMitigations[damage_type]
 

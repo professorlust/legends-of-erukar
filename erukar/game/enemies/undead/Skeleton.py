@@ -1,8 +1,14 @@
 from erukar.engine.lifeforms.Enemy import Enemy
 from erukar.game.inventory.weapons.standard.Sword import Sword
 from erukar.game.inventory.armor.shields.Buckler import Buckler
+import erukar
 
 class Skeleton(Enemy):
+    BaseMitigations = {
+        'bludgeoning': (-0.25, 0),
+        'piercing': (0.2, 0),
+        'slashing': (0.15, 0)
+    }
     BriefDescription = "a skeleton holding a {describe|right} and a {describe|left}."
 
     def __init__(self, random=True):
@@ -27,3 +33,4 @@ class Skeleton(Enemy):
         self.inventory = [s, b]
         self.left = s
         self.right = b
+        self.conditions.append(erukar.game.conditions.magical.Undead(self))

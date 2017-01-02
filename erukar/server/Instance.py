@@ -16,8 +16,19 @@ class Instance(Manager):
         self.dungeon = None
         self.command_contexts = {}
 
-    def activate(self, action_commands, non_action_commands, joins, generation_parameters):
-        '''Here generation_parameters is a GenerationProfile'''
+    def instance_running(self, connector, action_commands, non_action_commands, joins):
+        '''Entry point for the Initialization of the Instance by the Shard'''
+        # Activate and initialize timers
+        self.connector = connector
+        self.initialize_instance(action_commands, non_action_commands, joins)
+        self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
+        self.timer.start()
+        self.active_player = None
+
+        self.check_for_player_input()
+
+    def initialize_instance(self, action_commands, non_action_commands, joins):
+        '''Turn on players and generate a dungeon'''
         self.turn_manager = TurnManager()
         self.data = DataAccess()
         self.action_commands = action_commands
@@ -84,6 +95,7 @@ class Instance(Manager):
             self.connector.update_character(character)
 
         playernode.character = character
+        character.conditions.append(erukar.game.conditions.magical.Ethereal(character))
         character.spells = [
             erukar.game.magic.predefined.FlameBreath(),
             erukar.game.magic.predefined.Heal(),
@@ -136,15 +148,6 @@ class Instance(Manager):
         if cmd is not None:
             result = self.execute_command(cmd)
 
-    def instance_running(self, connector, action_commands, non_action_commands, joins, gen_params):
-        # Activate and initialize timers
-        self.connector = connector
-        self.activate(action_commands, non_action_commands, joins, gen_params)
-        self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
-        self.timer.start()
-        self.active_player = None
-
-        self.check_for_player_input()
 
     def get_next_player(self):
         if self.active_player is not None:

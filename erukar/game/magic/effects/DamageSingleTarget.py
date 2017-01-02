@@ -1,9 +1,10 @@
 from erukar.engine.model.SpellEffect import SpellEffect
 from erukar.engine.model.Damage import Damage
 from erukar.engine.inventory.SpellAttack import SpellAttack
+from erukar.engine.formatters.MagicDamageFormatter import MagicDamageFormatter
 import random
 
-class SingleTargetDamage(SpellEffect):
+class DamageSingleTarget(SpellEffect):
     DamageRange = (0, 10)
     DamageScalar = 1.0
     DamageOffset = 0
@@ -26,6 +27,6 @@ class SingleTargetDamage(SpellEffect):
             scales=self.DamageShouldScale
         )]
         result = self.target.apply_damage(damages, lifeform, efficacy)
-        self.process_and_append_damage_result(result)
+        MagicDamageFormatter.process_and_append_damage_result(command, result)
 
         return parameters

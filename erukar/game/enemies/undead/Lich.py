@@ -22,6 +22,7 @@ class Lich(Enemy):
             erukar.game.magic.predefined.ElectricalBurst(),
             erukar.game.magic.predefined.ShadowBurst()
         ]
+        self.conditions.append(erukar.game.conditions.magical.Undead(self))
 
     def perform_turn(self):
         targets = list(self.viable_targets(self.current_room))

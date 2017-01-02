@@ -203,3 +203,17 @@ class Lifeform(RpgEntity):
 
     def possessive_pronoun(self):
         return 'his'
+
+    def matching_deflections_and_mitigations(self, damage_type):
+        # Check for Mitigation in Armor
+        for x in self.equipment_types:
+            armor = getattr(self, x)
+            if isinstance(armor, erukar.engine.inventory.Armor):# and damage_type in armor.DamageMitigations:
+                yield armor.mitigation_for(damage_type)
+        # Check for Mitigation Conditions
+        for condition in self.conditions:
+            if damage_type in condition.DamageMitigations:
+                yield condition.DamageMitigations[damage_type]
+        # Check for Base Mitigations
+        if damage_type in self.BaseDamageMitigations:
+            yield self.BaseDamageMitigations[damage_type]

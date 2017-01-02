@@ -8,5 +8,5 @@ class ElectricBreath(Spell):
     def __init__(self):
         super().__init__('Electric Breath',[
             erukar.game.magic.effects.ElementalElectricity(),
-            erukar.game.magic.effects.SingleTargetDamage()
+            erukar.game.magic.effects.DamageSingleTarget()
         ])

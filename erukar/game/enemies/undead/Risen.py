@@ -1,4 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
+import erukar
 
 class Risen(Enemy):
     BriefDescription = "a risen"
@@ -20,3 +21,4 @@ class Risen(Enemy):
         self.sen_ratio = 0.0
         self.res_ratio = 0.6
         self.define_level(1)
+        self.conditions.append(erukar.game.conditions.magical.Undead(self))

@@ -1,4 +1,5 @@
 from erukar.engine.lifeforms.Enemy import Enemy
+import erukar
 
 class Revenant(Enemy):
     BriefDescription = "a Revenant"
@@ -20,4 +21,4 @@ class Revenant(Enemy):
         self.res_ratio = 0.15
         self.define_level(10)
         self.randomize_equipment()
-
+        self.conditions.append(erukar.game.conditions.magical.Undead(self))

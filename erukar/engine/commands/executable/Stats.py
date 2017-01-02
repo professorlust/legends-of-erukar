@@ -5,7 +5,7 @@ from erukar.engine.lifeforms import Lifeform
 class Stats(Command):
     status = 'Health:    {} / {}\nEvasion:   {}'
     level = 'Level:     {}\nXP:        {} / {}'
-    stat = "{0:10} {1}"
+    stat = "{name:10} {raw:>3} {mod:>3} = {total:3}"
     attribute_types = [
         "strength",
         "dexterity",
@@ -37,17 +37,16 @@ class Stats(Command):
             self.lifeform.experience, 
             self.lifeform.calculate_necessary_xp())
 
-        attribute_d = '\n'.join([Stats.stat.format(
-                stat.capitalize(), 
-                self.lifeform.calculate_stat_score(stat))
-            for stat in self.attribute_types])
+        attribute_d = '\n'.join(self.stat_descriptions())
 
         mitigations = '\n'.join(['{:12} {:3}% MIT / {:2} DFL'.format(
             dtype.capitalize(),
             int(100.0*(1-self.lifeform.mitigation(dtype))), self.lifeform.deflection(dtype))
             for dtype in Damage.Types])
 
-        self.append_result(self.sender_uid, '\n--------------------\n'.join([level_d, status_d, attribute_d, mitigations]))
+        conditions = '\n'.join([c.__module__ for c in self.lifeform.conditions])
+
+        self.append_result(self.sender_uid, '\n--------------------\n'.join([level_d, status_d, attribute_d, mitigations, conditions]))
 
         return self.succeed()
 
@@ -56,3 +55,19 @@ class Stats(Command):
         result = ['{}: {}'.format(wanted.capitalize(), desc),\
                 'Your current {} score:  {}'.format(wanted, lifeform.calculate_stat_score(wanted))]
         return '\n\n'.join(result)
+
+    def stat_descriptions(self):
+        for stat in self.attribute_types:
+            full_value = self.lifeform.calculate_stat_score(stat)
+            raw = self.lifeform.get(stat)
+            yield Stats.stat.format(
+                name = stat.capitalize(),
+                raw = Stats.signed(raw),
+                mod = Stats.signed(full_value-raw),
+                total = Stats.signed(full_value))
+        
+
+    def signed(number):
+        if number < 0:
+            return '-{0}'.format(number)
+        return '+{0}'.format(number)

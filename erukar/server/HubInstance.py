@@ -5,6 +5,6 @@ class HubInstance(Instance):
         self.hub_definition_file_path = file_path
         super().__init__()
 
-    def activate(self, action_commands, non_action_commands, joins, generation_parameters):
+    def initialize_instance(self, action_commands, non_action_commands, joins):
         self.dungeon = __import__(self.hub_definition_file_path).dungeon
-        super().activate(action_commands, non_action_commands, joins, generation_parameters)
+        super().initialize_instance(action_commands, non_action_commands, joins)
