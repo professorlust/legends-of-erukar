@@ -48,8 +48,16 @@ class Interface:
 
     def get_messages_for(self, uid):
         instance = self.shard.player_current_instance(uid)
+        messages = self.messages.pop(uid, [])
         if instance is not None:
-            return instance.get_messages_for(uid)
+            messages.extend(instance.get_messages_for(uid))
+        return messages
+
+    def append_result(self, uid, response):
+        if uid not in self.messages:
+            self.messages[uid] = [response]
+            return
+        self.messages[uid].append(response)
 
     def check_for_aliases(self, command, generation_parameters):
         if command not in self.aliases:

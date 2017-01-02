@@ -36,7 +36,4 @@ class InstanceInfo:
         self.non_action_commands.append(command)
 
     def get_messages_for(self, uid):
-        messages = []
-        if uid in self.responses:
-            messages = self.responses.pop(uid, [])
-            return messages
+        return self.responses.pop(uid, [])

@@ -38,7 +38,7 @@ class Shard(Manager):
     def get_playernode_from_uid(self, uid):
         playernode = self.data.get_player({'uid': uid})
         if playernode is None:
-            self.new_player_tutorial()
+            self.new_player_tutorial(uid)
             playernode = PlayerNode(uid)
             self.data.add_player(playernode)
         return playernode
@@ -47,13 +47,13 @@ class Shard(Manager):
         character = Player()
         character.uid = uid
         if not self.data.load_player(uid, character):
-            print('Character creation time')
+            self.interface.append_result(uid, 'You look like you need a new character.')
             self.data.add_character(uid, character) 
             self.data.update_character(character)
         return character
 
-    def new_player_tutorial(self):
-        print('New Player')
+    def new_player_tutorial(self, uid):
+        self.interface.append_result(uid, 'You must be new here!')
 
     def create_random_dungeon(self, for_player):
         dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, {'level': for_player.level})
