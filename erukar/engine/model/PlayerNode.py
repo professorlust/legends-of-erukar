@@ -1,11 +1,20 @@
 from erukar.engine.model.Indexer import Indexer
 
 class PlayerNode(Indexer):
+    Disconnected  =-1  # Default State
+    Idle          = 0  # When the player is in menus
+    PrePlaying    = 1  # When the player is in a tutorial or building character
+    Playing       = 2  # When the player has chosen a character and is playing it
+    RunningScript = 3
+
     def __init__(self, uid, character=None):
         super().__init__()
+        self.status = PlayerNode.Disconnected
         self.uid = uid
         self.character = character
         self.dungeon_map = {}
+        self.active_script = ''
+        self.script_entry_point = None
 
     def turn_modifier(self):
         return self.character.turn_modifier()
@@ -36,3 +45,10 @@ class PlayerNode(Indexer):
 
     def lifeform(self):
         return self.character
+
+    def run_script(self, script):
+        self.active_script = script
+        self.status = PlayerNode.RunningScript
+
+    def set_script_entry_point(self, entry_point):
+        self.script_entry_point = entry_point

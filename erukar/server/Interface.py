@@ -1,4 +1,5 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
+from erukar.engine.model.PlayerNode import PlayerNode
 from erukar.server.DataAccess import DataAccess
 import sys, inspect, erukar, threading
 
@@ -28,6 +29,22 @@ class Interface:
         line = whisper_msg['message']
 
         return self.execute(uid, line)
+    
+    def receive(self, uid, line):
+        if not any(x.uid == uid for x in self.shard.connected_players):
+            self.shard.subscribe(uid)
+            return
+
+        if self.shard.is_playing(uid):
+            self.execute(uid, line)
+            return
+
+        pn = self.shard.get_active_playernode(uid) 
+        if pn.status == PlayerNode.RunningScript:
+            self.shard.continue_script(pn, line)
+            return
+
+        self.append_result(uid, 'Not accepting results') 
 
     def execute(self, uid, line):
         command, payload = self.command_and_payload(line)

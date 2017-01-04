@@ -7,11 +7,10 @@ class TieredKey(Key):
     BriefDescription = "a {Tier} key"
     WrongTarget = 'Invalid target for use with a {Tier} key.'
     FailedToUnlock = 'This lock is a {} tier; you cannot unlock it with a {} key.'
-    BaseName = "{Tier} Key"
     Tier = 'Iron'
 
     def __init__(self):
-        super().__init__(self.mutate(self.BaseName))
+        super().__init__('Key')
 
     def on_use(self, cmd, target):
         if isinstance(target, erukar.engine.environment.Passage):
@@ -31,4 +30,3 @@ class TieredKey(Key):
             self.consume()
             target.is_locked = False
         return self.mutate('The {Tier} lock has been successfully unlocked.'), not target.is_locked
-

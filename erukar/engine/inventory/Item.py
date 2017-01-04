@@ -13,6 +13,7 @@ class Item(Describable):
 
     MaxDurability = 100
     StandardWeight = 0 # In Pounds
+    BasePrice = 10
     EquipmentLocations = []
     BaseStatInfluences = {
         # Determines the influence of stats on the Item's efficacy. These totals are
@@ -26,7 +27,6 @@ class Item(Describable):
         self.item_type = item_type
         self.owner = None
         self.name = name
-        self.price = 0
         self.description = Item.generic_description
         self.modifiers = []
         self.durability = self.MaxDurability
@@ -80,6 +80,16 @@ class Item(Describable):
     def on_equip(self, lifeform):
         for modifier in self.modifiers:
             modifier.on_equip(lifeform)
+
+    def price(self):
+        prices = [x.PriceMultiplier for x in self.modifiers]
+        if hasattr(self, 'material') and self.material:
+            return functools.reduce(operator.mul, prices, self.BasePrice * self.material.PriceMultiplier * self.durability_multiplier())
+        return functools.reduce(operator.mul, prices, self.BasePrice)
+
+    def durability_multiplier(self):
+        mmdpm = self.material.MinimumDurabilityPriceMultiplier
+        return (1 - mmdpm) * pow(self.durability, 2) / pow(self.MaxDurability, 2)  + mmdpm
 
     def alias(self):
         return self.name

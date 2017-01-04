@@ -37,7 +37,7 @@ class Stats(Command):
             self.lifeform.experience, 
             self.lifeform.calculate_necessary_xp())
 
-        attribute_d = '\n'.join(self.stat_descriptions())
+        attribute_d = '\n'.join(Stats.stat_descriptions())
 
         mitigations = '\n'.join(['{:12} {:3}% MIT / {:2} DFL'.format(
             dtype.capitalize(),
@@ -56,17 +56,16 @@ class Stats(Command):
                 'Your current {} score:  {}'.format(wanted, lifeform.calculate_stat_score(wanted))]
         return '\n\n'.join(result)
 
-    def stat_descriptions(self):
-        for stat in self.attribute_types:
-            full_value = self.lifeform.calculate_stat_score(stat)
-            raw = self.lifeform.get(stat)
+    def stat_descriptions(lifeform):
+        for stat in Stats.attribute_types:
+            full_value = lifeform.calculate_stat_score(stat)
+            raw = lifeform.get(stat)
             yield Stats.stat.format(
                 name = stat.capitalize(),
                 raw = Stats.signed(raw),
                 mod = Stats.signed(full_value-raw),
                 total = Stats.signed(full_value))
         
-
     def signed(number):
         if number < 0:
             return '-{0}'.format(number)

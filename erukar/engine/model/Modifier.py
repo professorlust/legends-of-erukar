@@ -13,27 +13,16 @@ class Modifier(Describable):
     PermissionType = ALL
     DefaultPersistence = True
 
+    PriceMultiplier = 1
+    MinimumDurabilityPriceMultiplier = 0.5
+
     InventoryName = '__class__'
     InventoryDescription = 'Basic inventory description for {__module__}'
-    BriefDescription = "{BaseName}"
-    AbsoluteMinimalDescription = "Absolute Minimal"
-    VisualMinimalDescription = "Visual Minimal"
-    VisualIdealDescription = "Visual Ideal"
-    VisualRange = (1, 15)
-    SensoryMinimalDescription = "Sensory Minimal"
-    SensoryIdealDescription = "Sensory Ideal"
-    SensoryRange = (6, 20)
-    Adjective = "Adjective"
-    DetailedMinimalDescription = "{SensoryMinimalDescription} {VisualMinimalDescription}"
-    DetailedIdealDescription = "{SensoryIdealDescription} {VisualIdealDescription}"
 
     def __init__(self):
         super().__init__()
         self.target = None
         self.persistent = self.DefaultPersistence
-        self.set_vision_results(self.VisualMinimalDescription, self.VisualIdealDescription, self.VisualRange)
-        self.set_sensory_results(self.SensoryMinimalDescription, self.SensoryIdealDescription, self.SensoryRange)
-        self.set_detailed_results(self.DetailedMinimalDescription, self.DetailedIdealDescription)
 
     def modify(self, entity):
         '''Safe-guarded modification entry point'''

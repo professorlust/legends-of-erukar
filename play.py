@@ -2,7 +2,8 @@ from erukar import *
 import readline, os, sys, threading
 import numpy as np
 
-sys.path.append(os.getcwd() + '/hubs')
+sys.path.append(os.getcwd() + '/config/hubs')
+sys.path.append(os.getcwd() + '/config/scripts')
 
 w = Shard()
 w.activate()
@@ -25,13 +26,15 @@ class MessageTracker:
         if msgs: 
             print('\n'.join(msgs))
 
-        self.timer.cancel()
+        if self.timer:
+            self.timer.cancel()
         self.start()
 
 mtracker = MessageTracker(w.interface, alias)
-mtracker.start()
+mtracker.check_for_messages()
 
 while True:
     print('-' * 64)
     line = input('> ')
-    res = w.interface.execute(alias, line)
+    print('-' * 64)
+    res = w.interface.receive(alias, line)

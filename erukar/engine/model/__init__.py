@@ -10,6 +10,8 @@ from .Manager import Manager
 from .Modifier import Modifier
 from .PlayerNode import PlayerNode
 from .RpgEntity import RpgEntity
+from .ScriptPayload import ScriptPayload
+from .Shop import Shop
 from .Spell import Spell
 from .SpellEffect import SpellEffect
 from .Stance import Stance
@@ -29,6 +31,8 @@ __all__ = [
     "Modifier",
     "PlayerNode",
     "RpgEntity",
+    "ScriptPayload",
+    "Shop",
     "Spell",
     "SpellEffect",
     "Stance",

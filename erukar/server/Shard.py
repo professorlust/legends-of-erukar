@@ -7,7 +7,9 @@ import erukar, threading
 import numpy as np
 
 class Shard(Manager):
-    DefaultInstance = 0
+    SplashPath = 'Splash'
+    CharacterCreationPath = 'CharacterCreation'
+    TutorialPath = 'Tutorial'
 
     def __init__(self):
         super().__init__()
@@ -18,8 +20,12 @@ class Shard(Manager):
         self.data = self.connector_factory.create_session()
         self.interface = Interface(self)
         self.instances = []
+        self.connected_players = set()
 
     def activate(self):
+        '''
+        Create all Hub Instances and spin up  
+        '''
         self.instances = [
             InstanceInfo(erukar.server.HubInstance, {'file_path': 'Test'})
         ]
@@ -27,41 +33,93 @@ class Shard(Manager):
             self.launch_dungeon_instance(info)
 
     def subscribe(self, uid):
+        self.run_script(self.SplashPath, uid)
         super().subscribe(uid)
         # Check Connector for plaOyer
         player = self.get_playernode_from_uid(uid)
-        character = self.get_character_from_playernode(uid)
         self.interface.data.players.append(player)
+        self.connected_players.add(player)
+        character = self.get_character_from_playernode(player)
+        if character:
+            self.start_playing(uid, character)
+
+    def start_playing(self, uid, character):
+        self.interface.append_result(uid, 'starting gameplay')
+        self.get_active_playernode(uid).status = PlayerNode.Playing
         info = self.create_random_dungeon(character)
         info.player_join(uid)
 
     def get_playernode_from_uid(self, uid):
+        '''
+        Attempt to get a PlayerNode by UID from the database. If it exists,
+        return it. If not, run the script @TutorialPath and add the new uid
+        to the database.
+        '''
         playernode = self.data.get_player({'uid': uid})
         if playernode is None:
-            self.new_player_tutorial(uid)
+            # Run a tutorial for the new guy
+            self.run_script(self.TutorialPath, uid)
             playernode = PlayerNode(uid)
             self.data.add_player(playernode)
         return playernode
 
-    def get_character_from_playernode(self, uid):
-        character = Player()
-        character.uid = uid
-        if not self.data.load_player(uid, character):
-            self.interface.append_result(uid, 'You look like you need a new character.')
-            self.data.add_character(uid, character) 
-            self.data.update_character(character)
-        return character
+    def get_character_from_playernode(self, playernode):
+        '''
+        Attempt to get a not deceased character from the database. If it exists,
+        return it. Otherwise, run the player through the script @CharacterCreationPath
+        '''
+        uid = playernode.uid
+        playernode.character = Player()
+        playernode.character.uid = uid
+        if not self.data.load_player(uid, playernode.character):
+            self.run_script(self.CharacterCreationPath, uid, playernode)
+            return
+        return playernode.character
 
-    def new_player_tutorial(self, uid):
-        self.interface.append_result(uid, 'You must be new here!')
+    def character_creation_callback(self, uid, character):
+        '''
+        Callback from the CharacterCreation script. Adds the character to the database
+        and then starts playing.
+        '''
+        self.data.add_character(uid, character) 
+        self.data.update_character(character)
+        self.start_playing(uid, character)
+
+    def run_script(self, script, uid, playernode=None, character=None):
+        '''
+        Execute a script within `./config/scripts`. When finished, each script should
+        call the callback function, though some may get away with not doing so
+        (e.g. Splash)
+        '''
+        if not playernode:
+            playernode = self.get_active_playernode(uid)
+        payload = ScriptPayload(self.interface, uid, playernode, character, '')
+        if playernode:
+            playernode.run_script(script)
+        __import__(script).run_script(payload)
+
+    def continue_script(self, playernode, user_input):
+        '''
+        Execute a script within `./config/scripts`. When finished, each script should
+        call the callback function, though some may get away with not doing so
+        (e.g. Splash)
+        '''
+        payload = ScriptPayload(self.interface, playernode.uid, playernode, playernode.character, user_input)
+        getattr(__import__(playernode.active_script), playernode.script_entry_point)(payload)
 
     def create_random_dungeon(self, for_player):
+        '''
+        Create a random dungeon instance based on a player's level
+        '''
         dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, {'level': for_player.level})
         self.launch_dungeon_instance(dungeon_info)
         self.instances.append(dungeon_info)
         return dungeon_info
 
     def launch_dungeon_instance(self, info):
+        '''
+        Launch an instance using an InstanceInfo object.
+        '''
         args=(self.connector_factory.create_session(),
               info.action_commands,
               info.non_action_commands,
@@ -80,3 +138,9 @@ class Shard(Manager):
     def uids_in_instance(self, info):
         for uid in info.player_list:
             yield uid
+
+    def is_playing(self, uid):
+        return self.get_active_playernode(uid).status == PlayerNode.Playing
+
+    def get_active_playernode(self, uid):
+        return next((x for x in self.connected_players if x.uid == uid), None)
