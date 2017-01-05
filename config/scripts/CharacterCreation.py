@@ -31,7 +31,27 @@ def handle_skill_allocation(payload):
     handle_inventory(payload)
 
 def handle_inventory(payload):
+    shop = make_shop(payload)
+    append(payload, 'Please pick your default inventory. You have {} riphons to spend.'.format(50))
+    append(payload, '\n'.join(shop.display_inventory()))
+    append(payload, '\nUse the following commands to buy or sell items\n')
+    append(payload, '  {:15} -- {}'.format('buy #', 'Buy item at seller\'s # (if you can afford it)'))
+    append(payload, '  {:15} -- {}'.format('my items', 'See items in your inventory'))
+    append(payload, '  {:15} -- {}'.format('sell my #', 'Buy sell item at your #'))
+    append(payload, '  {:15} -- {}'.format('more about #', 'See detailed information about seller\'s item at #'))
+    append(payload, '  {:15} -- {}'.format('more about my #', 'See detailed information about your item at #'))
+    append(payload, '  {:15} -- {}'.format('exit', 'Commit and exit inventory management\n'))
+
+def make_shop(payload):
+    '''Either makes a new shop or retrieves the one established in script_data'''
+    # Check to see if we already have a shop in the script_data
+    if 'character_creation_shop' in payload.playernode.script_data:
+        append(payload, 'Retrieved a shop')
+        return payload.playernode.script_data['character_creation_shop']
+    # No? gotta create one then
     shop = Shop(50)
+    payload.playernode.set_script_entry_point('handle_inventory')
+    # Add Inventory
     for item in [Axe, Sword, CrossBow, Buckler, RoundShield, Cuirass, Guard, Greaves]:
         for material in [erukar.game.modifiers.material.Iron, erukar.game.modifiers.material.Steel]:
             shop.inventory.append(Shop.create(item, material))
@@ -48,9 +68,9 @@ def handle_inventory(payload):
     shop.inventory.append(Candle())
     shop.inventory.append(erukar.game.inventory.consumables.keys.IronKey())
     shop.inventory.append(erukar.game.inventory.consumables.keys.SteelKey())
-
-    append(payload, 'Please pick your default inventory. You have {} riphons to spend.'.format(50))
-    append(payload, '\n'.join(shop.display_inventory()))
+    # Save into script_data
+    payload.playernode.script_data['character_creation_shop'] = shop
+    return shop
 
 def show_stat_allocation_display(payload):
     append(payload, 'You have {} points to allocate between your stats.'.format(payload.character.stat_points))

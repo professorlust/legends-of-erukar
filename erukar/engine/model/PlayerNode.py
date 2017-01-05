@@ -15,6 +15,7 @@ class PlayerNode(Indexer):
         self.dungeon_map = {}
         self.active_script = ''
         self.script_entry_point = None
+        self.script_data = {}
 
     def turn_modifier(self):
         return self.character.turn_modifier()
