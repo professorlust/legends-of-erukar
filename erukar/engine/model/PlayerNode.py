@@ -13,9 +13,11 @@ class PlayerNode(Indexer):
         self.uid = uid
         self.character = character
         self.dungeon_map = {}
+
         self.active_script = ''
         self.script_entry_point = None
         self.script_data = {}
+        self.script_completion_callback = None
 
     def turn_modifier(self):
         return self.character.turn_modifier()
@@ -48,8 +50,17 @@ class PlayerNode(Indexer):
         return self.character
 
     def run_script(self, script):
-        self.active_script = script
         self.status = PlayerNode.RunningScript
+        self.active_script = script
 
     def set_script_entry_point(self, entry_point):
         self.script_entry_point = entry_point
+
+    def exit_script(self):
+        self.status = PlayerNode.Idle
+        self.active_script = ''
+        self.script_entry_point = None
+        self.script_data.clear()
+        if self.script_completion_callback:
+            self.script_completion_callback(self)
+        self.script_completion_callback = None

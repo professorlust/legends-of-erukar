@@ -68,7 +68,8 @@ class Item(Describable):
             modifier.on_move(room)
 
     def on_inventory(self, *_):
-        return self.alias()
+        print('format')
+        return self.format()
 
     def on_inventory_inspect(self, lifeform):
         return self.on_inventory()
@@ -116,3 +117,13 @@ class Item(Describable):
 
     def take_damage(self, amount):
         self.durability = max(0, self.durability - amount)
+
+    def format(self, with_price=False):
+        if not with_price:
+            if hasattr(self, 'material') and self.material:
+                return '{} {}'.format(self.material.InventoryName, self.alias())
+            return self.alias()
+        # show price
+        if hasattr(self, 'material') and self.material:
+            return '{} {} ({} R)'.format(self.material.InventoryName, self.alias(), int(self.price()))
+        return '{} ({} R)'.format(self.alias(), int(self.price()))

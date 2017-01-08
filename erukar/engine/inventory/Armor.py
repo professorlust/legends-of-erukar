@@ -17,10 +17,10 @@ class Armor(Item):
 
     def on_inventory(self):
         equip_loc = ', '.join(x.capitalize() for x in self.EquipmentLocations)
-        return '{} [{}] ({}%)'.format(self.name, equip_loc, int(100*self.durability/self.MaxDurability))
+        return '{} [{}] ({}%)'.format(self.format(), equip_loc, int(100*self.durability/self.MaxDurability))
 
     def on_inventory_inspect(self, lifeform):
-        name = '{} ({} / {})'.format(self.name, int(self.durability), int(self.MaxDurability))
+        name = '{} ({} / {})'.format(self.format(), int(self.durability), int(self.MaxDurability))
         mit_desc = '\t' + '\n\t'.join(list(self.mitigation_descriptions()))
         mods = [self.material] + self.modifiers if self.material else self.modifiers
         mod_desc = '\n'.join(['\t\t• {}: {}'.format(d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])

@@ -11,8 +11,7 @@ class Inventory(Command):
     def execute(self, *_):
         char = self.find_player().character
         # All of the Other items
-        items = '\n'.join(['{:2}. {}'.format(i+1, char.inventory[i].on_inventory())\
-            for i in range(len(char.inventory))])
+        items = '\n'.join(Inventory.inventory_contents(char))
         equipment = self.equipment(char)
         self.append_result(self.sender_uid, self.header.format(equipment, items))
         return self.succeed()
@@ -26,7 +25,11 @@ class Inventory(Command):
             if armor is not None:
                 armor_name = armor.on_inventory_inspect(character)
             armor_results.append(self.item.format(armor_type.capitalize(), armor_name))
-        return '\n\n'.join(armor_results)
+        return '\n'.join(armor_results)
+
+    def inventory_contents(character):
+        for i, item in enumerate(character.inventory):
+            yield '{:2}. {}'.format(i+1, item.on_inventory())
 
     def get_header(self, char):
         '''Draw Equipment'''

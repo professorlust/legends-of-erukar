@@ -44,6 +44,7 @@ class Shard(Manager):
             self.start_playing(uid, character)
 
     def start_playing(self, uid, character):
+        '''Callback from character creation or subscription'''
         self.interface.append_result(uid, 'starting gameplay')
         self.get_active_playernode(uid).status = PlayerNode.Playing
         info = self.create_random_dungeon(character)
@@ -72,18 +73,19 @@ class Shard(Manager):
         playernode.character = Player()
         playernode.character.uid = uid
         if not self.data.load_player(uid, playernode.character):
+            playernode.script_completion_callback = self.character_creation_callback
             self.run_script(self.CharacterCreationPath, uid, playernode)
             return
         return playernode.character
 
-    def character_creation_callback(self, uid, character):
+    def character_creation_callback(self, playernode):
         '''
         Callback from the CharacterCreation script. Adds the character to the database
         and then starts playing.
         '''
-        self.data.add_character(uid, character) 
-        self.data.update_character(character)
-        self.start_playing(uid, character)
+        self.data.add_character(playernode.uid, playernode.character) 
+        self.data.update_character(playernode.character)
+        self.start_playing(playernode.uid, playernode.character)
 
     def run_script(self, script, uid, playernode=None, character=None):
         '''

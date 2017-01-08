@@ -6,6 +6,7 @@ class Stats(Command):
     status = 'Health:    {} / {}\nEvasion:   {}'
     level = 'Level:     {}\nXP:        {} / {}'
     stat = "{name:10} {raw:>3} {mod:>3} = {total:3}"
+    raw_stat = "{name:10} {raw:>3}"
     attribute_types = [
         "strength",
         "dexterity",
@@ -27,17 +28,17 @@ class Stats(Command):
     def execute(self, *_):
         self.check_for_arguments()
 
-        status_d = self.status.format(
-            self.lifeform.health, 
-            self.lifeform.max_health,
-            self.lifeform.evasion())
+        status_d = '\n'.join([
+            '{:10}{:3} / {:3}'.format('Health:', self.lifeform.health, self.lifeform.max_health), 
+            '{:10}{:3}'.format('Evasion:', self.lifeform.evasion()),
+        ])
 
         level_d = self.level.format(
             self.lifeform.level, 
             self.lifeform.experience, 
             self.lifeform.calculate_necessary_xp())
 
-        attribute_d = '\n'.join(Stats.stat_descriptions())
+        attribute_d = '\n'.join(Stats.stat_descriptions(self.lifeform))
 
         mitigations = '\n'.join(['{:12} {:3}% MIT / {:2} DFL'.format(
             dtype.capitalize(),
@@ -56,17 +57,22 @@ class Stats(Command):
                 'Your current {} score:  {}'.format(wanted, lifeform.calculate_stat_score(wanted))]
         return '\n\n'.join(result)
 
-    def stat_descriptions(lifeform):
+    def stat_descriptions(lifeform, show_raw=False):
         for stat in Stats.attribute_types:
             full_value = lifeform.calculate_stat_score(stat)
             raw = lifeform.get(stat)
-            yield Stats.stat.format(
-                name = stat.capitalize(),
-                raw = Stats.signed(raw),
-                mod = Stats.signed(full_value-raw),
-                total = Stats.signed(full_value))
+            if show_raw:
+                yield Stats.raw_stat.format(
+                    name = stat.capitalize(),
+                    raw = Stats.signed(raw))
+            else:
+                yield Stats.stat.format(
+                    name = stat.capitalize(),
+                    raw = Stats.signed(raw),
+                    mod = Stats.signed(full_value-raw),
+                    total = Stats.signed(full_value))
         
     def signed(number):
         if number < 0:
-            return '-{0}'.format(number)
+            return '{0}'.format(number)
         return '+{0}'.format(number)
