@@ -12,8 +12,10 @@ class Inventory(Command):
         char = self.find_player().character
         # All of the Other items
         items = '\n'.join(Inventory.inventory_contents(char))
-        equipment = self.equipment(char)
-        self.append_result(self.sender_uid, self.header.format(equipment, items))
+        equipped_items = self.equipment(char)
+        wealth = '{:12} {} R'.format('Wealth', char.wealth)
+        result = '\n------------\n'.join(['INVENTORY', wealth, equipped_items, items])
+        self.append_result(self.sender_uid, result)
         return self.succeed()
 
     def equipment(self, character):
@@ -28,6 +30,7 @@ class Inventory(Command):
         return '\n'.join(armor_results)
 
     def inventory_contents(character):
+        '''All Items'''
         for i, item in enumerate(character.inventory):
             yield '{:2}. {}'.format(i+1, item.on_inventory())
 

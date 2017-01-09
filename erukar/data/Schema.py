@@ -43,6 +43,7 @@ class Lifeform(Base):
     sense       = Column(Integer, default=0)
     resolve     = Column(Integer, default=0)
 
+    wealth      = Column(Integer, default=0)
     level       = Column(Integer, default=1)
     experience  = Column(Integer, default=0)
 

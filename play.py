@@ -34,7 +34,6 @@ mtracker = MessageTracker(w.interface, alias)
 mtracker.check_for_messages()
 
 while True:
-    print('-' * 64)
-    line = input('> ')
+    line = input('')
     print('-' * 64)
     res = w.interface.receive(alias, line)

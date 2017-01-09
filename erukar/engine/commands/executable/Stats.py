@@ -5,8 +5,8 @@ from erukar.engine.lifeforms import Lifeform
 class Stats(Command):
     status = 'Health:    {} / {}\nEvasion:   {}'
     level = 'Level:     {}\nXP:        {} / {}'
-    stat = "{name:10} {raw:>3} {mod:>3} = {total:3}"
-    raw_stat = "{name:10} {raw:>3}"
+    stat = "{name:12} {raw:>3} {mod:>3} = {total:3}"
+    raw_stat = "{name:12} {raw:>3}"
     attribute_types = [
         "strength",
         "dexterity",
@@ -29,8 +29,8 @@ class Stats(Command):
         self.check_for_arguments()
 
         status_d = '\n'.join([
-            '{:10}{:3} / {:3}'.format('Health:', self.lifeform.health, self.lifeform.max_health), 
-            '{:10}{:3}'.format('Evasion:', self.lifeform.evasion()),
+            '{:12} {} / {}'.format('Health:', self.lifeform.health, self.lifeform.max_health), 
+            '{:12} {}'.format('Evasion:', self.lifeform.evasion()),
         ])
 
         level_d = self.level.format(

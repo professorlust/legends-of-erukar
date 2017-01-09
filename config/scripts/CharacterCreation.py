@@ -43,7 +43,6 @@ def select_template(payload):
 
     payload.playernode.set_script_entry_point('select_template')
 
-
 def handle_stat_allocation(payload):
     payload.playernode.set_script_entry_point('handle_stat_allocation')
     if hasattr(payload, 'user_input'):
@@ -134,7 +133,6 @@ def make_barbarian(payload):
     barbarian.left  = barbarian.inventory[0]
     barbarian.right = barbarian.inventory[1]
     barbarian.legs  = barbarian.inventory[2]
-    barbarian.currency = 50 - sum(i.price() for i in barbarian.inventory)
     payload.playernode.script_data['barbarian'] = barbarian
     return barbarian
 
@@ -171,8 +169,8 @@ def make_cleric(payload):
     cleric.dexterity = 1
     cleric.vitality  = 3
     cleric.acuity    = 1
-    cleric.sense     = 3
-    cleric.resolve   = 4
+    cleric.sense     = 5
+    cleric.resolve   = 2
     
     cleric.define_level(1)
     cleric.inventory = [
@@ -186,7 +184,6 @@ def make_cleric(payload):
     cleric.chest = cleric.inventory[1]
     cleric.legs  = cleric.inventory[2]
     cleric.feet  = cleric.inventory[3]
-    cleric.currency = 50 - sum(i.price() for i in cleric.inventory)
     payload.playernode.script_data['cleric'] = cleric
     return cleric
 
@@ -199,7 +196,7 @@ def define_cleric(payload):
 
     cleric = make_cleric(payload)
 
-    append(payload, 'Clerics are holy warriors who specialize in purification and sanctification. Clerics use a weapon of their choice and a holy symbol, which provides bonuses while within hallowed areas.')
+    append(payload, 'Clerics are holy warriors who specialize in purification and sanctification. Clerics use a weapon of their choice and a holy symbol, which provides bonuses while within hallowed areas. They have a strong sense score which allows them to sense otherworldly presences.')
     append(payload, 'Base Stats\n----------')
     append(payload, '\n'.join(Stats.stat_descriptions(cleric, show_raw=True)))
     append(payload, '\nInventory\n----------')
@@ -211,26 +208,164 @@ def define_cleric(payload):
 
     payload.playernode.set_script_entry_point('define_cleric')
 
-
 def choose_cleric(payload):
     perform_template_choice(payload, 'cleric')
     
-def define_fighter(payload):
-    pass
-
 def make_fighter(payload):
+    if 'fighter' in payload.playernode.script_data:
+        append(payload, 'Retrieved a fighter')
+        return payload.playernode.script_data['fighter']
+    fighter = Player()
+    fighter.strength  = 5
+    fighter.dexterity = 2
+    fighter.vitality  = 5
+    fighter.acuity    = 1
+    fighter.sense     = 1
+    fighter.resolve   = 1
+    
+    fighter.define_level(1)
+    fighter.inventory = [
+        Shop.create(Sword, erukar.game.modifiers.material.Iron),
+        Shop.create(HeaterShield, erukar.game.modifiers.material.Oak),
+        Shop.create(Piece, erukar.game.modifiers.material.Chainmail),
+        Shop.create(Leggings, erukar.game.modifiers.material.Chainmail),
+        Shop.create(Treads, erukar.game.modifiers.material.Leather),
+        Shop.create(Spear, erukar.game.modifiers.material.Iron),
+    ]
+    fighter.right = fighter.inventory[0]
+    fighter.left  = fighter.inventory[1]
+    fighter.chest = fighter.inventory[2]
+    fighter.legs  = fighter.inventory[3]
+    fighter.feet  = fighter.inventory[4]
+    payload.playernode.script_data['fighter'] = fighter
+    return fighter
+
+def define_fighter(payload):
+    choices = [
+        ('Yes', choose_fighter),
+        ('No', select_template),
+    ]
+    if exec_ui_choice(payload, choices): return
+
+    fighter = make_fighter(payload)
+
+    append(payload, 'Fighters are skilled in hand to hand combat. They specialize in advanced combat maneuvers and tightly controlled attacks which minimize opportunities for counterattacks.')
+    append(payload, 'Base Stats\n----------')
+    append(payload, '\n'.join(Stats.stat_descriptions(fighter, show_raw=True)))
+    append(payload, '\nInventory\n----------')
+    append(payload, '\n'.join(Inventory.inventory_contents(fighter)))
+    append(payload, '\nFighters start with no active spells but have advanced training in parrying, swords, spears, and shields.')
+
+    append(payload, '\nChoose Fighter?')
+    append(payload, '\n'.join('  {:2} -- {}'.format(i+1, x[0]) for i, x in enumerate(choices)))
+
+    payload.playernode.set_script_entry_point('define_fighter')
+
+def choose_fighter(payload):
     perform_template_choice(payload, 'fighter')
 
-def define_mage(payload):
-    pass
-
 def make_mage(payload):
+    if 'mage' in payload.playernode.script_data:
+        append(payload, 'Retrieved a mage')
+        return payload.playernode.script_data['mage']
+    mage = Player()
+    mage.strength  = 1
+    mage.dexterity = 2
+    mage.vitality  = 1
+    mage.acuity    = 6
+    mage.sense     = 2
+    mage.resolve   = 2
+    
+    mage.define_level(1)
+    mage.inventory = [
+        Shop.create(Wand, erukar.game.modifiers.material.Oak),
+        Candle(),
+        Shop.create(Robes, erukar.game.modifiers.material.Cotton),
+        Shop.create(Sandals, erukar.game.modifiers.material.Leather),
+        Shop.create(Breeches, erukar.game.modifiers.material.Cotton),
+        Potion(5)
+    ]
+    mage.right = mage.inventory[0]
+    mage.left  = mage.inventory[1]
+    mage.chest = mage.inventory[2]
+    mage.feet  = mage.inventory[3]
+    mage.legs  = mage.inventory[4]
+    payload.playernode.script_data['mage'] = mage
+    return mage
+
+def define_mage(payload):
+    choices = [
+        ('Yes', choose_mage),
+        ('No', select_template),
+    ]
+    if exec_ui_choice(payload, choices): return
+
+    mage = make_mage(payload)
+
+    append(payload, 'Mages excel in observation and intellect. Their orders are highly diverse and tend to attract the most intelligent of indivuals. Mages specialize in casting arcane magics, though some may tend to prefer alchemy or research.')
+    append(payload, 'Base Stats\n----------')
+    append(payload, '\n'.join(Stats.stat_descriptions(mage, show_raw=True)))
+    append(payload, '\nInventory\n----------')
+    append(payload, '\n'.join(Inventory.inventory_contents(mage)))
+    append(payload, '\nMages start with several Arcane Words: Three Elemental Augments (Ice, Fire, and Electric) and two Spellshapes (Bolt, Shield). By combining these words, they can shape their spells to their needs with minimal downtime.')
+
+    append(payload, '\nChoose Mage?')
+    append(payload, '\n'.join('  {:2} -- {}'.format(i+1, x[0]) for i, x in enumerate(choices)))
+
+    payload.playernode.set_script_entry_point('define_mage')
+
+def choose_mage(payload):
     perform_template_choice(payload, 'mage')
 
-def define_ranger(payload):
-    pass
-
 def make_ranger(payload):
+    if 'ranger' in payload.playernode.script_data:
+        append(payload, 'Retrieved a ranger')
+        return payload.playernode.script_data['ranger']
+    ranger = Player()
+    ranger.strength  = 3
+    ranger.dexterity = 5
+    ranger.vitality  = 2
+    ranger.acuity    = 2
+    ranger.sense     = 2
+    ranger.resolve   = 1
+    
+    ranger.define_level(1)
+    ranger.inventory = [
+        Shop.create(Bow, erukar.game.modifiers.material.Oak),
+        Shop.create(Boots, erukar.game.modifiers.material.Leather),
+        Shop.create(Vest, erukar.game.modifiers.material.Leather),
+        Shop.create(Breeches, erukar.game.modifiers.material.Leather),
+        Potion(5) # This should be replaced with ammo
+    ]
+    ranger.right = ranger.inventory[0]
+    ranger.feet  = ranger.inventory[1]
+    ranger.chest = ranger.inventory[2]
+    ranger.legs  = ranger.inventory[3]
+    payload.playernode.script_data['ranger'] = ranger
+    return ranger
+
+def define_ranger(payload):
+    choices = [
+        ('Yes', choose_ranger),
+        ('No', select_template),
+    ]
+    if exec_ui_choice(payload, choices): return
+
+    ranger = make_ranger(payload)
+
+    append(payload, 'Rangers are marksmen, specializing in the art of archery and ranged combat. They tend to prefer keeping ther targets at a distance.')
+    append(payload, 'Base Stats\n----------')
+    append(payload, '\n'.join(Stats.stat_descriptions(ranger, show_raw=True)))
+    append(payload, '\nInventory\n----------')
+    append(payload, '\n'.join(Inventory.inventory_contents(ranger)))
+    append(payload, '\nRangers start with advanced training in bows and crossbows and have Snipe, an active skill which provides additional accuracy at long ranges at the cost of damage.')
+
+    append(payload, '\nChoose Ranger?')
+    append(payload, '\n'.join('  {:2} -- {}'.format(i+1, x[0]) for i, x in enumerate(choices)))
+
+    payload.playernode.set_script_entry_point('define_ranger')
+
+def choose_ranger(payload):
     perform_template_choice(payload, 'ranger')
 
 '''Helper Methods'''
@@ -238,6 +373,8 @@ def perform_template_choice(payload, template_name):
     append(payload, 'You are entering the game as a {}!'.format(template_name.capitalize()))
 
     payload.playernode.character = payload.playernode.script_data[template_name.lower()]
+    payload.playernode.character.wealth = 250 - sum(x.price() for x in payload.playernode.character.inventory)
+
     payload.playernode.script_data.clear()
 
     payload.playernode.exit_script()

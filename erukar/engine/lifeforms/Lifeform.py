@@ -35,6 +35,7 @@ class Lifeform(RpgEntity):
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.name = name
+        self.wealth = 0
         self.skill_points = 3
         self.skills = []
         self.stat_points = 15
