@@ -27,7 +27,7 @@ class Inventory(Command):
             if armor is not None:
                 armor_name = armor.on_inventory_inspect(character)
             armor_results.append(self.item.format(armor_type.capitalize(), armor_name))
-        return '\n'.join(armor_results)
+        return '\n\n'.join(armor_results)
 
     def inventory_contents(character):
         '''All Items'''

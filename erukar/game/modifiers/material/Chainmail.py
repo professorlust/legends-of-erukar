@@ -6,7 +6,13 @@ class Chainmail(MaterialModifier):
     ProhibitedEntities = [Weapon]
     PermittedEntities = [Armor]
     Probability = 0.05
-    Desirability = 2.0
+    Desirability = 6.0
+    MitigationMultipliers = {
+        'bludgeoning': (0.1,0.5),
+        'slashing': (2, 1.5),
+        'piercing': (2, 1.5),
+    }
+
     InventoryDescription = "Provides better mobility, improves piercing/slashing mitigation, reduces bludgeoning mitigation"
     InventoryName = "Chainmail"
 
@@ -17,3 +23,4 @@ class Chainmail(MaterialModifier):
     Inspects = [
         Observation(acuity=0, sense=0, result="The {BaseType} has been forged with interlocking weaves of chain")
     ]
+
