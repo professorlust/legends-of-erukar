@@ -19,8 +19,6 @@ class MaterialModifier(ItemModifier):
         # Adjust Weight and Durability
         # Adjust weight
         # Adjust Movement Penalty
-        entity.MaxDurability *= self.DurabilityMultiplier
-        entity.durability *= self.DurabilityMultiplier
 
         if issubclass(type(entity), Weapon):
             return

@@ -7,6 +7,11 @@ class Chainmail(MaterialModifier):
     PermittedEntities = [Armor]
     Probability = 0.05
     Desirability = 6.0
+
+    WeightMultiplier = 4.0
+    DurabilityMultiplier = 4.0
+    FlexibilityMultiplier = 1.0 
+
     MitigationMultipliers = {
         'bludgeoning': (0.1,0.5),
         'slashing': (2, 1.5),

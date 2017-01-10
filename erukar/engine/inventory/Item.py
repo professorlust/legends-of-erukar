@@ -9,7 +9,7 @@ class Item(Describable):
     EssentialPart = 'item part'
     SupportPart = 'item part'
     Persistent = False
-    PersistentAttributes = ['durability']
+    PersistentAttributes = ['durability_coefficient']
 
     MaxDurability = 100
     StandardWeight = 0 # In Pounds
@@ -29,7 +29,7 @@ class Item(Describable):
         self.name = name
         self.description = Item.generic_description
         self.modifiers = []
-        self.durability = self.MaxDurability
+        self.durability_coefficient = 1
         self.material = None
 
     def efficacy_for(self, lifeform):
@@ -68,7 +68,6 @@ class Item(Describable):
             modifier.on_move(room)
 
     def on_inventory(self, *_):
-        print('format')
         return self.format()
 
     def on_inventory_inspect(self, lifeform):
@@ -82,6 +81,12 @@ class Item(Describable):
         for modifier in self.modifiers:
             modifier.on_equip(lifeform)
 
+    def durability(self):
+        return self.durability_coefficient * self.max_durability() 
+
+    def max_durability(self):
+        return self.material.DurabilityMultiplier * self.MaxDurability
+
     def price(self):
         prices = [x.PriceMultiplier for x in self.modifiers]
         if hasattr(self, 'material') and self.material:
@@ -90,7 +95,7 @@ class Item(Describable):
 
     def durability_multiplier(self):
         mmdpm = self.material.MinimumDurabilityPriceMultiplier
-        return (1 - mmdpm) * pow(self.durability, 2) / pow(self.MaxDurability, 2)  + mmdpm
+        return (1 - mmdpm) * pow(self.durability(), 2) / pow(self.max_durability(), 2)  + mmdpm
 
     def alias(self):
         return self.name
@@ -116,7 +121,7 @@ class Item(Describable):
         return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}
 
     def take_damage(self, amount):
-        self.durability = max(0, self.durability - amount)
+        self.durability_coefficient = max(0, self.durability() - amount) / self.max_durability()
 
     def format(self, with_price=False):
         if not with_price:

@@ -32,12 +32,12 @@ class Weapon(Item):
         return [(d.roll(attacker)*efficacy if d.scales else d.roll(attacker), d.name) for d in self.damages]
 
     def on_inventory(self):
-        return '{} ({}%)'.format(self.format(), int(100*self.durability/self.MaxDurability))
+        return '{} ({}%)'.format(self.format(), int(100*self.durability_coefficient))
 
     def on_inventory_inspect(self, lifeform):
         scale = self.efficacy_for(lifeform)
         mod = lifeform.get(self.DamageModifier)
-        name = '{} ({} / {})'.format(self.format(), int(self.durability), int(self.MaxDurability))
+        name = '{} ({} / {})'.format(self.format(), int(self.durability()), int(self.max_durability()))
         damage_desc = '\n'.join(['{:>11} {} to {} {} Damage'.format('•',
             int((mod if d.scales else 0) + d.damage[0]*scale),
             int((mod if d.scales else 0) + d.damage[1]*scale), d.name)
