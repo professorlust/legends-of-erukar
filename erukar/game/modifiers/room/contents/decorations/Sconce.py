@@ -2,7 +2,7 @@ from erukar.engine.model import Modifier
 from erukar.game.inventory.consumables.Torch import Torch
 from erukar.engine.environment import *
 from erukar.game.modifiers.RoomModifier import RoomModifier
-from erukar.game.modifiers.material.Wood import Wood
+from erukar.game.modifiers.material.Oak import Oak
 from erukar.game.modifiers.inventory import Luminous, Glowing
 import random
 
@@ -37,7 +37,7 @@ class Sconce(RoomModifier):
         '''Make a base torch and add it to the room'''
         torch = Torch()
         torch.fuel = fuel
-        Wood().apply_to(torch)
+        Oak().apply_to(torch)
         room.add(torch)
         return torch
 

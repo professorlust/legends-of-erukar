@@ -45,6 +45,7 @@ class Move(ActionCommand):
 
         for content in new_room.contents:
             if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not self.lifeform:
+                print(content)
                 self.append_result(content.uid, '{} has moved {}.'.format(self.lifeform.alias(), self.direction.name))
 
         if isinstance(self.player, erukar.engine.model.PlayerNode):

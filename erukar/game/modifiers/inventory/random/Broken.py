@@ -16,6 +16,8 @@ class Broken(WeaponMod):
     DetailedIdealDescription = "The {EssentialPart} has been broken."
     Adjective = ""
 
+    DurabilityMuiltiplier = 0
+
     InventoryDescription = "Removes minimum damage, halves maximum, and removes scaling"
     InventoryName = "Broken"
 

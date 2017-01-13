@@ -31,6 +31,7 @@ from .MinorSenseEnhancement import MinorSenseEnhancement
 from .MinorStrengthEnhancement import MinorStrengthEnhancement
 from .MinorVitalityEnhancement import MinorVitalityEnhancement
 from .NoModifier import NoModifier
+from .Reinforced import Reinforced
 from .ResolveEnhancement import ResolveEnhancement
 from .Rusty import Rusty
 from .SenseEnhancement import SenseEnhancement
@@ -43,6 +44,50 @@ from .Unholy import Unholy
 from .Unwieldy import Unwieldy
 from .VitalityEnhancement import VitalityEnhancement
 
-__all__ = ["Acid", "AcuityEnhancement","Bane","Blessed","Broken","Cursed","Dark","DexterityEnhancement","Dull","Electric","Enhancement","Fine","Flaming","Frost","Glowing","Grand","Greater","Holy","Large","Luminous","MajorAcuityEnhancement","MajorDexterityEnhancement","MajorResolveEnhancement","MajorSenseEnhancement","MajorStrengthEnhancement","MajorVitalityEnhancement","MinorAcuityEnhancement","MinorDexterityEnhancement","MinorResolveEnhancement","MinorSenseEnhancement","MinorStrengthEnhancement","MinorVitalityEnhancement","NoModifier","ResolveEnhancement","Rusty","SenseEnhancement","Serrated","Sharp","Small","StrengthEnhancement","Swift","Unholy","Unwieldy","VitalityEnhancement"]
-
-
+__all__ = [
+    "Acid", 
+    "AcuityEnhancement", 
+    "Bane", 
+    "Blessed", 
+    "Broken", 
+    "Cursed", 
+    "Dark", 
+    "DexterityEnhancement", 
+    "Dull", 
+    "Electric", 
+    "Enhancement", 
+    "Fine", 
+    "Flaming", 
+    "Frost", 
+    "Glowing", 
+    "Grand", 
+    "Greater", 
+    "Holy", 
+    "Large", 
+    "Luminous", 
+    "MajorAcuityEnhancement", 
+    "MajorDexterityEnhancement", 
+    "MajorResolveEnhancement", 
+    "MajorSenseEnhancement", 
+    "MajorStrengthEnhancement", 
+    "MajorVitalityEnhancement", 
+    "MinorAcuityEnhancement", 
+    "MinorDexterityEnhancement", 
+    "MinorResolveEnhancement", 
+    "MinorSenseEnhancement", 
+    "MinorStrengthEnhancement", 
+    "MinorVitalityEnhancement", 
+    "NoModifier", 
+    "Reinforced", 
+    "ResolveEnhancement", 
+    "Rusty", 
+    "SenseEnhancement", 
+    "Serrated", 
+    "Sharp", 
+    "Small", 
+    "StrengthEnhancement", 
+    "Swift", 
+    "Unholy", 
+    "Unwieldy", 
+    "VitalityEnhancement"
+]

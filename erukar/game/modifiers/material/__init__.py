@@ -29,7 +29,6 @@ from .Silver import Silver
 from .Steel import Steel
 from .StuddedLeather import StuddedLeather
 from .Tungsten import Tungsten
-from .Wood import Wood
 
 __all__ = [
     "Abyssium", 
@@ -62,6 +61,5 @@ __all__ = [
     "Silver", 
     "Steel", 
     "StuddedLeather", 
-    "Tungsten", 
-    "Wood"
+    "Tungsten"
 ]

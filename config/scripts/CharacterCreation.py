@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, re
 sys.path.append(os.getcwd())
 
 from erukar import *
@@ -45,6 +45,7 @@ def select_template(payload):
 
 def handle_stat_allocation(payload):
     payload.playernode.set_script_entry_point('handle_stat_allocation')
+    payload.playernode.character.wealth = 250
     if hasattr(payload, 'user_input'):
         if payload.user_input.strip() == 'exit':
             append(payload, 'Your stat allocation is now locked. You can level up in game through the \'level\' command.')
@@ -60,7 +61,7 @@ def handle_skill_allocation(payload):
 
 def handle_inventory(payload):
     shop = make_shop(payload)
-    append(payload, 'Please pick your default inventory. You have {} riphons to spend.'.format(50))
+    append(payload, 'Please pick your default inventory. You have {} riphons to spend.\n'.format(payload.playernode.character.wealth))
     append(payload, '\n'.join(shop.display_inventory()))
     append(payload, '\nUse the following commands to buy or sell items\n')
     append(payload, '  {:15} -- {}'.format('buy #', 'Buy item at seller\'s # (if you can afford it)'))
@@ -68,17 +69,80 @@ def handle_inventory(payload):
     append(payload, '  {:15} -- {}'.format('sell my #', 'Buy sell item at your #'))
     append(payload, '  {:15} -- {}'.format('more about #', 'See detailed information about seller\'s item at #'))
     append(payload, '  {:15} -- {}'.format('more about my #', 'See detailed information about your item at #'))
+    append(payload, '  {:15} -- {}'.format('back', 'Return to previous menu'))
     append(payload, '  {:15} -- {}'.format('exit', 'Commit and exit inventory management\n'))
+
+def interpret_inventory_response(payload):
+    shop = make_shop(payload)
+    if not hasattr(payload, 'user_input'):
+        handle_inventory(payload)
+        return
+
+    if 'my' in payload.user_input:
+        handle_a_my_inventory_command(payload)
+        return
+
+    if 'back' in payload.user_input:
+        choose_pregen_or_custom(payload)
+        return
+
+    if 'exit' in payload.user_input:
+        do_exit(payload)
+        return
+
+    matched_item = get_matched_item_in_list(payload.user_input, shop.inventory)
+    if not matched_item: return
+
+    if 'buy' in payload.user_input:
+        result = shop.sell_to_buyer(matched_item, payload.playernode.character)
+        append(payload, result)
+        handle_inventory(payload)
+        return
+
+    if 'more about' in payload.user_input:
+        append(payload, matched_item.on_inventory_inspect(payload.playernode.character))
+
+
+def handle_a_my_inventory_command(payload):
+    ui = payload.user_input
+    shop = make_shop(payload)
+
+    if 'items' in ui:
+        inventory = ['{:3} -- {}'.format(i+1, item.format()) for i, item in enumerate(payload.playernode.character.inventory)]
+        append(payload, '\n'.join(inventory))
+        return
+
+    matched_item = get_matched_item_in_list(payload.user_input, payload.playernode.character.inventory)
+    if not matched_item: return
+
+    if 'sell' in ui:
+        result = shop.buy_from_seller(matched_item, payload.playernode.character)
+        append(payload, result)
+        return
+
+    if 'more about' in ui:
+        append(payload, matched_item.on_inventory_inspect(payload.playernode.character))
+
+def match_first_digit(ui):
+    match = re.search('\s+(\d+)', ui)
+    if match:
+        return int(match.group(1))-1
+    return -1
+
+def get_matched_item_in_list(ui, matchlist):
+    index = match_first_digit(ui)
+    if 0 <= index < len(matchlist):
+        return matchlist[index]
 
 def make_shop(payload):
     '''Either makes a new shop or retrieves the one established in script_data'''
     # Check to see if we already have a shop in the script_data
     if 'character_creation_shop' in payload.playernode.script_data:
-        append(payload, 'Retrieved a shop')
         return payload.playernode.script_data['character_creation_shop']
     # No? gotta create one then
-    shop = Shop(50)
-    payload.playernode.set_script_entry_point('handle_inventory')
+    shop = Shop(500)
+    shop.has_infinite_supply = True
+    payload.playernode.set_script_entry_point('interpret_inventory_response')
     # Add Inventory
     for item in [Axe, Sword, CrossBow, Buckler, RoundShield, Cuirass, Guard, Greaves]:
         for material in [erukar.game.modifiers.material.Iron, erukar.game.modifiers.material.Steel]:
@@ -375,8 +439,10 @@ def perform_template_choice(payload, template_name):
     payload.playernode.character = payload.playernode.script_data[template_name.lower()]
     payload.playernode.character.wealth = 250 - sum(x.price() for x in payload.playernode.character.inventory)
 
-    payload.playernode.script_data.clear()
+    do_exit(payload)
 
+def do_exit(payload):
+    payload.playernode.script_data.clear()
     payload.playernode.exit_script()
 
 def append(payload, string):

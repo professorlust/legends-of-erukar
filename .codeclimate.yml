@@ -6,6 +6,7 @@ engines:
         - python
     exclude_paths:
       - "erukar/game/" 
+      - "config/" 
       - "erukar/data/"
   fixme:
     enabled: true
