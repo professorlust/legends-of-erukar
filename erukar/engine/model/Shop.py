@@ -20,7 +20,7 @@ class Shop:
             return '{} is not in stock'.format(item.format())
 
         if purchaser.wealth < item.price():
-            return 'Insufficient funds.'
+            return 'Insufficient funds (missing {} riphons).'.format(item.price() - purchaser.wealth)
         
         purchaser.wealth -= item.price()
         if self.has_infinite_supply:
@@ -28,12 +28,13 @@ class Shop:
         else:
             self.inventory.remove(item)
             purchaser.inventory.append(item)
-        return 'Successfully purchased {}'.format(item.format())
+        return 'Successfully purchased {} for {} riphons.'.format(item.format(), item.price())
 
     def buy_from_seller(self, item, seller):
         seller.inventory.remove(item)
         seller.wealth += item.price()
         self.inventory.append(item)
+        return 'Successfully sold {} for {} riphons.'.format(item.format(), item.price())
 
     def duplicate(item):
         return copy.deepcopy(item)

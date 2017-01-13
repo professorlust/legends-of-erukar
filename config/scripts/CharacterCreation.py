@@ -46,14 +46,43 @@ def select_template(payload):
 def handle_stat_allocation(payload):
     payload.playernode.set_script_entry_point('handle_stat_allocation')
     payload.playernode.character.wealth = 250
+    payload.playernode.inventory = []
+
     if hasattr(payload, 'user_input'):
-        if payload.user_input.strip() == 'exit':
+        if 'exit' in payload.user_input:
             append(payload, 'Your stat allocation is now locked. You can level up in game through the \'level\' command.')
             handle_skill_allocation(payload)
             return
-        append(payload, 'Unrecognized command.')
-        
+
+        try:
+            a_or_r, amount, stat = re.search('(add|remove)\s+(\d+)\s+(?:to|from)\s+(\w+)', payload.user_input).groups()
+        except:
+            append(payload, 'Could not parse that input. Try again!')
+            return
+        stat_var_name = decode_stat(stat)
+        cur_val = getattr(payload.playernode.character, stat_var_name)
+
+        if a_or_r == 'add':
+            if int(amount) > payload.playernode.character.stat_points:
+                append(payload, 'Truncating to {pts}, as you only have {pts} to spend.'.format(pts=payload.playernode.character.stat_points))
+                amount = payload.playernode.character.stat_points
+            setattr(payload.playernode.character, stat_var_name, cur_val + int(amount))
+            payload.playernode.character.stat_points -= int(amount)
+            append(payload, 'Adding {} to {}'.format(int(amount), stat_var_name))
+
+        if a_or_r == 'remove':
+            new_level = max(0, cur_val - int(amount))
+            payload.playernode.character.stat_points += cur_val - new_level
+            setattr(payload.playernode.character, stat_var_name, new_level)
+            append(payload, 'removing {} from {}'.format(amount, stat_var_name))
+
     show_stat_allocation_display(payload)
+
+def decode_stat(stat_string):
+    stats = ['strength','dexterity','vitality','acuity','sense','resolve']
+    if len(stat_string) < 2: 
+        return stats[0]
+    return next(x for x in stats if stat_string.lower() in x.lower()) 
 
 def handle_skill_allocation(payload):
     append(payload, '\nThis is where you will pick skills\n')
