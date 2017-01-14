@@ -14,6 +14,7 @@ class Modifier(Describable):
     DefaultPersistence = True
 
     PriceMultiplier = 1
+    WeightMultiplier = 1
     MinimumDurabilityPriceMultiplier = 0.5
 
     InventoryName = '__class__'

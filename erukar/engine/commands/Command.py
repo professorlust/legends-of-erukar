@@ -166,6 +166,8 @@ class Command:
         return '\n'.join(['{:3}. {}'.format(i+1, self.readable(x)) for i,x in enumerate(targets)])
 
     def readable(self, x):
+        if hasattr(x, 'format'):
+            return x.format()
         if hasattr(x, 'alias'):
             return x.alias()
         return x

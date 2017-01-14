@@ -6,8 +6,11 @@ class Brass(MaterialModifier):
     Desirability = 1.0
 
     InventoryName = 'Brass'
-    InventoryDescription = 'Decreases weight by 10%; Decreases Durability by 5%'
+    InventoryDescription = 'Decreases weight by 40%; Decreases Durability by 35%'
 
+    PriceMultiplier = 1.2
+    WeightMultiplier = 0.6
+    DurabilityMultiplier = 0.65
 
     Glances = [
         Observation(acuity=5, sense=0, result="with a metallic yellow {BaseName}"),

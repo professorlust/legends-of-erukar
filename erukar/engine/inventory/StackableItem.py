@@ -16,7 +16,7 @@ class StackableItem(Item):
         # Check to see if there's an existing stack that isn't full
         existing_stack = next(self.other_stacks(lifeform.inventory), None)
         # if there is one, add our quantity to that quantity
-        if existing_stack:
+        if existing_stack is not None:
             existing_stack.quantity += self.quantity
 
             # If we were able to put everything in the existing stack, remove this item and leave
@@ -36,7 +36,7 @@ class StackableItem(Item):
                 yield item
 
     def on_inventory(self):
-        return '{} x{}'.format(self.name, self.quantity)
+        return '{} x{}'.format(self.format(), self.quantity)
 
     def consume(self):
         self.quantity -= 1

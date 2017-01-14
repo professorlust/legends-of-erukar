@@ -5,6 +5,7 @@ class Axe(Weapon):
     Probability = 1
     BaseName = "Axe"
     EssentialPart = "edge"
+    BaseWeight = 4.0
 
     # Damage
     DamageRange = [4, 8]

@@ -4,6 +4,7 @@ import erukar
 class PlatinumKey(TieredKey):
     Probability = 2
     Tier = 'Platinum'
+    BasePrice = 1600
 
     def __init__(self):
         super().__init__()

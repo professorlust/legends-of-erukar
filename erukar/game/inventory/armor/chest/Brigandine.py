@@ -4,8 +4,7 @@ class Brigandine(Armor):
     EquipmentLocations = ['chest']
     BaseName="Brigandine"
     Probability = 1
+    BaseWeight = 6.6
 
     def __init__(self):
         super().__init__("Brigandine")
-        self.armor_class_modifier = 5
-        self.max_dex_mod = 20

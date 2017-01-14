@@ -4,8 +4,7 @@ class Legwraps(Armor):
     EquipmentLocations = ['legs']
     BaseName="Legwraps"
     Probability = 1
+    BaseWeight = 0.7
 
     def __init__(self):
         super().__init__("Legwraps")
-        self.armor_class_modifier = 0
-        self.max_dex_mod = 20

@@ -12,6 +12,9 @@ class TieredKey(Key):
     def __init__(self):
         super().__init__('Key')
 
+    def price(self):
+        return self.BasePrice
+
     def on_use(self, cmd, target):
         if isinstance(target, erukar.engine.environment.Passage):
             if not target.door:

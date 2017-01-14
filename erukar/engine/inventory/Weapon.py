@@ -20,12 +20,33 @@ class Weapon(Item):
     SuccessfullyAttackWith = 'Your attack hits {target}!'
     YouAreHitBy = 'You are hit by {subject}\'s {weapon_name}!'
 
+    # Used when you need to have projectiles
+    RequiresAmmo = False
+
     def __init__(self):
         super().__init__(self.BaseName)
         self.name = self.BaseName
         self.item_type = "weapon"
         self.damages = [Damage(self.DamageType, list(self.DamageRange), self.DamageModifier,\
                                (self.Distribution, self.DistributionProperties), scales=True)]
+
+    def on_attack(self, attacker):
+        '''Needs implementation''' 
+        if self.RequiresAmmo:
+            # This should mutate an AttackParameters object 
+            self.get_ammo(attacker).on_attack(self, attacker)            
+        super().on_attack(attacker)
+
+    def can_attack(self, attacker):
+        return not self.RequiresAmmo or self.get_ammo() is not None
+
+    def get_ammo(self, attacker):
+        return self.attacker.ammunition
+
+    def use_ammo(self, attacker):
+        ammo = self.get_ammo(attacker)
+        if ammo is None: return 'No ammo was found!'
+        ammo.consume()
 
     def roll(self, attacker):
         efficacy = self.efficacy_for(attacker)

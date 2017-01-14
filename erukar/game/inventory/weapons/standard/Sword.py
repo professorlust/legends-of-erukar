@@ -5,6 +5,7 @@ class Sword(Weapon):
     Probability = 2
     BaseName = "Sword"
     EssentialPart = "blade"
+    BaseWeight = 7.0
 
     # Damage
     DamageRange = [2, 6]

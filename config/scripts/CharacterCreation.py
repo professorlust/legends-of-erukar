@@ -84,6 +84,16 @@ def decode_stat(stat_string):
         return stats[0]
     return next(x for x in stats if stat_string.lower() in x.lower()) 
 
+def show_stat_allocation_display(payload):
+    append(payload, '\nYou have {} points to allocate between your stats.\n'.format(payload.character.stat_points))
+    stat_results = '\n'.join(Stats.stat_descriptions(payload.character))
+    append(payload, stat_results)
+    append(payload, '\nPlease use the following commands to create your character')
+    append(payload, '  {:15} -- {}'.format('add X to Y', 'Add X points to Y stat'))
+    append(payload, '  {:15} -- {}'.format('remove X from Y', 'Remove X points from Y stat'))
+    append(payload, '  {:15} -- {}'.format('exit', 'Commit and exit stat distribution\n'))
+
+
 def handle_skill_allocation(payload):
     append(payload, '\nThis is where you will pick skills\n')
     handle_inventory(payload)
@@ -193,15 +203,6 @@ def make_shop(payload):
     payload.playernode.script_data['character_creation_shop'] = shop
     return shop
 
-def show_stat_allocation_display(payload):
-    append(payload, 'You have {} points to allocate between your stats.'.format(payload.character.stat_points))
-    stat_results = '\n'.join(Stats.stat_descriptions(payload.character))
-    append(payload, stat_results)
-    append(payload, '\nPlease use the following commands to create your character')
-    append(payload, '  {:15} -- {}'.format('add X to Y', 'Add X points to Y stat'))
-    append(payload, '  {:15} -- {}'.format('remove X from Y', 'Remove X points from Y stat'))
-    append(payload, '  {:15} -- {}'.format('exit', 'Commit and exit stat distribution\n'))
-
 '''Template Creation'''
 def make_barbarian(payload):
     if 'barbarian' in payload.playernode.script_data:
@@ -215,7 +216,6 @@ def make_barbarian(payload):
     barbarian.sense     = 1
     barbarian.resolve   = 4
     
-    barbarian.define_level(1)
     barbarian.inventory = [
         Shop.create(Axe, erukar.game.modifiers.material.Iron),
         Shop.create(Mace, erukar.game.modifiers.material.Iurwood),
@@ -265,7 +265,6 @@ def make_cleric(payload):
     cleric.sense     = 5
     cleric.resolve   = 2
     
-    cleric.define_level(1)
     cleric.inventory = [
         Shop.create(Mace, erukar.game.modifiers.material.Iron),
         Shop.create(Piece, erukar.game.modifiers.material.Chainmail),
@@ -316,7 +315,6 @@ def make_fighter(payload):
     fighter.sense     = 1
     fighter.resolve   = 1
     
-    fighter.define_level(1)
     fighter.inventory = [
         Shop.create(Sword, erukar.game.modifiers.material.Iron),
         Shop.create(HeaterShield, erukar.game.modifiers.material.Oak),
@@ -369,7 +367,6 @@ def make_mage(payload):
     mage.sense     = 2
     mage.resolve   = 2
     
-    mage.define_level(1)
     mage.inventory = [
         Shop.create(Wand, erukar.game.modifiers.material.Oak),
         Candle(),
@@ -422,7 +419,6 @@ def make_ranger(payload):
     ranger.sense     = 2
     ranger.resolve   = 1
     
-    ranger.define_level(1)
     ranger.inventory = [
         Shop.create(Bow, erukar.game.modifiers.material.Oak),
         Shop.create(Boots, erukar.game.modifiers.material.Leather),
@@ -471,6 +467,7 @@ def perform_template_choice(payload, template_name):
     do_exit(payload)
 
 def do_exit(payload):
+    payload.playernode.character.define_level(1)
     payload.playernode.script_data.clear()
     payload.playernode.exit_script()
 

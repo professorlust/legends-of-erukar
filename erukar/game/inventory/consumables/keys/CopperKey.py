@@ -4,6 +4,7 @@ import erukar
 class CopperKey(TieredKey):
     Probability = 32
     Tier = 'Copper'
+    BasePrice = 100
 
     def __init__(self):
         super().__init__()

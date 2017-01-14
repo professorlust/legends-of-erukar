@@ -5,6 +5,7 @@ class Bow(Weapon):
     Probability = 1
     BaseName = "Bow"
     EssentialPart = "bowstrings"
+    BaseWeight = 2.0
     AttackRange = 3
     RangePenalty = 2
 

@@ -3,6 +3,7 @@ import erukar
 
 class BronzeKey(TieredKey):
     Probability = 16
+    BasePrice = 200
     Tier = 'Bronze'
 
     def __init__(self):

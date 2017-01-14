@@ -5,6 +5,7 @@ class CrossBow(Weapon):
     Probability = 1
     BaseName = "Crossbow"
     EssentialPart = "string"
+    BaseWeight = 3.25
     AttackRange = 2
     RangePenalty = 2
 

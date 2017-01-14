@@ -15,7 +15,8 @@ class Lifeform(RpgEntity):
         "legs",
         "ring",
         "amulet",
-        "blessing"]
+        "ammunition",
+    ]
     attack_slots = [ "left", "right" ]
     base_health = 4
 
@@ -70,10 +71,7 @@ class Lifeform(RpgEntity):
         '''Calculates a character's stat score based on armor and status effects'''
         score = getattr(self, stat_type)
         # First up, handle equipment
-        for eq_type in self.equipment_types:
-            equipment = getattr(self, eq_type)
-            if equipment is None:
-                continue
+        for equipment in self.equipped_items():
             penalty_args = (equipment, '{}Penalty'.format(stat_type.capitalize()))
             if hasattr(*penalty_args):
                 score -= getattr(*penalty_args)
@@ -89,7 +87,30 @@ class Lifeform(RpgEntity):
             modify_str = 'modify_{}'.format(stat_type)
             if hasattr(condition, modify_str):
                 score += getattr(condition, modify_str)()
+
+        # finally check for EL penalty if dex
+        if stat_type == 'dexterity':
+            score -= self.equip_load_penalty()
+
         return score
+
+    def equip_load_penalty(self):
+        return max(0, math.floor(20 * (self.equip_load() / self.max_equip_load() - 1)))
+
+    def equip_load(self):
+        return int(sum([eq.weight() for eq in self.equipped_items()]))
+
+    def max_equip_load(self):
+        effective_strength = self.calculate_stat_score('strength')
+        if effective_strength > 10:
+            return 70 + 2 * effective_strength
+        return 10 + 5 * effective_strength
+
+    def equipped_items(self, with_location=False):
+        for eq_type in self.equipment_types:
+            equipment = getattr(self, eq_type)
+            if equipment is not None:
+                yield (eq_type, equipment) if with_location else equipment
 
     def is_incapacitated(self):
         return any(aff for aff in self.conditions if aff.Incapacitates)

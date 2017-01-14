@@ -6,6 +6,7 @@ class Spear(Weapon):
     BaseName = "Spear"
     AttackRange = 1
     EssentialPart = "tip"
+    BaseWeight = 8.5
 
     # Damage
     DamageRange = [2, 6]

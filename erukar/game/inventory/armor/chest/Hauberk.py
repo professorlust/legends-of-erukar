@@ -4,7 +4,8 @@ class Hauberk(Armor):
     EquipmentLocations = ['chest']
     BaseName="Hauberk"
     Probability = 1
-    DexterityPenalty = 3
+
+    BaseWeight = 7.5
     DamageMitigations = {
         # type, mitigation percent, glancing range
         'slashing': (0.12, 6),
@@ -13,5 +14,3 @@ class Hauberk(Armor):
 
     def __init__(self):
         super().__init__("Hauberk")
-        self.armor_class_modifier = 7
-        self.max_dex_mod = 20

@@ -5,6 +5,7 @@ class MorningStar(Weapon):
     Probability = 1
     BaseName = "Morning Star"
     EssentialPart = "head"
+    BaseWeight = 10.9
 
     # Damage
     DamageRange = [2, 6]

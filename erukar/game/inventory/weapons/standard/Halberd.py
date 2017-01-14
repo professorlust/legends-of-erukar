@@ -6,6 +6,7 @@ class Halberd(Weapon):
     BaseName = "Halberd"
     EssentialPart = "head"
     AttackRange = 1
+    BaseWeight = 13.5
 
     # Damage
     DamageRange = [3, 6]

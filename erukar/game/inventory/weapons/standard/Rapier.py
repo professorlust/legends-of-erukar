@@ -5,6 +5,7 @@ class Rapier(Weapon):
     Probability = 1
     BaseName = "Rapier"
     EssentialPart = "blade"
+    BaseWeight = 4.5
 
     # Damage
     DamageRange = [2, 6]

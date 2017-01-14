@@ -6,7 +6,11 @@ class Abyssium(MaterialModifier):
     ProbabilityFromSanctity = -1.0
     Desirability = 2.0
 
-    InventoryDescription = "Predilection towards Unholiness and Curses"
+    PriceMultiplier = 20
+    WeightMultiplier = 1.2
+    DurabilityMultiplier = 2.5
+
+    InventoryDescription = "Rare ore mined from Demonic Ruins; predilection towards Unholiness and Curses"
     InventoryName = "Abyssium"
 
     Glances = [

@@ -8,6 +8,10 @@ class Atherite(MaterialModifier):
     InventoryDescription = "A whitish alloy infused with chaotic energies; enhances random effects by 25%"
     InventoryName = "Atherite"
 
+    PriceMultiplier = 12.5
+    WeightMultiplier = 3.1
+    DurabilityMultiplier = 1.2
+
     Glances = [
         Observation(acuity=5, sense=0, result="with a white {EssentialPart}"),
         Observation(acuity=10, sense=0, result="with a whitish {EssentialPart} which shimmers a faint blue light "),

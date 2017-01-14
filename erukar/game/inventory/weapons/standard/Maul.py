@@ -5,6 +5,7 @@ class Maul(Weapon):
     Probability = 1
     BaseName = "Maul"
     EssentialPart = "head"
+    BaseWeight = 11.5
 
     # Damage
     DamageRange = [2, 6]

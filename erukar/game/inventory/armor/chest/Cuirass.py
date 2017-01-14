@@ -5,7 +5,7 @@ class Cuirass(Armor):
     BaseName="Cuirass"
     Probability = 1
 
+    BaseWeight = 4.0
+
     def __init__(self):
         super().__init__("Cuirass")
-        self.armor_class_modifier = 6
-        self.max_dex_mod = 20

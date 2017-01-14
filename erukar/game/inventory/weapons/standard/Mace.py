@@ -5,6 +5,7 @@ class Mace(Weapon):
     Probability = 1
     BaseName = "Mace"
     EssentialPart = "head"
+    BaseWeight = 10.0
 
     # Damage
     DamageRange = [2, 6]

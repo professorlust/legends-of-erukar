@@ -8,6 +8,7 @@ class Wand(Weapon):
     EssentialPart = "tip"
     AttackRange = 2
     RangePenalty = 2
+    BaseWeight = 1.0
 
     # Damage
     DamageRange = [2, 6]

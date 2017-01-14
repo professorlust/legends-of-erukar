@@ -6,8 +6,12 @@ class Aluminum(MaterialModifier):
     ProbabilityFromFabrication = 0.1
     Desirability = 1.0
 
+    PriceMultiplier = 1.5
+    WeightMultiplier = 0.7
+    DurabilityMultiplier = 0.8
+
     InventoryName = 'Aluminum'
-    InventoryDescription = 'Lowers weight by 30%'
+    InventoryDescription = 'Lightweight metal lowers weight by 30% but is highly pliable, reducing durability by 20%'
 
     Glances = [
         Observation(acuity=5, sense=0, result="with a metallic gray {EssentialPart}"),

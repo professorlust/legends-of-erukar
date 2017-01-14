@@ -8,6 +8,7 @@ class Chainmail(MaterialModifier):
     Probability = 0.05
     Desirability = 6.0
 
+    PriceMultiplier = 10.0
     WeightMultiplier = 4.0
     DurabilityMultiplier = 4.0
     FlexibilityMultiplier = 1.0 

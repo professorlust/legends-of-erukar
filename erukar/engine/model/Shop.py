@@ -24,10 +24,12 @@ class Shop:
         
         purchaser.wealth -= item.price()
         if self.has_infinite_supply:
-            purchaser.inventory.append(Shop.duplicate(item))
+            item = Shop.duplicate(item)
         else:
             self.inventory.remove(item)
-            purchaser.inventory.append(item)
+
+        purchaser.inventory.append(item)
+        item.on_take(purchaser)
         return 'Successfully purchased {} for {} riphons.'.format(item.format(), item.price())
 
     def buy_from_seller(self, item, seller):

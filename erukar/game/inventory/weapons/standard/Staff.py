@@ -5,6 +5,7 @@ class Staff(Weapon):
     Probability = 1
     BaseName = "Staff"
     EssentialPart = "head"
+    BaseWeight = 6.0
 
     # Damage
     DamageRange = [2, 6]

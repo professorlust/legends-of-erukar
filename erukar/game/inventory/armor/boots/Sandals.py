@@ -5,9 +5,7 @@ class Sandals(Armor):
     BaseName="Sandals"
     Probability = 1
 
+    BaseWeight = 0.5
+
     def __init__(self):
         super().__init__("Sandals")
-        self.armor_class_modifier = 0
-        self.max_dex_mod = 20
-
-

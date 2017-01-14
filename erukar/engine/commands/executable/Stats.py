@@ -31,6 +31,7 @@ class Stats(Command):
         status_d = '\n'.join([
             '{:12} {} / {}'.format('Health:', self.lifeform.health, self.lifeform.max_health), 
             '{:12} {}'.format('Evasion:', self.lifeform.evasion()),
+            '{:12} {} / {}'.format('Equip Load:', self.lifeform.equip_load(), self.lifeform.max_equip_load()),
         ])
 
         level_d = self.level.format(

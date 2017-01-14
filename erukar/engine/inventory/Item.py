@@ -12,9 +12,10 @@ class Item(Describable):
     PersistentAttributes = ['durability_coefficient']
 
     MaxDurability = 100
-    StandardWeight = 0 # In Pounds
+    BaseWeight = 0 # In Pounds
     BasePrice = 10
     EquipmentLocations = []
+
     BaseStatInfluences = {
         # Determines the influence of stats on the Item's efficacy. These totals are
         # multiplicative. See efficacy_for method for more details.
@@ -87,11 +88,17 @@ class Item(Describable):
     def max_durability(self):
         return self.material.DurabilityMultiplier * self.MaxDurability
 
-    def price(self):
-        prices = [x.PriceMultiplier for x in self.modifiers]
+    def weight(self):
+        mults = [x.WeightMultiplier for x in self.modifiers]
         if hasattr(self, 'material') and self.material:
-            return functools.reduce(operator.mul, prices, self.BasePrice * self.material.PriceMultiplier * self.durability_multiplier())
-        return functools.reduce(operator.mul, prices, self.BasePrice)
+            return functools.reduce(operator.mul, mults, self.BaseWeight * self.material.WeightMultiplier)
+        return functools.reduce(operator.mul, mults, self.BaseWeight)
+
+    def price(self):
+        mults = [x.PriceMultiplier for x in self.modifiers]
+        if hasattr(self, 'material') and self.material:
+            return functools.reduce(operator.mul, mults, self.BasePrice * self.material.PriceMultiplier * self.durability_multiplier())
+        return functools.reduce(operator.mul, mults, self.BasePrice)
 
     def durability_multiplier(self):
         mmdpm = self.material.MinimumDurabilityPriceMultiplier

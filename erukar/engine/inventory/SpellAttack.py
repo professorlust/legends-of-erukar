@@ -2,6 +2,8 @@ from .Weapon import Weapon
 import numpy as np
 
 class SpellAttack(Weapon):
+    '''Default Weapon for Spell Attacks -- may no longer be used'''
+
     Persistent = False
     Probability = 0
     BaseName = "Spell Attack"

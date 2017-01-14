@@ -8,6 +8,3 @@ class Feet(Armor):
 
     def __init__(self):
         super().__init__("Feet")
-        self.armor_class_modifier = 0
-        self.max_dex_mod = 20
-
