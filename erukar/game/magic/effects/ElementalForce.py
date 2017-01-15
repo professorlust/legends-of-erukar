@@ -5,3 +5,6 @@ class ElementalForce(ElementalAugmentation):
     DamageDescription = "{alias|target}'s body is shocked by a concussive force!"
 
     ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription']
+
+    PotionName = 'Force'
+    PotionPriceMultiplier = 3.5

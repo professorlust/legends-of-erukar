@@ -6,6 +6,7 @@ class Item(Describable):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
     IsInteractible = True
     BaseName = 'base'
+    InventoryDescription = "inv description"
     EssentialPart = 'item part'
     SupportPart = 'item part'
     Persistent = False

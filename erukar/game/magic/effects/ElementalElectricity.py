@@ -6,3 +6,6 @@ class ElementalElectricity(ElementalAugmentation):
     DamageDescription = 'Lightning strikes {alias|target} and electricity courses through his body!'
 
     ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription']
+
+    PotionName = 'Electricity'
+    PotionPriceMultiplier = 3.5

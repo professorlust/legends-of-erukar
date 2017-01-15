@@ -6,6 +6,9 @@ class AugmentedWeaponEffect(SpellEffect):
     StandardCast = "Glowing turquoise runes appear on the {EssentialPart|weapon} of {alias|lifeform}'s {alias|weapon}"
     FailedCast = "Embarrassingly, {alias|lifeform} seems to have forgotten to equip a weapon..."
 
+    PotionName = 'Augmented Weapon'
+    PotionPriceMultiplier = 7.5
+
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
         '''Inflicts a random amount of fire damage to something, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters)

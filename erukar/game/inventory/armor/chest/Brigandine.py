@@ -5,6 +5,8 @@ class Brigandine(Armor):
     BaseName="Brigandine"
     Probability = 1
     BaseWeight = 6.6
+    BasePrice = 40
+    InventoryDescription = "Brigandine description todo"
 
     def __init__(self):
         super().__init__("Brigandine")

@@ -6,6 +6,8 @@ class Cuirass(Armor):
     Probability = 1
 
     BaseWeight = 4.0
+    BasePrice = 30
+    InventoryDescription = "Cuirass description todo"
 
     def __init__(self):
         super().__init__("Cuirass")

@@ -9,6 +9,9 @@ class ElementalAugmentation(SpellEffect):
     DamageName = ''
     DamageDescription = ''
 
+    PotionName = 'Elemental'
+    PotionPriceMultiplier = 3.0
+
     ParametersWhichShouldBeOverridden = []
 
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):

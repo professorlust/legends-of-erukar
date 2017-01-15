@@ -4,6 +4,9 @@ class Divinum(MaterialModifier):
     Probability = 0.05
     Desirability = 2.0
 
-    def apply_to(self, item):
-        item.name = 'Divinum ' + item.name
+    PriceMultiplier = 28
+    WeightMultiplier = 3.2
+    DurabilityMultiplier = 6.3
 
+    InventoryName = "Divinum"
+    InventoryDescription = 'A holy ore which is highly durable and is predisposed towards sanctification'

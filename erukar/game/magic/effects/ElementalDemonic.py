@@ -6,3 +6,6 @@ class ElementalDemonic(ElementalAugmentation):
     DamageDescription = "{alias|target} is swallowed by demonic darkness!"
 
     ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription']
+
+    PotionName = 'Demonic'
+    PotionPriceMultiplier = 3.5

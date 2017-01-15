@@ -6,3 +6,6 @@ class ElementalFire(ElementalAugmentation):
     DamageDescription = "Flames engulf {alias|target}'s body!"
 
     ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription']
+
+    PotionName = 'Fire'
+    PotionPriceMultiplier = 3.5

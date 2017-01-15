@@ -4,6 +4,9 @@ class ArcaneAdeptAugmentation(SpellEffect):
     DamageShouldScale = True
     DamageScalar = 3
 
+    PotionName = 'Adept'
+    PotionPriceMultiplier = 30.0
+
     ParametersWhichShouldBeOverridden = ['DamageShouldScale', 'DamageScalar']
 
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):

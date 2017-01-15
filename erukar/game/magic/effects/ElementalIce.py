@@ -6,3 +6,6 @@ class ElementalIce(ElementalAugmentation):
     DamageDescription = "{alias|target} rapidly frosts over!"
 
     ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription']
+
+    PotionName = 'Ice'
+    PotionPriceMultiplier = 3.5

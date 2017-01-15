@@ -44,15 +44,25 @@ class Move(ActionCommand):
         self.append_result(self.sender_uid, Move.move_successful.format(self.direction.name))
 
         for content in new_room.contents:
-            if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not self.lifeform:
-                print(content)
-                self.append_result(content.uid, '{} has moved {}.'.format(self.lifeform.alias(), self.direction.name))
+            self.inform_of_movement(content)
 
         if isinstance(self.player, erukar.engine.model.PlayerNode):
-            self.player.move_to_room(new_room)
+            self.move_player(new_room)
 
-            i = Inspect()
-            i.data = self.data
-            i.sender_uid = self.sender_uid
-            inspection_result = i.execute()
-            self.append_result(self.sender_uid, ' '.join(inspection_result.results[self.sender_uid]))
+    def inform_of_movement(self, content):
+        if not isinstance(content, erukar.engine.lifeforms.Lifeform):
+            return
+
+        if content is not self.lifeform:
+            self.append_result(content.uid, '{} has moved {}.'.format(self.lifeform.alias(), self.direction.name))
+        else:
+            self.append_result(self.lifeform.uid, 'In the new room you see {}.'.format(content.alias()))
+
+    def move_player(self, new_room):
+        self.player.move_to_room(new_room)
+
+        i = Inspect()
+        i.data = self.data
+        i.sender_uid = self.sender_uid
+        inspection_result = i.execute()
+        self.append_result(self.sender_uid, ' '.join(inspection_result.results[self.sender_uid]))

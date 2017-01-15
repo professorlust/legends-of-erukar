@@ -5,7 +5,9 @@ class Sandals(Armor):
     BaseName="Sandals"
     Probability = 1
 
+    InventoryDescription = "Rudimentary shoe which is very light but offers little to no protection."
     BaseWeight = 0.5
+    BasePrice = 8
 
     def __init__(self):
         super().__init__("Sandals")

@@ -14,3 +14,9 @@ class Potion(StackableItem):
         self.effect.on_cast(cmd, target)
         self.consume()
         return '', True
+
+    def alias(self):
+        return '{} of {}'.format(self.BaseName, self.effect.PotionName)
+
+    def price(self):
+        return self.BasePrice * self.effect.PotionPriceMultiplier

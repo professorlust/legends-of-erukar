@@ -6,3 +6,6 @@ class ElementalDivine(ElementalAugmentation):
     DamageDescription = "Holy light pierces {alias|target}!"
 
     ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription']
+
+    PotionName = 'Divine'
+    PotionPriceMultiplier = 3.5

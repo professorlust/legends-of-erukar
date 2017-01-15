@@ -1,5 +1,4 @@
 from .Boots import Boots
-from .Feet import Feet
 from .Footguards import Footguards
 from .Sabatons import Sabatons
 from .Sandals import Sandals
@@ -8,4 +7,13 @@ from .Spurs import Spurs
 from .Treads import Treads
 from .Warboots import Warboots
 
-__all__ = ["Boots","Feet","Footguards","Sabatons","Sandals","Sprinters","Spurs","Treads","Warboots"]
+__all__ = [
+    "Boots", 
+    "Footguards", 
+    "Sabatons", 
+    "Sandals", 
+    "Sprinters", 
+    "Spurs", 
+    "Treads", 
+    "Warboots"
+]

@@ -8,6 +8,10 @@ class Negacite(MaterialModifier):
     InventoryDescription = "A grayish alloy infused with negative energies; enhances shielding effects by 25%"
     InventoryName = "Negacite"
 
+    PriceMultiplier = 41
+    WeightMultiplier = 0.5
+    DurabilityMultiplier = 1.7
+
     Glances = [
         Observation(acuity=5, sense=0, result="with a white {EssentialPart}"),
         Observation(acuity=10, sense=0, result="with a whitish {EssentialPart} which shimmers a faint blue light "),

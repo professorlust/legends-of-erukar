@@ -8,6 +8,10 @@ class Salericite(MaterialModifier):
     InventoryDescription = "A black and orange alloy radiating positive energies; enhances outward effects by 25%"
     InventoryName = "Salericite"
 
+    PriceMultiplier = 33
+    WeightMultiplier = 1.8
+    DurabilityMultiplier = 1.0
+
     Glances = [
         Observation(acuity=5, sense=0, result="with a black {EssentialPart}"),
         Observation(acuity=10, sense=0, result="with a black {EssentialPart} which shimmers an orangish glare"),

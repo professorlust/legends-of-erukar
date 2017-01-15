@@ -5,6 +5,9 @@ class HealEffect(SpellEffect):
     AlreadyFull = "The healing had no effect, as {target}'s health was already full."
     StandardCast = "Brilliant light radiates from {target}'s wounds. {target} regains {health} health and the wounds slowly close."
 
+    PotionName = 'Healing'
+    PotionPriceMultiplier = 9.0
+
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
         '''Heals a specific target, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters, efficacy)

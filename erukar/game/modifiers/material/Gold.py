@@ -4,6 +4,9 @@ class Gold(MaterialModifier):
     Probability = 0.05
     Desirability = 8.0
 
-    def apply_to(self, item):
-        item.name = 'Gold ' + item.name
+    PriceMultiplier = 35
+    WeightMultiplier = 3.0
+    DurabilityMultiplier = 0.9
 
+    InventoryName = "Gold"
+    InventoryDescription = 'Gold\'s status as a precious commodity stems from its rarity, not its durability.'

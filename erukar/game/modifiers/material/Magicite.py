@@ -8,6 +8,10 @@ class Magicite(MaterialModifier):
     InventoryDescription = "Magically-infused, reddish alloy; enhances magic imbuements by 10%"
     InventoryName = "Magicite"
 
+    PriceMultiplier = 17
+    WeightMultiplier = 2.6
+    DurabilityMultiplier = 1.7
+
     Glances = [
         Observation(acuity=5, sense=0, result="with a reddish {EssentialPart}"),
         Observation(acuity=0, sense=10, result="with a magical {EssentialPart}"),

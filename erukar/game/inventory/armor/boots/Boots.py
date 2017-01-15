@@ -6,6 +6,7 @@ class Boots(Armor):
     BaseName = "Boots"
 
     BaseWeight = 1.4
+    BasePrice = 10
 
     def __init__(self):
         super().__init__("Boots")

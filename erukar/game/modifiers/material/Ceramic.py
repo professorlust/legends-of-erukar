@@ -9,6 +9,7 @@ class Ceramic(MaterialModifier):
 
     DurabilityMultiplier = 0.1
     WeightMultiplier = 0.1
+    PriceMultiplier = 0.1
 
     MitigationMultipliers = {
         'bludgeoning': (1, 2),

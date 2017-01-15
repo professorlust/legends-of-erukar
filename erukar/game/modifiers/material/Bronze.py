@@ -5,8 +5,12 @@ class Bronze(MaterialModifier):
     Probability = 200
     Desirability = 2.0
 
+    PriceMultiplier = 3
+    WeightMultiplier = 3.5
+    DurabilityMultiplier = 0.9
+
     InventoryName = 'Bronze'
-    InventoryDescription = 'Increases weight by 15%; Increases durability by 10%'
+    InventoryDescription = 'Heavy but cheap metal which is easy to work with'
 
     Glances = [
         Observation(acuity=5, sense=0, result="with a metallic yellow {BaseName}"),

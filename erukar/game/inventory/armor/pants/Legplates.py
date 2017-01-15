@@ -4,7 +4,10 @@ class Legplates(Armor):
     EquipmentLocations = ['legs']
     BaseName="Legplates"
     Probability = 1
-    BaseWeight = 6.5
+    
+    InventoryDescription = "Legplates are heavier than greaves but offer slightly better protection."
+    BasePrice = 100
+    BaseWeight = 6
 
     def __init__(self):
         super().__init__("Legplates")

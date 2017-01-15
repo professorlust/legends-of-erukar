@@ -8,6 +8,10 @@ class Steel(MaterialModifier):
     InventoryDescription = "Strong, sturdy alloy; +10% durability"
     InventoryName = "Steel"
 
+    PriceMultiplier = 6.7
+    WeightMultiplier = 2.1
+    DurabilityMultiplier = 9.5
+
     Glances = [
         Observation(acuity=5, sense=0, result="with a metallic {EssentialPart}"),
         Observation(acuity=20, sense=0, result="with a steel {EssentialPart}")
