@@ -1,7 +1,6 @@
 from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.conditions.Dead import Dead
 from erukar.engine.conditions.Dying import Dying
-from erukar.engine.model.results.DamageResult import DamageResult
 import erukar, math, random
 
 class Lifeform(RpgEntity):
@@ -230,7 +229,7 @@ class Lifeform(RpgEntity):
         # Check for Mitigation in Armor
         for x in self.equipment_types:
             armor = getattr(self, x)
-            if isinstance(armor, erukar.engine.inventory.Armor):# and damage_type in armor.DamageMitigations:
+            if isinstance(armor, erukar.engine.inventory.Armor):
                 yield armor.mitigation_for(damage_type)
         # Check for Mitigation Conditions
         for condition in self.conditions:

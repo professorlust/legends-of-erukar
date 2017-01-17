@@ -50,13 +50,12 @@ class Move(ActionCommand):
             self.move_player(new_room)
 
     def inform_of_movement(self, content):
-        if not isinstance(content, erukar.engine.lifeforms.Lifeform):
-            return
-
-        if content is not self.lifeform:
+        if not hasattr(content, 'uid'): return
+        
+        if content.uid != self.sender_uid:
+            print('Telling {} that {} has moved'.format(content.uid, self.sender_uid))
             self.append_result(content.uid, '{} has moved {}.'.format(self.lifeform.alias(), self.direction.name))
-        else:
-            self.append_result(self.lifeform.uid, 'In the new room you see {}.'.format(content.alias()))
+            self.append_result(self.sender_uid, 'In the new room you see {}.'.format(content.alias()))
 
     def move_player(self, new_room):
         self.player.move_to_room(new_room)

@@ -89,6 +89,8 @@ class Instance(Manager):
             playernode = PlayerNode(uid)
             self.connector.add_player(playernode)
         character.uid = uid
+        print(playernode.uid)
+        print(character.uid)
 
         # If this is a new character, mark it for Initialization
         if not self.connector.load_player(uid, character):
@@ -210,10 +212,9 @@ class Instance(Manager):
     def append_result_responses(self, result):
         for uid in result.results:
             self.append_response(uid,'\n\n'.join(result.result_for(uid)) + '\n')
-            self.append_response(uid, ('-' * 64))
 
     def append_response(self, uid, response):
         if uid not in self.responses:
             self.responses[uid] = [response]
             return
-        self.responses[uid].append(response)
+        self.responses[uid] = self.responses[uid] + [response]

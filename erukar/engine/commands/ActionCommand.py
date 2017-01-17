@@ -36,7 +36,6 @@ class ActionCommand(Command):
                 cumulative_damages.append((result.damage_type, result.damage_amount))
 
             if result.is_corpsified(enemy):
-                self.add_corpsify_strings()
                 self.create_corpse(enemy)
                 return
 
@@ -49,10 +48,6 @@ class ActionCommand(Command):
             self.append_damage_string(character, enemy, weapon, cumulative_damages)
         if should_incapacitate:
             self.add_incapacitated_strings()
-
-    def add_corpsify_strings(self):
-        self.append_result(self.target.uid, 'You have been slain by {}!'.format(self.lifeform.alias()))
-        self.append_result(self.sender_uid, 'You have slain {}'.format(self.target.alias()))
 
     def add_incapacitated_strings(self):
         self.append_result(self.target.uid, 'You have been incapacitated!')
@@ -79,23 +74,8 @@ class ActionCommand(Command):
             if damage_result.xp_awards[uid] > 0:
                 self.find_lifeform(uid).award_xp(damage_result.xp_awards[uid], enemy)
 
-    def append_damage_string(self, character, enemy, weapon, damages):
-        '''Add damage strings to enemy (if yet alive) and self'''
-        damage_list = ActionCommand.format_damage_list(damages)
-        self.append_result(self.sender_uid, 'Your {} does {} damage!'.format(weapon.alias(), ' '.join(damage_list)))
-        if hasattr(enemy, 'uid'):
-            self.append_result(enemy.uid, '{}\'s {} does {} damage!'.format(character.alias(), weapon.alias(), ' '.join(damage_list)))
-
     def create_corpse(self, target):
         room = target.current_room
         if target in room.contents:
             room.contents.remove(target)
         room.add(Corpse(target))
-
-    def format_damage_list(cumulative_damages):
-        damage_list = ['{1} {0}'.format(*d) for d in cumulative_damages]
-        if len(damage_list) >= 2:
-            damage_list[-1] = 'and ' + damage_list[-1]
-        if len(damage_list) >= 3:
-            damage_list[:-1] = [x + ',' for x in damage_list[:-1]]
-        return damage_list
