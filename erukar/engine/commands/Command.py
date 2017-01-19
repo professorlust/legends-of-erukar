@@ -26,7 +26,7 @@ class Command:
         self.lifeform = self.player.lifeform()
         self.room = self.lifeform.current_room
 
-        if self.context and self.context.requires_disambiguation and payload.isdigit():
+        if self.context and self.context.should_resolve(self) and payload.isdigit():
             self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
 
         for param_name in self.TrackedParameters:
@@ -223,11 +223,6 @@ class Command:
     def resolve_direction(self, opt_payload=''):
         '''If we're tracking direction, it should default here'''
         # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self) and hasattr(self.context, 'direction'):
-            self.direction = getattr(self.context, 'direction')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'direction') and self.direction: return
         directions = {
             'North': Direction.North,
             'East': Direction.East,

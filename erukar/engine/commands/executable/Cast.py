@@ -34,11 +34,12 @@ class Cast(ActionCommand):
         payload = self.user_specified_payload
         self.payloads = None
 
-        if self.context and self.context.requires_disambiguation and payload.isdigit():
-            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
+        if self.context and self.context.should_resolve(self):
+            if payload.isdigit():
+                self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
 
-        if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads:
-            self.payloads = getattr(self.context.context, 'payloads')
+            if hasattr(self.context.context, 'payloads') and self.context.context.payloads:
+                self.payloads = getattr(self.context.context, 'payloads')
 
         if not self.payloads:
             if ' on ' in payload:

@@ -8,7 +8,7 @@ class DamageOverTime(SpellEffect):
     DamageScalar = 1.0
     DamageOffset = 0
     DamageDuration = 4
-    DamageOverTimeEfficacy = 0.333
+    DamageOverTimeEfficacy = 0.5
 
     DamageDescription = "{alias|target} is consumed by a pulsing energy!"
     DamageShouldScale = False

@@ -12,6 +12,6 @@ class Dying(Condition):
         if random.uniform(*skill_range)+mod >= dc:
             self.target.conditions.remove(self)
             self.target.health = 1
-            return '{} has regained the strength to fight!'.format(self.target.alias())
+            print( '{} has regained the strength to fight!'.format(self.target.alias()))
 
         return '{} is dying!'.format(self.target.alias())

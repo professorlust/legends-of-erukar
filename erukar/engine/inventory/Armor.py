@@ -15,17 +15,19 @@ class Armor(Item):
         super().__init__("armor", name)
 
     def on_inventory(self):
+        '''Basic inventory description; includes information about possible equipment locations and durability'''
         equip_loc = ', '.join(x.capitalize() for x in self.EquipmentLocations)
         return '{} [{}] ({}%)'.format(self.format(), equip_loc, int(100*self.durability_coefficient))
 
     def on_inventory_inspect(self, lifeform):
+        '''This is what you get whenever you inspect something in your inventory, or whenever you view your equipped items'''
         name = '{} ({} / {})'.format(self.format(), int(self.durability()), int(self.max_durability()))
         mit_desc = '\n'.join(list(self.mitigation_descriptions()))
         mods = [self.material] + self.modifiers if self.material else self.modifiers
         mod_desc = '\n'.join(['{:>11} {:12}: {}'.format('+', d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])
-        weight_desc = '{:>11} {:12}: {}'.format('+', 'Weight:', self.weight())
+        weight_desc = '{:>11} {:12}: {:3.2} levts'.format('+', 'Weight:', self.weight())
         inv_desc = '{:>11} {}'.format('+', self.InventoryDescription)
-        return '\n'.join([name, weight_desc, mit_desc, inv_desc, mod_desc])
+        return '\n'.join([name, weight_desc, mit_desc, mod_desc, inv_desc])
 
     def mitigation_for(self, damage_type):
         '''result is (%MIT, DFL)'''
