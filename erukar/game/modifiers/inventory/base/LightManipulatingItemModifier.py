@@ -1,9 +1,14 @@
 from erukar.game.modifiers.ItemModifier import ItemModifier
 from erukar.engine.environment.Aura import Aura
+from erukar.engine.model.Observation import Observation
 
 class LightManipulatingItemModifier(ItemModifier):
     AuraDescription = "You see light emanating from the {relative_direction}."
     SelfAuraDescription = "Light from your item lights up this room."
+
+    Glances = [
+        Observation(acuity=1, sense=1, result='Light flickers.')
+    ]
 
     def apply_to(self, item):
         super().apply_to(item)
@@ -30,10 +35,11 @@ class LightManipulatingItemModifier(ItemModifier):
 
     def start_aura(self, initiator):
         self.aura = Aura((0,0), self.aura_strength, self.aura_decay)
+        print(self.Glances)
+        self.aura.Glances = self.Glances
         self.aura.initiator = initiator
         self.aura.blocked_by_walls = True
         self.aura.modify_light = self.modify_light
-        self.aura.BriefDescription = self.AuraDescription
         initiator.initiate_aura(self.aura)
 
     def on_unequip(self, lifeform):

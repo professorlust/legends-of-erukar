@@ -5,7 +5,13 @@ class DamageFormatter(TextFormatter):
     They = '{target} {verb}s {amount} damage.'
 
     def get_damage_specifics(damage_result, specific='amount_deflected'):
-        return ', '.join(['{} {}'.format(getattr(x, specific), x.damage_type) for x in damage_result.reports if x.amount_deflected > 0])
+        return ', '.join(DamageFormatter.get_damage_specifics_generator(damage_result, specific))
+
+    def get_damage_specifics_generator(damage_result, specific):
+        for report in damage_result.reports:
+            val = getattr(report, specific)
+            if val > 0:
+                yield '{} {}'.format(val, report.damage_type)
 
     def process_and_append_damage_result(cmd, damage_result):
         attacker_results, target_results = DamageFormatter.get_string_results(damage_result)
@@ -41,10 +47,11 @@ class DamageFormatter(TextFormatter):
 
     def append_results_for_verb(results, victim, verb, attacker_results, target_results):
         if len(results) > 0:
-            target_results.append(DamageFormatter.You.format(verb, results))
-            attacker_results.append(DamageFormatter.They.format(victim.alias(), verb, results))
+            target_results.append(DamageFormatter.You.format(verb=verb, amount=results))
+            attacker_results.append(DamageFormatter.They.format(target=victim.alias(), verb=verb, amount=results))
 
     def append_death_results(damage_result, attacker_results, target_results):
-        target_results.append('You have been slain by {}...'.format(damage_result.instigator.alias()))
-        attacker_results.append('You have slain {}!'.format(damage_result.victim.alias()))
+        if damage_result.caused_death:
+            target_results.append('You have been slain by {}...'.format(damage_result.instigator.alias()))
+            attacker_results.append('You have slain {}!'.format(damage_result.victim.alias()))
 

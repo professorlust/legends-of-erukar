@@ -64,3 +64,7 @@ class PlayerNode(Indexer):
         if self.script_completion_callback:
             self.script_completion_callback(self)
         self.script_completion_callback = None
+
+    def switch_script(self, new_script, payload):
+        self.run_script(new_script)
+        __import__(new_script).run_script(payload)

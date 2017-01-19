@@ -7,9 +7,9 @@ class AugmentedWeapon(Condition):
     Incapacitates = False
     MaxInstances = 1
 
-    def __init__(self, target, modifier_Type):
+    def __init__(self, target, modifier_type):
         super().__init__(target)
-        self.modifier_type = erukar.game.modifiers.inventory.random.Flaming
+        self.modifier_type = getattr(erukar.game.modifiers.inventory,modifier_type)
         self.timer = AugmentedWeapon.Duration
         self.weapon = None
         self.modifier_instances = []

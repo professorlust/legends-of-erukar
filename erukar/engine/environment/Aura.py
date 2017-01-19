@@ -50,12 +50,6 @@ class Aura(Describable):
 
         return 'the {}'.format(direction.name.lower())
 
-    def brief_inspect(self, lifeform, acuity, sense):
-        if self.initiator is lifeform:
-            return self.mutate(self.SelfAuraDescription)
-        loc = self.directionality(lifeform.current_room.coordinates)
-        return self.mutate(self.BriefDescription, {'relative_direction':loc})
-
     def tick(self):
         '''
         Time-based, regular Tick that occurs every 25 ticks in a TurnManager (5 seconds).

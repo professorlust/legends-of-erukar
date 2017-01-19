@@ -8,7 +8,7 @@ import numpy as np
 
 class Shard(Manager):
     SplashPath = 'Splash'
-    CharacterCreationPath = 'CharacterCreation'
+    CharacterCreationPath = 'CharacterSelect'
     TutorialPath = 'Tutorial'
 
     def __init__(self):
@@ -26,8 +26,12 @@ class Shard(Manager):
         '''
         Create all Hub Instances and spin up  
         '''
+        __import__('ServerProperties').configure(self)
+        __import__('WorldConfiguration').configure(self)
+
         self.instances = [
-            InstanceInfo(erukar.server.HubInstance, {'file_path': 'Test'})
+            InstanceInfo(erukar.server.HubInstance, {'file_path': option})
+            for option in self.StartingOptions
         ]
         for info in self.instances:
             self.launch_dungeon_instance(info)
@@ -47,7 +51,7 @@ class Shard(Manager):
         '''Callback from character creation or subscription'''
         self.interface.append_result(uid, 'starting gameplay')
         self.get_active_playernode(uid).status = PlayerNode.Playing
-        info = self.create_random_dungeon(character)
+        info = self.get_instance_for(character)
         info.player_join(uid)
 
     def get_playernode_from_uid(self, uid):
@@ -95,7 +99,7 @@ class Shard(Manager):
         '''
         if not playernode:
             playernode = self.get_active_playernode(uid)
-        payload = ScriptPayload(self.interface, uid, playernode, character, '')
+        payload = ScriptPayload(self, uid, playernode, character, '')
         if playernode:
             playernode.run_script(script)
         __import__(script).run_script(payload)
@@ -106,7 +110,7 @@ class Shard(Manager):
         call the callback function, though some may get away with not doing so
         (e.g. Splash)
         '''
-        payload = ScriptPayload(self.interface, playernode.uid, playernode, playernode.character, user_input)
+        payload = ScriptPayload(self, playernode.uid, playernode, playernode.character, user_input)
         getattr(__import__(playernode.active_script), playernode.script_entry_point)(payload)
 
     def create_random_dungeon(self, for_player):
@@ -146,3 +150,10 @@ class Shard(Manager):
 
     def get_active_playernode(self, uid):
         return next((x for x in self.connected_players if x.uid == uid), None)
+
+    def get_instance_for(self, player):
+        '''Tries to find an active instance for whatever the character has marked'''
+        instance = next((x for x in self.instances if x.identifier == player.instance), None)
+        if instance is None:
+            return self.create_random_dungeon(player)
+        return instance

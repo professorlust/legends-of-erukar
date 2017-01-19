@@ -1,4 +1,5 @@
 from erukar.engine.model.Condition import Condition
+from erukar.engine.formatters.MagicDamageFormatter import MagicDamageFormatter
 import erukar
 
 class DamageOverTime(Condition):
@@ -17,4 +18,7 @@ class DamageOverTime(Condition):
         if self.target.has_condition(erukar.engine.conditions.Dying) and not self.affects_dying: return
     
         result = self.target.apply_damage(self.damage, self.instigator, self.damage_efficacy)
-        MagicalDamageFormatter.process_and_append_damage_result(self.cmd, result)
+        a_res, self_res = MagicDamageFormatter.get_string_results(result)
+        print('\n'.join(a_res))
+        print('\n'.join(self_res))
+        return '\n'.join(self_res)

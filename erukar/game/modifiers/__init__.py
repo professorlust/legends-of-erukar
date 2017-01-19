@@ -1,10 +1,9 @@
 from .ItemModifier import ItemModifier
-from .MaterialModifier import MaterialModifier
 from .RoomDoorModifier import RoomDoorModifier
 from .RoomModifier import RoomModifier
 from .WeaponMod import WeaponMod
 
-__all__ = ["ItemModifier", "MaterialModifier", "RoomModifier", "RoomDoorModifier", "WeaponMod"]
+__all__ = ["ItemModifier", "RoomModifier", "RoomDoorModifier", "WeaponMod"]
 
 from .enemy import *
 from .room import *

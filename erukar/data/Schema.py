@@ -35,6 +35,7 @@ class Lifeform(Base):
     deceased    = Column(Boolean, default=False)
     max_health  = Column(Integer, default=4)
     name        = Column(String,  default="unnamed")
+    instance    = Column(String)
     health      = Column(Integer, default=4)
     strength    = Column(Integer, default=0)
     dexterity   = Column(Integer, default=0)

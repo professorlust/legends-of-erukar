@@ -1,6 +1,7 @@
 from erukar.engine.inventory.Item import Item
 from erukar.engine.environment.Aura import Aura
 from erukar.engine.calculators.Curves import Curves
+from erukar.engine.model.Observation import Observation
 import erukar, random, math
 
 class LightSource(Item):
@@ -20,6 +21,10 @@ class LightSource(Item):
     StrengthAtZeroFuel = 1
     DecayAtMaxFuel = 0.5
     DecayAtZeroFuel = 0.2
+
+    Glances = [
+        Observation(acuity=1, sense=1, result='Light flickers.')
+    ]
 
     def __init__(self):
         super().__init__(self.BaseName,self.BaseName)
@@ -68,11 +73,10 @@ class LightSource(Item):
     def start_aura(self, initiator):
         if self.fuel <= 0: return
         self.aura = Aura((0,0), self.strength(), self.decay_factor())
+        self.aura.Glances = self.Glances
         self.aura.initiator = initiator
         self.aura.blocked_by_walls = True
         self.aura.modify_light = self.modify_light
-        self.aura.BriefDescription = self.AuraDescription
-        self.aura.SelfAuraDescription = self.SelfAuraDescription
         initiator.initiate_aura(self.aura)
 
     def stop_aura(self):

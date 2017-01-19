@@ -1,5 +1,7 @@
 from .ArcaneAdeptAugmentation import ArcaneAdeptAugmentation
-from .AugmentedWeaponEffect import AugmentedWeaponEffect
+from .AugmentWeapon import AugmentWeapon
+from .ConditionBlinded import ConditionBlinded
+from .ConditionFrozen import ConditionFrozen
 from .DamageOverTime import DamageOverTime
 from .DamageSingleTarget import DamageSingleTarget
 from .ElementalAcid import ElementalAcid
@@ -11,14 +13,14 @@ from .ElementalFire import ElementalFire
 from .ElementalForce import ElementalForce
 from .ElementalIce import ElementalIce
 from .HealEffect import HealEffect
-from .InflictConsumed import InflictConsumed
-from .InflictDisorient import InflictDisorient
-from .InflictFrozen import InflictFrozen
-from .InflictStunned import InflictStunned
+from .InflictCondition import InflictCondition
+from .Sunder import Sunder
 
 __all__ = [
     "ArcaneAdeptAugmentation", 
-    "AugmentedWeaponEffect", 
+    "AugmentWeapon", 
+    "ConditionBlinded", 
+    "ConditionFrozen", 
     "DamageOverTime", 
     "DamageSingleTarget", 
     "ElementalAcid", 
@@ -30,8 +32,6 @@ __all__ = [
     "ElementalForce", 
     "ElementalIce", 
     "HealEffect", 
-    "InflictConsumed", 
-    "InflictDisorient", 
-    "InflictFrozen", 
-    "InflictStunned"
+    "InflictCondition", 
+    "Sunder"
 ]

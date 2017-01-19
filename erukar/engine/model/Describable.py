@@ -27,14 +27,10 @@ class Describable(Interactible):
 
     MaximumMutationDepth = 4
 
-    def set_vision_results(self, minimal, ideal, vision_range, *_):
-        pass
-
-    def set_sensory_results(self, minimal, ideal, sense_range, *_):
-        pass
-
-    def set_detailed_results(self, *_):
-        pass
+    def add_glances(self, new_glances):
+        self.Glances.update(new_glances)
+    def add_inspects(self, new_inspects):
+        self.Inspects.update(new_inspects)
 
     def erjoin(list_to_join):
         '''English readable Join. Adds commas and an "and".'''

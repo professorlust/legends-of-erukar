@@ -30,6 +30,8 @@ class Skeleton(Enemy):
     def randomize_equipment(self):
         s = Sword()
         b = Buckler()
+        erukar.game.modifiers.material.Steel().apply_to(s)
+        erukar.game.modifiers.material.Oak().apply_to(b)
         self.inventory = [s, b]
         self.left = s
         self.right = b

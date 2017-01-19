@@ -8,5 +8,5 @@ class FlameBreath(Spell):
     def __init__(self):
         super().__init__('Flame Breath',[
             erukar.game.magic.effects.ElementalFire(),
-            erukar.game.magic.effects.DamageSingleTarget()
+            erukar.game.magic.effects.DamageOverTime()
         ])

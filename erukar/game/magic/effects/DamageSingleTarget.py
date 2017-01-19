@@ -17,9 +17,9 @@ class DamageSingleTarget(SpellEffect):
     PotionName = 'Instant Poison'
     PotionPriceMultiplier = 5.0
 
-    def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
+    def on_cast(self, command, caster, parameters=None, efficacy=1.0):
         '''Inflicts a random amount of ice damage to something, defaulting to the caster'''
-        super().on_cast(command, lifeform, parameters)
+        super().on_cast(command, caster, parameters)
         
         self.append_for_all_in_room(self.mutate(self.DamageDescription))
         damages = [Damage(
@@ -29,7 +29,7 @@ class DamageSingleTarget(SpellEffect):
             dist_and_params=(random.uniform, (0,1)),
             scales=self.DamageShouldScale
         )]
-        result = self.target.apply_damage(damages, lifeform, efficacy)
+        result = self.target.apply_damage(damages, caster, efficacy)
         MagicDamageFormatter.process_and_append_damage_result(command, result)
 
         return parameters

@@ -32,6 +32,7 @@ class Lifeform(RpgEntity):
         self.experience = 0
         self.dual_wielding_penalty = 0.667
         self.current_room = None
+        self.instance = ''
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.name = name
@@ -40,6 +41,9 @@ class Lifeform(RpgEntity):
         self.skills = []
         self.stat_points = 15
         self.conditions = []
+
+    def subscribe(self, instance):
+        self.instance = instance.identifier
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''

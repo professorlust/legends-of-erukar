@@ -4,8 +4,9 @@ import random
 class ElementalIce(ElementalAugmentation):
     DamageName = 'ice'
     DamageDescription = "{alias|target} rapidly frosts over!"
+    AugmentationType = 'Frost'
 
-    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription']
+    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription', 'AugmentationType']
 
     PotionName = 'Ice'
     PotionPriceMultiplier = 3.5

@@ -6,6 +6,7 @@ from erukar.engine.environment.Container import Container
 from erukar.engine.environment.Door import Door
 from erukar.engine.environment.Decoration import Decoration
 from erukar.engine.model.Describable import Describable
+from erukar.engine.model.Observation import Observation
 import erukar, random
 from enum import Enum
 
@@ -13,6 +14,9 @@ class Room(Containable):
     SelfDescription = "This room is fairly large."
     DecoDescription = "You see {}."
     ContainerDescription = "In the room you see {}."
+    Glances = [
+        Observation(acuity=0, sense=0, result="This is a room.")
+    ]
 
     def __init__(self, dungeon, coordinates=(0,0), shape=None, dimensions=(1, 1)):
         super().__init__([])
@@ -97,9 +101,10 @@ class Room(Containable):
     def peek(self, lifeform, acuity, sense):
         '''Used for peeking NESW during on_inspect'''
         light_mod = self.calculate_luminosity()
-        if light_mod <= 0.01: return 'The chamber in this direction is completely dark.'
+        if light_mod <= 0.01: 
+            return 'The chamber in this direction is completely dark.'
         desc = [x for x in self.threat_descriptions(lifeform, acuity, sense) if x is not '']
-        return self.describe(lifeform, 1) + ' ' + Describable.erjoin(desc)
+        return Describable.on_glance(self, lifeform, acuity, sense) + ' ' + Describable.erjoin(desc)
 
     def on_inspect(self, lifeform, acuity, sense):
         '''Used exclusively for inspecting the current room'''

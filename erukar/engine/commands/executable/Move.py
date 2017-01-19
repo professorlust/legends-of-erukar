@@ -53,7 +53,6 @@ class Move(ActionCommand):
         if not hasattr(content, 'uid'): return
         
         if content.uid != self.sender_uid:
-            print('Telling {} that {} has moved'.format(content.uid, self.sender_uid))
             self.append_result(content.uid, '{} has moved {}.'.format(self.lifeform.alias(), self.direction.name))
             self.append_result(self.sender_uid, 'In the new room you see {}.'.format(content.alias()))
 

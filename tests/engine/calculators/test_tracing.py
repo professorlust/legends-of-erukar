@@ -3,23 +3,6 @@ import erukar, math
 import unittest
 
 class TracingTests(unittest.TestCase):
-    def test_aura_directional_descriptions_make_sense(self):
-        aura = Aura((0, 0))
-        d = Dungeon()
-        l = Lifeform()
-        center = Room(d,(0,0))
-        center.initiate_aura(aura)
-
-        # This iterates over all of the directions and makes sure that the 
-        # directions from describe_brief all are coherent (e.g. West -> "... west... ")
-        for aux in [((1,0), Direction.West), ((0,-1), Direction.North), ((-1,0), Direction.East), ((0,1), Direction.South)]:
-            nr = Room(d, aux[0])
-            l.link_to_room(nr)
-            center.coestablish_connection(aux[1], nr, None)
-            applicable = list(d.get_applicable_auras(nr))
-            desc = applicable[0].brief_inspect(l, 50, 50)
-            self.assertIn(aux[1].name.lower(), desc)
-
 
     def test_raytrace_yields_finish_if_no_obstruction(self):
         d = Dungeon()

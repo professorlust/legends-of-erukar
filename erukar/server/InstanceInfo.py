@@ -14,6 +14,7 @@ class InstanceInfo:
         if not additional_parameters:
             additional_parameters = {}
         self.instance = instance_type(**additional_parameters)
+        self.identifier = self.instance.identifier
         self.player_list = []
         self.non_action_commands = self.manager.list([])
         self.action_commands = self.manager.list([])

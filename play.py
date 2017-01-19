@@ -2,8 +2,16 @@ from erukar import *
 import readline, os, sys, threading
 import numpy as np
 
-sys.path.append(os.getcwd() + '/config/hubs')
-sys.path.append(os.getcwd() + '/config/scripts')
+config_directories = [
+    'world/sovereignties',
+    'world/regions',
+    'world/hubs',
+    'scripts',
+    'server'
+]
+
+for cd in config_directories:
+    sys.path.append(os.getcwd() + '/config/' + cd)
 
 w = Shard()
 w.activate()

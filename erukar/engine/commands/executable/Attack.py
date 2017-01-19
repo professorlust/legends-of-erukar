@@ -86,17 +86,18 @@ class Attack(ActionCommand):
 
     def perform_attack(self, weapon, efficacy=1.0):
         '''Used to actually resolve an attack roll made between a character and target'''
-        attack_roll = int(self.character.roll(self.character.stat_random_range('dexterity')) * efficacy)
-        evasion = self.target.evasion()
-        if attack_roll < evasion:
-            PhysicalDamageFormatter.append_missed_attack_results(self, attack_roll)
-            return
-
         if weapon is None:
             weapon = erukar.engine.inventory.UnarmedStrike()
 
+        attack_roll = int(self.character.roll(self.character.stat_random_range('dexterity')) * efficacy)
+        evasion = self.target.evasion()
+        if attack_roll < evasion:
+            PhysicalDamageFormatter.append_missed_attack_results(self, weapon, attack_roll, self.target, self.lifeform)
+            return
+
         self.dirty(self.character)
         self.dirty(self.target)
+
         result = self.target.apply_damage(weapon.damages, self.character, efficacy)
         PhysicalDamageFormatter.process_and_append_damage_result(self, attack_roll, weapon, result)
 

@@ -2,7 +2,7 @@ from erukar.engine.model import Modifier
 from erukar.game.inventory.consumables.Torch import Torch
 from erukar.engine.environment import *
 from erukar.game.modifiers.RoomModifier import RoomModifier
-from erukar.game.modifiers.material.Oak import Oak
+from erukar.game.modifiers.material.random.Oak import Oak
 from erukar.game.modifiers.inventory import Luminous, Glowing
 import random
 

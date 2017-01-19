@@ -19,6 +19,7 @@ class Connector:
         'level',
         'experience',
         'wealth',
+        'instance'
     ]
     simple_map_creature_params = [
         'str_ratio',

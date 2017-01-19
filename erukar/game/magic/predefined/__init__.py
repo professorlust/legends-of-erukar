@@ -1,6 +1,6 @@
 from .AcidBreath import AcidBreath
 from .AcidBurst import AcidBurst
-from .AugmentWeapon import AugmentWeapon
+from .AcidWeapon import AcidWeapon
 from .Disorient import Disorient
 from .ElectricBreath import ElectricBreath
 from .ElectricalBurst import ElectricalBurst
@@ -15,7 +15,7 @@ from .ShadowBurst import ShadowBurst
 __all__ = [
     "AcidBreath", 
     "AcidBurst", 
-    "AugmentWeapon", 
+    "AcidWeapon", 
     "Disorient", 
     "ElectricBreath", 
     "ElectricalBurst", 

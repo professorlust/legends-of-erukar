@@ -49,10 +49,6 @@ class ActionCommand(Command):
         if should_incapacitate:
             self.add_incapacitated_strings()
 
-    def add_incapacitated_strings(self):
-        self.append_result(self.target.uid, 'You have been incapacitated!')
-        self.append_result(self.sender_uid, '{} has been incapacitated'.format(self.target.alias()))
-
     def apply_damage_and_parse_results(self, enemy, damage, efficacy):
         '''Handles actually applying damage by passing off to RpgEntity'''
         # pass off to enemy to get a DamageResult

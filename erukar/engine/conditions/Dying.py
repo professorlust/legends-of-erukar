@@ -10,7 +10,7 @@ class Dying(Condition):
         mod = 10*(1-(pow((self.target.resolve-1000)/1000, 2)))
 
         if random.uniform(*skill_range)+mod >= dc:
-            self.target.afflictions.remove(self)
+            self.target.conditions.remove(self)
             self.target.health = 1
             return '{} has regained the strength to fight!'.format(self.target.alias())
 

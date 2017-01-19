@@ -13,6 +13,7 @@ class Instance(Manager):
 
     def __init__(self):
         super().__init__()
+        self.identifier = 'n/a'
         self.dungeon = None
         self.command_contexts = {}
 
@@ -72,6 +73,7 @@ class Instance(Manager):
         super().subscribe(player)
         room = self.dungeon.rooms[0]
         player.character.link_to_room(room)
+        player.character.subscribe(self)
         player.move_to_room(room)
         # Run on_equip for all equipped items
         for equip in player.character.equipment_types:
@@ -89,8 +91,6 @@ class Instance(Manager):
             playernode = PlayerNode(uid)
             self.connector.add_player(playernode)
         character.uid = uid
-        print(playernode.uid)
-        print(character.uid)
 
         # If this is a new character, mark it for Initialization
         if not self.connector.load_player(uid, character):
@@ -102,6 +102,7 @@ class Instance(Manager):
         character.spells = [
             erukar.game.magic.predefined.FlameBreath(),
             erukar.game.magic.predefined.Heal(),
+            erukar.game.magic.predefined.AcidWeapon(),
             erukar.game.magic.predefined.ShadowBurst()]
         self.data.players.append(playernode)
         return playernode
@@ -211,7 +212,7 @@ class Instance(Manager):
 
     def append_result_responses(self, result):
         for uid in result.results:
-            self.append_response(uid,'\n\n'.join(result.result_for(uid)) + '\n')
+            self.append_response(uid,'\n'.join(result.result_for(uid)) + '\n')
 
     def append_response(self, uid, response):
         if uid not in self.responses:

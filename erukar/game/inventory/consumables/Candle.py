@@ -1,4 +1,5 @@
 from erukar.game.inventory.base.LightSource import LightSource
+from erukar.engine.model.Observation import Observation
 
 class Candle(LightSource):
     BaseName = "Candle"
@@ -6,7 +7,9 @@ class Candle(LightSource):
     SupportPart = "base"
     BriefDescription = "a candle"
     SelfAuraDescription = "The soft white light of the candle in your hand slightly illuminates the room."
-    AuraDescription = "A slight candlelight flickers from {relative_direction}."
+    Glances = [
+        Observation(acuity=1, sense=1, result='Soft light fills the room.')
+    ]
 
     MaxFuel = 100
     FuelConsumptionRate = 0.1
