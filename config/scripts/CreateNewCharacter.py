@@ -8,11 +8,13 @@ def run_script(payload):
     handle_stat_allocation(payload)
 
 def return_to_previous(payload):
-    payload.playernode.switch_script('CharacterCreation', payload)
+    payload.playernode.switch_script('CharacterSelect', payload)
 
 def handle_stat_allocation(payload):
     payload.playernode.set_script_entry_point('handle_stat_allocation')
-    payload.playernode.character.wealth = payload.shard.StartingWealth
+    payload.playernode.character.wealth = payload.shard.properties.StartingWealth
+    payload.playernode.character.stat_points = payload.shard.properties.StartingStatPoints
+    payload.playernode.character.skill_points = payload.shard.properties.StartingSkillPoints
     payload.playernode.inventory = []
 
     stats = ['strength','dexterity','vitality','acuity','sense','resolve']

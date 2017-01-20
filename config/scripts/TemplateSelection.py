@@ -6,7 +6,7 @@ def run_script(payload):
     select_template(payload)
 
 def return_to_previous(payload):
-    payload.playernode.switch_script('CharacterCreation', payload)
+    payload.playernode.switch_script('CharacterSelect', payload)
 
 def select_template(payload):
     choices = [

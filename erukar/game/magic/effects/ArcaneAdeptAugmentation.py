@@ -4,7 +4,7 @@ class ArcaneAdeptAugmentation(SpellEffect):
     DamageShouldScale = True
     DamageScalar = 3
     DamageOverTimeEfficacy = 1.5
-
+    
     PotionName = 'Adept'
     PotionPriceMultiplier = 30.0
 

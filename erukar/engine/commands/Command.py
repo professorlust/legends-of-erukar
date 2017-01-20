@@ -201,7 +201,6 @@ class Command:
 
     def determine_direction(self, text):
         '''Take text and determine its respective cardinal direction'''
-
         couples = [
             { "keywords": ['n', 'north'], "direction": Direction.North },
             { "keywords": ['e', 'east'], "direction": Direction.East },

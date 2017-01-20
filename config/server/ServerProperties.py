@@ -1,9 +1,9 @@
 def configure(shard):
-    shard.PermaDeath = False
+    shard.properties.PermaDeath = False
 
-    shard.StartingWealth = 1000
-    shard.StartingStatPoints = 15
-    shard.StartingSkillPoints = 2
+    shard.properties.StartingWealth = 1000
+    shard.properties.StartingStatPoints = 20
+    shard.properties.StartingSkillPoints = 2
 
-    shard.BaseHealth = 4
-    shard.BaseEvasion = 10
+    shard.properties.BaseHealth = 4
+    shard.properties.BaseEvasion = 10

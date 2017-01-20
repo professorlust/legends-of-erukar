@@ -48,6 +48,8 @@ class Lifeform(Base):
     level       = Column(Integer, default=1)
     experience  = Column(Integer, default=0)
 
+    skills      = relationship("Skill", cascade="all, delete-orphan") 
+    spell_words = relationship("SpellWord", cascade="all, delete-orphan")
     equipment   = relationship("EquippedItem", cascade="all, delete-orphan")
     inventory   = relationship("Item", cascade="all, delete-orphan")
     effects     = relationship("Effect", cascade="all, delete-orphan")
@@ -116,3 +118,21 @@ class Effect(Base):
     lifeform_id     = Column(Integer, ForeignKey('lifeforms.id'))
     lifeform        = relationship("Lifeform", foreign_keys=[lifeform_id])
 
+
+class Skill(Base):
+    __tablename__ = 'skills'
+
+    id              = Column(Integer, primary_key=True)
+    skill_type      = Column(String)
+    lifeform_id     = Column(Integer, ForeignKey('lifeforms.id'))
+    lifeform        = relationship("Lifeform", foreign_keys=[lifeform_id])
+
+
+class SpellWord(Base):
+    __tablename__ = 'spellwords'
+
+    id              = Column(Integer, primary_key=True)
+    word            = Column(String)
+    proficiency     = Column(Integer)
+    lifeform_id     = Column(Integer, ForeignKey('lifeforms.id'))
+    lifeform        = relationship("Lifeform", foreign_keys=[lifeform_id])

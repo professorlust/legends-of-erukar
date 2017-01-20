@@ -3,6 +3,7 @@ from erukar.engine.model import *
 from erukar.engine.lifeforms.Player import Player
 from erukar.server.Interface import Interface
 from erukar.server.InstanceInfo import InstanceInfo
+from erukar.server.ServerProperties import ServerProperties
 import erukar, threading
 import numpy as np
 
@@ -17,6 +18,7 @@ class Shard(Manager):
         self.connector_factory = ConnectorFactory(db_pass)
         self.connector_factory.establish_connection()
         self.connector_factory.create_metadata()
+        self.properties = ServerProperties()
         self.data = self.connector_factory.create_session()
         self.interface = Interface(self)
         self.instances = []
@@ -30,7 +32,7 @@ class Shard(Manager):
         __import__('WorldConfiguration').configure(self)
 
         self.instances = [
-            InstanceInfo(erukar.server.HubInstance, {'file_path': option})
+            InstanceInfo(erukar.server.HubInstance, self.properties.copy(), {'file_path': option})
             for option in self.StartingOptions
         ]
         for info in self.instances:
@@ -117,7 +119,7 @@ class Shard(Manager):
         '''
         Create a random dungeon instance based on a player's level
         '''
-        dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, {'level': for_player.level})
+        dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {'level': for_player.level})
         self.launch_dungeon_instance(dungeon_info)
         self.instances.append(dungeon_info)
         return dungeon_info
