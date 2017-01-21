@@ -13,6 +13,7 @@ class Instance(Manager):
 
     def __init__(self):
         super().__init__()
+        self.properties = None
         self.identifier = 'n/a'
         self.dungeon = None
         self.command_contexts = {}
@@ -152,7 +153,6 @@ class Instance(Manager):
         if cmd is not None:
             result = self.execute_command(cmd)
 
-
     def get_next_player(self):
         if self.active_player is not None:
             res = self.active_player.end_turn()
@@ -190,8 +190,11 @@ class Instance(Manager):
         self.active_player = next_player
 
     def execute_command(self, cmd):
+        cmd.server_properties = self.properties
         cmd.context = self.command_contexts[cmd.sender_uid]
         cmd.data = self.data
+        if cmd.context and not hasattr(cmd.context, 'server_properties'):
+            cmd.context.server_properties = self.properties
         result = cmd.execute()
 
         # Check results

@@ -23,3 +23,5 @@ class AugmentWeapon(SpellEffect):
         self.weapon = augment.weapon
         self.target.conditions.append(augment)
         self.append_for_all_in_room(self.mutate(self.StandardCast,{'lifeform':self.target}))
+
+        return parameters

@@ -10,17 +10,23 @@ class InstanceInfo:
     Instance, e.g. PlayerList, command_queue, command results list
     '''
     def __init__(self, instance_type=Instance, props=None, additional_parameters=None):
-        self.manager = Manager()
-        self.properties = props
+        self.setup_instance(instance_type, props, additional_parameters)
+        self.setup_lists()
+
+    def setup_instance(self, instance_type, props, additional_parameters):
         if not additional_parameters:
             additional_parameters = {}
         self.instance = instance_type(**additional_parameters)
+        self.instance.properties = props 
         self.identifier = self.instance.identifier
-        self.player_list = []
+
+    def setup_lists(self):
+        self.manager = Manager()
         self.non_action_commands = self.manager.list([])
         self.action_commands = self.manager.list([])
         self.joins = self.manager.list([])
         self.responses = self.manager.dict([])
+        self.player_list = []
         self.player_command_contexts = {}
 
     def player_join(self, uid):

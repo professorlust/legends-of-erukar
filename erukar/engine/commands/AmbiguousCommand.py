@@ -11,4 +11,5 @@ class AmbiguousCommand(Command):
         new_cmd.context = self.context
         new_cmd.user_specified_payload = self.user_specified_payload
         new_cmd.sender_uid = self.sender_uid
+        new_cmd.server_properties = self.context.server_properties
         return new_cmd.execute()
