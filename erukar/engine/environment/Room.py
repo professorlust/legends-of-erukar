@@ -70,6 +70,9 @@ class Room(Containable):
     def decoration_descriptions(self, lifeform, acuity, sense):
         '''used to describe non-decoration contents'''
         for x in self.contents:
+            if not x.is_detected(acuity, sense):
+                continue
+
             if isinstance(x, Decoration) or isinstance(x, Container):
                 res = self.mutate(x.on_glance(lifeform, acuity, sense))
                 if res is not '':
@@ -78,6 +81,9 @@ class Room(Containable):
     def container_descriptions(self, lifeform, acuity, sense):
         '''used to describe non-decoration contents'''
         for x in self.contents:
+            if not x.is_detected(acuity, sense):
+                continue
+
             if not isinstance(x, Decoration) and not isinstance(x, erukar.engine.lifeforms.Lifeform) and not isinstance(x, Container):
                 res = x.on_glance(lifeform, acuity, sense)
                 if res is not '':
@@ -90,6 +96,9 @@ class Room(Containable):
 
     def threat_descriptions(self, lifeform, acuity, sense):
         for content in self.contents:
+            if not content.is_detected(acuity, sense):
+                continue
+
             if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
                 yield content.describe_as_threat(lifeform, acuity, sense)
 

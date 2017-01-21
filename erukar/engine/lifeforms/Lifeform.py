@@ -1,6 +1,7 @@
 from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.conditions.Dead import Dead
 from erukar.engine.conditions.Dying import Dying
+from erukar.engine.model.Observation import Observation
 import erukar, math, random
 
 class Lifeform(RpgEntity):

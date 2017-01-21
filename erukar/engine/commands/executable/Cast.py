@@ -57,4 +57,4 @@ class Cast(ActionCommand):
                 self.cast_string, target_string = self.cast_string.split(target_preposition, 1)
                 break
 
-        return target_string
+        super().resolve_target(target_string)

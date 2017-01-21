@@ -3,7 +3,7 @@ from erukar.engine.model.Indexer import Indexer
 from erukar.engine.model.Describable import Describable
 from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 from erukar.engine.calculators import Random, Namer
-import random, erukar, string
+import math, random, erukar, string
 
 class Enemy(Lifeform, Indexer):
     RandomizedArmor = []
@@ -144,8 +144,13 @@ class Enemy(Lifeform, Indexer):
             return 
 
     def viable_targets(self, room):
+        acuity, sense = [math.floor(random.uniform(*self.stat_random_range(x))) for x in ('acuity', 'sense')]
         for item in room.contents:
             # A player should always be in this list
+            if not item.is_detected(acuity, sense):
+                print('could not detect {}' .format(item))
+                continue
+
             if isinstance(item, erukar.engine.lifeforms.Player):
                 yield item
 

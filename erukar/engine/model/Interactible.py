@@ -1,4 +1,13 @@
 class Interactible:
+    def is_detected(self, acuity, sense):
+        return acuity > self.minimum_acuity_to_detect() or sense > self.minimum_sense_to_detect()
+
+    def minimum_sense_to_detect(self):
+        return 1
+
+    def minimum_acuity_to_detect(self):
+        return 1
+
     def on_inspect(self, sender):
         pass
 
