@@ -6,13 +6,11 @@ class Cast(ActionCommand):
     NoSpell = "No spell '{}' was found in spell book."
 
     aliases = ['cast']
-    TrackedParameters = ['player', 'cast_string', 'target']
+    TrackedParameters = ['caster', 'cast_string', 'target']
 
     def execute(self):
-        player = self.find_player()
-        if player is None: return
-        self.player = player.lifeform()
-        self.room = self.player.current_room
+        self.caster = self.find_player().lifeform()
+        self.room = self.caster.current_room
 
         failure = self.check_for_arguments()
         if failure: return failure
@@ -20,15 +18,21 @@ class Cast(ActionCommand):
         spell = self.create_spell_chain()
 
         arguments = {'target': self.target}
-        spell.on_cast(self, self.player, arguments)
+        spell.on_cast(self, self.caster, arguments)
         return self.succeed()
 
     def create_spell_chain(self):
+        '''
+        Break out the cast_string into different words and assemble a
+        chain of spell effects
+        '''
         strategem = []
         for word in self.cast_string.split(' '):
             if word.lower() in self.server_properties.SpellWords:
                 effect = getattr(erukar.game.magic.effects, self.server_properties.SpellWords[word.lower()])
                 strategem.append(effect())
+            else:
+                print('could not match ' + word)
         return Spell('Unknown spell', strategem)
 
     def check_for_arguments(self):
@@ -49,6 +53,7 @@ class Cast(ActionCommand):
             if fail: return fail
 
     def find_cast_string_and_target(self):
+        '''Determine if we have specified a target (with 'on' or 'at')'''
         self.cast_string = self.user_specified_payload
         target_string = ''
 

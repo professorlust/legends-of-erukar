@@ -1,3 +1,4 @@
+from .AttackState import AttackState
 from .Condition import Condition
 from .Containable import Containable
 from .Damage import Damage
@@ -19,6 +20,7 @@ from .Stance import Stance
 from .results import *
 
 __all__ = [
+    "AttackState",
     "Condition",
     "Containable",
     "Damage",

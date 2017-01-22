@@ -1,7 +1,9 @@
 from .ArcaneAdeptAugmentation import ArcaneAdeptAugmentation
 from .AugmentWeapon import AugmentWeapon
 from .ConditionBlinded import ConditionBlinded
+from .ConditionCloaked import ConditionCloaked
 from .ConditionFrozen import ConditionFrozen
+from .ConditionMuted import ConditionMuted
 from .DamageOverTime import DamageOverTime
 from .DamageSingleTarget import DamageSingleTarget
 from .ElementalAcid import ElementalAcid
@@ -20,7 +22,9 @@ __all__ = [
     "ArcaneAdeptAugmentation", 
     "AugmentWeapon", 
     "ConditionBlinded", 
+    "ConditionCloaked", 
     "ConditionFrozen", 
+    "ConditionMuted", 
     "DamageOverTime", 
     "DamageSingleTarget", 
     "ElementalAcid", 

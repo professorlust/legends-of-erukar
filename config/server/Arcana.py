@@ -1,6 +1,8 @@
 def configure(shard):
     shard.properties.SpellWords = {
         'thel': 'AugmentWeapon',
+        'mute': 'ConditionMuted',
+        'cloak': 'ConditionCloaked',
         'loth': 'ConditionBlinded',
         'loz':  'ConditionFrozen',
         'roth': 'DamageOverTime',

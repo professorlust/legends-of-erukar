@@ -11,6 +11,10 @@ class AugmentWeapon(SpellEffect):
     PotionName = 'Augmented Weapon'
     PotionPriceMultiplier = 7.5
 
+    Name = 'Augment Weapon'
+    Description = 'Binds an effect to a weapon. Multiple weapons can be bound at higher proficiencies.'
+    Flavor = 'A recent advancement in arcana, the "Augment Weapon" magic was developed at the Sidernes Academy in Luinden, Iuria as part of research conducted by Arcanist Felwin Bougarde. The research was based in part on pre-Theocracy battlemages whose legendary abilities to bind the elements to their items was once forgotten.'
+
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
         '''Inflicts a random amount of fire damage to something, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters)

@@ -9,3 +9,6 @@ class ArcaneAdeptAugmentation(SpellEffect):
     PotionPriceMultiplier = 30.0
 
     ParametersWhichShouldBeOverridden = ['DamageShouldScale', 'DamageScalar', 'DamageOverTimeEfficacy']
+
+    Name = 'Arcane Adept Effect'
+    Description = '[!BUG] Automatically added due to the Arcane Adept Skill'

@@ -30,6 +30,7 @@ class Shard(Manager):
         '''
         __import__('ServerProperties').configure(self)
         __import__('WorldConfiguration').configure(self)
+        __import__('Arcana').configure(self)
 
         self.instances = [
             InstanceInfo(erukar.server.HubInstance, self.properties.copy(), {'file_path': option})
@@ -39,6 +40,7 @@ class Shard(Manager):
             self.launch_dungeon_instance(info)
 
     def subscribe(self, uid):
+        '''Called when a player (with uid) is connecting'''
         self.run_script(self.SplashPath, uid)
         super().subscribe(uid)
         # Check Connector for plaOyer

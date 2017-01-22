@@ -10,6 +10,7 @@ class Condition:
         self.target = target
         self.instigator = instigator
         self.timer = self.Duration
+        self.efficiency = 1.0
 
     def do_begin_of_turn_effect(self):
         return ''
@@ -29,3 +30,12 @@ class Condition:
 
     def exit(self):
         self.target.conditions.remove(self)
+
+    def modify_acuity_to_detect(self):
+        return 0
+
+    def modify_sense_to_detect(self):
+        return 0
+
+    def modify_attack_roll(self, target):
+        return 0

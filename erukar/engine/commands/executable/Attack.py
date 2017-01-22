@@ -3,6 +3,7 @@ from erukar.engine.environment.Corpse import Corpse
 from erukar.engine.environment.Door import Door
 from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Damage import Damage
+from erukar.engine.model.AttackState import AttackState
 from erukar.engine.formatters.PhysicalDamageFormatter import PhysicalDamageFormatter
 import erukar, random, math
 
@@ -21,35 +22,29 @@ class Attack(ActionCommand):
         failure = self.check_for_arguments()
         if failure: return failure
         
-        if isinstance(self.target, erukar.engine.model.Direction):
-            return self.do_directional_attacks()
         return self.do_attack()
 
-    def can_attack_with(self, weapon):
-        return weapon is None or isinstance(weapon, erukar.engine.inventory.Weapon)
-
-    def do_directional_attacks(self, direction):
-        '''Handles attacking with all queued weapons'''
-        room = self.character.current_room
-
-        dual_wielding_penalty = 1.0
-        for attacking_slot in self.character.attack_slots:
-            weapon = getattr(self.character, attacking_slot)
-            if not self.can_attack_with(weapon): continue
-            self.attack_in_direction(room, weapon, 0, direction)
-            dual_wielding_penalty *= self.character.dual_wielding_penalty
-
-        # Succeed if we have results, otherwise fail with the UnableToAttackInDirection
-        return self.succeed_if_any_results(msg_if_failure=self.UnableToAttackInDirection)
+    def build_attack_state(self):
+        '''Factory method'''
+        attack_state = AttackState()
+        attack_state.attacker = self.character
+        attack_state.target = self.target
+        return attack_state
 
     def do_attack(self):
         '''Attack an enemy within the current room'''
         # Attack with each weapon, keeping track of the penalties for dual wielding each time
+        direction = self.target if isinstance(self.target, erukar.engine.model.Direction) else None
         dual_wielding_penalty = 1.0
+
         for attacking_slot in self.character.attack_slots:
-            weapon = getattr(self.character, attacking_slot)
-            if not self.can_attack_with(weapon): continue
-            self.perform_attack(weapon, dual_wielding_penalty)
+            new_attack = self.build_attack_state()
+            new_attack.efficiency = dual_wielding_penalty
+            new_attack.get_weapon(attacking_slot, use_unarmed_if_none=True)
+            new_attack.attack_direction = direction
+            if not new_attack.is_valid():
+                continue
+            self.perform_attack(new_attack)
             dual_wielding_penalty *= self.character.dual_wielding_penalty
 
         # Succeed if we have results, otherwise fail with the UnableToAttackInRoom
@@ -84,20 +79,16 @@ class Attack(ActionCommand):
 
         return self.fail('Your weapon does not have the range to attack {}.'.format(direction.name))
 
-    def perform_attack(self, weapon, efficacy=1.0):
+    def perform_attack(self, attack_state):
         '''Used to actually resolve an attack roll made between a character and target'''
-        if weapon is None:
-            weapon = erukar.engine.inventory.UnarmedStrike()
+        attack_state.calculate_attack()
 
-        attack_roll = int(self.character.roll(self.character.stat_random_range('dexterity')) * efficacy)
-        evasion = self.target.evasion()
-        if attack_roll < evasion:
-            PhysicalDamageFormatter.append_missed_attack_results(self, weapon, attack_roll, self.target, self.lifeform)
+        if not attack_state.attack_successful():
+            PhysicalDamageFormatter.append_missed_attack_results(self, attack_state)
             return
 
         self.dirty(self.character)
         self.dirty(self.target)
 
-        result = self.target.apply_damage(weapon.damages, self.character, efficacy)
-        PhysicalDamageFormatter.process_and_append_damage_result(self, attack_roll, weapon, result)
-
+        attack_state.on_apply_damage()
+        PhysicalDamageFormatter.process_and_append_damage_result(self, attack_state)

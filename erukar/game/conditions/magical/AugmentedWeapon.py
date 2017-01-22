@@ -9,19 +9,21 @@ class AugmentedWeapon(Condition):
 
     def __init__(self, target, modifier_type):
         super().__init__(target)
-        self.modifier_type = getattr(erukar.game.modifiers.inventory,modifier_type)
+        self.modifier_type = getattr(erukar.game.modifiers.inventory, modifier_type)
         self.timer = AugmentedWeapon.Duration
         self.weapon = None
         self.modifier_instances = []
         self.augment_weapon(target)
 
     def tick(self):
+        '''Countdown'''
         if self.IsTemporary:
             self.timer -= 1
             if self.timer <= 0:
                 self.exit()
 
     def augment_weapon(self, target):
+        '''Augment up to {MaxInstances} weapons, then track them so they can be removed later'''
         for slot in target.attack_slots:
             self.weapon = getattr(target, slot)
             if self.weapon is not None and isinstance(self.weapon, erukar.engine.inventory.Weapon):
@@ -33,6 +35,7 @@ class AugmentedWeapon(Condition):
                     return
 
     def exit(self):
+        '''Remove all modifiers'''
         for modifier in self.modifier_instances:
             modifier.remove()
         self.target.conditions.remove(self)
