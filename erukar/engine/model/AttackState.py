@@ -42,5 +42,5 @@ class AttackState:
 
     def on_apply_damage(self):
         self.damage_result = self.target.apply_damage(self.weapon.damages, self.attacker, self.efficiency)
-        self.attacker.on_apply_damage(self.target, self.weapon, self.damage_result)
+        self.attacker.on_apply_damage(self.damage_result, self.weapon)
 

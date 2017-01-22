@@ -53,7 +53,14 @@ class Weapon(Item):
         return [(d.roll(attacker)*efficacy if d.scales else d.roll(attacker), d.name) for d in self.damages]
 
     def on_calculate_attack_roll(self, raw, target):
-        return raw
+        result = self.material.on_calculate_attack_roll(raw, target)
+        for modifier in self.modifiers:
+            result = modifier.on_calculate_attack_roll(result, target) 
+        return result
+
+    def on_apply_damage(self, damage_result):
+        for modifier in self.modifiers:
+            modifier.on_apply_damage(damage_result)
 
     def on_inventory(self):
         return '{} ({}%)'.format(self.format(), int(100*self.durability_coefficient))

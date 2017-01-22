@@ -103,8 +103,11 @@ class Lifeform(RpgEntity):
         attack_mod = sum([x.modify_attack_roll(target) for x in self.conditions])
         return int((raw + attack_mod) * efficiency)
 
-    def on_apply_damage(self, target, weapon, result):
-        pass
+    def on_apply_damage(self, damage_result, weapon):
+        for condition in self.conditions:
+            condition.on_apply_damage(damage_result)
+        if weapon:
+            weapon.on_apply_damage(damage_result)
 
     def minimum_sense_to_detect(self):
         condition_mod = sum([x.modify_sense_to_detect() for x in self.conditions])

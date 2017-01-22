@@ -1,3 +1,4 @@
+from .Accurate import Accurate
 from .Acid import Acid
 from .AcuityEnhancement import AcuityEnhancement
 from .Bane import Bane
@@ -11,6 +12,7 @@ from .Electric import Electric
 from .Enhancement import Enhancement
 from .Fine import Fine
 from .Flaming import Flaming
+from .Freezing import Freezing
 from .Frost import Frost
 from .Glowing import Glowing
 from .Grand import Grand
@@ -45,6 +47,7 @@ from .Unwieldy import Unwieldy
 from .VitalityEnhancement import VitalityEnhancement
 
 __all__ = [
+    "Accurate", 
     "Acid", 
     "AcuityEnhancement", 
     "Bane", 
@@ -58,6 +61,7 @@ __all__ = [
     "Enhancement", 
     "Fine", 
     "Flaming", 
+    "Freezing", 
     "Frost", 
     "Glowing", 
     "Grand", 

@@ -39,3 +39,6 @@ class Condition:
 
     def modify_attack_roll(self, target):
         return 0
+
+    def on_apply_damage(self, damage_result):
+        pass

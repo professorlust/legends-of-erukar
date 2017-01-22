@@ -79,3 +79,8 @@ class Modifier(Describable):
         '''
         return any(r for r in group if isinstance(entity, r))
 
+    def on_calculate_attack_roll(self, current, target):
+        return current
+
+    def on_apply_damage(self, damage_result):
+        pass

@@ -20,6 +20,11 @@ entry.Glances = [
     Observation(acuity=15, sense=0,  result='You see rows of columns on the north and south of this long, narrow room.'),
 ]
 
+sword = Shop.create(Sword, erukar.game.modifiers.material.Steel)
+erukar.game.modifiers.inventory.random.Accurate().apply_to(sword)
+erukar.game.modifiers.inventory.random.Freezing().apply_to(sword)
+entry.add(sword)
+
 first_room = Room(dungeon, (2,0), dimensions=(2,2), shape=erukar.engine.environment.roomshapes.SouthEastCorner)
 first_room.Glances = [
     Observation(acuity = 0, sense=0, result='This room has a sharp ninety degree corner.')
