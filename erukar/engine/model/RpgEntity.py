@@ -6,6 +6,14 @@ class RpgEntity(Describable):
     equipment_types = []
     base_evasion = 10
     BaseDamageMitigations = {}
+    AttributeTypes = [
+        'strength',
+        'dexterity',
+        'vitality',
+        'acuity',
+        'sense',
+        'resolve'
+    ]
 
     def __init__(self):
         super().__init__()

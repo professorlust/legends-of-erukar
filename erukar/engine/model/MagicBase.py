@@ -2,6 +2,9 @@ from erukar.engine.model.Describable import Describable
 import erukar
 
 class MagicBase(Describable):
+    Name = 'Default Magic Name'
+    Description = 'Default Magic Description'
+
     def on_cast(self, command, caster, parameters=None, efficacy=1.0):
         self.cmd = command
         self.caster = caster

@@ -44,10 +44,21 @@ class Enemy(Lifeform, Indexer):
         self.uid = ''.join(random.choice(chars) for x in range(128))
 
     def define_level(self, level):
+        self.level = level
         if self.should_randomize:
             self.stat_points = 14 + level
             self.perform_level_ups()
+            self.redefine_personality()
         super().define_level(level)
+
+    def redefine_personality(self):
+        '''Used to give monsters a unique personality after initial levelup'''
+        total = 14 + self.level
+        for stat in self.AttributeTypes:
+            stat_ratio = stat[:3] + '_ratio'
+            new_ratio = max(getattr(self, stat) / total, 0)
+            setattr(self, stat_ratio, new_ratio)
+        stat_ratios = [stat[:3]+'_ratio' for stat in self.AttributeTypes]
 
     def alias(self):
         if self.is_elite():
@@ -85,16 +96,8 @@ class Enemy(Lifeform, Indexer):
 
     def perform_level_ups(self):
         while self.stat_points > 0:
-            stats = ['strength','dexterity','vitality','acuity','sense','resolve']
-            weights = [
-                self.str_ratio, 
-                self.dex_ratio, 
-                self.vit_ratio, 
-                self.acu_ratio, 
-                self.sen_ratio, 
-                self.res_ratio
-            ] 
-            bins, values = Random.create_random_distribution(stats, weights)
+            weights = [getattr(self, '{}_ratio'.format(stat[:3])) for stat in self.AttributeTypes]
+            bins, values = Random.create_random_distribution(self.AttributeTypes, weights)
             chosen = Random.get_from_custom_distribution(random.random(), bins, values)
             setattr(self, chosen, getattr(self, chosen)+1)
             self.stat_points -= 1
@@ -148,7 +151,6 @@ class Enemy(Lifeform, Indexer):
         for item in room.contents:
             # A player should always be in this list
             if not item.is_detected(acuity, sense):
-                print('could not detect {}' .format(item))
                 continue
 
             if isinstance(item, erukar.engine.lifeforms.Player):
