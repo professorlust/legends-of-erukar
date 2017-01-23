@@ -16,7 +16,7 @@ class Inspect(ActionCommand):
         player = self.find_player()
         self.room = player.lifeform().current_room
 
-        self.acuity, self.sense = [math.floor(random.uniform(*player.lifeform().stat_random_range(x))) for x in ('acuity', 'sense')]
+        self.acuity, self.sense = player.lifeform().get_detection_pair()
 
         # Index in the player's active indexing tree
         self.index(self.room, player)

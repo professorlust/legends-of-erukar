@@ -110,6 +110,10 @@ class Lifeform(RpgEntity):
         if attack_state.weapon:
             attack_state.weapon.on_apply_damage(attack_state, command)
 
+    def get_detection_pair(self):
+        '''Retrieve a rolled Acuity and Sense for detection'''
+        return [math.floor(random.uniform(*self.stat_random_range(x))) for x in ('acuity', 'sense')]
+
     def minimum_sense_to_detect(self):
         condition_mod = sum([x.modify_sense_to_detect() for x in self.conditions])
         return 1 + condition_mod

@@ -15,12 +15,13 @@ class Open(ActionCommand):
         failure = self.check_for_arguments()
         if failure: return failure
 
+        self.dirty(self.player.lifeform())
         # If the payload was NESW, treat this as a door
         if isinstance(self.target, erukar.engine.model.Direction):
             return self.handle_door()
 
         # Otherwise we need to find in the room
-        self.append_result(self.sender_uid, self.target.on_open(self.player))
+        self.append_result(self.sender_uid, self.target.on_open(self.player.lifeform()))
         return self.succeed()
 
     def handle_door(self):
@@ -40,5 +41,5 @@ class Open(ActionCommand):
             # There is no door to open
             return self.fail(Open.nesw_no_door)
 
-        self.append_result(self.sender_uid, door.on_open(self.player))
+        self.append_result(self.sender_uid, door.on_open(self.player.lifeform()))
         return self.succeed()

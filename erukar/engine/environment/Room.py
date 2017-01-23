@@ -95,12 +95,18 @@ class Room(Containable):
                 yield '{:8s} {}'.format(d.name, self.connections[d].peek(d, lifeform, acuity, sense))
 
     def threat_descriptions(self, lifeform, acuity, sense):
-        for content in self.contents:
-            if not content.is_detected(acuity, sense):
-                continue
+        for content in self.detected_lifeforms(lifeform, acuity, sense):
+            yield content.describe_as_threat(lifeform, acuity, sense)
 
+    def detected_contents(self, lifeform, acuity, sense):
+        for content in self.contents:
+            if content.is_detected(acuity, sense):
+                yield content
+
+    def detected_lifeforms(self, lifeform, acuity, sense):
+        for content in self.detected_contents(lifeform, acuity, sense):
             if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
-                yield content.describe_as_threat(lifeform, acuity, sense)
+                yield content
 
     def on_start(self, *_):
         '''Called when the Instance has decorated and is actually starting'''
@@ -110,7 +116,8 @@ class Room(Containable):
     def peek(self, lifeform, acuity, sense):
         '''Used for peeking NESW during on_inspect'''
         light_mod = self.calculate_luminosity()
-        if light_mod <= 0.01: 
+        acuity *= self.calculate_luminosity()
+        if acuity <= 0 or sense <= 0:
             return 'The chamber in this direction is completely dark.'
         desc = [x for x in self.threat_descriptions(lifeform, acuity, sense) if x is not '']
         return Describable.on_glance(self, lifeform, acuity, sense) + ' ' + Describable.erjoin(desc)

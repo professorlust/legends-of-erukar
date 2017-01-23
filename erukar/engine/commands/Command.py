@@ -239,21 +239,20 @@ class Command:
         # If we have the parameter and it's not nully, assert that we're done
         if hasattr(self, 'target') and self.target: return
 
-        if not opt_payload:
+        if not opt_payload or opt_payload == 'self':
             self.target = self.find_player().lifeform()
             return
 
         direction = self.determine_direction(opt_payload.lower())
         if direction:
-            self.target = direction
-            return
-
-        if opt_payload == 'self':
-            self.target = self.player.lifeform()
-            return
+            return self.resolve_directional_target(direction)
 
         failure_object = self.find_in_target(opt_payload, self.room, 'target')
         return failure_object
+
+    def resolve_directional_target(self, direction):
+        '''Oftentimes, we just need the direction; advanced cases should be overridden'''
+        self.target = direction
 
     def resolve_item(self, opt_payload=''):
         # If this is on the context, grab it and return

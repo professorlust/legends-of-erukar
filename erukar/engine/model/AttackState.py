@@ -11,7 +11,6 @@ class AttackState:
         self.attack_roll = 0
         self.damage_result = None
 
-        self.is_projectile = False
         self.projectile_depth = 0
         self.attack_direction = None
         self.ammunition = None
@@ -20,7 +19,7 @@ class AttackState:
         self.weapon = UnarmedStrike()
 
     def is_projectile(self):
-        return not self.weapon or self.weapon.AttackRange > 0 and self.attack_direction is not None
+        return self.weapon_exists() and self.weapon.AttackRange > 0
 
     def origin(self):
         return self.attacker.current_room
@@ -31,7 +30,16 @@ class AttackState:
         self.weapon = UnarmedStrike() if (self.weapon is None and use_unarmed_if_none) else self.weapon
 
     def is_valid(self):
-        return (self.weapon is not None and isinstance(self.weapon, Weapon)) and ((self.is_projectile and self.ammunition is not None) or (not self.is_projectile and self.target.current_room == self.attacker.current_room))
+        return self.weapon_exists() and (self.is_ranged_valid() or self.is_melee_valid())
+
+    def weapon_exists(self):
+        return self.weapon is not None and isinstance(self.weapon, Weapon)
+
+    def is_ranged_valid(self):
+        return self.is_projectile and (self.ammunition is not None or not self.weapon.RequiresAmmo)
+
+    def is_melee_valid(self):
+        return not self.is_projectile and self.target.current_room == self.attacker.current_room
 
     def calculate_attack(self):
         self.attack_roll = self.attacker.calculate_attack_roll(self.efficiency, self.target)

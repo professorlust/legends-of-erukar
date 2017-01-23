@@ -26,11 +26,12 @@ erukar.game.modifiers.inventory.random.Freezing().apply_to(sword)
 erukar.game.modifiers.inventory.random.UndeadBane().apply_to(sword)
 entry.add(sword)
 
-first_room = Room(dungeon, (2,0), dimensions=(2,2), shape=erukar.engine.environment.roomshapes.SouthEastCorner)
+'''First Room'''
+first_room = Room(dungeon, (2,0), dimensions=(2,2))
 first_room.Glances = [
-    Observation(acuity = 0, sense=0, result='This room has a sharp ninety degree corner.')
+    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
 ]
-first_room.SelfDescription = 'The stone hallway stops abruptly in the direction ahead of you and then quickly shoots off in a ninety degree angle.'
+first_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
 
 entry.coestablish_connection(Direction.East, first_room)
 
@@ -40,3 +41,18 @@ undead.link_to_room(first_room)
 t = Torch()
 t.fuel = 100
 first_room.add(t)
+
+'''Second Room'''
+second_room = Room(dungeon, (4,0), dimensions=(1,1))
+second_room.Glances = [
+    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
+]
+second_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
+
+first_room.coestablish_connection(Direction.East, second_room)
+
+undead = erukar.game.enemies.undead.Skeleton()
+undead.link_to_room(second_room)
+
+dummy_room = Room(dungeon, (5,0), dimensions=(1,1))
+second_room.coestablish_connection(Direction.East, dummy_room, InstanceTransition('Instance transition door', 'BarlenTownCenter'))

@@ -5,6 +5,7 @@ from .Dungeon import Dungeon
 from .Decoration import Decoration
 from erukar.engine.model.EnvironmentPiece import EnvironmentPiece
 from .Door import Door
+from .InstanceTransition import InstanceTransition
 from .Passage import Passage
 from .Room import Room
 from .Trap import Trap
@@ -19,6 +20,7 @@ __all__ = [
     "Corpse",
     "Decoration",
     "Door",
+    "InstanceTransition",
     "Dungeon",
     "EnvironmentPiece",
     "Lock",

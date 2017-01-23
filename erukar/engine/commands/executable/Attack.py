@@ -5,6 +5,7 @@ from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Damage import Damage
 from erukar.engine.model.AttackState import AttackState
 from erukar.engine.formatters.PhysicalDamageFormatter import PhysicalDamageFormatter
+from erukar.engine.calculators.Navigator import Navigator
 import erukar, random, math
 
 class Attack(ActionCommand):
@@ -21,7 +22,7 @@ class Attack(ActionCommand):
 
         failure = self.check_for_arguments()
         if failure: return failure
-        
+
         return self.do_attack()
 
     def build_attack_state(self):
@@ -50,35 +51,6 @@ class Attack(ActionCommand):
         # Succeed if we have results, otherwise fail with the UnableToAttackInRoom
         return self.succeed_if_any_results(msg_if_failure=self.UnableToAttackInRoom)
 
-    def attack_in_direction(self, room, weapon, distance, direction, penalty=1.0):
-        ''' Attack in direction; logic for what gets hit (door, room, or wall) goes here'''
-        adj_room = room.get_in_direction(direction)
-
-        # Are we going to hit a door?
-        if adj_room.door is not None \
-            and isinstance(adj_room.door, erukar.engine.environment.Door):
-            if adj_room.door.status is not Door.Open:
-                return self.append_result(self.sender_uid, 'You have attacked a door.')
-
-        # are we actually able to hit the room in this direction (and does it exist?)
-        if adj_room.room is not None:
-            return self.attack_into_room(adj_room.room, weapon, distance+1, direction, penalty)
-        return self.append_result(self.sender_uid, 'You attack a wall. Are you happy now?')
-
-    def attack_into_room(self, room, weapon, distance, direction, penalty=1.0):
-        '''Check to see if there's a target in this room to attack; attack if so'''
-        if weapon.AttackRange >= distance:
-            targets = [c for c in room.contents if isinstance(c, erukar.engine.lifeforms.Lifeform)]
-            if len(targets) < 1:
-                return self.attack_in_direction(room, weapon, distance, direction)
-
-            # Actually Attack
-            self.target = random.choice(targets)
-            total_penalty = weapon.RangePenalty * distance * penalty
-            self.perform_attack(weapon, total_penalty)
-
-        return self.fail('Your weapon does not have the range to attack {}.'.format(direction.name))
-
     def perform_attack(self, attack_state):
         '''Used to actually resolve an attack roll made between a character and target'''
         attack_state.calculate_attack()
@@ -92,3 +64,24 @@ class Attack(ActionCommand):
 
         attack_state.on_apply_damage(self)
         PhysicalDamageFormatter.process_and_append_damage_result(self, attack_state)
+
+    def resolve_directional_target(self, direction):
+        '''Find all visible targets in a line extending to the {direction}'''
+        acuity, sense = self.character.get_detection_pair()
+        targets = {}
+        room = self.character.current_room
+        passage = room.get_in_direction(direction)
+
+        while passage.can_see_through() and (acuity > 0 or sense > 0):
+            acuity -= 10
+            sense -= 10
+            room = passage.room
+
+            for target in room.detected_lifeforms(self.character, acuity, sense):
+                distance = Navigator.distance(room.coordinates, self.character.current_room.coordinates)
+                target_string = '{} ({} feet to the {})'.format(target.alias(), int(distance*5), direction.name)
+                targets[target_string] = target
+            passage = room.get_in_direction(direction)
+
+        return self.find_in_dictionary('', targets, 'target')
+
