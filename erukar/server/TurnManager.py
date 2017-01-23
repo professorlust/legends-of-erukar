@@ -3,7 +3,6 @@ from erukar.engine.model.Manager import Manager
 
 class TurnManager(Manager):
     MaximumTurnCount = 100
-    TurnWaitTime = 15 # sec
     TickCount = 50
 
     def __init__(self):
@@ -17,6 +16,10 @@ class TurnManager(Manager):
         super().subscribe(player)
         self.turn_order = self.turn_order_generator(self.current_turn_count)
         self.most_recent_active_commands[player] = None
+
+    def unsubscribe(self, player):
+        super().unsubscribe(player)
+        self.turn_order = self.turn_order_generator(self.current_turn_count)
 
     def received_command(self, player, command):
         if isinstance(command, erukar.engine.model.ActionCommand):

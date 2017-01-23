@@ -18,24 +18,25 @@ class Instance(Manager):
         self.dungeon = None
         self.command_contexts = {}
 
-    def instance_running(self, connector, action_commands, non_action_commands, joins, responses):
+    def instance_running(self, connector, action_commands, non_action_commands, joins, sys_messages, responses):
         '''Entry point for the Initialization of the Instance by the Shard'''
         # Activate and initialize timers
         self.connector = connector
-        self.initialize_instance(action_commands, non_action_commands, joins, responses)
+        self.initialize_instance(action_commands, non_action_commands, joins, sys_messages, responses)
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
         self.active_player = None
 
         self.check_for_player_input()
 
-    def initialize_instance(self, action_commands, non_action_commands, joins, responses):
+    def initialize_instance(self, action_commands, non_action_commands, joins, sys_messages, responses):
         '''Turn on players and generate a dungeon'''
         self.turn_manager = TurnManager()
         self.data = DataAccess()
         self.action_commands = action_commands
         self.non_action_commands = non_action_commands
         self.joins = joins
+        self.sys_messages = sys_messages
         self.responses = responses
         self.subscribe_enemies()
         self.has_had_players = False
@@ -58,9 +59,16 @@ class Instance(Manager):
             room.contents = [c for c in room.contents if not (isinstance(type(c), erukar.engine.lifeforms.Enemy) and c.requesting_persisted)]
 
     def subscribe_enemy(self, enemy):
+        enemy.subscribe(self)
         self.command_contexts[enemy.uid] = None
         self.turn_manager.subscribe(enemy)
         self.data.players.append(enemy)
+
+    def unsubscribe(self, player):
+        self.turn_manager.unsubscribe(player)
+        self.data.players.remove(player)
+        super().unsubscribe(player)
+        self.sys_messages.append(player.uid)
 
     def try_to_get_persistent_enemy(self, enemy):
         possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.data.find_player(e.uid)]
@@ -210,7 +218,13 @@ class Instance(Manager):
             # Set context for player
             self.command_contexts[cmd.sender_uid] = result
 
+        self.check_for_transitions(result)
         return result
+
+    def check_for_transitions(self, result):
+        for player in self.data.players:
+            if player.lifeform().instance != self.identifier:
+                self.unsubscribe(player)
 
     def append_result_responses(self, result):
         for uid in result.results:

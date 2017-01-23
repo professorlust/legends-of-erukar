@@ -134,6 +134,7 @@ class Shard(Manager):
               info.action_commands,
               info.non_action_commands,
               info.joins,
+              info.sys_messages,
               info.responses,
         )
         dungeon_thread = threading.Thread(target=info.instance.instance_running,args=args)
@@ -161,3 +162,8 @@ class Shard(Manager):
         if instance is None:
             return self.create_random_dungeon(player)
         return instance
+
+    def transfer_instances(self, uid):
+        playernode = self.data.get_player({'uid': uid})
+        character = self.get_character_from_playernode(playernode)
+        self.start_playing(uid, character)

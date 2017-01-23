@@ -26,11 +26,11 @@ class RandomDungeonInstance(Instance):
             generation_parameters = GenerationProfile.random()
         self.generation_parameters = generation_parameters
 
-    def initialize_instance(self, action_commands, non_action_commands, joins, responses):
+    def initialize_instance(self, action_commands, non_action_commands, joins, sys_messages, responses):
         d = DungeonGenerator()
         self.dungeon = d.generate()
         self.decorate()
-        super().initialize_instance(action_commands, non_action_commands, joins, responses)
+        super().initialize_instance(action_commands, non_action_commands, joins, sys_messages, responses)
 
     def decorate(self):
         decorators = list(self.decorators())

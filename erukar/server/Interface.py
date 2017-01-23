@@ -70,6 +70,13 @@ class Interface:
             messages.extend(instance.get_messages_for(uid))
         return messages
 
+    def check_for_transfer(self, uid, instance):
+        '''checks to see if the uid is marked to leave an instance'''
+        if uid in instance.sys_messages:
+            instance.sys_messages.pop()
+            instance.remove_player(uid)
+            self.shard.transfer_instances(uid)
+
     def append_result(self, uid, response):
         if uid not in self.messages:
             self.messages[uid] = [response]

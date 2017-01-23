@@ -33,7 +33,7 @@ first_room.Glances = [
 ]
 first_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
 
-entry.coestablish_connection(Direction.East, first_room)
+#entry.coestablish_connection(Direction.East, first_room)
 
 undead = erukar.game.enemies.undead.Skeleton()
 undead.link_to_room(first_room)
@@ -55,4 +55,4 @@ undead = erukar.game.enemies.undead.Skeleton()
 undead.link_to_room(second_room)
 
 dummy_room = Room(dungeon, (5,0), dimensions=(1,1))
-second_room.coestablish_connection(Direction.East, dummy_room, InstanceTransition('Instance transition door', 'BarlenTownCenter'))
+entry.coestablish_connection(Direction.East, dummy_room, InstanceTransition('Instance transition door', 'BarlenTownCenter'))
