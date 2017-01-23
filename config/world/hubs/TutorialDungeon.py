@@ -23,6 +23,7 @@ entry.Glances = [
 sword = Shop.create(Sword, erukar.game.modifiers.material.Steel)
 erukar.game.modifiers.inventory.random.Accurate().apply_to(sword)
 erukar.game.modifiers.inventory.random.Freezing().apply_to(sword)
+erukar.game.modifiers.inventory.random.UndeadBane().apply_to(sword)
 entry.add(sword)
 
 first_room = Room(dungeon, (2,0), dimensions=(2,2), shape=erukar.engine.environment.roomshapes.SouthEastCorner)

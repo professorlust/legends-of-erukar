@@ -90,5 +90,5 @@ class Attack(ActionCommand):
         self.dirty(self.character)
         self.dirty(self.target)
 
-        attack_state.on_apply_damage()
+        attack_state.on_apply_damage(self)
         PhysicalDamageFormatter.process_and_append_damage_result(self, attack_state)

@@ -26,3 +26,15 @@ class DamageResult:
         self.caused_death = self.victim.has_condition(erukar.engine.conditions.Dead)
         if self.caused_death and not self.is_trap:
             self.xp_value = self.victim.calculate_xp_worth()
+
+    def get_damage_total(self):
+        return sum([report.amount_dealt for report in self.reports])
+
+    def merge(self, other):
+        self.reports.extend(other.reports)
+        self.caused_incapacitated = self.caused_incapacitated or other.caused_incapacitated
+        self.caused_death = self.caused_death or other.caused_death
+        self.stopped_by_deflection = self.stopped_by_deflection or other.stopped_by_deflection
+        self.stopped_by_mitigation = self.stopped_by_mitigation or other.stopped_by_mitigation
+
+        self.xp_value += other.xp_value

@@ -239,6 +239,10 @@ class Command:
         # If we have the parameter and it's not nully, assert that we're done
         if hasattr(self, 'target') and self.target: return
 
+        if not opt_payload:
+            self.target = self.find_player().lifeform()
+            return
+
         direction = self.determine_direction(opt_payload.lower())
         if direction:
             self.target = direction

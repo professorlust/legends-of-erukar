@@ -1,9 +1,9 @@
-from erukar.engine.lifeforms.Enemy import Enemy
+from erukar.game.enemies.templates.Undead import Undead
 from erukar.game.inventory.weapons.standard.Sword import Sword
 from erukar.game.inventory.armor.shields.Buckler import Buckler
 import erukar
 
-class Skeleton(Enemy):
+class Skeleton(Undead):
     BaseMitigations = {
         'bludgeoning': (-0.25, 0),
         'piercing': (0.2, 0),
@@ -35,4 +35,3 @@ class Skeleton(Enemy):
         self.inventory = [s, b]
         self.left = s
         self.right = b
-        self.conditions.append(erukar.game.conditions.magical.Undead(self))

@@ -99,7 +99,6 @@ class Instance(Manager):
             self.connector.update_character(character)
 
         playernode.character = character
-        character.conditions.append(erukar.game.conditions.magical.Ethereal(character))
         character.spells = [
             erukar.game.magic.predefined.FlameBreath(),
             erukar.game.magic.predefined.Heal(),

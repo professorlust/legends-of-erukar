@@ -40,7 +40,10 @@ class AttackState:
     def attack_successful(self):
         return self.attack_roll >= self.target.evasion()
 
-    def on_apply_damage(self):
+    def on_apply_damage(self, command):
         self.damage_result = self.target.apply_damage(self.weapon.damages, self.attacker, self.efficiency)
-        self.attacker.on_apply_damage(self.damage_result, self.weapon)
+        self.attacker.on_apply_damage(self, command)
 
+    def add_extra_damage(self, damage):
+        new_result = self.target.apply_damage(damage, self.attacker)
+        self.damage_result.merge(new_result)

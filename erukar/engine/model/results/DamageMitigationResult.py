@@ -1,8 +1,8 @@
 class DamageMitigationResult:
-    def __init__(self, damage):
+    def __init__(self, damage=None):
         self.attacker_uid = ''
         self.receiver_uid = ''
-        self.damage_type = damage.name
+        self.damage_type = '' if not damage else damage.name
         # damage values
         self.raw = 0
         self.amount_deflected = 0

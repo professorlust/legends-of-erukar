@@ -1,7 +1,6 @@
 from .Accurate import Accurate
 from .Acid import Acid
 from .AcuityEnhancement import AcuityEnhancement
-from .Bane import Bane
 from .Blessed import Blessed
 from .Broken import Broken
 from .Cursed import Cursed
@@ -42,6 +41,7 @@ from .Sharp import Sharp
 from .Small import Small
 from .StrengthEnhancement import StrengthEnhancement
 from .Swift import Swift
+from .UndeadBane import UndeadBane
 from .Unholy import Unholy
 from .Unwieldy import Unwieldy
 from .VitalityEnhancement import VitalityEnhancement
@@ -50,7 +50,6 @@ __all__ = [
     "Accurate", 
     "Acid", 
     "AcuityEnhancement", 
-    "Bane", 
     "Blessed", 
     "Broken", 
     "Cursed", 
@@ -91,6 +90,7 @@ __all__ = [
     "Small", 
     "StrengthEnhancement", 
     "Swift", 
+    "UndeadBane", 
     "Unholy", 
     "Unwieldy", 
     "VitalityEnhancement"
