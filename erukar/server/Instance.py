@@ -39,24 +39,34 @@ class Instance(Manager):
         self.sys_messages = sys_messages
         self.responses = responses
         self.subscribe_enemies()
-        self.has_had_players = False
         if self.dungeon:
             for room in self.dungeon.rooms:
                 room.on_start()
 
+    def any_connected_players(self):
+        ''''''
+        res = any([isinstance(x, PlayerNode) for x in self.data.players])
+        return res
+
     def subscribe_enemies(self):
         for room in self.dungeon.rooms:
             for item in room.contents:
-                if issubclass(type(item), erukar.engine.lifeforms.Enemy):
-                    if item.requesting_persisted:
-                        p_enemy = self.try_to_get_persistent_enemy(item)
-                        if p_enemy:
-                            p_enemy.link_to_room(room)
-                            p_enemy.is_transient = False
-                            self.subscribe_enemy(p_enemy)
-                        continue
-                    self.subscribe_enemy(item)
+                self.handle_enemy_persistence(room, item)
             room.contents = [c for c in room.contents if not (isinstance(type(c), erukar.engine.lifeforms.Enemy) and c.requesting_persisted)]
+    def handle_enemy_persistence(self, room, enemy):
+        '''Get persisted enemies where available'''
+        if not issubclass(type(enemy), erukar.engine.lifeforms.Enemy):
+            return
+
+        if enemy.requesting_persisted:
+            persisted_enemy = self.try_to_get_persistent_enemy(item)
+            if persisted_enemy:
+                persisted_enemy.link_to_room(room)
+                persisted_enemy.is_transient = False
+                self.subscribe_enemy(persisted_enemy)
+            return
+
+        self.subscribe_enemy(enemy)
 
     def subscribe_enemy(self, enemy):
         enemy.subscribe(self)
@@ -78,6 +88,7 @@ class Instance(Manager):
         return self.connector.load_creature(uid)
 
     def subscribe(self, uid):
+        prejoin  = self.any_connected_players()
         player = self.launch_player(uid)
         super().subscribe(player)
         room = self.dungeon.rooms[0]
@@ -91,6 +102,8 @@ class Instance(Manager):
                 equipped.on_equip(player.character)
         self.turn_manager.subscribe(player)
         self.command_contexts[uid] = None
+        if not prejoin:
+            self.get_next_player()
 
     def launch_player(self, uid):
         # Create the base object
@@ -116,18 +129,11 @@ class Instance(Manager):
         return playernode
 
     def check_for_player_input(self):
-        if any(self.joins):
-            uid = self.joins.pop()
-            self.subscribe(uid)
-            if not self.has_had_players:
-                self.get_next_player()
-                self.has_had_players = True
-
         if any(self.non_action_commands):
             cmd = self.non_action_commands.pop()
             self.execute_command(cmd)
 
-        if self.has_had_players:
+        if self.any_connected_players():
             self.execute_player_turn()
 
         self.timer.cancel()

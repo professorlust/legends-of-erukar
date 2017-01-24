@@ -53,7 +53,7 @@ class Shard(Manager):
 
     def start_playing(self, uid, character):
         '''Callback from character creation or subscription'''
-        self.interface.append_result(uid, 'starting gameplay')
+        self.interface.append_result(uid, 'loading')
         self.get_active_playernode(uid).status = PlayerNode.Playing
         info = self.get_instance_for(character)
         info.player_join(uid)

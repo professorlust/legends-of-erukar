@@ -68,6 +68,7 @@ class Interface:
         messages = self.messages.pop(uid, [])
         if instance is not None:
             messages.extend(instance.get_messages_for(uid))
+            self.check_for_transfer(uid, instance)
         return messages
 
     def check_for_transfer(self, uid, instance):

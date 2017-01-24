@@ -32,7 +32,7 @@ class InstanceInfo:
 
     def player_join(self, uid):
         self.player_list.append(uid)
-        self.joins.append(uid)
+        self.instance.subscribe(uid)
 
     def remove_player(self, uid):
         self.player_list[:] = [u for u in self.player_list if u != uid]

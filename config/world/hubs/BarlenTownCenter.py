@@ -19,6 +19,9 @@ t = Torch()
 t.fuel = 100
 gh_antechamber.add(t)
 
+dummy_room = Room(dungeon, (1,0), dimensions=(1,1))
+gh_antechamber.coestablish_connection(Direction.East, dummy_room, InstanceTransition('Instance transition door', 'TutorialDungeon'))
+
 m = Sword()
 erukar.game.modifiers.material.Abyssium().apply_to(m)
 erukar.game.modifiers.random.Flaming().apply_to(m)

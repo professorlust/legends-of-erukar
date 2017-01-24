@@ -3,7 +3,5 @@
 def configure(shard):
     shard.StartingOptions = [
         'TutorialDungeon',
-        'Altrael',
         'BarlenTownCenter',
-        'OridelMaintown'
     ]
