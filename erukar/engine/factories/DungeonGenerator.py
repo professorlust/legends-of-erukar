@@ -18,10 +18,15 @@ class DungeonGenerator(FactoryBase):
         self.hallway_bias = 0.2
         self.avg_rooms = 15
 
-    def generate(self):
+    def generate(self, previous_instance_identifier=''):
         self.dungeon = Dungeon()
         num_rooms = math.floor(np.random.gamma(self.avg_rooms, 1.0)) + Dungeon.minimum_rooms
         self.create_rooms(num_rooms)
+
+        if previous_instance_identifier:
+            origin_wall = random.choice(list(self.dungeon.rooms[0].wall_directions()))
+            dungeon_exit = HubInstanceTransition('Dungeon Entrance/Exit to {}'.format(previous_instance_identifier), previous_instance_identifier, (0,0))
+            self.dungeon.rooms[0].add_door(origin_wall, dungeon_exit)
 
         return self.dungeon
 

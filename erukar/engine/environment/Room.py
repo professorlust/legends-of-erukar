@@ -179,12 +179,9 @@ class Room(Containable):
         self.connect_room(direction, other_room, door)
         other_room.connect_room(self.invert_direction(direction), self, door)
 
-    def add_door(self, direction, door):
+    def add_door(self, direction, door, room=None):
         '''Adds a door and sets it up with the next room appropriately'''
-        self.connections[direction].door = door
-        self.contents.append(door)
-        other_dir = self.invert_direction(direction)
-        self.connections[direction].room.connections[other_dir].door = door
+        self.connections[direction] = Passage(wall=Surface(), room=room, door=door)
 
     def adjacent_rooms(self):
         '''Generator which yields rooms we can see into from this one'''

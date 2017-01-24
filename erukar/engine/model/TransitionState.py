@@ -6,6 +6,7 @@ class TransitionState:
         self.coordinates = (0,0)
         self.is_random = False
         self.generation_properties = None
+        self.previous_identifier = ''
 
     def random(generation_properties):
         f = TransitionState()

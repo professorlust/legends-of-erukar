@@ -32,7 +32,7 @@ class Door(RpgEntity):
 
     def peek(self, direction, room, lifeform, acu, sen):
         '''Does a single look through'''
-        if self.status is Door.Open:
+        if self.status is Door.Open and room is not None:
             return ' '.join([self.on_inspect(direction), room.peek(lifeform, acu, sen)])
         return self.on_inspect(direction)
 

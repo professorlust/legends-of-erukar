@@ -42,7 +42,7 @@ class Navigator:
         travelled = set({cur.coordinates})
         while True:
             next_room = next((cur.connections[x].room for x in cur.connections \
-                              if cur.connections[x].can_see_through() \
+                              if cur.connections[x].can_see_through() and cur.connections[x].room is not None \
                               and cur.connections[x].room.coordinates not in travelled\
                               and cur.connections[x].room.coordinates in paths), None)
             if next_room is None or cur is finish:

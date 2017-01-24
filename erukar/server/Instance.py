@@ -79,6 +79,7 @@ class Instance(Manager):
         self.turn_manager.unsubscribe(player)
         self.data.players.remove(player)
         super().unsubscribe(player)
+        player.lifeform().transition_properties.previous_identifier = self.identifier
         self.sys_messages[player.uid] = player.lifeform().transition_properties 
 
     def try_to_get_persistent_enemy(self, enemy):
