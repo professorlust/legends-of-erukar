@@ -17,7 +17,3 @@ class DirtFloor(RoomModifier):
         args = self.get_arguments()
         room.floor = Surface("")
         room.floor.BriefDescription = self.depth[0]
-        # Don't worry about setting vision or sensory results because detailed should always be used
-        room.floor.set_vision_results("","", (1, 35))
-        room.floor.set_sensory_results("","", (0,0))
-        room.floor.set_detailed_results(self.depth[1], self.depth[2])

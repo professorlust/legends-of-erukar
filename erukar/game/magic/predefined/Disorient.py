@@ -6,6 +6,7 @@ class Disorient(Spell):
     TheyCastSpell = '{alias|caster} speaks some words in an ancient language, then closes his eyes.'
 
     def __init__(self):
-        super().__init__('Disorient',[erukar.game.magic.effects.InflictDisorient()])
-
-
+        super().__init__('Disorient',[
+            erukar.game.magic.effects.ConditionBlinded(),
+            erukar.game.magic.effects.InflictCondition()
+        ])

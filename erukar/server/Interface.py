@@ -74,9 +74,10 @@ class Interface:
     def check_for_transfer(self, uid, instance):
         '''checks to see if the uid is marked to leave an instance'''
         if uid in instance.sys_messages:
-            instance.sys_messages.pop()
+            parameters = instance.sys_messages.pop(uid, [])
+            print(parameters)
             instance.remove_player(uid)
-            self.shard.transfer_instances(uid)
+            self.shard.transfer_instances(uid, parameters)
 
     def append_result(self, uid, response):
         if uid not in self.messages:

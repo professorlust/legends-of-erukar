@@ -174,7 +174,7 @@ class Lifeform(RpgEntity):
     def calculate_necessary_xp(self):
         return self.calculate_xp_worth()
 
-    def award_xp(self, xp, target=None):
+    def award_xp(self, xp, cmd):
         '''Award a certain amount of XP to the player and level if the threshold is met'''
         output_strings = ['{} has gained {} xp.'.format(self.alias(), xp)]
         self.experience += xp
@@ -187,7 +187,8 @@ class Lifeform(RpgEntity):
             self.health = int(math.ceil(self.max_health * hp_proportion))
             self.stat_points += 1
             output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
-        return output_strings
+    
+        cmd.append_result(self.uid, '\n'.join(output_strings))
 
     def take_damage(self, damage_amount, instigator=None):
         '''Take damage and return amount of XP to award instigator'''

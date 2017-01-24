@@ -33,11 +33,6 @@ class Cabinet(RoomModifier):
 
         # Add Descriptions
         deco.BriefDescription = "a cabinet to the {location}"
-        deco.set_vision_results('You see a cabinet to the {location} of the room.',\
-                                'There is a {material} cabinet on the {location} side of the room. {anomaly}', (1, vision_difficulty))
-        deco.set_sensory_results('','', (0,0))
-        deco.set_detailed_results('You see a cabinet to the {location} of the room.',\
-                                'There is a {material} cabinet on the {location} side of the room. {anomaly}')
         room.add(deco)
 
     @staticmethod

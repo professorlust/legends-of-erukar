@@ -10,6 +10,7 @@ dungeon.name = "Tutorial Dungeon"
 dungeon.sovereignty = 'Iuria'
 dungeon.region = "Lesser Iurian Razorwoods"
 dungeon.description = "An introduction to Legends of Erukar, this dungeon is regularly used by an Adventuring Guild known as \"Consultants and Dragons\" centered in Barlen, Iuria. The dungeon itself is located a half day's journey north from Barlen on the Way of Steel inside of the Lesser Iurian Razorwoods."
+woodlands_properties = GenerationProfile.Woodlands()
 
 # Entry Room
 entry = Room(dungeon, (0,0), dimensions = (2,1))
@@ -55,4 +56,4 @@ undead = erukar.game.enemies.undead.Skeleton()
 undead.link_to_room(second_room)
 
 dummy_room = Room(dungeon, (5,0), dimensions=(1,1))
-entry.coestablish_connection(Direction.East, dummy_room, InstanceTransition('Instance transition door', 'BarlenTownCenter'))
+entry.coestablish_connection(Direction.East, dummy_room, RandomInstanceTransition('Instance transition door', woodlands_properties))

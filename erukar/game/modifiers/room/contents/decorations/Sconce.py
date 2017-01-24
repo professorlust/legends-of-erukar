@@ -26,10 +26,6 @@ class Sconce(RoomModifier):
         deco.torch_type = torch
         deco.location = random.choice([x.name for x in room.connections])
         deco.BriefDescription = 'a sconce on the {location} wall'
-        deco.set_vision_results('You see a {torch} on the {location} wall.',
-                                'You see a {torch} inside of a sconce on the {location} wall.', (5, 8))
-        deco.set_sensory_results('', sensory_result, (sense_difficulty, sense_difficulty))
-        deco.set_detailed_results(sensory_result, sensory_result)
         add_torch_method(room)
         room.add(deco)
 

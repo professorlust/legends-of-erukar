@@ -28,11 +28,6 @@ class Table(RoomModifier):
         deco.material = self.material
         deco.BriefDescription = "a table to the {location}"
         deco.location = self.random_wall(room)
-        deco.set_vision_results('You see a table to the {location} of the room.',\
-                                'There is a {material} table on the {location} side of the room.', (1, 30))
-        deco.set_sensory_results('','', (0,0))
-        deco.set_detailed_results('You see a table to the {location} of the room.',\
-                                'There is a {material} table on the {location} side of the room.')
         room.add(deco)
 
     def create_table_top(self, room):
@@ -41,10 +36,5 @@ class Table(RoomModifier):
         c = erukar.game.inventory.consumables.Candle()
         top.BriefDescription = "The table top is completely bare."
         top.ContentDescription = "On top of the table, you find {}."
-        top.set_vision_results('top of the table',\
-                                'Top of the table', (1, 30))
-        top.set_sensory_results('','', (0,0))
-        top.set_detailed_results('top of the table',\
-                                'Top of the table,')
         top.add(c)
         room.add(top)

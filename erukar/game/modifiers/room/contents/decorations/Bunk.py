@@ -33,9 +33,4 @@ class Bunk(RoomModifier):
         smell_difficulty, deco.bed_smell = random.choice(self.bed_smells)
         deco.location = self.random_wall(room)
         deco.BriefDescription = "a bunk on the {location} side of the room"
-        deco.set_vision_results('You see a bunk on the {location} side of the room.',\
-                                'You see a bunk on the {location} side of the room. The bed is {bed_state}.', (1, 5))
-        deco.set_sensory_results('','You smell {bed_smells} from a bunk to the {location}.', (2, smell_difficulty))
-        deco.set_detailed_results('There is a bunk {bed_state} to the {location} which has some sort of smell to it.',\
-                                  'You can smell {bed_smell} originating from a {bed_state} bunk to the {location} of the room.')
         room.add(deco)

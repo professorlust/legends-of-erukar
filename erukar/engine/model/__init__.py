@@ -1,4 +1,5 @@
 from .AttackState import AttackState
+from .TransitionState import TransitionState
 from .Condition import Condition
 from .Containable import Containable
 from .Damage import Damage
@@ -38,4 +39,5 @@ __all__ = [
     "Spell",
     "SpellEffect",
     "Stance",
+    "TransitionState",
 ]

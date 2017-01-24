@@ -17,7 +17,3 @@ class GrassyFloor(RoomModifier):
     def apply_to(self, room):
         room.floor = Surface('The floor is covered in grass.')
         room.floor.BriefDescription = self.health[0]
-        # Don't worry about setting vision or sensory results because detailed should always be used
-        room.floor.set_vision_results("","", (1, 35))
-        room.floor.set_sensory_results("","", (0,0))
-        room.floor.set_detailed_results(self.health[1], self.health[2])

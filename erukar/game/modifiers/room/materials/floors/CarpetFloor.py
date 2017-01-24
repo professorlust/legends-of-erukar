@@ -46,9 +46,3 @@ class CarpetFloor(RoomModifier):
         room.floor.texture = self.texture
         room.floor.color = self.color
         room.floor.BriefDescription = "{color} carpet"
-        # Don't worry about setting vision or sensory results because detailed should always be used
-        room.floor.set_vision_results("","", (1, 35))
-        room.floor.set_sensory_results("","", (0,0))
-        room.floor.set_detailed_results(\
-                "The floor is covered in {color} carpet.",\
-                "The floor is a {texture} {color} carpet. The carpet {anomaly}.")

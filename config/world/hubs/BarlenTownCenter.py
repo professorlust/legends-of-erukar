@@ -20,7 +20,7 @@ t.fuel = 100
 gh_antechamber.add(t)
 
 dummy_room = Room(dungeon, (1,0), dimensions=(1,1))
-gh_antechamber.coestablish_connection(Direction.East, dummy_room, InstanceTransition('Instance transition door', 'TutorialDungeon'))
+gh_antechamber.coestablish_connection(Direction.East, dummy_room, HubInstanceTransition('Instance transition door', 'TutorialDungeon', (0,0)))
 
 m = Sword()
 erukar.game.modifiers.material.Abyssium().apply_to(m)

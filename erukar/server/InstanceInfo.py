@@ -24,9 +24,8 @@ class InstanceInfo:
         self.manager = Manager()
         self.non_action_commands = self.manager.list([])
         self.action_commands = self.manager.list([])
-        self.joins = self.manager.list([])
-        self.sys_messages = self.manager.list([])
         self.responses = self.manager.dict([])
+        self.sys_messages = self.manager.dict([])
         self.player_command_contexts = {}
         self.player_list = self.manager.list([])
 

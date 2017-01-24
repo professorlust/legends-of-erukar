@@ -53,9 +53,26 @@ class Shard(Manager):
 
     def start_playing(self, uid, character):
         '''Callback from character creation or subscription'''
-        self.interface.append_result(uid, 'loading')
         self.get_active_playernode(uid).status = PlayerNode.Playing
         info = self.get_instance_for(character)
+        self.move_player_to_instance(uid, info)
+
+    def move_player_to_instance(self, uid, info):
+        if info.instance.dungeon:
+            self.interface.append_result(uid, '\n'.join([
+                '-'*16,
+                'Loading {}'.format(info.instance.dungeon.name),
+                '{}, {}'.format(info.instance.dungeon.region, info.instance.dungeon.sovereignty),
+                '\n{}'.format(info.instance.dungeon.description),
+                '-'*16,
+                '\n'
+            ]))
+        else:
+            self.interface.append_result(uid, '\n'.join([
+                '-'*16,
+                'Randomizing dungeon',
+                '-'*16
+            ]))
         info.player_join(uid)
 
     def get_playernode_from_uid(self, uid):
@@ -117,11 +134,11 @@ class Shard(Manager):
         payload = ScriptPayload(self, playernode.uid, playernode, playernode.character, user_input)
         getattr(__import__(playernode.active_script), playernode.script_entry_point)(payload)
 
-    def create_random_dungeon(self, for_player):
+    def create_random_dungeon(self, for_player, generation_properties=None):
         '''
         Create a random dungeon instance based on a player's level
         '''
-        dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {'level': for_player.level})
+        dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {'level': for_player.level, 'generation_properties': generation_properties})
         self.launch_dungeon_instance(dungeon_info)
         self.instances.append(dungeon_info)
         return dungeon_info
@@ -133,7 +150,6 @@ class Shard(Manager):
         args=(self.connector_factory.create_session(),
               info.action_commands,
               info.non_action_commands,
-              info.joins,
               info.sys_messages,
               info.responses,
         )
@@ -163,7 +179,11 @@ class Shard(Manager):
             return self.create_random_dungeon(player)
         return instance
 
-    def transfer_instances(self, uid):
+    def transfer_instances(self, uid, properties):
         playernode = self.data.get_player({'uid': uid})
         character = self.get_character_from_playernode(playernode)
-        self.start_playing(uid, character)
+        if properties.is_random:
+            info = self.create_random_dungeon(character, properties.generation_properties)
+        else:
+            info = self.get_instance_for(character)
+        self.move_player_to_instance(uid, info)

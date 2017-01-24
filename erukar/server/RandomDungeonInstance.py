@@ -18,19 +18,21 @@ class RandomDungeonInstance(Instance):
         (ModuleDecorator, "structure.passages"),
         (ModuleDecorator, "phenomena")]
 
-    def __init__(self, level=-1, level_variance=0.2, generation_parameters=None):
+    def __init__(self, level=-1, level_variance=0.2, generation_properties=None):
         super().__init__()
         self.level = level if level > 0 else int(random.uniform(1, 50))
         self.level_variance = level_variance
-        if generation_parameters is None:
-            generation_parameters = GenerationProfile.random()
-        self.generation_parameters = generation_parameters
+        if generation_properties is None:
+            generation_properties = GenerationProfile.random()
+        self.generation_parameters = generation_properties
+        print(self.generation_parameters.format())
 
-    def initialize_instance(self, action_commands, non_action_commands, joins, sys_messages, responses):
+    def initialize_instance(self, action_commands, non_action_commands, sys_messages, responses):
+        super().initialize_instance(action_commands, non_action_commands, sys_messages, responses)
         d = DungeonGenerator()
         self.dungeon = d.generate()
         self.decorate()
-        super().initialize_instance(action_commands, non_action_commands, joins, sys_messages, responses)
+        self.on_start()
 
     def decorate(self):
         decorators = list(self.decorators())

@@ -13,53 +13,54 @@ class Instance(Manager):
 
     def __init__(self):
         super().__init__()
+        self.active_player = None
         self.properties = None
         self.identifier = 'n/a'
         self.dungeon = None
         self.command_contexts = {}
 
-    def instance_running(self, connector, action_commands, non_action_commands, joins, sys_messages, responses):
+    def instance_running(self, connector, action_commands, non_action_commands, sys_messages, responses):
         '''Entry point for the Initialization of the Instance by the Shard'''
         # Activate and initialize timers
         self.connector = connector
-        self.initialize_instance(action_commands, non_action_commands, joins, sys_messages, responses)
+        self.initialize_instance(action_commands, non_action_commands, sys_messages, responses)
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
-        self.active_player = None
-
         self.check_for_player_input()
 
-    def initialize_instance(self, action_commands, non_action_commands, joins, sys_messages, responses):
+    def initialize_instance(self, action_commands, non_action_commands, sys_messages, responses):
         '''Turn on players and generate a dungeon'''
         self.turn_manager = TurnManager()
         self.data = DataAccess()
         self.action_commands = action_commands
         self.non_action_commands = non_action_commands
-        self.joins = joins
         self.sys_messages = sys_messages
         self.responses = responses
-        self.subscribe_enemies()
         if self.dungeon:
-            for room in self.dungeon.rooms:
-                room.on_start()
+            self.on_start()
+
+    def on_start(self):
+        self.subscribe_enemies()
+        for room in self.dungeon.rooms:
+            room.on_start()
 
     def any_connected_players(self):
-        ''''''
-        res = any([isinstance(x, PlayerNode) for x in self.data.players])
-        return res
+        '''Check to see if there are any currently connected players'''
+        return any([isinstance(x, PlayerNode) for x in self.data.players])
 
     def subscribe_enemies(self):
         for room in self.dungeon.rooms:
             for item in room.contents:
                 self.handle_enemy_persistence(room, item)
             room.contents = [c for c in room.contents if not (isinstance(type(c), erukar.engine.lifeforms.Enemy) and c.requesting_persisted)]
+
     def handle_enemy_persistence(self, room, enemy):
         '''Get persisted enemies where available'''
         if not issubclass(type(enemy), erukar.engine.lifeforms.Enemy):
             return
 
         if enemy.requesting_persisted:
-            persisted_enemy = self.try_to_get_persistent_enemy(item)
+            persisted_enemy = self.try_to_get_persistent_enemy(enemy)
             if persisted_enemy:
                 persisted_enemy.link_to_room(room)
                 persisted_enemy.is_transient = False
@@ -78,7 +79,7 @@ class Instance(Manager):
         self.turn_manager.unsubscribe(player)
         self.data.players.remove(player)
         super().unsubscribe(player)
-        self.sys_messages.append(player.uid)
+        self.sys_messages[player.uid] = player.lifeform().transition_properties 
 
     def try_to_get_persistent_enemy(self, enemy):
         possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.data.find_player(e.uid)]
@@ -88,7 +89,7 @@ class Instance(Manager):
         return self.connector.load_creature(uid)
 
     def subscribe(self, uid):
-        prejoin  = self.any_connected_players()
+        prejoin = self.any_connected_players()
         player = self.launch_player(uid)
         super().subscribe(player)
         room = self.dungeon.rooms[0]
@@ -120,11 +121,6 @@ class Instance(Manager):
             self.connector.update_character(character)
 
         playernode.character = character
-        character.spells = [
-            erukar.game.magic.predefined.FlameBreath(),
-            erukar.game.magic.predefined.Heal(),
-            erukar.game.magic.predefined.AcidWeapon(),
-            erukar.game.magic.predefined.ShadowBurst()]
         self.data.players.append(playernode)
         return playernode
 
@@ -229,7 +225,7 @@ class Instance(Manager):
 
     def check_for_transitions(self, result):
         for player in self.data.players:
-            if player.lifeform().instance != self.identifier:
+            if hasattr(player.lifeform(), 'transition_properties') and player.lifeform().transition_properties is not None:
                 self.unsubscribe(player)
 
     def append_result_responses(self, result):
