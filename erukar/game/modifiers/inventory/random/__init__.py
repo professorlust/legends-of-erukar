@@ -1,11 +1,10 @@
 from .Accurate import Accurate
 from .Acid import Acid
-from .AcuityEnhancement import AcuityEnhancement
 from .Blessed import Blessed
+from .Blinding import Blinding
 from .Broken import Broken
 from .Cursed import Cursed
 from .Dark import Dark
-from .DexterityEnhancement import DexterityEnhancement
 from .Dull import Dull
 from .Electric import Electric
 from .Enhancement import Enhancement
@@ -19,42 +18,25 @@ from .Greater import Greater
 from .Holy import Holy
 from .Large import Large
 from .Luminous import Luminous
-from .MajorAcuityEnhancement import MajorAcuityEnhancement
-from .MajorDexterityEnhancement import MajorDexterityEnhancement
-from .MajorResolveEnhancement import MajorResolveEnhancement
-from .MajorSenseEnhancement import MajorSenseEnhancement
-from .MajorStrengthEnhancement import MajorStrengthEnhancement
-from .MajorVitalityEnhancement import MajorVitalityEnhancement
-from .MinorAcuityEnhancement import MinorAcuityEnhancement
-from .MinorDexterityEnhancement import MinorDexterityEnhancement
-from .MinorResolveEnhancement import MinorResolveEnhancement
-from .MinorSenseEnhancement import MinorSenseEnhancement
-from .MinorStrengthEnhancement import MinorStrengthEnhancement
-from .MinorVitalityEnhancement import MinorVitalityEnhancement
 from .NoModifier import NoModifier
 from .Reinforced import Reinforced
-from .ResolveEnhancement import ResolveEnhancement
 from .Rusty import Rusty
-from .SenseEnhancement import SenseEnhancement
 from .Serrated import Serrated
 from .Sharp import Sharp
 from .Small import Small
-from .StrengthEnhancement import StrengthEnhancement
 from .Swift import Swift
 from .UndeadBane import UndeadBane
 from .Unholy import Unholy
 from .Unwieldy import Unwieldy
-from .VitalityEnhancement import VitalityEnhancement
 
 __all__ = [
     "Accurate", 
     "Acid", 
-    "AcuityEnhancement", 
     "Blessed", 
+    "Blinding", 
     "Broken", 
     "Cursed", 
     "Dark", 
-    "DexterityEnhancement", 
     "Dull", 
     "Electric", 
     "Enhancement", 
@@ -68,30 +50,14 @@ __all__ = [
     "Holy", 
     "Large", 
     "Luminous", 
-    "MajorAcuityEnhancement", 
-    "MajorDexterityEnhancement", 
-    "MajorResolveEnhancement", 
-    "MajorSenseEnhancement", 
-    "MajorStrengthEnhancement", 
-    "MajorVitalityEnhancement", 
-    "MinorAcuityEnhancement", 
-    "MinorDexterityEnhancement", 
-    "MinorResolveEnhancement", 
-    "MinorSenseEnhancement", 
-    "MinorStrengthEnhancement", 
-    "MinorVitalityEnhancement", 
     "NoModifier", 
     "Reinforced", 
-    "ResolveEnhancement", 
     "Rusty", 
-    "SenseEnhancement", 
     "Serrated", 
     "Sharp", 
     "Small", 
-    "StrengthEnhancement", 
     "Swift", 
     "UndeadBane", 
     "Unholy", 
-    "Unwieldy", 
-    "VitalityEnhancement"
+    "Unwieldy"
 ]

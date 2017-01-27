@@ -7,6 +7,8 @@ class Container(Containable):
     def __init__(self, aliases):
         '''visible_in_room_description here is used for Containers like Table Tops'''
         super().__init__(aliases)
+        self.on_glance_prefix = ''
+        self.on_inspect_prefix = ''
         self.visible_in_room_description = True
         self.can_close = True
         self.contents_visible = False

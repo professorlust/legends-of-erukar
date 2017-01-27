@@ -166,7 +166,7 @@ class Room(Containable):
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
-            self.connections[direction] = Passage(wall=Surface(), room=other_room, door=door)
+            self.add_door(direction, room=other_room, door=door)
 
     def invert_direction(self, direction):
         return Direction( (direction.value + 2) % 4 )

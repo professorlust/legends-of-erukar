@@ -173,7 +173,7 @@ class Connector:
     def create_item(self, data):
         '''Create an item from an ItemSchema'''
         item = self.create_from_type(data.item_type)
-        modifiers = [self.create_from_type(m.modifier_type) for m in data.modifiers] + [self.create_from_type(data.material_type)]
+        modifiers = [self.create_modifier(m) for m in data.modifiers] + [self.create_from_type(data.material_type)]
         for mod in modifiers:
             if mod is None: continue
             mod.apply_to(item)
@@ -181,6 +181,14 @@ class Connector:
             for pattr in data.item_attributes:
                 setattr(item, pattr, data.item_attributes[pattr])
         return item
+
+    def create_modifier(self, data):
+        modifier = self.create_from_type(data.modifier_type)
+        modifier.level = data.level
+        if data.attributes is not None and len(data.attributes) > 0:
+            for pattr in data.attributes:
+                setattr(modifier, pattr, data.attributes[pattr])
+        return modifier
 
     def create_from_type(self, item_type, args=None):
         if item_type is None:

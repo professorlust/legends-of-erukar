@@ -20,8 +20,11 @@ class Modifier(Describable):
     InventoryName = '__class__'
     InventoryDescription = 'Basic inventory description for {__module__}'
 
+    ShouldRandomizeOnApply = False
+
     def __init__(self):
         super().__init__()
+        self.is_set = False
         self.target = None
         self.persistent = self.DefaultPersistence
 
@@ -30,9 +33,11 @@ class Modifier(Describable):
         if self.can_apply_to(entity):
             self.apply_to(entity)
 
-    def apply_to(self, entity):
+    def apply_to(self, entity, parameters=None):
         '''Actually does the modification; this should be overridden'''
-        pass
+        if not self.is_set and self.ShouldRandomizeOnApply:
+            self.is_set = True
+            self.randomize(parameters)
 
     def remove(self):
         '''Removes modification; this should be overridden'''

@@ -108,6 +108,8 @@ class Modifier(Base):
     modifier_type   = Column(String)
     item_id         = Column(Integer, ForeignKey('items.id'))
     item            = relationship("Item", foreign_keys=[item_id])
+    level           = Column(Integer)
+    attributes      = Column(JSON, nullable=True)
 
 
 class Effect(Base):
