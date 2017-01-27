@@ -21,6 +21,7 @@ class Modifier(Describable):
     InventoryDescription = 'Basic inventory description for {__module__}'
 
     ShouldRandomizeOnApply = False
+    PersistentAttributes = []
 
     def __init__(self):
         super().__init__()
@@ -89,3 +90,7 @@ class Modifier(Describable):
 
     def on_apply_damage(self, attack_state, command):
         pass
+
+    def persistable_attributes(self):
+        '''For use with database; getattrs all attributes defined by persistent_attr dict'''
+        return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}

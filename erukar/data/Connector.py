@@ -188,6 +188,7 @@ class Connector:
         if data.attributes is not None and len(data.attributes) > 0:
             for pattr in data.attributes:
                 setattr(modifier, pattr, data.attributes[pattr])
+        modifier.is_set = True
         return modifier
 
     def create_from_type(self, item_type, args=None):
@@ -257,13 +258,16 @@ class Connector:
         '''Create Item Schema objects from a lifeform's inventory'''
         for item in lifeform.inventory:
             if item.Persistent:
-                modifiers = [erukar.data.Schema.Modifier(modifier_type=m.__module__) for m in item.modifiers if m.persistent]
+                modifiers = [self.generate_modifier_schema(m) for m in item.modifiers if m.persistent]
                 item_attributes = item.persistable_attributes()
                 if item.material is not None:
                     material = item.material.__module__
                     yield (item, erukar.data.Schema.Item(item_type=item.__module__, material_type=material, modifiers=modifiers, item_attributes=item_attributes))
                 else:
                     yield (item, erukar.data.Schema.Item(item_type=item.__module__, modifiers=modifiers, item_attributes=item_attributes))
+
+    def generate_modifier_schema(self, mod):
+        return erukar.data.Schema.Modifier(modifier_type=mod.__module__, attributes=mod.persistable_attributes())
 
     def generate_effects(self, lifeform):
         for eff in lifeform.conditions:

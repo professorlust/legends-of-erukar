@@ -179,7 +179,7 @@ class Room(Containable):
         self.connect_room(direction, other_room, door)
         other_room.connect_room(self.invert_direction(direction), self, door)
 
-    def add_door(self, direction, door, room=None):
+    def add_door(self, direction, door=None, room=None):
         '''Adds a door and sets it up with the next room appropriately'''
         self.connections[direction] = Passage(wall=Surface(), room=room, door=door)
 
