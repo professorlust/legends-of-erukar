@@ -6,6 +6,10 @@ class Condition:
     Duration = 4
     DamageMitigations = {}
 
+    Noun = 'Condition'
+    Participle = 'Conditioning'
+    Description = 'Default Condition Description'
+
     def __init__(self, target, instigator=None):
         self.target = target
         self.instigator = instigator

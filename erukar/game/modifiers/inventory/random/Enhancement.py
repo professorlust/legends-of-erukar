@@ -7,9 +7,6 @@ class Enhancement(WeaponMod):
     Desirability = 0
     ShouldRandomizeOnApply = True
 
-    StatType = ""
-    StatEnhancement = "<bug> Enhancement"
-
     PersistentAttributes = ['enhancement_type', 'amount', 'InventoryDescription', 'InventoryName']
 
     Levels = [
@@ -23,7 +20,7 @@ class Enhancement(WeaponMod):
 
     def randomize(self, parameters=None):
         '''In the future we will determine level based on the generation parameters level and desirability''' 
-        self.level = int(random.random() * 6)
+        self.level = int(random.random() * len(self.Levels))
         self.amount = int(math.pow(2, self.level))
         self.enhancement_type = random.choice(RpgEntity.AttributeTypes)
         self.InventoryName = '{} {} Enhancement'.format(self.Levels[self.level], self.enhancement_type.capitalize())

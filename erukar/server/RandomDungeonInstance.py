@@ -44,6 +44,5 @@ class RandomDungeonInstance(Instance):
     def decorators(self):
         for sm in RandomDungeonInstance.SubModules:
             md = sm[0](RandomDungeonInstance.BaseModule.format(sm[1]), self.generation_parameters)
-            md.initialize()
             yield md
 

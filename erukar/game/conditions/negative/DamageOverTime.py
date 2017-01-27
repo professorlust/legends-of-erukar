@@ -7,6 +7,10 @@ class DamageOverTime(Condition):
     Duration = 4 # In ticks, where a tick is 5 seconds
     Incapacitates = False
 
+    Noun        = 'Damage Over Time'
+    Participle  = 'Damaging Over Time'
+    Description = 'Applies specific Damage every 5 seconds'
+
     def __init__(self, target, instigator=None):
         super().__init__(target, instigator)
         self.damage = []

@@ -13,3 +13,6 @@ class Frozen(Condition):
         'fire': (1, 0),
     }
 
+    Noun        = 'Frozen'
+    Participle  = 'Freezing'
+    Description = 'Stops target for a full turn, providing increased piercing, slashing, ice, and fire damage mitigation but highly reduced bludgeoning mitigation'

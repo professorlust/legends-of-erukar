@@ -1,4 +1,5 @@
 from erukar.engine.factories.ModuleDecorator import ModuleDecorator
+from erukar.engine.calculators.Modules import Modules
 import random
 
 class MultipleModuleDecorator(ModuleDecorator):
@@ -6,8 +7,8 @@ class MultipleModuleDecorator(ModuleDecorator):
     Like the ModuleDecorator, except that it creates multiple items
     and treats each item independently, instead of choosing from a list
     '''
-    def initialize(self):
-        poss = list(self.get_possibilities())
+    def initialize(self, module):
+        poss = list(Modules.get_members_of(module))
         self.items = [(x, self.calculate_probability(x)) for x in poss]
 
     def apply_one_to(self, room):

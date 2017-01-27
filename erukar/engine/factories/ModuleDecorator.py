@@ -1,6 +1,7 @@
 from erukar.engine.factories.ProbablisticGenerator import ProbablisticGenerator
 from erukar.engine.exceptions.InitializationException import InitializationException
-import sys, inspect, functools, math
+from erukar.engine.calculators.Modules import Modules
+import functools, math
 import numpy as np
 
 class ModuleDecorator(ProbablisticGenerator):
@@ -9,15 +10,10 @@ class ModuleDecorator(ProbablisticGenerator):
     def __init__(self, module, generation_parameters):
         super().__init__()
         self.generation_parameters = generation_parameters
-        self.decoration_module = sys.modules[module]
-        self.initialize()
+        self.initialize(module)
 
-    def get_possibilities(self):
-        for x in inspect.getmembers(self.decoration_module, inspect.isclass):
-            yield x[1]
-
-    def initialize(self):
-        poss = list(self.get_possibilities())
+    def initialize(self, module):
+        poss = list(Modules.get_members_of(module))
 
         weights, values = zip(*[(self.calculate_probability(p), p) for p in poss])
         self.create_distribution(values, weights)
@@ -62,7 +58,7 @@ class ModuleDecorator(ProbablisticGenerator):
         return self.create_type(type_to_create)
 
     def create_type(self, type_to_create):
-        new_one = type_to_create()
+        new_one = type_to_create[1]()
         setattr(new_one, 'generation_parameters', self.generation_parameters)
         return new_one
 

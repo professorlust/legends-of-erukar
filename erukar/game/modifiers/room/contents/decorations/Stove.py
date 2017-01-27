@@ -15,7 +15,5 @@ class Stove(RoomModifier):
             location = 'to the ' + random.choice(list(room.wall_directions())).name
         except:
             location = 'in the center'
-        deco = Decoration(aliases=[self.broad_alias_base],\
-            broad_results=self.broad_result_base.format(location),\
-            inspect_results=self.inspect_result_base)
+        deco = Decoration(aliases=[self.broad_alias_base])
         room.add(deco)

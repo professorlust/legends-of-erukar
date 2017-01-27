@@ -45,7 +45,5 @@ class Tree(RoomModifier):
         except:
             location = 'in the center'
         arguments = self.get_arguments(location)
-        deco = Decoration(aliases=[self.mutate(self.broad_alias_base, arguments)],
-            broad_results=self.mutate(self.broad_result_base, arguments),
-            inspect_results=self.mutate(self.inspect_result_base, arguments))
+        deco = Decoration(aliases=[self.mutate(self.broad_alias_base, arguments)])
         room.add(deco) 

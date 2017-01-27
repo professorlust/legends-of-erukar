@@ -9,3 +9,6 @@ class Concussed(Condition):
     def modify_acuity(self):
         return -self.target.sense/2
 
+    Noun        = 'Concussion'
+    Participle  = 'Concussing'
+    Description = 'Halves effective Sense score'

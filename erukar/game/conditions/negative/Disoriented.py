@@ -11,3 +11,7 @@ class Disoriented(Condition):
     
     def modify_sense(self):
         return -int(self.target.sense/4)
+
+    Noun        = 'Disorientation'
+    Participle  = 'Disorienting'
+    Description = 'Reduces effective Acuity and Sense scores by 25%'
