@@ -22,9 +22,7 @@ entry.Glances = [
 ]
 
 sword = Shop.create(Sword, erukar.game.modifiers.material.Steel)
-erukar.game.modifiers.inventory.random.Accurate().apply_to(sword)
-erukar.game.modifiers.inventory.random.Freezing().apply_to(sword)
-erukar.game.modifiers.inventory.random.UndeadBane().apply_to(sword)
+erukar.game.modifiers.inventory.random.Enhancement().apply_to(sword)
 entry.add(sword)
 
 '''First Room'''
