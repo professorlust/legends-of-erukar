@@ -1,16 +1,19 @@
 from .DungeonGenerator import DungeonGenerator
+from .DungeonGeneratorRedux import DungeonGeneratorRedux
+from .FactoryBase import FactoryBase
+from .ModifierGenerator import ModifierGenerator
 from .ModuleDecorator import ModuleDecorator
 from .MultipleModuleDecorator import MultipleModuleDecorator
-from .ModifierGenerator import ModifierGenerator
 from .ProbablisticGenerator import ProbablisticGenerator
-from .FactoryBase import FactoryBase
 from .RandomizedEntityFactory import RandomizedEntityFactory
 
 __all__ = [
     "DungeonGenerator", 
-    "ModifierGenerator",
+    "DungeonGeneratorRedux", 
+    "FactoryBase", 
+    "ModifierGenerator", 
     "ModuleDecorator", 
     "MultipleModuleDecorator", 
     "ProbablisticGenerator", 
-    "FactoryBase", 
-    "RandomizedEntityFactory"]
+    "RandomizedEntityFactory"
+]

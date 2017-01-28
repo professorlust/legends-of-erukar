@@ -60,3 +60,11 @@ class Navigator:
     def exists_obstruction_between(start, finish):
         raytrace_collision = Navigator.raytrace(start, finish)
         return raytrace_collision != finish
+
+    def ccw(A,B,C):
+        '''Credit to Bryce Boe ... found at http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/'''
+        return (C[1] - A[1])*(B[0] - A[0]) > (B[1] - A[1])*(C[0] - A[0])
+
+    def intersects(A,B,C,D):
+        '''Credit to Bryce Boe ... found at http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/'''
+        return Navigator.ccw(A,C,D) != Navigator.ccw(B,C,D) and Navigator.ccw(A,B,C) != Navigator.ccw(A,B,D)
