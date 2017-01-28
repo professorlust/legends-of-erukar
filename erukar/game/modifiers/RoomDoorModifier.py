@@ -15,7 +15,7 @@ class RoomDoorModifier(RoomModifier):
         self.necessary_acuity = 0
 
     def apply_to(self, room):
-        rooms = [r for r in room.connections if room.connections[r].room is not None and room.connections[r].door is None]
+        rooms = list(room.adjacent_rooms())
         if len(rooms) == 0: return
 
         direction = random.choice(rooms)

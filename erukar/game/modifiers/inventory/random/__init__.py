@@ -24,7 +24,7 @@ from .Serrated import Serrated
 from .Sharp import Sharp
 from .Small import Small
 from .Swift import Swift
-from .UndeadBane import UndeadBane
+from .Bane import Bane
 from .Unholy import Unholy
 from .Unwieldy import Unwieldy
 
@@ -55,7 +55,7 @@ __all__ = [
     "Sharp", 
     "Small", 
     "Swift", 
-    "UndeadBane", 
+    "Bane", 
     "Unholy", 
     "Unwieldy"
 ]
