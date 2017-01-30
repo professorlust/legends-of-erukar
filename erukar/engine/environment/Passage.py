@@ -21,7 +21,7 @@ class Passage:
         return self.door.necessary_acuity() < acu
 
     def is_not_empty(self):
-        return self.door is not None and self.room is not None
+        return self.door is not None or self.room is not None
 
     def directional_inspect(self, relative_dir, lifeform, depth=1):
         acu = lifeform.calculate_effective_stat('acuity', depth)

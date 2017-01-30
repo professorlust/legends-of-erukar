@@ -166,7 +166,7 @@ class Room(Containable):
 
     def connect_room(self, direction, other_room, door=None):
         if other_room is not self:
-            self.add_door(direction, room=other_room, door=door)
+            self.connections[direction] = Passage(room=other_room, door=door)
 
     def invert_direction(self, direction):
         return Direction( (direction.value + 2) % 4 )
@@ -181,15 +181,14 @@ class Room(Containable):
 
     def add_door(self, direction, door=None, room=None):
         '''Adds a door and sets it up with the next room appropriately'''
-        self.connections[direction] = Passage(wall=Surface(), room=room, door=door)
+        self.connections[direction].door = door
 
     def adjacent_rooms(self):
         '''Generator which yields rooms we can see into from this one'''
         for c in self.connections:
             passage = self.connections[c]
             if passage.room is not None:
-                if passage.door is None or (isinstance(passage.door, Door) and passage.door.status == Door.Open):
-                    yield c
+                yield c
 
     def walls(self):
         '''Generator for getting only the walls in this room'''
@@ -200,7 +199,7 @@ class Room(Containable):
         '''Generator for getting the directions which contain only walls'''
         for direction in self.connections:
             passage = self.connections[direction]
-            if passage.room is None and passage.door is None:
+            if not passage.is_not_empty():
                 yield direction
 
     def center(self):

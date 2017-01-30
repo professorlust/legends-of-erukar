@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D      
 
 e = erukar.engine.factories.DungeonGeneratorRedux()
-e.create_dungeon()
+r = e.generate()
 
 fig = plt.figure()
 ax = fig.add_subplot(111)

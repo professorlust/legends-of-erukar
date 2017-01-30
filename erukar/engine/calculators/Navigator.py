@@ -32,6 +32,10 @@ class Navigator:
 
         return Direction.East
 
+    def direction_between(start, finish):
+        angle = Navigator.angle(start, finish)
+        return Navigator.angle_to_direction(angle)
+
     def raytrace(start, finish):
         '''Basic path tracing from one room to another; yields the furthest traversible Room'''
         angle = Navigator.angle(start.coordinates, finish.coordinates)

@@ -12,10 +12,10 @@ class RandomDungeonInstance(Instance):
         (ModuleDecorator, "structure.ceilings"),
         (ModuleDecorator, "qualities.air"),
         (ModuleDecorator, "qualities.sounds"),
-        (ModuleDecorator, "contents.enemies"),
+        #(ModuleDecorator, "contents.enemies"),
         (MultipleModuleDecorator, "contents.decorations"),
         (ModuleDecorator, "contents.items"),
-        (ModuleDecorator, "structure.passages"),
+#       (ModuleDecorator, "structure.passages"),
         (ModuleDecorator, "phenomena")]
 
     def __init__(self, level=-1, level_variance=0.2, generation_properties=None, previous_identifier=''):
@@ -29,7 +29,7 @@ class RandomDungeonInstance(Instance):
 
     def initialize_instance(self, action_commands, non_action_commands, sys_messages, responses):
         super().initialize_instance(action_commands, non_action_commands, sys_messages, responses)
-        d = DungeonGenerator()
+        d = DungeonGeneratorRedux()
         self.dungeon = d.generate(self.previous_identifier)
         self.decorate()
         self.on_start()

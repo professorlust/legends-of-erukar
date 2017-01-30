@@ -32,9 +32,10 @@ class Map(Command):
         self.open_space = []
         self.registered_passages = {}
         # Iterate over all of the rooms the player knows about
-        for coord in player.dungeon_map:
+        #for coord in player.dungeon_map:
+        for room in room.dungeon.rooms:
             # Get a list of all coordinates which this room occupies
-            room = player.dungeon_map[coord]
+        #   room = player.dungeon_map[coord]
             self.open_space += list(room.shape.coordinates(room))
             dimensions = (room.width, room.height)
             # Now look at all of the passageways into and out of this room
