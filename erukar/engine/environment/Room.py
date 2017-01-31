@@ -24,8 +24,7 @@ class Room(Containable):
         self.dungeon = dungeon
         self.shape = shape if shape is not None else erukar.engine.environment.roomshapes.Rectangle
         self.width, self.height = dimensions
-        if self.dungeon is not None:
-            self.dungeon.rooms.append(self)
+        self.is_valid = self.dungeon.add_room(self, coordinates)
         self.floor = None
         self.ceiling = None
         self.coordinates = coordinates

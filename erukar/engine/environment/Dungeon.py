@@ -23,6 +23,13 @@ class Dungeon(RpgEntity):
             if aura.affects_tile(room_at):
                 yield aura
 
+    def add_room(self, new_room, coord):
+        '''Adds a safeguard to prevent duplication'''
+        unique = not self.get_room_at(coord)
+        if unique:
+            self.rooms.append(new_room)
+        return unique
+
     def get_room_at(self, location):
         return next((x for x in self.rooms if x.coordinates == location), None)
 

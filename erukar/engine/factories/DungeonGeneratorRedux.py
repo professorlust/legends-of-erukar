@@ -14,13 +14,13 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
     ManhattanD  = 10
 
-    NumberOfLinearityPasses = 16
+    NumberOfLinearityPasses = 32
     MinimumLinearityForRisk = 4
-    NumberOfOffshoots       = 8
+    NumberOfOffshoots       = 10
     MinimumOffshootLength   = 2
     MaximumOffshootLength   = 5
 
-    def __init__(self, size=16):
+    def __init__(self, size=32):
         self.rooms = []
         self.connections = {}
         self.size = size
@@ -88,6 +88,8 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
             direction = random.choice(available_rooms)
             new_coords = CoordinateTranslator.translate(current.coordinates, direction)
             new_room = Room(self.dungeon, new_coords)
+            if not new_room.is_valid:
+                break
             current.coestablish_connection(direction, new_room, None)
             current = new_room
 
