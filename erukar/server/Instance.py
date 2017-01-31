@@ -18,6 +18,7 @@ class Instance(Manager):
         self.identifier = 'n/a'
         self.dungeon = None
         self.command_contexts = {}
+        self.is_ready = False
 
     def instance_running(self, connector, action_commands, non_action_commands, sys_messages, responses):
         '''Entry point for the Initialization of the Instance by the Shard'''
@@ -43,6 +44,8 @@ class Instance(Manager):
         self.subscribe_enemies()
         for room in self.dungeon.rooms:
             room.on_start()
+        self.is_ready = True
+        self.info.on_instance_ready()
 
     def any_connected_players(self):
         '''Check to see if there are any currently connected players'''

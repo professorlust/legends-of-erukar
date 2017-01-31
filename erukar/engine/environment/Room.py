@@ -20,6 +20,7 @@ class Room(Containable):
 
     def __init__(self, dungeon, coordinates=(0,0), shape=None, dimensions=(1, 1)):
         super().__init__([])
+        self.linearity = 0
         self.dungeon = dungeon
         self.shape = shape if shape is not None else erukar.engine.environment.roomshapes.Rectangle
         self.width, self.height = dimensions

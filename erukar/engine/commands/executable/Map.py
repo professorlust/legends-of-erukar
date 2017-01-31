@@ -28,14 +28,18 @@ class Map(Command):
     def translate_coordinates_to_grid(coords):
         return tuple(map(lambda y: 2*y+1, coords))
 
+    def translate_grid_to_coordinates(grid):
+        return tuple(map(lambda y: int((y-1)/2), grid))
+
     def dimensional_map(self, player, room):
         self.open_space = []
         self.registered_passages = {}
+        self.dungeon = room.dungeon
         # Iterate over all of the rooms the player knows about
         #for coord in player.dungeon_map:
-        for room in room.dungeon.rooms:
+        for room in self.dungeon.rooms:
             # Get a list of all coordinates which this room occupies
-        #   room = player.dungeon_map[coord]
+         #   room = player.dungeon_map[coord]
             self.open_space += list(room.shape.coordinates(room))
             dimensions = (room.width, room.height)
             # Now look at all of the passageways into and out of this room
@@ -68,6 +72,9 @@ class Map(Command):
         if (x,y) == self.player_location:
             return Map.player_marker
         if (x,y) in self.open_space:
+#           room = self.dungeon.get_room_at(Map.translate_grid_to_coordinates((x,y)))
+#           if room is not None:
+#               return str(room.linearity)
             return Map.empty_space
         if (x,y) in self.registered_passages:
             return Map.decode_door(self.registered_passages[(x,y)])

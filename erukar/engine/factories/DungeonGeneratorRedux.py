@@ -1,7 +1,8 @@
+from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.environment import *
 from erukar.engine.calculators import *
-from erukar.engine.meta import AStarBase
+from erukar.engine.meta import AStarBase, Queue
 import numpy as np
 import math, random
 
@@ -12,6 +13,12 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     Huge        = 32
 
     ManhattanD  = 10
+
+    NumberOfLinearityPasses = 16
+    MinimumLinearityForRisk = 4
+    NumberOfOffshoots       = 8
+    MinimumOffshootLength   = 2
+    MaximumOffshootLength   = 5
 
     def __init__(self, size=16):
         self.rooms = []
@@ -29,10 +36,14 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
             self.randomly_connect(room)
 
         self.create_rooms_along_lines()
-        print('-'*100)
+        for _ in range(self.NumberOfLinearityPasses):
+            self.build_junction_based_on_linearity()
+        for _ in range(self.NumberOfOffshoots):
+            self.build_offshoot()
         self.fill_walls()
 
     def create_rooms_along_lines(self):
+        '''Use the connections from the random connection process to generate A* paths and then connect'''
         visited_connections = []
         for origin in self.rooms:
             if not origin in self.connections: continue
@@ -46,6 +57,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
                 visited_connections.append([destination, origin])
 
     def add_room_path(self, path, origin):
+        '''Use an A* Path to add a bunch of rooms from one objective to the other'''
         previous = None
         for coord in path:
             if coord not in self.dungeon.rooms:
@@ -53,7 +65,6 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
                 current = self.dungeon.get_room_at(coord)
                 if not current:
                     current = Room(self.dungeon, coord)
-                self.dungeon.rooms.append(current)
 
                 if previous and previous != current:
                     direction = Navigator.direction_between(current.coordinates, previous.coordinates)
@@ -61,6 +72,92 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
                 previous = current
 
+    def build_offshoot(self):
+        '''Build random off-shoots which go nowhere, but overall decrease linearity'''
+        self.determine_linearity()
+        at_risk = [x for x in self.dungeon.rooms if x.linearity > self.MinimumLinearityForRisk]
+        
+        #determine start randomly
+        distribution = [self.linearity_weight(st) for st in self.rooms]
+        coords = self.rooms[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
+        current = self.dungeon.get_room_at(coords)
+
+        for added in range(int(random.random() * (self.MaximumOffshootLength-self.MinimumOffshootLength) + self.MinimumOffshootLength)): 
+            available_rooms = list(current.wall_directions())
+            if len(available_rooms) == 0: return
+            direction = random.choice(available_rooms)
+            new_coords = CoordinateTranslator.translate(current.coordinates, direction)
+            new_room = Room(self.dungeon, new_coords)
+            current.coestablish_connection(direction, new_room, None)
+            current = new_room
+
+
+    def build_junction_based_on_linearity(self):
+        '''Attempts to build connections (junctions) between two highly linear rooms'''
+        self.determine_linearity()
+        at_risk = [x for x in self.dungeon.rooms if x.linearity > self.MinimumLinearityForRisk]
+        
+        #determine start randomly
+        distribution = [self.linearity_weight(st) for st in self.rooms]
+        start = self.rooms[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
+
+        # determine end randomly
+        distribution = [self.linearity_weight(dest) * self.distance_weight(start, dest) for dest in self.rooms if dest != start]
+        dest = self.rooms[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
+
+        cf, ec = self.search(self.rooms, start, dest)
+        path = self.reverse(cf, start, dest)
+        self.add_room_path(path, start)
+
+    def get_from_unnormalized_distribution(distribution):
+        distribution = [a / sum(distribution) for a in distribution]
+        bins, values = Random.create_random_distribution(list(range(len(distribution))), distribution)
+        return Random.get_from_custom_distribution(random.random(), bins, values)
+
+    def determine_linearity(self):
+        '''Do a single pass over the entire dungeon, calculating linearity scores'''
+        calculation_queue = Queue()
+        branch_points = {x for x in self.dungeon.rooms if len(list(x.adjacent_rooms())) > 2}
+        branch_points.add(self.dungeon.rooms[0])
+        starts_evaluated = set()
+        
+        for bp in iter(branch_points):
+            for direction in bp.adjacent_rooms():
+                if bp.connections[direction].room in starts_evaluated: continue
+                self.build_and_evaluate_linear_branch(bp, direction, branch_points, starts_evaluated)
+
+    def build_and_evaluate_linear_branch(self, origin, direction, branch_points, starts_evaluated):
+        '''Iterate from an origin along a direction to find the linearity'''
+        current = origin.connections[direction].room
+        current_path = [origin]
+        while current not in current_path:
+            current_path.append(current)
+            if current is None:
+                self.linear_to_dead_end(current_path, starts_evaluated)
+                return
+            if current in branch_points:
+                self.linear_to_junction(current_path, starts_evaluated)
+                return
+
+            # Get Next
+            current = next((current.connections[x].room for x in current.adjacent_rooms() if current.connections[x].room not in current_path), None) 
+
+    def linear_to_dead_end(self, current_path, starts_evaluated):
+        '''Assign linearity with max at end of current path'''
+        starts_evaluated.add(current_path[0])
+        to_i = len(current_path) - 1
+        for i in range(to_i):
+            current_path[i].linearity = i
+
+    def linear_to_junction(self, current_path, starts_evaluated):
+        '''Assign linearity with max in center of current path'''
+        starts_evaluated.add(current_path[0])
+        starts_evaluated.add(current_path[-1])
+        to_i = int(len(current_path)/2) + 1
+        for i in range(to_i):
+            current_path[i].linearity = i
+            current_path[-i-1].linearity = i
+        
     def create_rooms(self):
         '''Should be pretty straightforward'''
         num_rooms = int(np.random.beta(8, 4) * self.size)
@@ -75,7 +172,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         return coord
 
     def random_coordinate(self):
-        return int(20*(random.random()-0.5))
+        return int(16*(random.random()-0.5))
 
     def distance_weight(self, room, destination):
         '''Creates a scalar based on the distance between two coordinates'''
@@ -96,6 +193,11 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
                 if Navigator.intersects(start, dest, other_start, other_dest):
                     return 0
         return 1
+
+    def linearity_weight(self, coords):
+        '''Used to greatly sway linearity adjustments'''
+        room = self.dungeon.get_room_at(coords)
+        return 0 if not room else math.pow(room.linearity, 2)
 
     def randomly_connect(self, for_room):
         '''Connect a room a random number of times to random rooms'''
