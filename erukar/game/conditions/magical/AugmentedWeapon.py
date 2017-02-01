@@ -7,6 +7,10 @@ class AugmentedWeapon(Condition):
     Incapacitates = False
     MaxInstances = 1
 
+    Noun = 'Augmented Weapon'
+    Participle = 'Augmenting Weapon'
+    Description = 'Adds a temporary effect to one or multiple weapons'
+
     def __init__(self, target, modifier_type):
         super().__init__(target)
         self.modifier_type = getattr(erukar.game.modifiers.inventory, modifier_type)

@@ -12,7 +12,7 @@ class Wand(Weapon):
 
     # Damage
     DamageRange = [2, 6]
-    DamageType = random.choice(['fire','acid','cold','electric'])
+    DamageType = 'force'
     DamageModifier = "acuity"
 
     # Distribution

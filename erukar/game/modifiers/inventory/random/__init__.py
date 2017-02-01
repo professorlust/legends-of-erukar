@@ -1,5 +1,7 @@
 from .Accurate import Accurate
 from .Acid import Acid
+from .AdditionalDamage import AdditionalDamage
+from .Bane import Bane
 from .Blessed import Blessed
 from .Broken import Broken
 from .ChanceToInflictCondition import ChanceToInflictCondition
@@ -24,13 +26,14 @@ from .Serrated import Serrated
 from .Sharp import Sharp
 from .Small import Small
 from .Swift import Swift
-from .Bane import Bane
 from .Unholy import Unholy
 from .Unwieldy import Unwieldy
 
 __all__ = [
     "Accurate", 
     "Acid", 
+    "AdditionalDamage", 
+    "Bane", 
     "Blessed", 
     "Broken", 
     "ChanceToInflictCondition", 
@@ -55,7 +58,6 @@ __all__ = [
     "Sharp", 
     "Small", 
     "Swift", 
-    "Bane", 
     "Unholy", 
     "Unwieldy"
 ]

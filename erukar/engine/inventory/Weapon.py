@@ -71,10 +71,19 @@ class Weapon(Item):
         scale = self.efficacy_for(lifeform)
         mod = lifeform.get(self.DamageModifier)
         name = '{} ({} / {})'.format(self.format(), int(self.durability()), int(self.max_durability()))
-        damage_desc = '\n'.join(['{:>11} {} to {} {} Damage'.format('•',
-            int((mod if d.scales else 0) + d.damage[0]*scale),
-            int((mod if d.scales else 0) + d.damage[1]*scale), d.name)
-            for d in self.damages])
+        damage_desc = '\n'.join([self.damage_inspection(d, lifeform) for d in self.damages])
+        weight_desc = '{:>11} {:12}: {:3.2f} levts'.format('+', 'Weight:', self.weight())
         mods = ([self.material] + self.modifiers) if self.material else self.modifiers
         mod_desc = '\n'.join(['{:>11} {}: {}'.format('•',d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])
-        return '\n'.join([name, damage_desc, mod_desc])
+        return '\n'.join([name, weight_desc, damage_desc, mod_desc])
+
+    def damage_inspection(self, damage, lifeform):
+        weapon_scale = self.efficacy_for(lifeform)
+        if damage.scales:
+            mod = lifeform.get(damage.modifier)
+            min_d = mod + damage.damage[0] * weapon_scale
+            max_d = mod + damage.damage[1] * weapon_scale
+        else:
+            min_d = damage.damage[0]
+            max_d = damage.damage[1]
+        return '{:>11} {} to {} {} Damage'.format('•', int(min_d), int(max_d), damage.name.capitalize())

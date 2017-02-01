@@ -20,7 +20,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     MinimumOffshootLength   = 2
     MaximumOffshootLength   = 5
 
-    def __init__(self, size=32):
+    def __init__(self, size=24):
         self.rooms = []
         self.connections = {}
         self.size = size

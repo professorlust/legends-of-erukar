@@ -13,8 +13,9 @@ class Inventory(Command):
         # All of the Other items
         items = '\n'.join(Inventory.inventory_contents(char))
         equipped_items = self.equipment(char)
-        wealth = '{:12} {} R'.format('Wealth', char.wealth)
-        result = '\n------------\n'.join(['INVENTORY', wealth, equipped_items, items])
+        wealth = '{:12} {} R'.format('Wealth:', char.wealth)
+        equip_load = '{:12} {} / {}'.format('Equip Load:', char.equip_load(), char.max_equip_load())
+        result = '\n------------\n'.join(['INVENTORY', '\n'.join([wealth, equip_load]), equipped_items, items])
         self.append_result(self.sender_uid, result)
         return self.succeed()
 
