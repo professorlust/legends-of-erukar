@@ -19,6 +19,6 @@ class Axe(Weapon):
     DistributionProperties = (Scale, Size)
 
     BaseStatInfluences = {
-        'strength': {'requirement': 5, 'scaling_factor': 2.5, 'max_scale': 4},
-        'dexterity':  {'requirement': 0, 'scaling_factor': 3.5, 'max_scale': 3}
+        'strength': {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
+        'dexterity':  {'requirement': 0, 'scaling_factor': 3.5, 'cutoff': 200},
     }

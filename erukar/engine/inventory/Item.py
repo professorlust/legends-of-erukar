@@ -18,10 +18,24 @@ class Item(Describable):
     EquipmentLocations = []
 
     BaseStatInfluences = {
-        # Determines the influence of stats on the Item's efficacy. These totals are
-        # multiplicative. See efficacy_for method for more details.
-        # Uses the following format
-        # 'strength': { 'requirement': 20, 'scaling_factor': 1.5, 'max_scale': 2 }
+        '''
+        Stat scaling is a linear relationship between a specific attribute and the scaling_factor
+        The Damage Range is essentially a proportion
+        
+        # Assuming damage range is 1 to 4
+        # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5 }
+        @ str = 15,  damage = damage * 15/20            = 0.75 * damage          =   1 to   3
+        @ str = 20,  damage = damage * 20/20            = 1.0 * damage           =   1 to   4
+        @ str = 30,  damage = damage + (30 - 20) * 1.5  = damage +  15 + STR-req =  21 to  34
+        @ str = 60,  damage = damage + (60 - 20) * 1.5  = damage +  60 + STR-req =  81 to 124
+        @ str = 200, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 361 to 574
+        @ str = 260, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 391 to 694
+
+        In the event of multiple stat influences, 
+ 
+        It can, however, be an s-curve if you specify 's-curve': True as in below
+        # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5, 's-curve': True }
+        '''
     }
 
     def __init__(self, item_type='Item', name="Item"):
@@ -34,12 +48,16 @@ class Item(Describable):
         self.durability_coefficient = 1
         self.material = None
 
+
     def efficacy_for(self, lifeform):
-        total = 1.0
+        total_scalar = 1.0
+        total_offset = 0
         for stat in self.stat_influences:
             value = lifeform.calculate_effective_stat(stat)
-            total *= Curves.item_stat_efficacy(value, **self.stat_influences[stat])
-        return total
+            scalar, offset = Curves.item_stat_efficacy(value, **self.stat_influences[stat])
+            total_scalar *= scalar
+            total_offset += offset
+        return total_scalar, total_offset
 
     def describe(self):
         return self.name

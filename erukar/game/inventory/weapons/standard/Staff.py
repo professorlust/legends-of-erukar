@@ -17,6 +17,6 @@ class Staff(Weapon):
     DistributionProperties = ()
 
     BaseStatInfluences = {
-        'acuity':  {'requirement': 6, 'scaling_factor': 3, 'max_scale': 3},
-        'strength': {'requirement': 4, 'scaling_factor': 2, 'max_scale': 4}
+        'acuity':  {'requirement': 6, 'scaling_factor': 3, 'cutoff': 200},
+        'strength': {'requirement': 4, 'scaling_factor': 2, 'cutoff': 200},
     }

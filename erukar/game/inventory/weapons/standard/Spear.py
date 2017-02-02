@@ -18,6 +18,6 @@ class Spear(Weapon):
     DistributionProperties = (2,1)
 
     BaseStatInfluences = {
-        'strength': {'requirement': 5, 'scaling_factor': 2.5, 'max_scale': 2},
-        'dexterity':  {'requirement': 4, 'scaling_factor': 3.5, 'max_scale': 4}
+        'strength': {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
+        'dexterity':  {'requirement': 4, 'scaling_factor': 3.5, 'cutoff': 200},
     }

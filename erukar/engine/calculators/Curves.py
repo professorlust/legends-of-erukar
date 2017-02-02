@@ -6,9 +6,8 @@ class Curves:
     def dropoff(x_min, x_max, y_min, y_max, at_value):
         return -1*(y_max-y_min)*math.pow((at_value-x_max+x_min)/(x_min-x_max), 2) + y_max
 
-    def item_stat_efficacy(value, requirement, scaling_factor, max_scale):
-        if requirement > 0 and value < requirement:
-            return 0.5*math.pow((value/requirement), 2)
-        value -= requirement
-        actual_scaling_factor = scaling_factor * Curves.AbsoluteScalingFactor
-        return 1+(max_scale-1)*(1 - 1/((value + 1/actual_scaling_factor)*actual_scaling_factor))
+    def item_stat_efficacy(value, requirement, cutoff, scaling_factor):
+        actual_value = max(0, value - requirement)
+        scalar = 1.0 if requirement is 0 else min(1.0, value / requirement)
+        offset = min(actual_value, cutoff) * scaling_factor
+        return scalar, offset

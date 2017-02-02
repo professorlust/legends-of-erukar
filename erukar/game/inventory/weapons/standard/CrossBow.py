@@ -21,5 +21,5 @@ class CrossBow(Weapon):
     DistributionProperties = (Shape, Scale)
 
     BaseStatInfluences = {
-        'dexterity':  {'requirement': 5, 'scaling_factor': 5, 'max_scale': 4}
+        'dexterity':  {'requirement': 5, 'scaling_factor': 5, 'cutoff': 200},
     }

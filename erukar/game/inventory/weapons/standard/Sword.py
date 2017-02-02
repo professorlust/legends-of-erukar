@@ -17,6 +17,6 @@ class Sword(Weapon):
     DistributionProperties = (2,2)
 
     BaseStatInfluences = {
-        'strength':  {'requirement': 4, 'scaling_factor': 4, 'max_scale': 3},
-        'dexterity': {'requirement': 3, 'scaling_factor': 3, 'max_scale': 2.25}
+        'strength':  {'requirement': 4, 'scaling_factor': 4, 'cutoff': 200},
+        'dexterity': {'requirement': 3, 'scaling_factor': 3, 'cutoff': 200},
     }

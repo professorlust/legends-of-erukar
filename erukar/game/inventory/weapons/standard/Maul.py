@@ -17,6 +17,6 @@ class Maul(Weapon):
     DistributionProperties = ()
 
     BaseStatInfluences = {
-        'strength': {'requirement': 3, 'scaling_factor': 5, 'max_scale': 4},
-        'dexterity':  {'requirement': 0, 'scaling_factor': 1.25, 'max_scale': 2}
+        'strength': {'requirement': 3, 'scaling_factor': 5, 'cutoff': 200},
+        'dexterity':  {'requirement': 0, 'scaling_factor': 1.25, 'cutoff': 200},
     }

@@ -49,8 +49,17 @@ class Weapon(Item):
         ammo.consume()
 
     def roll(self, attacker):
-        efficacy = self.efficacy_for(attacker)
-        return [(d.roll(attacker)*efficacy if d.scales else d.roll(attacker), d.name) for d in self.damages]
+        scalar, offset = self.efficacy_for(attacker)
+        return [self.rolled_damage(d, attacker) for d in self.damages]
+
+    def rolled_damage(self, damage, attacker):
+        '''used to get processed result for a single damage type'''
+        amount = d.roll(attacker)
+        scalar, offset = self.efficacy_for(attacker)
+        if damage.scales:
+            mod = attacker.get(damage.modifier)
+            amount = scalar * amount + offset + mod
+        return amount, damage.name
 
     def on_calculate_attack_roll(self, raw, target):
         result = raw
@@ -78,11 +87,11 @@ class Weapon(Item):
         return '\n'.join([name, weight_desc, damage_desc, mod_desc])
 
     def damage_inspection(self, damage, lifeform):
-        weapon_scale = self.efficacy_for(lifeform)
+        scale, offset = self.efficacy_for(lifeform)
         if damage.scales:
             mod = lifeform.get(damage.modifier)
-            min_d = mod + damage.damage[0] * weapon_scale
-            max_d = mod + damage.damage[1] * weapon_scale
+            min_d = mod + offset + damage.damage[0] * scale
+            max_d = mod + offset + damage.damage[1] * scale
         else:
             min_d = damage.damage[0]
             max_d = damage.damage[1]
