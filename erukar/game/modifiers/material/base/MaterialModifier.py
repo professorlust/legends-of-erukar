@@ -33,3 +33,6 @@ class MaterialModifier(ItemModifier):
     def apply_to_armor(self, entity):
         # Adjust Mitigations and Deflecti
         pass
+
+    def on_alias(self, current_alias):
+        return ' '.join([self.InventoryName, current_alias])

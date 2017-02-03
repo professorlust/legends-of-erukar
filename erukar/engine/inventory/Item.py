@@ -124,7 +124,10 @@ class Item(Describable):
         return (1 - mmdpm) * pow(self.durability(), 2) / pow(self.max_durability(), 2)  + mmdpm
 
     def alias(self):
-        return self.name
+        alias = self.name if not self.material else self.material.on_alias(self.name)
+        for mod in self.modifiers:
+            alias = mod.on_alias(alias)
+        return alias
 
     def belongs_in_hand(self, lifeform):
         return any(set(lifeform.attack_slots).intersection(set(self.EquipmentLocations)))
@@ -151,10 +154,6 @@ class Item(Describable):
 
     def format(self, with_price=False):
         if not with_price:
-            if hasattr(self, 'material') and self.material:
-                return '{} {}'.format(self.material.InventoryName, self.alias())
             return self.alias()
         # show price
-        if hasattr(self, 'material') and self.material:
-            return '{} {} ({} R)'.format(self.material.InventoryName, self.alias(), int(self.price()))
-        return '{} ({} R)'.format(self.alias(), int(self.price()))
+        return '({} R)'.format(self.alias(), int(self.price()))

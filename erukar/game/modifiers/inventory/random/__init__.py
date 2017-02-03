@@ -22,6 +22,7 @@ from .Luminous import Luminous
 from .NoModifier import NoModifier
 from .Reinforced import Reinforced
 from .Rusty import Rusty
+from .ScalingAdjustment import ScalingAdjustment
 from .Serrated import Serrated
 from .Sharp import Sharp
 from .Small import Small
@@ -54,6 +55,7 @@ __all__ = [
     "NoModifier", 
     "Reinforced", 
     "Rusty", 
+    "ScalingAdjustment", 
     "Serrated", 
     "Sharp", 
     "Small", 

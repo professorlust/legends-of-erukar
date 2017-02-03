@@ -74,7 +74,6 @@ class Connector:
             # Simple ADD 
             self.session.add(Creature(uid=uid))
             self.session.commit()
-            print('added new creature')
         first = self.session.query(Creature)\
                 .options(joinedload(Creature.equipment), joinedload(Creature.inventory))\
                 .filter_by(uid=uid, deceased=False)\
@@ -267,7 +266,7 @@ class Connector:
                     yield (item, erukar.data.Schema.Item(item_type=item.__module__, modifiers=modifiers, item_attributes=item_attributes))
 
     def generate_modifier_schema(self, mod):
-        return erukar.data.Schema.Modifier(modifier_type=mod.__module__, attributes=mod.persistable_attributes())
+        return erukar.data.Schema.Modifier(modifier_type=mod.__module__, attributes=mod.persistable_attributes(), level=mod.level)
 
     def generate_effects(self, lifeform):
         for eff in lifeform.conditions:

@@ -23,6 +23,10 @@ class Modifier(Describable):
     ShouldRandomizeOnApply = False
     PersistentAttributes = []
 
+    ShowInAlias = False
+    ShowInInventory = True
+    ShowInEquipment = False
+
     def __init__(self):
         super().__init__()
         self.is_set = False
@@ -39,6 +43,14 @@ class Modifier(Describable):
         if not self.is_set and self.ShouldRandomizeOnApply:
             self.is_set = True
             self.randomize(parameters)
+
+    def on_alias(self, current_alias):
+        '''
+        Used when formatting the alias for an item
+        Helpful for materials (Steel + sword.alias()) or suffixes/prefixes from other modifiers
+        (e.g. "Shoddy + (Steel Sword)" or "(Steel Sword) of the Flames"
+        '''
+        return current_alias
 
     def remove(self):
         '''Removes modification; this should be overridden'''

@@ -5,7 +5,6 @@ import random
 class Bane(WeaponMod):
     Probability = 1
     Desirability = 8.0
-    TargetType = 'Undead'
 
     ShouldRandomizeOnApply = True
     PersistentAttributes = ['damage_increase', 'target_type', 'InventoryDescription', 'InventoryName']
