@@ -1,5 +1,4 @@
 from erukar.game.enemies.templates.Elemental import Elemental
-from erukar.game.modifiers.inventory.random.Frost import Frost
 import random
 
 class IceElemental(Elemental):
@@ -14,8 +13,3 @@ class IceElemental(Elemental):
     def __init__(self, actual_name, is_random=True):
         super().__init__(actual_name, is_random)
         self.define_level(random.random()*20+5)
-        
-    def apply_elemental_effects(self):
-        Frost().apply_to(self.left)
-        Frost().apply_to(self.right)
-

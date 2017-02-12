@@ -44,10 +44,13 @@ class Item(Describable):
         self.owner = None
         self.name = name
         self.description = Item.generic_description
-        self.modifiers = []
         self.durability_coefficient = 1
-        self.material = None
 
+        # Modifiers
+        self.material = None
+        self.build_quality = None
+        self.size = None
+        self.modifiers = []
 
     def efficacy_for(self, lifeform):
         total_scalar = 1.0

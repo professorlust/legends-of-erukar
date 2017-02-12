@@ -1,5 +1,6 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
 from erukar.engine.model.Damage import Damage
+from erukar.engine.model.Observation import Observation
 import numpy as np
 import random
 
@@ -22,8 +23,15 @@ class AdditionalDamage(WeaponMod):
     Damages = {
         'fire': {
             'glances': [
+                Observation(acuity=0, sense=0, result='with a fiery {EssentialPart}'),
+                Observation(acuity=20, sense=0, result='with flames erupting from the {EssentialPart}')
             ],
             'inspects': [
+                Observation(acuity=0, sense=0, result='The {EssentialPart} is on fire.'),
+                Observation(acuity=10, sense=0, result='Flames rise off of the {EssentialPart}.'),
+                Observation(acuity=10, sense=10, result='Flames rise off of the {EssentialPart}, radiating a large amount of heat through the room..'),
+                Observation(acuity=20, sense=0, result='A plume of flames rises from the {EssentialPart}.'),
+                Observation(acuity=20, sense=10, result='A plume of flames rises from the {EssentialPart}, radiating a large amount of heat through the room.')
             ]
         },
         'ice': {
@@ -40,20 +48,32 @@ class AdditionalDamage(WeaponMod):
         },
         'acid': {
             'glances': [
+                Observation(acuity=10, sense=0, result="with condensation on the {EssentialPart}"),
+                Observation(acuity=25, sense=0, result="dripping with acid")
             ],
             'inspects': [
+                Observation(acuity=10, sense=0, result="The {EssentialPart} has some sort of condensation on it."),
+                Observation(acuity=25, sense=0, result="The {EssentialPart} is dripping with acid!")
             ]
         },
         'divine': {
             'glances': [
+                Observation(acuity=0, sense=10, result='which fills you with hope'),
+                Observation(acuity=0, sense=20, result='with a blessed {EssentialPart}')
             ],
             'inspects': [
+                Observation(acuity=0, sense=10, result='You feel a sense of hopeful spirituality when looking upon the {alias}'),
+                Observation(acuity=0, sense=20, result='You can sense that some sort of Divine entity has blessed the {EssentialPart} of the {alias}.')
             ]
         },
         'demonic': {
             'glances': [
+                Observation(acuity=0, sense=10, result='which fills you with dread'),
+                Observation(acuity=0, sense=20, result='with a cursed {EssentialPart}')
             ],
             'inspects': [
+                Observation(acuity=0, sense=10, result='You feel a sense of dread when looking upon the {alias}'),
+                Observation(acuity=0, sense=20, result='You can sense that some sort of demon has cursed the {EssentialPart} of the {alias}.')
             ]
         },
     }
