@@ -31,27 +31,27 @@ class DamageFormatter(TextFormatter):
 
     def append_damage_results(damage_result, attacker_results, target_results):
         damage = DamageFormatter.get_damage_specifics(damage_result, 'amount_dealt')
-        DamageFormatter.append_results_for_verb(damage, damage_result.victim, 'take', attacker_results, target_results)
+        DamageFormatter.append_results_for_verb(damage, damage_result.target, 'take', attacker_results, target_results)
 
         if damage_result.caused_incapacitated:
            target_results.append('You have been incapacitated by {}!'.format(damage_result.instigator.alias()))
-           attacker_results.append('You have incapacitated {}!'.format(damage_result.victim.alias()))
+           attacker_results.append('You have incapacitated {}!'.format(damage_result.target.alias()))
 
     def append_deflection_results(damage_result, attacker_results, target_results):
         deflection = DamageFormatter.get_damage_specifics(damage_result, 'amount_deflected')
-        DamageFormatter.append_results_for_verb(deflection, damage_result.victim, 'deflect', attacker_results, target_results)
+        DamageFormatter.append_results_for_verb(deflection, damage_result.target, 'deflect', attacker_results, target_results)
 
     def append_mitigation_results(damage_result, attacker_results, target_results):
         mitigation = DamageFormatter.get_damage_specifics(damage_result, 'amount_mitigated')
-        DamageFormatter.append_results_for_verb(mitigation, damage_result.victim, 'mitigate', attacker_results, target_results)
+        DamageFormatter.append_results_for_verb(mitigation, damage_result.target, 'mitigate', attacker_results, target_results)
 
-    def append_results_for_verb(results, victim, verb, attacker_results, target_results):
+    def append_results_for_verb(results, target, verb, attacker_results, target_results):
         if len(results) > 0:
             target_results.append(DamageFormatter.You.format(verb=verb, amount=results))
-            attacker_results.append(DamageFormatter.They.format(target=victim.alias(), verb=verb, amount=results))
+            attacker_results.append(DamageFormatter.They.format(target=target.alias(), verb=verb, amount=results))
 
     def append_death_results(damage_result, attacker_results, target_results):
         if damage_result.caused_death:
             target_results.append('You have been slain by {}...'.format(damage_result.instigator.alias()))
-            attacker_results.append('You have slain {}!'.format(damage_result.victim.alias()))
+            attacker_results.append('You have slain {}!'.format(damage_result.target.alias()))
 

@@ -69,9 +69,9 @@ class Weapon(Item):
             result = modifier.on_calculate_attack_roll(result, target) 
         return result
 
-    def on_apply_damage(self, attack_state, command):
+    def on_process_damage(self, attack_state, command):
         for modifier in self.modifiers:
-            modifier.on_apply_damage(attack_state, command)
+            modifier.on_process_damage(attack_state, command)
 
     def on_inventory(self):
         return '{} ({}%)'.format(self.format(), int(100*self.durability_coefficient))

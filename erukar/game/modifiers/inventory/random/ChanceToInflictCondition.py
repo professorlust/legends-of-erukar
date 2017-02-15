@@ -37,7 +37,7 @@ class ChanceToInflictCondition(WeaponMod):
         self.InventoryName = ' '.join([self.Levels[self.level], self.condition.Noun]).strip()
         self.InventoryDescription = self.BaseInventoryDescription.format(100*self.chance, self.condition.Noun, self.minimum_rounds, self.maximum_rounds)
 
-    def on_apply_damage(self, attack_state, command):
+    def on_process_damage(self, attack_state, command):
         if not self.condition:
             self.condition = getattr(erukar, self.condition_name)
 

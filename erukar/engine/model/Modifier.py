@@ -100,7 +100,7 @@ class Modifier(Describable):
     def on_calculate_attack_roll(self, current, target):
         return current
 
-    def on_apply_damage(self, attack_state, command):
+    def on_process_damage(self, attack_state, command):
         pass
 
     def persistable_attributes(self):

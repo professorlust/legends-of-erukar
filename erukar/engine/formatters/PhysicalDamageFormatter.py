@@ -2,7 +2,7 @@ from .DamageFormatter import DamageFormatter
 
 class PhysicalDamageFormatter(DamageFormatter):
     def process_and_append_damage_result(cmd, attack_state):
-        attacker_results, target_results = DamageFormatter.get_string_results(attack_state.damage_result)
+        attacker_results, target_results = DamageFormatter.get_string_results(attack_state.processed_damage_result)
 
         attacker_results.insert(0, 'Your attack ({}) with {} hits {}!'.format(
             attack_state.attack_roll, 

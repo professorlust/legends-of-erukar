@@ -1,9 +1,9 @@
 import erukar
 
 class DamageResult:
-    def __init__(self, victim, instigator):
+    def __init__(self, target, instigator):
         self.reports = []
-        self.victim = victim
+        self.target = target
         self.init_instigator(instigator)
         self.caused_incapacitated = False
         self.caused_death = False
@@ -20,12 +20,15 @@ class DamageResult:
         self.stopped_by_deflection = all(x.stopped_by_deflection for x in self.reports)
         self.stopped_by_mitigation = all(x.stopped_by_mitigation for x in self.reports)
 
-        if not issubclass(type(self.victim), erukar.engine.lifeforms.Lifeform): return
+        if not issubclass(type(self.target), erukar.engine.lifeforms.Lifeform): return
 
-        self.caused_incapacitated = self.victim.has_condition(erukar.engine.conditions.Dying)
-        self.caused_death = self.victim.has_condition(erukar.engine.conditions.Dead)
+        already_incapacitated = self.target.has_condition(erukar.engine.conditions.Dying)
+        total_damage = self.get_damage_total()
+
+        self.caused_incapacitated = not already_incapacitated and total_damage >= self.target.health
+        self.caused_death = already_incapacitated and total_damage > 0
         if self.caused_death and not self.is_trap:
-            self.xp_value = self.victim.calculate_xp_worth()
+            self.xp_value = self.target.calculate_xp_worth()
 
     def get_damage_total(self):
         return sum([report.amount_dealt for report in self.reports])

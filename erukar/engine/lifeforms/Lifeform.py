@@ -103,12 +103,12 @@ class Lifeform(RpgEntity):
         attack_mod = sum([x.modify_attack_roll(target) for x in self.conditions])
         return int((raw + attack_mod) * efficiency)
 
-    def on_apply_damage(self, attack_state, command):
+    def on_process_damage(self, attack_state, command):
         '''Called after a successful attack'''
         for condition in self.conditions:
-            condition.on_apply_damage(attack_state, command)
+            condition.on_process_damage(attack_state, command)
         if attack_state.weapon:
-            attack_state.weapon.on_apply_damage(attack_state, command)
+            attack_state.weapon.on_process_damage(attack_state, command)
 
     def get_detection_pair(self):
         '''Retrieve a rolled Acuity and Sense for detection'''

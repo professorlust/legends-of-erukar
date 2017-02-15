@@ -45,13 +45,15 @@ class RpgEntity(Describable):
             if isinstance(armor, erukar.engine.inventory.Armor):
                 armor.take_damage(damage)
 
-    def apply_damage(self, damages, instigator, efficacy=1.0):
+    def process_damage(self, damages, instigator, efficacy=1.0):
         '''Apply a list of damages to this player and return a result'''
         damage_result = self.calculate_damage_result(damages, instigator, efficacy)
-        damage_sum = sum(x.amount_dealt for x in damage_result.reports)
-        self.take_damage(damage_sum, instigator)  
         damage_result.parse_status()
         return damage_result
+
+    def apply_damage(self, damage_result, instigator):
+        damage_sum = sum(x.amount_dealt for x in damage_result.reports)
+        self.take_damage(damage_sum, instigator)  
 
     def calculate_damage_result(self, damages, instigator, efficacy=1.0):
         '''

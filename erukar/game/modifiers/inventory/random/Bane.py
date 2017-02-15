@@ -35,7 +35,7 @@ class Bane(WeaponMod):
         self.InventoryName = '{} {}bane'.format(self.Levels[self.level], self.target_type).strip()
         self.InventoryDescription = 'Deals {:2.0f}% extra damage to any {}; if the creature is incapacitated before the additional damage is applied, the creature is instead slain'.format(self.damage_increase*100, self.target_type)
 
-    def on_apply_damage(self, attack_state, command):
+    def on_process_damage(self, attack_state, command):
         '''Check to see if the enemy is of a specific type'''
         if not self.target_class:
             self.target_class = getattr(erukar.game.enemies.templates, self.target_type)

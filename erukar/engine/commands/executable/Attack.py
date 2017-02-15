@@ -62,11 +62,12 @@ class Attack(ActionCommand):
         self.dirty(self.character)
         self.dirty(self.target)
 
-        attack_state.on_apply_damage(self)
+        attack_state.on_process_damage(self)
+        attack_state.confirm()
         PhysicalDamageFormatter.process_and_append_damage_result(self, attack_state)
 
-        if attack_state.damage_result.xp_value > 0:
-            self.character.award_xp(attack_state.damage_result.xp_value, self)
+        if attack_state.processed_damage_result.xp_value > 0:
+            self.character.award_xp(attack_state.processed_damage_result.xp_value, self)
 
     def resolve_directional_target(self, direction):
         '''Find all visible targets in a line extending to the {direction}'''
