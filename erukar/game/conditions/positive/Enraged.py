@@ -1,7 +1,8 @@
 from erukar.engine.model.Condition import Condition
-import erukar
+from erukar.engine.model.Damage import Damage
+import erukar, random
 
-class Raged(Condition):
+class Enraged(Condition):
     IsTemporary = True
     Duration = 4 # In ticks, where a tick is 5 seconds
     Incapacitates = False
@@ -11,7 +12,7 @@ class Raged(Condition):
     Description = 'Adds Total Resolve Score to attack rolls, physical damage, and physical mitigation but reduces sense and acuity by the same amount'
 
     def __init__(self, target, instigator=None):
-        super().__init__(self, target, instigator)
+        super().__init__(target, instigator)
         if instigator is None:
             instigator = target
         self.resolve_score = instigator.calculate_effective_stat('resolve')
@@ -30,7 +31,7 @@ class Raged(Condition):
     def modify_attack_roll(self, target):
         return self.resolve_score
 
-    def on_apply_damage(self, attack_state, command):
+    def on_process_damage(self, attack_state, command):
         extra_damage = self.resolve_score
         damage = Damage(
             "force",

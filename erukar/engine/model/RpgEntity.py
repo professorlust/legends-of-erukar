@@ -22,14 +22,12 @@ class RpgEntity(Describable):
         return RpgEntity.base_evasion
 
     def roll(self, roll_range, distribution=None):
-        '''Roll on a string such as '1d20' or '6d6+6' '''
         if distribution is None:
             distribution = random.uniform
         return max(1, distribution(*roll_range))
 
     def deflection(self, damage_type):
-        deflections = [df for mit, df in self.matching_deflections_and_mitigations(damage_type)]
-        return min(deflections) if len(deflections) > 0 else 0
+        return sum( [df for mit, df in self.matching_deflections_and_mitigations(damage_type)] )
 
     def mitigation(self, damage_type):
         return 1.0-sum([mit for mit, df in self.matching_deflections_and_mitigations(damage_type)])

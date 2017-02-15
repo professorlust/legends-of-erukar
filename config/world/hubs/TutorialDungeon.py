@@ -23,6 +23,7 @@ entry.Glances = [
 
 sword = Shop.create(Sword, erukar.game.modifiers.material.Steel)
 erukar.game.modifiers.inventory.nonrandom.Quality().apply_to(sword)
+erukar.game.modifiers.inventory.random.Bane().apply_to(sword)
 erukar.game.modifiers.inventory.nonrandom.Size().apply_to(sword)
 entry.add(sword)
 

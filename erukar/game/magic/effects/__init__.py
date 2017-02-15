@@ -2,6 +2,7 @@ from .ArcaneAdeptAugmentation import ArcaneAdeptAugmentation
 from .AugmentWeapon import AugmentWeapon
 from .ConditionBlinded import ConditionBlinded
 from .ConditionCloaked import ConditionCloaked
+from .ConditionEnraged import ConditionEnraged
 from .ConditionFrozen import ConditionFrozen
 from .ConditionMuted import ConditionMuted
 from .DamageOverTime import DamageOverTime
@@ -23,6 +24,7 @@ __all__ = [
     "AugmentWeapon", 
     "ConditionBlinded", 
     "ConditionCloaked", 
+    "ConditionEnraged", 
     "ConditionFrozen", 
     "ConditionMuted", 
     "DamageOverTime", 

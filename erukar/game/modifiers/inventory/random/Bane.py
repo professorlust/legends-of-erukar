@@ -1,6 +1,6 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
 from erukar.engine.model.Damage import Damage
-import random
+import erukar, random
 
 class Bane(WeaponMod):
     Probability = 1
@@ -33,18 +33,18 @@ class Bane(WeaponMod):
         self.damage_increase = 0.075 * (self.level + 1)
         self.target_type = random.choice(self.Types)
         self.InventoryName = '{} {}bane'.format(self.Levels[self.level], self.target_type).strip()
-        self.InventoryDescription = 'Deals {:2.0f}% extra damage to any {}; if the creature is incapacitated before the additional damage is applied, the creature is instead slain'.format(self.damage_increase*100, self.target_type)
+        self.InventoryDescription = 'Deals {:2.0f}% extra damage to any {}'.format(self.damage_increase*100, self.target_type)
 
     def on_process_damage(self, attack_state, command):
         '''Check to see if the enemy is of a specific type'''
-        if not self.target_class:
+        if not hasattr(self, 'target_class') or not self.target_class:
             self.target_class = getattr(erukar.game.enemies.templates, self.target_type)
         if isinstance(attack_state.target, self.target_class):
             self.do_bane(attack_state, command)
 
     def do_bane(self, attack_state, command):
         '''Do extra damage'''
-        extra_damage = attack_state.damage_result.get_damage_total() * self.damage_increase
+        extra_damage = attack_state.processed_damage_result.get_damage_total() * self.damage_increase
         damage = Damage(
             "unmitigable",
             (extra_damage, extra_damage),

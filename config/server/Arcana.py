@@ -17,4 +17,5 @@ def configure(shard):
         'mar':  'HealEffect',
         'muun': 'InflictCondition',
         'nohs': 'Sunder',
+        'rage': 'ConditionEnraged',
     }

@@ -256,6 +256,8 @@ class Lifeform(RpgEntity):
         return 'his'
 
     def matching_deflections_and_mitigations(self, damage_type):
+
+        print('call')
         # Check for Mitigation in Armor
         for x in self.equipment_types:
             armor = getattr(self, x)
