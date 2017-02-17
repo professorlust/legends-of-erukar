@@ -20,6 +20,9 @@ class CrossBow(Weapon):
     Scale = 0.25
     DistributionProperties = (Shape, Scale)
 
+    RequiresAmmo = True
+    AmmoType     = 'erukar.game.inventory.ammunition.CrossbowBolt'
+
     BaseStatInfluences = {
         'dexterity':  {'requirement': 5, 'scaling_factor': 5, 'cutoff': 200},
     }

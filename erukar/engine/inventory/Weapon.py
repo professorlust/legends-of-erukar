@@ -1,5 +1,6 @@
 from .Item import Item
 from erukar.engine.model.Damage import Damage
+import erukar
 import numpy as np
 
 class Weapon(Item):
@@ -30,23 +31,16 @@ class Weapon(Item):
         self.damages = [Damage(self.DamageType, list(self.DamageRange), self.DamageModifier,\
                                (self.Distribution, self.DistributionProperties), scales=True)]
 
-    def on_attack(self, attacker):
+    def on_attack(self, attack_state):
         '''Needs implementation''' 
-        if self.RequiresAmmo:
+        if self.RequiresAmmo and attack_state.ammunition:
             # This should mutate an AttackParameters object 
-            self.get_ammo(attacker).on_attack(self, attacker)            
-        super().on_attack(attacker)
+            attack_state.ammunition.on_attack(attack_state)
+            attack_state.ammunition.consume()
+        super().on_attack(attack_state.attacker)
 
     def can_attack(self, attacker):
         return not self.RequiresAmmo or self.get_ammo() is not None
-
-    def get_ammo(self, attacker):
-        return self.attacker.ammunition
-
-    def use_ammo(self, attacker):
-        ammo = self.get_ammo(attacker)
-        if ammo is None: return 'No ammo was found!'
-        ammo.consume()
 
     def roll(self, attacker):
         scalar, offset = self.efficacy_for(attacker)

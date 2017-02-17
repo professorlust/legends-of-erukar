@@ -49,6 +49,7 @@ class AttackState:
 
     def calculate_attack(self):
         '''Get the basic attack roll, then modify it based on the weapon and weapon mods'''
+        self.weapon.on_attack(self)
         base_attack_roll = self.attacker.calculate_attack_roll(self.efficiency, self.target)
         modified_attack_roll = self.weapon.on_calculate_attack_roll(base_attack_roll, self.target)
         self.attack_roll = modified_attack_roll

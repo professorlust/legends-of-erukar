@@ -254,12 +254,14 @@ def make_ranger(payload):
         Shop.create(Boots, erukar.game.modifiers.material.Leather),
         Shop.create(Vest, erukar.game.modifiers.material.Leather),
         Shop.create(Breeches, erukar.game.modifiers.material.Leather),
+        Shop.create(Arrow, erukar.game.modifiers.material.Oak),
         Potion(5) # This should be replaced with ammo
     ]
     ranger.right = ranger.inventory[0]
     ranger.feet  = ranger.inventory[1]
     ranger.chest = ranger.inventory[2]
     ranger.legs  = ranger.inventory[3]
+    ranger.ammunition = ranger.inventory[4]
     payload.playernode.script_data['ranger'] = ranger
     return ranger
 

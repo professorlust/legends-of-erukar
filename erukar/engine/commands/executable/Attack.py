@@ -42,6 +42,8 @@ class Attack(ActionCommand):
             new_attack = self.build_attack_state()
             new_attack.efficiency = dual_wielding_penalty
             new_attack.get_weapon(attacking_slot, use_unarmed_if_none=True)
+            if isinstance(new_attack.weapon, erukar.engine.inventory.Weapon) and new_attack.weapon.RequiresAmmo:
+                new_attack.ammunition = self.character.ammunition
             new_attack.attack_direction = direction
             if not new_attack.is_valid():
                 continue

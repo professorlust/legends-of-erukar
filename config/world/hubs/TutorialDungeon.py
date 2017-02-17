@@ -27,6 +27,12 @@ erukar.game.modifiers.inventory.random.Bane().apply_to(sword)
 erukar.game.modifiers.inventory.nonrandom.Size().apply_to(sword)
 entry.add(sword)
 
+arrow = Shop.create(Arrow, erukar.game.modifiers.material.Oak)
+entry.add(arrow)
+
+bow = Shop.create(Bow, erukar.game.modifiers.material.Oak)
+entry.add(bow)
+
 '''First Room'''
 first_room = Room(dungeon, (2,0), dimensions=(2,2))
 first_room.Glances = [

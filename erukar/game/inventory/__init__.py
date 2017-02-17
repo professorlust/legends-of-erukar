@@ -1,3 +1,4 @@
+from .ammunition import *
 from .base import *
 from .consumables import *
 from .weapons import *
