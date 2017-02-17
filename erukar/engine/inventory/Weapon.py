@@ -23,13 +23,19 @@ class Weapon(Item):
 
     # Used when you need to have projectiles
     RequiresAmmo = False
+    AmmoType = ''
 
     def __init__(self):
         super().__init__(self.BaseName)
         self.name = self.BaseName
         self.item_type = "weapon"
-        self.damages = [Damage(self.DamageType, list(self.DamageRange), self.DamageModifier,\
-                               (self.Distribution, self.DistributionProperties), scales=True)]
+        self.damages = [Damage(
+            self.DamageType, 
+            list(self.DamageRange), 
+            self.DamageModifier,
+            (self.Distribution, self.DistributionProperties), 
+            scales=True
+        )]
 
     def on_attack(self, attack_state):
         '''Needs implementation''' 
@@ -38,6 +44,9 @@ class Weapon(Item):
             attack_state.ammunition.on_attack(attack_state)
             attack_state.ammunition.consume()
         super().on_attack(attack_state.attacker)
+
+    def has_correct_ammo(self, ammo):
+        return isinstance(ammo, getattr(erukar.game.inventory.ammunition, self.AmmoType))
 
     def can_attack(self, attacker):
         return not self.RequiresAmmo or self.get_ammo() is not None

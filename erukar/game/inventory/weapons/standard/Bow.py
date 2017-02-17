@@ -21,7 +21,7 @@ class Bow(Weapon):
     DistributionProperties = (Shape, Scale)
 
     RequiresAmmo = True
-    AmmoType     = 'erukar.game.inventory.ammunition.Arrow'
+    AmmoType     = 'Arrow'
 
     BaseStatInfluences = {
         'dexterity':  {'requirement': 8, 'scaling_factor': 3, 'cutoff': 200},

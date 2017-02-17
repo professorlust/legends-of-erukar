@@ -41,7 +41,7 @@ class AttackState:
 
     def is_ranged_valid(self):
         '''Check to see if we're a projectile, and then check to see if we have ammo if we need it)'''
-        return self.is_projectile() and (self.ammunition is not None or not self.weapon.RequiresAmmo)
+        return self.is_projectile() and (not self.weapon.RequiresAmmo or self.weapon.has_correct_ammo(self.ammunition))
 
     def is_melee_valid(self):
         '''Make sure that melee attacks only happen in this room'''
