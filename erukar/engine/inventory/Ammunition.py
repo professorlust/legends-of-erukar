@@ -9,9 +9,9 @@ class Ammunition(StackableItem):
     def __init__(self):
         super().__init__(self.BaseName)
 
-    def on_attack(self, attack_state):
+    def on_calculate_attack(self, attack_state):
         for modifier in self.modifiers:
-            modifier.on_ranged_attack(attack_state)
+            modifier.on_calculate_attack_ranged(attack_state)
 
     def consume(self):
         self.quantity -= 1

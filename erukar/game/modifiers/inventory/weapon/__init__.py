@@ -5,7 +5,7 @@ from .Broken import Broken
 from .ChanceToInflictCondition import ChanceToInflictCondition
 from .Dark import Dark
 from .Dull import Dull
-from .Enhancement import Enhancement
+from .EnhancedWeapon import EnhancedWeapon
 from .Glowing import Glowing
 from .Holy import Holy
 from .Luminous import Luminous
@@ -26,7 +26,7 @@ __all__ = [
     "ChanceToInflictCondition", 
     "Dark", 
     "Dull", 
-    "Enhancement", 
+    "EnhancedWeapon", 
     "Glowing", 
     "Holy", 
     "Luminous", 

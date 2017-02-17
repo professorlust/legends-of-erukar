@@ -1,3 +1,5 @@
 from .base import *
-from .nonrandom import *
-from .random import *
+from .universal import *
+from .weapon import *
+from .armor import *
+from .ammunition import *

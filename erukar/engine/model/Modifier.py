@@ -103,6 +103,9 @@ class Modifier(Describable):
     def on_process_damage(self, attack_state, command):
         pass
 
+    def on_calculate_attack_ranged(self, attack_state):
+        pass
+
     def persistable_attributes(self):
         '''For use with database; getattrs all attributes defined by persistent_attr dict'''
         return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}

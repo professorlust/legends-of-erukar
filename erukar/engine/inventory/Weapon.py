@@ -37,11 +37,11 @@ class Weapon(Item):
             scales=True
         )]
 
-    def on_attack(self, attack_state):
+    def on_calculate_attack(self, attack_state):
         '''Needs implementation''' 
         if self.RequiresAmmo and attack_state.ammunition:
             # This should mutate an AttackParameters object 
-            attack_state.ammunition.on_attack(attack_state)
+            attack_state.ammunition.on_calculate_attack(attack_state)
             attack_state.ammunition.consume()
         super().on_attack(attack_state.attacker)
 

@@ -106,7 +106,6 @@ class AdditionalDamage(WeaponMod):
 
     def apply_subclass(self, subclass):
         self.damage_type = subclass
-        print(self.damage_type)
 
     def apply_to(self, weapon):
         super().apply_to(weapon)
@@ -119,3 +118,12 @@ class AdditionalDamage(WeaponMod):
 
     def on_alias(self, current):
         return self.Damages[self.damage_type]['inventory_name'].format(self.Levels[self.level], current).strip()
+
+    def on_calculate_attack_ranged(self, attack_state):
+        attack_state.add_extra_damage(Damage(
+            self.damage_type.capitalize(),
+            [self.min_damage, self.max_damage],
+            "",
+            (np.random.uniform, (0,1))
+        ))
+

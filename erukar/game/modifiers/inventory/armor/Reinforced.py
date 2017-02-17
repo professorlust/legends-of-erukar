@@ -1,0 +1,5 @@
+class Reinforced(ItemModifier):
+    '''
+    '''
+    pass
+

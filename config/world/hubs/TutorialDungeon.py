@@ -22,15 +22,16 @@ entry.Glances = [
 ]
 
 sword = Shop.create(Sword, erukar.game.modifiers.material.Steel)
-erukar.game.modifiers.inventory.nonrandom.Quality().apply_to(sword)
-erukar.game.modifiers.inventory.random.Bane().apply_to(sword)
-erukar.game.modifiers.inventory.nonrandom.Size().apply_to(sword)
+erukar.game.modifiers.inventory.universal.Quality().apply_to(sword)
+erukar.game.modifiers.inventory.universal.Size().apply_to(sword)
+erukar.game.modifiers.inventory.weapon.Bane().apply_to(sword)
 entry.add(sword)
 
 arrow = Shop.create(Arrow, erukar.game.modifiers.material.Oak)
 entry.add(arrow)
 
 bow = Shop.create(Bow, erukar.game.modifiers.material.Oak)
+erukar.game.modifiers.inventory.universal.Quality().apply_to(bow)
 entry.add(bow)
 
 '''First Room'''
