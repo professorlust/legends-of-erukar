@@ -4,9 +4,8 @@ import random
 class ElementalElectricity(ElementalAugmentation):
     DamageName = 'electricity'
     DamageDescription = 'Lightning strikes {alias|target} and electricity courses through his body!'
-    AugmentationType = 'Electric'
-
-    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription', 'AugmentationType']
+    AugmentationType = 'AdditionalDamage'
+    AugmentationSubclass = 'electric'
 
     PotionName = 'Electricity'
     PotionPriceMultiplier = 3.5

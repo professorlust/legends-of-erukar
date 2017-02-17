@@ -4,9 +4,8 @@ import random
 class ElementalFire(ElementalAugmentation):
     DamageName = 'fire'
     DamageDescription = "Flames engulf {alias|target}'s body!"
-    AugmentationType = 'Flaming'
-
-    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription', 'AugmentationType']
+    AugmentationType = 'AdditionalDamage'
+    AugmentationSubclass = 'fire'
 
     PotionName = 'Fire'
     PotionPriceMultiplier = 3.5

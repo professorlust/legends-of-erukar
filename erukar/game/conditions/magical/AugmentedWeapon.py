@@ -11,13 +11,20 @@ class AugmentedWeapon(Condition):
     Participle = 'Augmenting Weapon'
     Description = 'Adds a temporary effect to one or multiple weapons'
 
-    def __init__(self, target, modifier_type):
+    def __init__(self, target, modifier_type, subclass):
         super().__init__(target)
         self.modifier_type = getattr(erukar.game.modifiers.inventory, modifier_type)
         self.timer = AugmentedWeapon.Duration
         self.weapon = None
+        self.subclass = subclass
         self.modifier_instances = []
         self.augment_weapon(target)
+
+    def name(self):
+        return self.modifier_instances[0].on_alias('Weapon')
+
+    def describe(self):
+        return self.modifier_instances[0].InventoryDescription
 
     def tick(self):
         '''Countdown'''
@@ -32,6 +39,7 @@ class AugmentedWeapon(Condition):
             self.weapon = getattr(target, slot)
             if self.weapon is not None and isinstance(self.weapon, erukar.engine.inventory.Weapon):
                 modifier = self.modifier_type()
+                modifier.apply_subclass(self.subclass)
                 modifier.persistent = False
                 modifier.apply_to(self.weapon)
                 self.modifier_instances.append(modifier)

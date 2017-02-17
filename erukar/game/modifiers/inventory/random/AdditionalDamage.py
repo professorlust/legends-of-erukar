@@ -22,6 +22,7 @@ class AdditionalDamage(WeaponMod):
 
     Damages = {
         'fire': {
+            'inventory_name': '{} Flaming {}',
             'glances': [
                 Observation(acuity=0, sense=0, result='with a fiery {EssentialPart}'),
                 Observation(acuity=20, sense=0, result='with flames erupting from the {EssentialPart}')
@@ -35,18 +36,21 @@ class AdditionalDamage(WeaponMod):
             ]
         },
         'ice': {
+            'inventory_name': '{} Frosted {}',
             'glances': [
             ],
             'inspects': [
             ]
         },
         'electric': {
+            'inventory_name': '{} Electric {}',
             'glances': [
             ],
             'inspects': [
             ]
         },
         'acid': {
+            'inventory_name': '{} Acidic {}',
             'glances': [
                 Observation(acuity=10, sense=0, result="with condensation on the {EssentialPart}"),
                 Observation(acuity=25, sense=0, result="dripping with acid")
@@ -57,6 +61,7 @@ class AdditionalDamage(WeaponMod):
             ]
         },
         'divine': {
+            'inventory_name': '{} Divine {}',
             'glances': [
                 Observation(acuity=0, sense=10, result='which fills you with hope'),
                 Observation(acuity=0, sense=20, result='with a blessed {EssentialPart}')
@@ -67,6 +72,7 @@ class AdditionalDamage(WeaponMod):
             ]
         },
         'demonic': {
+            'inventory_name': '{} Demonic {}',
             'glances': [
                 Observation(acuity=0, sense=10, result='which fills you with dread'),
                 Observation(acuity=0, sense=20, result='with a cursed {EssentialPart}')
@@ -89,11 +95,18 @@ class AdditionalDamage(WeaponMod):
 
     def randomize(self, parameters=None):
         '''In the future we will determine level based on the generation parameters level and desirability''' 
-        self.level = int(random.random() * len(self.Levels))
-        self.min_damage, self.max_damage = self.DamageRanges[self.level]
-        self.damage_type = random.choice(list(self.Damages.keys()))
+        if not hasattr(self, 'level'):
+            self.level = int(random.random() * len(self.Levels))
+        if not hasattr(self, 'min_damage') or not hasattr(self, 'max_damage'):
+            self.min_damage, self.max_damage = self.DamageRanges[self.level]
+        if not hasattr(self, 'damage_type'):
+            self.damage_type = random.choice(list(self.Damages.keys()))
         self.InventoryName = '{} {} Augmentation'.format(self.Levels[self.level], self.damage_type.capitalize()).strip()
         self.InventoryDescription = 'Deals {} to {} extra {} damage per attack'.format(self.min_damage, self.max_damage, self.damage_type)
+
+    def apply_subclass(self, subclass):
+        self.damage_type = subclass
+        print(self.damage_type)
 
     def apply_to(self, weapon):
         super().apply_to(weapon)
@@ -103,3 +116,6 @@ class AdditionalDamage(WeaponMod):
             "",
             (np.random.uniform, (0,1))
         ))
+
+    def on_alias(self, current):
+        return self.Damages[self.damage_type]['inventory_name'].format(self.Levels[self.level], current).strip()

@@ -9,3 +9,7 @@ class Ethereal(Condition):
         'piercing': (0.333, 0),
         'slashing': (0.333, 0)
     }
+
+    Noun        = 'Ethereal'
+    Participle  = 'Being Ethereal'
+    Description = 'Partial transition into Ethereal Plane, reducing physical damage by 33%'

@@ -46,7 +46,7 @@ class Stats(Command):
             int(100.0*(1-self.lifeform.mitigation(dtype))), self.lifeform.deflection(dtype))
             for dtype in Damage.Types])
 
-        conditions = '\n'.join([c.__module__ for c in self.lifeform.conditions])
+        conditions = '\n'.join([c.on_stats() for c in self.lifeform.conditions])
 
         self.append_result(self.sender_uid, '\n--------------------\n'.join([level_d, status_d, attribute_d, mitigations, conditions]))
 
@@ -74,6 +74,4 @@ class Stats(Command):
                     total = Stats.signed(full_value))
         
     def signed(number):
-        if number < 0:
-            return '{0}'.format(number)
-        return '+{0}'.format(number)
+        return ('{}' if number < 0 else '+{}').format(number)

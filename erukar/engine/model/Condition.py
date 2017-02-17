@@ -16,6 +16,18 @@ class Condition:
         self.timer = self.Duration
         self.efficiency = 1.0
 
+    def on_stats(self):
+        if self.IsTemporary:
+            seconds_left = int(self.timer * 5)
+            return '{} ({} seconds left): {}'.format(self.name(), seconds_left, self.describe())
+        return '{}: {}'.format(self.name(), self.describe())
+
+    def name(self):
+        return self.Noun
+
+    def describe(self):
+        return self.Description
+
     def do_begin_of_turn_effect(self):
         return ''
 

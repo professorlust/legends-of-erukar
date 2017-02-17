@@ -6,7 +6,8 @@ class AugmentWeapon(SpellEffect):
     StandardCast = "Glowing turquoise runes appear on the {EssentialPart|weapon} of {alias|lifeform}'s {alias|weapon}"
     FailedCast = "Embarrassingly, {alias|lifeform} seems to have forgotten to equip a weapon..."
 
-    AugmentationType = 'Blessed'
+    AugmentationType = 'AdditionalDamage'
+    AugmentationSubclass = 'fire'
 
     PotionName = 'Augmented Weapon'
     PotionPriceMultiplier = 7.5
@@ -19,7 +20,7 @@ class AugmentWeapon(SpellEffect):
         '''Inflicts a random amount of fire damage to something, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters)
 
-        augment = AugmentedWeapon(self.target, self.AugmentationType)
+        augment = AugmentedWeapon(self.target, self.AugmentationType, self.AugmentationSubclass)
         if augment.weapon is None:
             self.append_for_all_in_room(self.mutate(self.StandardCast,{'lifeform':self.target}))
             return

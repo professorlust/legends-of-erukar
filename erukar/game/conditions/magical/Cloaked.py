@@ -7,10 +7,13 @@ class Cloaked(Condition):
 
     Noun        = 'Cloaked'
     Participle  = 'Cloaking'
-    Description = 'Raises the necessary acuity to be visually detected by 20'
+    Description = 'Raises ATD (Acuity to Detect) by {}'
 
     def __init__(self, target, instigator=None):
         super().__init__(target, instigator)
 
+    def describe(self):
+        return self.Description.format(self.modify_acuity_to_detect())
+
     def modify_acuity_to_detect(self):
-        return self.BaseAcuityModifier * self.efficiency
+        return int(self.BaseAcuityModifier * self.efficiency)

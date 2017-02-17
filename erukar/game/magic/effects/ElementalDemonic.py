@@ -4,9 +4,8 @@ import random
 class ElementalDemonic(ElementalAugmentation):
     DamageName = 'demonic'
     DamageDescription = "{alias|target} is swallowed by demonic darkness!"
-    AugmentationType = 'Cursed'
-
-    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription', 'AugmentationType']
+    AugmentationType = 'AdditionalDamage'
+    AugmentationSubclass = 'demonic'
 
     PotionName = 'Demonic'
     PotionPriceMultiplier = 3.5

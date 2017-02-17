@@ -8,6 +8,10 @@ class ElementalAugmentation(SpellEffect):
     DamageOffset = 0
     DamageName = ''
     DamageDescription = ''
+    AugmentationType = 'AdditionalDamage'
+    AugmentationSubclass = ''
 
     PotionName = 'Elemental'
     PotionPriceMultiplier = 3.0
+
+    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription', 'AugmentationType', 'AugmentationSubclass']

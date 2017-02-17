@@ -4,8 +4,8 @@ import random
 class ElementalAcid(ElementalAugmentation):
     DamageName = 'acid'
     DamageDescription = 'Acid engulfs {alias|target}\'s body!'
-    AugmentationType = 'Acid'
+    AugmentationType = 'AdditionalDamage'
+    augmentationSubclass = 'Acid'
 
-    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription', 'AugmentationType']
     PotionName = 'Acid'
     PotionPriceMultiplier = 3.5

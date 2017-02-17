@@ -15,11 +15,8 @@ class RpgEntity(Describable):
         'resolve'
     ]
 
-    def __init__(self):
-        super().__init__()
-
     def evasion(self):
-        return RpgEntity.base_evasion
+        return self.base_evasion
 
     def roll(self, roll_range, distribution=None):
         if distribution is None:

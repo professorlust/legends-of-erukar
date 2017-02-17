@@ -4,9 +4,8 @@ import random
 class ElementalDivine(ElementalAugmentation):
     DamageName = 'divine'
     DamageDescription = "Holy light pierces {alias|target}!"
-    AugmentationType = 'Blessed'
-
-    ParametersWhichShouldBeOverridden = ['DamageName','DamageDescription', 'AugmentationType']
+    AugmentationType = 'AdditionalDamage'
+    AugmentationSubclass = 'divine'
 
     PotionName = 'Divine'
     PotionPriceMultiplier = 3.5
