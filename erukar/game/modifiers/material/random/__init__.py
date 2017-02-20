@@ -1,3 +1,39 @@
+'''
+Abyssium        - 
+Aluminum        - 2.71
+Ash             - 0.71
+Atherite        - 
+Beechwood       - 0.82
+Brass           - 8.47 
+Bronze          - 8.20 
+Ceramic         - 
+Chainmail       - 
+Copper          - 8.94
+Cotton          - 
+Diamond         - 0.03
+Divinum         - 
+Glass           - 
+Gold            - 19.32
+Infernite       - 
+Iron            - 7.85
+Iurwood         - 1.10
+Leather         - 0.86
+Magicite        - 
+Mahogany        - 0.66
+Maple           - 0.62
+Negacite        - 
+Oak             - 0.74
+Platinum        - 21.40
+Sacrium         - 
+Salericite      - 
+Silk            - 
+Silver          - 10.49
+Steel           - 7.85
+StuddedLeather  - 
+Tungsten        - 19.60
+'''
+
+
 from .Abyssium import Abyssium
 from .Aluminum import Aluminum
 from .Ash import Ash
