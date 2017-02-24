@@ -38,7 +38,7 @@ class Lifeform(RpgEntity):
             setattr(self, eq_type, None)
         self.name = name
         self.wealth = 0
-        self.skill_points = 3
+        self.skill_points = 5
         self.skills = []
         self.stat_points = 15
         self.conditions = []
@@ -178,17 +178,49 @@ class Lifeform(RpgEntity):
         '''Award a certain amount of XP to the player and level if the threshold is met'''
         output_strings = ['{} has gained {} xp.'.format(self.alias(), xp)]
         self.experience += xp
+        necessary_xp = self.calculate_necessary_xp()
+
         # Allows multiple level ups to occur
-        while self.experience >= self.calculate_necessary_xp():
-            self.experience -= self.calculate_necessary_xp()
-            self.level += 1
-            hp_proportion = self.health / self.max_health
-            self.max_health += (4 + self.vitality)
-            self.health = int(math.ceil(self.max_health * hp_proportion))
-            self.stat_points += 1
-            output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
+        while self.experience >= necessary_xp:
+            self.experience -= necessary_xp
+            self.perform_level_up(output_strings)
     
         cmd.append_result(self.uid, '\n'.join(output_strings))
+
+    def perform_level_up(self, output_strings):
+        '''Level up the character once'''
+        self.level += 1
+        output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
+
+        # Manage Health
+        hp_proportion = self.health / self.max_health
+        self.max_health += (4 + self.vitality)
+        self.health = int(math.ceil(self.max_health * hp_proportion))
+
+        # Manage stat and skill points
+        self.stat_points += 1
+        self.check_for_skill_point_award(output_strings)
+
+    def check_for_skill_point_award(self, output_strings):
+        '''
+        Skill point progression (80 maximum skill points)
+        Level 1         : 6 per level
+        Level 2   -  30 : 1 per level
+        Level 31  - 100 : 1 per 2 levels
+        Level 100       : Extra point
+        Level 101 - 200 : 1 per 10 levels
+        '''
+        eligible = 2 <= self.level < 30 \
+            or (30 <= self.level < 100 and self.level % 2 == 0) \
+            or (100 <= self.level < 200 and self.level % 10 == 0)
+
+        if self.level == 100:
+            self.skill_points += 1
+    
+        if eligible:
+            self.skill_points += 1
+            output_strings.append('{} now has {} skill points.'.format(self.alias(), self.skill_points))
+
 
     def take_damage(self, damage_amount, instigator=None):
         '''Take damage and return amount of XP to award instigator'''

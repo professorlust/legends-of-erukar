@@ -3,7 +3,7 @@ import random
 
 class ElementalDivine(ElementalAugmentation):
     DamageName = 'divine'
-    DamageDescription = "Holy light pierces {alias|target}!"
+    DamageDescription = "{alias|target} is consumed by divine light!"
     AugmentationType = 'AdditionalDamage'
     AugmentationSubclass = 'divine'
 
