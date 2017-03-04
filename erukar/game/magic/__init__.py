@@ -1,2 +1,2 @@
-from .effects import *
+from .words import *
 from .predefined import *

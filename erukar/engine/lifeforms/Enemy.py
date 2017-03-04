@@ -13,6 +13,8 @@ class Enemy(Lifeform, Indexer):
     def __init__(self, name="", is_random=True):
         Indexer.__init__(self)
         Lifeform.__init__(self, name)
+
+        # Personality
         self.stat_points = 0
         self.elite_points = 0
         self.str_ratio = 0.1667
@@ -21,11 +23,16 @@ class Enemy(Lifeform, Indexer):
         self.acu_ratio = 0.1667
         self.sen_ratio = 0.1667
         self.res_ratio = 0.1667
+        self.commander = None   # Used in conjuration or with Elites
+        self.faction   = None   # Reserved
+
+        # Flavor
         self.history = []
         self.modifiers = []
         self.region = ''
         self.name = name
 
+        # Randomized/Persistent enemy 
         self.is_transient = True
         self.requesting_persisted = False
         self.should_randomize = is_random
@@ -69,15 +76,23 @@ class Enemy(Lifeform, Indexer):
         return self.elite_points >= Enemy.ElitePointClassificationMinimum and not self.is_transient
 
     def perform_turn(self):
-        targets = list(self.viable_targets(self.current_room))
+        # Check to see if we should attack
+        targets = list(self.viable_attack_targets(self.current_room))
         if len(targets) > 0:
             return self.do_attack(targets)
+        
+        if self.commander is not None:
+            return self.help_or_follow_commander(self)
+
         return self.maybe_move_somewhere()
+
+    def help_or_follow_commander(self):
+        print('following ' + self.commander.alias())
 
     def maybe_move_somewhere(self):
         for room_dir in list(self.current_room.adjacent_rooms()):
             room = self.current_room.get_in_direction(room_dir).room
-            targets = list(self.viable_targets(room))
+            targets = list(self.viable_attack_targets(room))
             if len(targets) > 0:
                 return self.do_move(room_dir)
 
@@ -146,13 +161,14 @@ class Enemy(Lifeform, Indexer):
             # Gain a random modifier
             return 
 
-    def viable_targets(self, room):
+    def viable_attack_targets(self, room):
         acuity, sense = [math.floor(random.uniform(*self.stat_random_range(x))) for x in ('acuity', 'sense')]
         for item in room.contents:
-            # A player should always be in this list
-            if not item.is_detected(acuity, sense):
+            # Can't be viable if it's not detected, can't be viable if is our commander
+            if not item.is_detected(acuity, sense) or self.our_commander_is(item):
                 continue
 
+            # Typically, monsters are aggressive towards players so yield it if we've gotten this far
             if isinstance(item, erukar.engine.lifeforms.Player):
                 yield item
 
@@ -164,6 +180,9 @@ class Enemy(Lifeform, Indexer):
                 # If you have sense < -4, you might attack yourself on accident 
                 if self.sense <= -4 or item is not self:
                     yield item
+
+    def our_commander_is(self, target):
+        return self.commander is not None and target is self.commander
 
     def lifeform(self):
         return self
