@@ -53,12 +53,12 @@ class Room(Containable):
     def directional_inspect(self, direction, lifeform, depth=0):
         '''e.g. INSPECT NORTH'''
         connection_result = self.connections[direction].directional_inspect(direction, lifeform, depth)
-        acu = lifeform.calculate_effective_stat('acuity', depth)
+        acu,sen = [lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense']]
         if depth == 0:
             return connection_result
         if acu < 1 and depth > 1:
             return 'You can see no further.'
-        our_result = self.describe(lifeform, depth)
+        our_result = self.describe(lifeform, acu, sen, depth)
         return our_result + ' ' + connection_result
 
     def aura_descriptions(self, lifeform, acuity, sense):
@@ -131,7 +131,7 @@ class Room(Containable):
             return 'This room is completely dark.'
         threats = ' '.join(list(self.threat_descriptions(lifeform, acu, sen)))
         auras = ' '.join(list(self.aura_descriptions(lifeform, acu, sen))[:3])
-        self_desc = self.describe(lifeform)
+        self_desc = self.describe(lifeform, acu, sen)
         container_desc = Describable.erjoin(list(self.container_descriptions(lifeform, acu, sen)))
         container = self.ContainerDescription.format(container_desc) if len(container_desc) > 0 else ''
         peeks = '\n'.join(list(self.directional_descriptions(lifeform, acu, sen)))
@@ -153,9 +153,8 @@ class Room(Containable):
         result = Describable.erjoin(nonempty_surfaces)
         return result.capitalize() + '.' if result is not '' else ''
 
-    def describe(self, lifeform, depth=0):
+    def describe(self, lifeform, acu, sen, depth=0):
         '''Room Descriptions'''
-        acu, sen = (lifeform.calculate_effective_stat(x, depth) for x in ['acuity', 'sense'])
         describable_contents = [x for x in self.decoration_descriptions(lifeform, acu, sen) if x is not '']
 
         self_describe = self.SelfDescription

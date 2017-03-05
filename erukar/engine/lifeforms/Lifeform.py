@@ -2,6 +2,7 @@ from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.conditions.Dead import Dead
 from erukar.engine.conditions.Dying import Dying
 from erukar.engine.model.Observation import Observation
+from erukar.engine.environment.Corpse import Corpse
 import erukar, math, random
 
 class Lifeform(RpgEntity):
@@ -221,7 +222,6 @@ class Lifeform(RpgEntity):
             self.skill_points += 1
             output_strings.append('{} now has {} skill points.'.format(self.alias(), self.skill_points))
 
-
     def take_damage(self, damage_amount, instigator=None):
         '''Take damage and return amount of XP to award instigator'''
         if self.has_condition(erukar.engine.conditions.Dying):
@@ -235,6 +235,9 @@ class Lifeform(RpgEntity):
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''
         self.conditions = [Dead(self, None)]
+        self.current_room.add(Corpse(self))
+        self.current_room.remove(self)
+        self.current_room = None
 
     def link_to_room(self, room):
         self.current_room = room
