@@ -134,7 +134,8 @@ class SpellWord(Base):
     __tablename__ = 'spellwords'
 
     id              = Column(Integer, primary_key=True)
-    word            = Column(String)
-    proficiency     = Column(Integer)
+    word_class      = Column(String)
+    successes       = Column(Integer)
+    total           = Column(Integer)
     lifeform_id     = Column(Integer, ForeignKey('lifeforms.id'))
     lifeform        = relationship("Lifeform", foreign_keys=[lifeform_id])

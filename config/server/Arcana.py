@@ -33,6 +33,8 @@ def configure(shard):
         "four": "Four", 
         "three": "Three", 
         "two": "Two", 
+        "barrier": "Barrier",
+        "bolt": "Bolt",
         "circular": "Circular", 
         "explosive": "Explosive", 
         "persistent": "Persistent", 

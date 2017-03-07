@@ -1,4 +1,5 @@
 from erukar.server.ScriptHelpers import *
+from erukar.engine.magic.SpellWordGrasp import SpellWordGrasp
 from erukar import *
 import erukar
 
@@ -48,6 +49,11 @@ def make_barbarian(payload):
     barbarian.left  = barbarian.inventory[0]
     barbarian.right = barbarian.inventory[1]
     barbarian.legs  = barbarian.inventory[2]
+
+    barbarian.spell_words = [
+        SpellWordGrasp('InflictCondition', 1, 1),
+        SpellWordGrasp('Enraged', 1, 1)
+    ]
     payload.playernode.script_data['barbarian'] = barbarian
     return barbarian
 
@@ -96,6 +102,12 @@ def make_cleric(payload):
         Shop.create(Treads, erukar.game.modifiers.material.Leather),
         Potion(5),
     ]
+    cleric.spell_words = [
+        SpellWordGrasp('Consecrate', 1, 1),
+        SpellWordGrasp('HealEffect', 1, 1),
+        SpellWordGrasp('Persistent', 1, 1),
+    ]
+
     cleric.left  = cleric.inventory[0]
     cleric.chest = cleric.inventory[1]
     cleric.legs  = cleric.inventory[2]
@@ -117,7 +129,7 @@ def define_cleric(payload):
     append(payload, '\n'.join(Stats.stat_descriptions(cleric, show_raw=True)))
     append(payload, '\nInventory\n----------')
     append(payload, '\n'.join(Inventory.inventory_contents(cleric)))
-    append(payload, '\nClerics can cast a healing spell, a blessing, and can use holy water to purify a room from evil.')
+    append(payload, '\nClerics can use holy water or a consecration spell word to purify a room from evil. They also have access to a word which heals and one which persists effects for a duration of time.')
 
     append(payload, '\nChoose Cleric?')
     append(payload, '\n'.join('  {:2} -- {}'.format(i+1, x[0]) for i, x in enumerate(choices)))
@@ -202,6 +214,13 @@ def make_mage(payload):
         Shop.create(Sandals, erukar.game.modifiers.material.Leather),
         Shop.create(Breeches, erukar.game.modifiers.material.Cotton),
         Potion(5)
+    ]
+    mage.spell_words = [
+        SpellWordGrasp('Fire', 1, 1),
+        SpellWordGrasp('Ice', 1, 1),
+        SpellWordGrasp('Electricity', 1, 1),
+        SpellWordGrasp('Barrier', 1, 1),
+        SpellWordGrasp('Bolt', 1, 1),
     ]
     mage.right = mage.inventory[0]
     mage.left  = mage.inventory[1]
@@ -288,8 +307,6 @@ def define_ranger(payload):
 
 def choose_ranger(payload):
     perform_template_choice(payload, 'ranger')
-
-
 
 '''Helper Methods'''
 def perform_template_choice(payload, template_name):

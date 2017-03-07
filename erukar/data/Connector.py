@@ -1,4 +1,5 @@
 from .Schema import *
+from erukar.engine.magic.SpellWordGrasp import SpellWordGrasp
 from erukar.engine.model.PlayerNode import PlayerNode
 from sqlalchemy.orm import joinedload, load_only
 from sqlalchemy.orm.attributes import InstrumentedAttribute
@@ -105,6 +106,8 @@ class Connector:
         if target.health <= 0:
             schema.deceased = True
 
+        schema.spell_words = list(Connector.generate_spell_word_schema(target))
+
         # Polymorphism Mapping
         if isinstance(target, erukar.engine.lifeforms.Player):
             self.map_player_to_schema(target, schema)
@@ -125,10 +128,17 @@ class Connector:
             self.simple_map_character(out_char, data)
             self.map_items_on_character(out_char, data)
             self.map_effects_on_character(out_char, data)
+            Connector.map_words(out_char, data)
         return data is not None
 
+    def map_words(out_char, data):
+        for word in data.spell_words:
+            out_char.spell_words.append(
+                SpellWordGrasp(word.word_class, word.successes, word.total)
+            )
+
     def get_creature_uids(self):
-        return  self.session.query(Creature).options(load_only("uid")).all()
+        return self.session.query(Creature).options(load_only("uid")).all()
 
     def load_creature(self, uid):
         '''Creates a creature that has been persisted'''
@@ -139,6 +149,7 @@ class Connector:
             self.simple_map_creature(out, data)
             self.map_items_on_character(out, data)
             self.map_effects_on_character(out, data)
+            Connector.map_words(out_char, data)
         return out
 
     def simple_map_character(self, out, data):
@@ -207,11 +218,13 @@ class Connector:
         player = self.get(Player, {'uid': uid}).first()
         effects = list(self.generate_effects(lifeform_object))
         inventory = self.gen_to_dict(self.generate_inventory(lifeform_object))
+        words = list(Connector.generate_words(lifeform_object))
         equipment = list(self.generate_equipped_items(lifeform_object, inventory))
         supplementary_data = {
             'player_id': player.id, 
             'inventory': list(inventory.values()), 
             'equipment': equipment, 
+            'spell_words': words,
             'effects': effects,
         }
         self.add(lifeform_object, Character, supplementary_data)
@@ -252,6 +265,12 @@ class Connector:
         for x in obj_params:
             if isinstance(obj_params[x],InstrumentedAttribute) and hasattr(obj, x):
                 yield (x, getattr(obj,x))
+
+    def generate_words(lifeform):
+        for word in lifeform.spell_words:
+            yield erukar.data.Schema.SpellWord(word_class=word.word_class,
+                                   successes =word.successes,
+                                   total = word.total)
 
     def generate_inventory(self, lifeform):
         '''Create Item Schema objects from a lifeform's inventory'''
