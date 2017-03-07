@@ -106,13 +106,14 @@ class Connector:
         if target.health <= 0:
             schema.deceased = True
 
-        schema.spell_words = list(Connector.generate_spell_word_schema(target))
+        schema.spell_words = list(Connector.generate_words(target))
 
         # Polymorphism Mapping
         if isinstance(target, erukar.engine.lifeforms.Player):
             self.map_player_to_schema(target, schema)
         elif self.is_persistible_enemy(target):
             self.map_enemy_to_schema(target, schema)
+
 
     def map_list_of_parameters_to_schema(self, schema, target, parameter_list):
         for schema_param in parameter_list:
