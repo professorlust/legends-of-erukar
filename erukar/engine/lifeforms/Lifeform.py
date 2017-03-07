@@ -124,8 +124,8 @@ class Lifeform(RpgEntity):
         condition_mod = sum([x.modify_acuity_to_detect() for x in self.conditions])
         return self.calculate_effective_stat('dexterity') + condition_mod
 
-    def spell_word_efficiency(self, word_class):
-        our_grasp = next((x for x in self.spell_words if x.word_class == word_class), None)
+    def spell_word_efficiency(self, word):
+        our_grasp = next((x for x in self.spell_words if x.word_class == word), None)
         if our_grasp is None:
             return self.UnknownWordEfficiency
 
