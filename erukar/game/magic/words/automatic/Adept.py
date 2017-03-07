@@ -1,6 +1,6 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class Adept(SpellEffect):
+class Adept(SpellWord):
     DamageShouldScale = True
     DamageScalar = 3
     DamageOverTimeEfficacy = 1.5

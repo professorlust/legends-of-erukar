@@ -1,6 +1,6 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class Bind(SpellEffect):
+class Bind(SpellWord):
     pass
 '''
 Binds a new soul from the Realm of the Dead to an existing corpse. The corpse must have 

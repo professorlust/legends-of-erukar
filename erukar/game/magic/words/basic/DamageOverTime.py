@@ -1,9 +1,9 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 from erukar.engine.model.Damage import Damage
 from erukar.engine.inventory.SpellAttack import SpellAttack
 import erukar, random
 
-class DamageOverTime(SpellEffect):
+class DamageOverTime(SpellWord):
     DamageRange = (0, 10)
     DamageScalar = 1.0
     DamageOffset = 0

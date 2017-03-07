@@ -1,5 +1,5 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class Persistent(SpellEffect):
+class Persistent(SpellWord):
     pass
 

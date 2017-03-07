@@ -1,4 +1,4 @@
-from erukar.engine.model.Spell import Spell
+from erukar.engine.magic.Spell import Spell
 import erukar
 
 class IceBreath(Spell):

@@ -1,6 +1,6 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class BeginConjurationSequence(SpellEffect):
+class BeginConjurationSequence(SpellWord):
     '''
     Conjuration mechanics are a bit more complex than normal casting. They begin as such...
 

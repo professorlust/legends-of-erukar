@@ -1,8 +1,8 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 from erukar.game.conditions.magical.AugmentedWeapon import AugmentedWeapon
 import random
 
-class AugmentWeapon(SpellEffect):
+class AugmentWeapon(SpellWord):
     StandardCast = "Glowing turquoise runes appear on the {EssentialPart|weapon} of {alias|lifeform}'s {alias|weapon}"
     FailedCast = "Embarrassingly, {alias|lifeform} seems to have forgotten to equip a weapon..."
 

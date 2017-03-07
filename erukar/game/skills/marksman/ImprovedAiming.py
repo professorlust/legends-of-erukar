@@ -1,0 +1,2 @@
+class ImprovedAiming:
+    pass

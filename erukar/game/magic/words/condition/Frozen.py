@@ -1,8 +1,8 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 from erukar.engine.model.Damage import Damage
 import random
 
-class Frozen(SpellEffect):
+class Frozen(SpellWord):
     PotionName = 'Freezing'
     PotionPriceMultiplier = 3.0
     ConditionType = 'Frozen'

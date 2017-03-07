@@ -1,0 +1,2 @@
+class ForestNavigation:
+    pass

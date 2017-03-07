@@ -1,6 +1,6 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class Revive(SpellEffect):
+class Revive(SpellWord):
     pass
 # Uses a corpse's original soul and returns it to life from death
 # Extremely expensive.

@@ -1,4 +1,4 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class Explosive(SpellEffect):
+class Explosive(SpellWord):
     pass

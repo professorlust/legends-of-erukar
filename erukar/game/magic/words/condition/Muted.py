@@ -1,8 +1,8 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 from erukar.engine.model.Damage import Damage
 import random
 
-class Muted(SpellEffect):
+class Muted(SpellWord):
     PotionName = 'Muting'
     PotionPriceMultiplier = 15.0
     ConditionType = 'Muted'

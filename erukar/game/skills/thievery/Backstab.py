@@ -1,0 +1,2 @@
+class Backstab:
+    pass

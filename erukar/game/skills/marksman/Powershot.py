@@ -1,0 +1,2 @@
+class Powershot:
+    pass

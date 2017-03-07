@@ -1,0 +1,2 @@
+class Traps:
+    pass

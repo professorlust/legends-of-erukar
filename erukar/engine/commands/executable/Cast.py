@@ -1,5 +1,5 @@
 from erukar.engine.commands.ActionCommand import ActionCommand
-from erukar.engine.model.Spell import Spell
+from erukar.engine.magic.Spell import Spell
 import erukar, re
 
 class Cast(ActionCommand):
@@ -15,10 +15,11 @@ class Cast(ActionCommand):
         failure = self.check_for_arguments()
         if failure: return failure
 
-        spell = self.create_spell_chain()
+        spell, efficiency = self.create_spell_chain()
+        print(efficiency)
 
         arguments = {'target': self.target}
-        spell.on_cast(self, self.caster, arguments)
+        spell.on_cast(self, self.caster, arguments, efficiency)
         return self.succeed()
 
     def create_spell_chain(self):
@@ -26,14 +27,17 @@ class Cast(ActionCommand):
         Break out the cast_string into different words and assemble a
         chain of spell effects
         '''
-        strategem = []
+        spell_chain = []
+        efficiency_from_words = 1.0 
+
         for word in self.cast_string.split(' '):
             if word.lower() in self.server_properties.SpellWords:
-                effect = getattr(erukar.game.magic.effects, self.server_properties.SpellWords[word.lower()])
-                strategem.append(effect())
+                effect = getattr(erukar.game.magic.effects, self.server_properties.SpellWords[word.lower()])()
+                efficiency_from_words *= self.caster.get_efficiency_for(effect)
+                spell_chain.append(effect)
             else:
                 print('could not match ' + word)
-        return Spell('Unknown spell', strategem)
+        return Spell('Unknown spell', spell_chain). efficiency
 
     def check_for_arguments(self):
         if self.context and self.context.should_resolve(self):

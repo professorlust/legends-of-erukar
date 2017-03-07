@@ -1,12 +1,12 @@
-from erukar.engine.model.MagicBase import MagicBase
+from erukar.engine.magic.MagicBase import MagicBase
 
 class Spell(MagicBase):
     YouCastSpell = "You cast '{name}'."
     TheyCastSpell = "{alias|lifeform} casts '{name}'."
 
-    def __init__(self, name, effect_strategem):
+    def __init__(self, name, effect_chain):
         self.name = name
-        self.effects = effect_strategem
+        self.effects = effect_chain
 
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
         super().on_cast(command, lifeform, parameters, efficacy)

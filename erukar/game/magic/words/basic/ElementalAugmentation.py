@@ -1,8 +1,8 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 from erukar.engine.model.Damage import Damage
 import random
 
-class ElementalAugmentation(SpellEffect):
+class ElementalAugmentation(SpellWord):
     DamageRange = (0, 10)
     DamageScalar = 1.0
     DamageOffset = 0

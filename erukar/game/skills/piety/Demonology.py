@@ -1,4 +1,4 @@
-class Demonolgy:
+class Demonology:
     '''
     Demonology improves knowledge of the Demonic, allowing the character to make more connections than
     would normally be expected.

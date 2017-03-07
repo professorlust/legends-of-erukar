@@ -25,6 +25,7 @@ class Enemy(Lifeform, Indexer):
         self.res_ratio = 0.1667
         self.commander = None   # Used in conjuration or with Elites
         self.faction   = None   # Reserved
+        self.spells    = []     # Enemies GENERALLY use pre-defined Spells instead of Spell words, though not necessarily 
 
         # Flavor
         self.history = []

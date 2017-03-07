@@ -20,10 +20,10 @@ class Lifeform(RpgEntity):
     ]
     attack_slots = [ "left", "right" ]
     base_health = 4
+    UnknownWordEfficiency = 0.01
 
     def __init__(self, name=""):
         self.uid        = ""
-        self.spells     = []
         self.inventory  = []
         self.strength   = 0
         self.dexterity  = 0
@@ -39,6 +39,7 @@ class Lifeform(RpgEntity):
             setattr(self, eq_type, None)
         self.name = name
         self.wealth = 0
+        self.spell_words = []
         self.skill_points = 5
         self.skills = []
         self.stat_points = 15
@@ -122,6 +123,14 @@ class Lifeform(RpgEntity):
     def minimum_acuity_to_detect(self):
         condition_mod = sum([x.modify_acuity_to_detect() for x in self.conditions])
         return self.calculate_effective_stat('dexterity') + condition_mod
+
+    def spell_word_efficiency(self, word_class):
+        our_grasp = next((x for x in self.spell_words if x.word_class == word_class), None)
+        if our_grasp is None:
+            return self.UnknownWordEfficiency
+
+        # Check for relevant skills here
+        return our_grasp.efficiency()
 
     def equip_load_penalty(self):
         return max(0, math.floor(20 * (self.equip_load() / self.max_equip_load() - 1)))
@@ -253,17 +262,6 @@ class Lifeform(RpgEntity):
 
     def matches(self, payload):
         return payload.lower() in self.alias().lower()
-
-    def describe(self):
-        descriptor_index = math.floor(4.0 * self.health / self.max_health)
-        description_type = [
-            'critical_health',
-            'badly_wounded',
-            'wounded',
-            'slightly_wounded',
-            'full_health']
-        descriptions = getattr(self, description_type[descriptor_index])
-        return random.choice(descriptions)
 
     def alias(self):
         return self.name

@@ -1,6 +1,6 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class Summon(SpellEffect):
+class Summon(SpellWord):
     '''
     Attempts to summon an extraplanar entity
     '''

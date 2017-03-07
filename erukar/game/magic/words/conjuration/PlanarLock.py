@@ -1,6 +1,6 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 
-class PlanarLock(SpellEffect):
+class PlanarLock(SpellWord):
     '''
     Attempts to prohibit planar travel on a specific entity
     '''

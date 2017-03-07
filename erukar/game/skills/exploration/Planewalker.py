@@ -1,3 +1,5 @@
+class Planewalker:
+    pass
 '''
 At Level 1, permits travel between planes (with assistance from portals and the like)
 At Level 2, the penalties incurred from the planar transfer are reduced

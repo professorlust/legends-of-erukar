@@ -1,7 +1,7 @@
-from erukar.engine.model.SpellEffect import SpellEffect
+from erukar.engine.magic.SpellWord import SpellWord
 import random
 
-class HealEffect(SpellEffect):
+class HealEffect(SpellWord):
     AlreadyFull = "The healing had no effect, as {target}'s health was already full."
     StandardCast = "Brilliant light radiates from {target}'s wounds. {target} regains {health} health and the wounds slowly close."
 
