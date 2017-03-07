@@ -32,12 +32,12 @@ class Cast(ActionCommand):
 
         for word in self.cast_string.split(' '):
             if word.lower() in self.server_properties.SpellWords:
-                effect = getattr(erukar.game.magic.effects, self.server_properties.SpellWords[word.lower()])()
-                efficiency_from_words *= self.caster.get_efficiency_for(effect)
-                spell_chain.append(effect)
+                effect_class = getattr(erukar.game.magic.words, self.server_properties.SpellWords[word.lower()])
+                efficiency_from_words *= self.caster.spell_word_efficiency(effect_class)
+                spell_chain.append(effect_class())
             else:
                 print('could not match ' + word)
-        return Spell('Unknown spell', spell_chain). efficiency
+        return Spell('Unknown spell', spell_chain), efficiency_from_words
 
     def check_for_arguments(self):
         if self.context and self.context.should_resolve(self):
