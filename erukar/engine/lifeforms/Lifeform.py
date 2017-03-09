@@ -124,13 +124,29 @@ class Lifeform(RpgEntity):
         condition_mod = sum([x.modify_acuity_to_detect() for x in self.conditions])
         return self.calculate_effective_stat('dexterity') + condition_mod
 
-    def spell_word_efficiency(self, word):
-        our_grasp = next((x for x in self.spell_words if x.word_class == word), None)
-        if our_grasp is None:
+    def get_grasp_index(self, word):
+        return next((i for i,x in enumerate(self.spell_words) if x.word_class == word), None)
+
+    def add_successful_cast(self, word):
+        index = self.get_grasp_index(word)
+        self.increment_grasp_scores(index, True)
+
+    def add_failed_cast(self, word):
+        index = self.get_grasp_index(word)
+        self.increment_grasp_scores(index)
+
+    def increment_grasp_scores(self, index, is_successful=False):
+        if index is None: return
+        self.spell_words[index].total += 1
+        self.spell_words[index].successes += is_successful
+
+    def spell_word_efficacy(self, word):
+        index = self.get_grasp_index(word)
+        if index is None:
             return self.UnknownWordEfficiency
 
         # Check for relevant skills here
-        return our_grasp.efficiency()
+        return self.spell_words[index].efficiency()
 
     def equip_load_penalty(self):
         return max(0, math.floor(20 * (self.equip_load() / self.max_equip_load() - 1)))
@@ -239,7 +255,6 @@ class Lifeform(RpgEntity):
         self.health = max(0, self.health - damage_amount)
         if self.health == 0:
             self.conditions.append(Dying(self, None))
-        return 
 
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''

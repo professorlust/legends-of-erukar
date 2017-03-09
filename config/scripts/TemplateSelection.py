@@ -221,6 +221,8 @@ def make_mage(payload):
         SpellWordGrasp('Electricity', 1, 1),
         SpellWordGrasp('Barrier', 1, 1),
         SpellWordGrasp('Bolt', 1, 1),
+        SpellWordGrasp('DamageSingleTarget', 1, 1),
+        SpellWordGrasp('DamageOverTime', 1, 1),
     ]
     mage.right = mage.inventory[0]
     mage.left  = mage.inventory[1]

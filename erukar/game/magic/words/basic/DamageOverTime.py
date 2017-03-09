@@ -18,21 +18,24 @@ class DamageOverTime(SpellWord):
     PotionName = 'Prolonged Poison'
     PotionPriceMultiplier = 5.0
 
+    Name = 'Recurring Damage'
+    Description = 'A punctuary word which releases destructive energy in bursts at regular intervals. While each damage burst is less potent than a Source Damage burst, the Recurring Damage total is often higher. The question a mage must ask is if they have the time for Recurring Damage to reach its full potential.'
+    Flavor = 'A recent advancement in arcana, the "Augment Weapon" magic was developed at the Sidernes Academy in Luinden, Iuria as part of research conducted by Arcanist Felwin Bougarde. The research was based in part on pre-Theocracy battlemages whose legendary abilities to bind the elements to their items was once forgotten.'
+
     def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
-        '''Inflicts a random amount of ice damage to something, defaulting to the caster'''
         super().on_cast(command, lifeform, parameters)
         
         self.append_for_all_in_room(self.mutate(self.DamageDescription))
-        dot_condition = erukar.game.conditions.negative.DamageOverTime(self.target, self.caster)
-        dot_condition.damage = [Damage(
-            name=self.DamageName,
-            damage_range=self.DamageRange, 
-            mod=self.DamageMod,
-            dist_and_params=(random.uniform, (0,1)),
-            scales=self.DamageShouldScale
+        rd_condition = erukar.game.conditions.negative.DamageOverTime(self.target, self.caster)
+        rd_condition.damage = [Damage(
+            name = self.DamageName,
+            damage_range = self.DamageRange, 
+            mod = self.DamageMod,
+            dist_and_params = (random.uniform, (0,1)),
+            scales = self.DamageShouldScale
         )]
-        dot_condition.duration = int(self.DamageDuration * efficacy)
-        dot_condition.damage_efficacy = self.DamageOverTimeEfficacy
-        self.target.conditions.append(dot_condition)
+        rd_condition.duration = int(self.DamageDuration * efficacy)
+        rd_condition.damage_efficacy = self.DamageOverTimeEfficacy
+        self.target.conditions.append(rd_condition)
 
         return parameters

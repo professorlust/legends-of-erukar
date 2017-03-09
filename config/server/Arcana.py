@@ -1,8 +1,8 @@
 def configure(shard):
     shard.properties.SpellWords = {
         "augmentweapon": "AugmentWeapon", 
-        "damageovertime": "DamageOverTime", 
-        "damagesingletarget": "DamageSingleTarget", 
+        "dot": "DamageOverTime", 
+        "dst": "DamageSingleTarget", 
         "elementalaugmentation": "ElementalAugmentation", 
         "sunder": "Sunder", 
         "blinded": "Blinded", 

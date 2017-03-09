@@ -15,11 +15,26 @@ class Cast(ActionCommand):
         failure = self.check_for_arguments()
         if failure: return failure
 
-        spell, efficiency = self.create_spell_chain()
-        print(efficiency)
+        spell, efficacy = self.create_spell_chain()
 
+        return self.attempt_cast(spell, efficacy)
+
+    def attempt_cast(self, spell, efficacy):
+        if efficacy < 0.05:
+            return self.failed_cast(spell)
+        return self.successful_cast(spell, efficacy)
+
+    def successful_cast(self, spell, efficacy):
         arguments = {'target': self.target}
-        spell.on_cast(self, self.caster, arguments, efficiency)
+        spell.on_cast(self, self.caster, arguments, efficacy)
+        for word in spell.words:
+            self.caster.add_successful_cast(word)
+        return self.succeed()
+
+    def failed_cast(self, spell):
+        print('failed')
+        for word in spell.words:
+            self.caster.add_failed_cast(word)
         return self.succeed()
 
     def create_spell_chain(self):
@@ -28,17 +43,17 @@ class Cast(ActionCommand):
         chain of spell effects
         '''
         spell_chain = []
-        efficiency_from_words = 1.0 
+        efficacy_from_words = 1.0 
 
         for word in self.cast_string.split(' '):
             if word.lower() in self.server_properties.SpellWords:
                 word_target = self.server_properties.SpellWords[word.lower()]
                 effect_class = getattr(erukar.game.magic.words, word_target)
-                efficiency_from_words *= self.caster.spell_word_efficiency(word_target)
+                efficacy_from_words *= self.caster.spell_word_efficacy(word_target)
                 spell_chain.append(effect_class())
             else:
                 print('could not match ' + word)
-        return Spell('Unknown spell', spell_chain), efficiency_from_words
+        return Spell('Unknown spell', spell_chain), efficacy_from_words
 
     def check_for_arguments(self):
         if self.context and self.context.should_resolve(self):

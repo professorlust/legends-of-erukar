@@ -23,13 +23,13 @@ class DamageSingleTarget(SpellWord):
         
         self.append_for_all_in_room(self.mutate(self.DamageDescription))
         damages = [Damage(
-            name=self.DamageName,
-            damage_range=self.DamageRange, 
-            mod=self.DamageMod,
-            dist_and_params=(random.uniform, (0,1)),
-            scales=self.DamageShouldScale
+            name = self.DamageName,
+            damage_range = self.DamageRange, 
+            mod = self.DamageMod,
+            dist_and_params = (random.uniform, (0,1)),
+            scales = self.DamageShouldScale
         )]
-        result = self.target.apply_damage(damages, caster, efficacy)
+        result = self.target.process_damage(damages, caster, efficacy)
         MagicDamageFormatter.process_and_append_damage_result(command, result)
 
         return parameters
