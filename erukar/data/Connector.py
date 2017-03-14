@@ -137,6 +137,7 @@ class Connector:
             Connector.map_items_on_character(out_char, data)
             Connector.map_effects_on_character(out_char, data)
             Connector.map_words_on_character(out_char, data)
+            Connector.map_skills_on_character(out_char, data)
         return data is not None
 
     def get_creature_uids(self):
@@ -187,6 +188,12 @@ class Connector:
             location = next((x.equipment_slot for x in data.equipment if x.item_id == item.id ), None)
             if location is not None:
                 setattr(out, location, instantiated)
+                
+    def map_skills_on_character(out, data):
+        '''Create persistent effects from Schema and assign to the character'''
+        for skill in data.skills:
+            instantiated = Connector.create_from_type(skill.skill_type)
+            out.skills.append(instantiated)
 
     def instantiate_item(data):
         '''Create an item from an ItemSchema'''
@@ -349,7 +356,7 @@ class Connector:
         return erukar.data.Schema.Skill(\
                 skill_type = skill.__module__,\
                 level = skill.level,\
-                skill_attributes = skill.persistible_attributes())
+                attributes = skill.persistible_attributes())
 
     def gen_to_dict(generator):
         '''Helper which creates a dict from a generator'''

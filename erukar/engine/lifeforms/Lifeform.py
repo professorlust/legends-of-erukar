@@ -27,32 +27,35 @@ class Lifeform(RpgEntity):
         self.name       = name
         self.uid        = ""
         self.inventory  = []
-        self.dual_wielding_penalty = 0.667
         self.initialize_stats() 
         self.current_room = None
         self.instance = ''
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.wealth = 0
-        self.spell_words = []
-        self.skill_points = 5
-        self.skills = []
-        self.stat_points = 15
-        self.conditions = []
+        self.initialize_effects()
+
+    def initialize_effects(self):
+        self.skill_points   = 5
+        self.skills         = []
+        self.conditions     = []
+        self.spell_words    = []
 
     def initialize_stats(self):
-        self.strength   = 0
-        self.dexterity  = 0
-        self.vitality   = 0
-        self.acuity     = 0
-        self.sense      = 0
-        self.resolve    = 0
-        self.experience = 0
-        self.arcane_energy      = 0
-        self.max_arcane_energy  = 0
+        self.stat_points    = 15
+        self.strength       = 0
+        self.dexterity      = 0
+        self.vitality       = 0
+        self.acuity         = 0
+        self.sense          = 0
+        self.resolve        = 0
+        self.experience     = 0
+        self.arcane_energy  = 0
 
     def subscribe(self, instance):
         self.instance = instance.identifier
+        self.arcane_energy = self.maximum_arcane_energy()
+
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''
@@ -66,9 +69,9 @@ class Lifeform(RpgEntity):
         for condition in self.conditions:
             results.append(condition.tick())
         # regenerate arcane energy
-        if not self.is_incapacitated() and self.arcane_energy < self.max_arcane_energy:
-            self.arcane_energy = min(self.max_arcane_energy,\
-                     self.arcane_energy + int(self.max_arcane_energy * Lifeform.ArcaneEnergyRegenerationPercentage))
+        max_arcane = self.maximum_arcane_energy()
+        if not self.is_incapacitated() and self.arcane_energy < max_arcane:
+            self.arcane_energy = min(max_arcane, self.arcane_energy + int(max_arcane * Lifeform.ArcaneEnergyRegenPercentage))
         return results
 
     def maximum_arcane_energy(self):

@@ -131,7 +131,6 @@ class Skill(Base):
     level           = Column(Integer, default=1)
     attributes      = Column(JSON, nullable=True)
 
-
 class SpellWord(Base):
     __tablename__ = 'spellwords'
 

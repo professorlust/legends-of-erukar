@@ -28,9 +28,12 @@ class Stats(Command):
     def execute(self, *_):
         self.check_for_arguments()
 
-        status_d = '\n'.join([
-            '{:12} {} / {}'.format('Health:', self.lifeform.health, self.lifeform.max_health), 
-            '{:12} {}'.format('Evasion:', self.lifeform.evasion()),
+        max_arcane = self.lifeform.maximum_arcane_energy()
+
+        status_d = ''.join([
+            '{:12} {} / {}\n'.format('Health:', self.lifeform.health, self.lifeform.max_health), 
+            '{:12} {}\n'.format('Evasion:', self.lifeform.evasion()),
+            '' if max_arcane <= 0 else '{:12} {} / {}\n'.format('Energy:', self.lifeform.arcane_energy, max_arcane),
             '{:12} {} / {}'.format('Equip Load:', self.lifeform.equip_load(), self.lifeform.max_equip_load()),
         ])
 
@@ -47,7 +50,6 @@ class Stats(Command):
             for dtype in Damage.Types])
 
         conditions = '\n'.join([c.on_stats() for c in self.lifeform.conditions])
-
         self.append_result(self.sender_uid, '\n--------------------\n'.join([level_d, status_d, attribute_d, mitigations, conditions]))
 
         return self.succeed()
