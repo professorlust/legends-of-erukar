@@ -54,6 +54,10 @@ def make_barbarian(payload):
         SpellWordGrasp('InflictCondition', 1, 1),
         SpellWordGrasp('Enraged', 1, 1)
     ]
+    barbarian.skills = [
+        erukar.game.skills.Bloodlust(),
+        erukar.game.skills.Rage(),
+    ]
     payload.playernode.script_data['barbarian'] = barbarian
     return barbarian
 
