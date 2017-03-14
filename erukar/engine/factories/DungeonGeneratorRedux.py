@@ -2,7 +2,7 @@ from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.environment import *
 from erukar.engine.calculators import *
-from erukar.engine.meta import AStarBase, Queue
+from erukar.engine.calculators.meta import AStarBase, Queue
 import numpy as np
 import math, random
 

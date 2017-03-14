@@ -17,25 +17,25 @@ class Item(Describable):
     BasePrice = 10
     EquipmentLocations = []
 
-    BaseStatInfluences = {
-        '''
-        Stat scaling is a linear relationship between a specific attribute and the scaling_factor
-        The Damage Range is essentially a proportion
-        
-        # Assuming damage range is 1 to 4
-        # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5 }
-        @ str = 15,  damage = damage * 15/20            = 0.75 * damage          =   1 to   3
-        @ str = 20,  damage = damage * 20/20            = 1.0 * damage           =   1 to   4
-        @ str = 30,  damage = damage + (30 - 20) * 1.5  = damage +  15 + STR-req =  21 to  34
-        @ str = 60,  damage = damage + (60 - 20) * 1.5  = damage +  60 + STR-req =  81 to 124
-        @ str = 200, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 361 to 574
-        @ str = 260, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 391 to 694
+    '''
+    Stat scaling is a linear relationship between a specific attribute and the scaling_factor
+    The Damage Range is essentially a proportion
+    
+    # Assuming damage range is 1 to 4
+    # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5 }
+    @ str = 15,  damage = damage * 15/20            = 0.75 * damage          =   1 to   3
+    @ str = 20,  damage = damage * 20/20            = 1.0 * damage           =   1 to   4
+    @ str = 30,  damage = damage + (30 - 20) * 1.5  = damage +  15 + STR-req =  21 to  34
+    @ str = 60,  damage = damage + (60 - 20) * 1.5  = damage +  60 + STR-req =  81 to 124
+    @ str = 200, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 361 to 574
+    @ str = 260, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 391 to 694
 
-        In the event of multiple stat influences, 
- 
-        It can, however, be an s-curve if you specify 's-curve': True as in below
-        # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5, 's-curve': True }
-        '''
+    In the event of multiple stat influences, 
+
+    It can, however, be an s-curve if you specify 's-curve': True as in below
+    # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5, 's-curve': True }
+    '''
+    BaseStatInfluences = {
     }
 
     def __init__(self, item_type='Item', name="Item"):

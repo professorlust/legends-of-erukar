@@ -1,4 +1,4 @@
-from erukar.engine.meta.PriorityQueue import PriorityQueue
+from erukar.engine.calculators.meta.PriorityQueue import PriorityQueue
 
 class AStarBase:
     def heuristic(self, node, goal):

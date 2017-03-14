@@ -128,6 +128,8 @@ class Skill(Base):
     skill_type      = Column(String)
     lifeform_id     = Column(Integer, ForeignKey('lifeforms.id'))
     lifeform        = relationship("Lifeform", foreign_keys=[lifeform_id])
+    level           = Column(Integer, default=1)
+    attributes      = Column(JSON, nullable=True)
 
 
 class SpellWord(Base):
