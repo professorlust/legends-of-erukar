@@ -1,10 +1,7 @@
 from .automatic import *
-from .basic import *
-from .condition import *
-from .conjuration import *
-from .demonic import *
-from .divine import *
-from .elemental import *
-from .number import *
+from .base import *
+from .conversion import *
+from .logic import *
+from .modifier import *
 from .shape import *
-
+from .source import *

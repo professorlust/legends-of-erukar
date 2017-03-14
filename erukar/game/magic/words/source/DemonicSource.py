@@ -1,4 +1,4 @@
 from erukar.engine.magic.SpellWord import SpellWord
 
-class Two(SpellWord):
+class DemonicSource(SpellWord):
     pass

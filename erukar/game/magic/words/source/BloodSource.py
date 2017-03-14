@@ -1,4 +1,4 @@
 from erukar.engine.magic.SpellWord import SpellWord
 
-class Four(SpellWord):
+class BloodSource(SpellWord):
     pass

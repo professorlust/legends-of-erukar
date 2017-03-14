@@ -1,6 +1,6 @@
 from erukar.engine.magic.SpellWord import SpellWord
 
-class Consume(SpellWord):
+class SoulSource(SpellWord):
     pass
 '''
 Consume absorbs corpses' souls within the shape to increase the efficacy of spells

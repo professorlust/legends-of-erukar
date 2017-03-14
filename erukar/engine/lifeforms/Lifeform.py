@@ -21,23 +21,18 @@ class Lifeform(RpgEntity):
     attack_slots = [ "left", "right" ]
     base_health = 4
     UnknownWordEfficiency = 0.01
+    ArcaneEnergyRegenPercentage = 0.05
 
     def __init__(self, name=""):
+        self.name       = name
         self.uid        = ""
         self.inventory  = []
-        self.strength   = 0
-        self.dexterity  = 0
-        self.vitality   = 0
-        self.acuity     = 0
-        self.sense      = 0
-        self.resolve    = 0
-        self.experience = 0
         self.dual_wielding_penalty = 0.667
+        self.initialize_stats() 
         self.current_room = None
         self.instance = ''
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
-        self.name = name
         self.wealth = 0
         self.spell_words = []
         self.skill_points = 5
@@ -45,19 +40,43 @@ class Lifeform(RpgEntity):
         self.stat_points = 15
         self.conditions = []
 
+    def initialize_stats(self):
+        self.strength   = 0
+        self.dexterity  = 0
+        self.vitality   = 0
+        self.acuity     = 0
+        self.sense      = 0
+        self.resolve    = 0
+        self.experience = 0
+        self.arcane_energy      = 0
+        self.max_arcane_energy  = 0
+
     def subscribe(self, instance):
         self.instance = instance.identifier
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''
         results = []
+        # Tick all equipped items
         for item_slot in self.equipment_types:
             item = getattr(self, item_slot)
             if item is not None:
                 results.append(item.tick())
+        # Tick all conditions
         for condition in self.conditions:
             results.append(condition.tick())
+        # regenerate arcane energy
+        if not self.is_incapacitated() and self.arcane_energy < self.max_arcane_energy:
+            self.arcane_energy = min(self.max_arcane_energy,\
+                     self.arcane_energy + int(self.max_arcane_energy * Lifeform.ArcaneEnergyRegenerationPercentage))
         return results
+
+    def maximum_arcane_energy(self):
+        arcane_gift = self.get_skill(erukar.engine.base.skills.ArcaneGift)
+        return 0 if not arcane_gift else arcane_gift.arcane_energy()
+
+    def get_skill(self, skill_class):
+        return next((x for x in self.skills if isinstance(x, skill_class)), None)
 
     def initiate_aura(self, aura):
         '''Initiates an aura within the current room'''

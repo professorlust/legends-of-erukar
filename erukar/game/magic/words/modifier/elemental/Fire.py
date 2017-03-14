@@ -1,4 +1,4 @@
-from erukar.game.magic.words.basic.ElementalAugmentation import ElementalAugmentation
+from erukar.game.magic.words.base.ElementalAugmentation import ElementalAugmentation
 import random
 
 class Fire(ElementalAugmentation):
