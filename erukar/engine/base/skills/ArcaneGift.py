@@ -6,10 +6,8 @@ class ArcaneGift(Skill):
     skill, but the levels provide diminishing returns. Arcane Energy always regenerates at 5% of max
     per turn
     '''
-    def __init__(self):
-        self.level = 1
-        self.name = 'Arcane Gift'
-
+    Name = 'Arcane Gift'
+        
     def current_level_description(self):
         return 'Grants {} Arcane Energy to be used as an Arcane Source'.format(self.arcane_energy())
 

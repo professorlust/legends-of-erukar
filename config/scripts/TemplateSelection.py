@@ -225,7 +225,8 @@ def make_mage(payload):
         SpellWordGrasp('DamageOverTime', 1, 1),
     ]
     mage.skills = [
-        erukar.engine.base.skills.ArcaneGift()
+        erukar.engine.base.skills.ArcaneGift(),
+        erukar.game.skills.ArcaneTraining(),
     ]
     mage.right = mage.inventory[0]
     mage.left  = mage.inventory[1]

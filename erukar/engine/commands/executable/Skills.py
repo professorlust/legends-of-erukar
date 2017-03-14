@@ -5,8 +5,8 @@ class Skills(Command):
     aliases = ['skills', 'my skills']
 
     def execute(self, *_):
-        descriptions = '\n'.join([c.on_skills() for c in self.find_player().lifeform().skills])
+        target = self.find_player().lifeform()
+        descriptions = '\n\n'.join([c.on_skills() for c in target.skills])
 
-        self.append_result(self.sender_uid, '\n'.join(['Skills', '-'*12 + '\n', descriptions]))
+        self.append_result(self.sender_uid, '\n'.join(['Skills', '='*16, descriptions]))
         return self.succeed()
-

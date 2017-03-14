@@ -1,18 +1,32 @@
-class ArcaneTraining:
-    '''
-    Levels
-    ----------
-    1. Initiate
-    2. Novice
-    3. Advanced Beginner
-    4. Competent
-    5. Proficient
-    6. Adept
-    7. Expert
-    8. Master
+from erukar.engine.model.Skill import Skill
 
-    Efficiency bonus is dictated by the following formula, where X is the level of this skill
+class ArcaneTraining(Skill):
+    Name = 'Arcane Training'
 
-    Efficiency = 100.0 * (0.5 * min((400*max(1,i-2)), (50 * math.pow(2, i)))
-    '''
-    pass
+    Descriptions = [
+        'Initiate',
+        'Novice',
+        'Advanced Beginner',
+        'Competent',
+        'Proficient',
+        'Adept',
+        'Expert',
+        'Master',
+    ]
+
+    def max_effective_arcane_energy(self):
+        return ArcaneTraining.max_arc_at_level(self.level)
+
+    def current_level_description(self):
+        return '{}: Can cast spells with {} Energy at 100% efficiency'.format(\
+                self.Descriptions[self.level-1],\
+                self.max_effective_arcane_energy())
+
+    def next_level_description(self):
+        if self.level >= len(self.Descriptions):
+            return 'None'
+        diff = ArcaneTraining.max_arc_at_level(self.level + 1) - ArcaneTraining.max_arc_at_level(self.level)
+        return '{} (+{} Max Energy for 100%)'.format(self.Descriptions[self.level], diff)
+
+    def max_arc_at_level(level):
+        return 5 * level

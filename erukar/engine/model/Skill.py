@@ -2,10 +2,10 @@ class Skill:
     Descriptions = [
         'Basic Description per level here'
     ]
+    Name = 'Default Skill Name'
 
     def __init__(self):
         self.level = 1
-        self.name = 'Default Skill Name'
 
     def is_viable_for(self, *_):
         return False
@@ -14,7 +14,7 @@ class Skill:
         return []
 
     def on_skills(self):
-        title = '{}, Level {}'.format(self.name, self.level)
+        title = '{}, Level {}'.format(self.Name, self.level)
         current_level = self.current_level_description()
         next_level = self.next_level_description()
         return '\n'.join([title, '-'*16, current_level, 'Next Level: {}'.format(next_level)])
