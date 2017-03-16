@@ -1,0 +1,2 @@
+class DefilersStance:
+    pass
