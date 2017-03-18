@@ -13,6 +13,7 @@ def select_template(payload):
     choices = [
         ('Barbarian', define_barbarian), 
         ('Cleric', define_cleric),
+        ('Defiler', define_defiler),
         ('Fighter', define_fighter),
         ('Mage', define_mage),
         ('Ranger', define_ranger),
@@ -143,6 +144,69 @@ def define_cleric(payload):
 def choose_cleric(payload):
     perform_template_choice(payload, 'cleric')
     
+
+'''Defiler'''
+def make_defiler(payload):
+    if 'defiler' in payload.playernode.script_data:
+        append(payload, 'Retrieved a defiler')
+        return payload.playernode.script_data['defiler']
+
+    defiler = Player()
+    defiler.strength  = 3
+    defiler.dexterity = 1
+    defiler.vitality  = 2
+    defiler.acuity    = 1
+    defiler.sense     = 4
+    defiler.resolve   = 4
+    
+    defiler.inventory = [
+        Shop.create(Sword, erukar.game.modifiers.material.Iron),
+        Shop.create(Piece, erukar.game.modifiers.material.Iron),
+        Shop.create(Leggings, erukar.game.modifiers.material.Leather),
+        Shop.create(Treads, erukar.game.modifiers.material.Leather),
+    ]
+
+    defiler.spell_words = [
+        SpellWordGrasp('Desecrate', 1, 1),
+        SpellWordGrasp('Decay', 1, 1),
+        SpellWordGrasp('Persistent', 1, 1),
+    ]
+    defiler.skills = [
+        DefilersStance(),
+        Desecration(),
+    ]
+
+    defiler.right = defiler.inventory[0]
+    defiler.chest = defiler.inventory[1]
+    defiler.legs  = defiler.inventory[2]
+    defiler.feet  = defiler.inventory[3]
+    payload.playernode.script_data['defiler'] = defiler
+    return defiler
+
+def define_defiler(payload):
+    choices = [
+        ('Yes', choose_defiler),
+        ('No', select_template),
+    ]
+    if exec_ui_choice(payload, choices): return
+
+    defiler = make_defiler(payload)
+
+    append(payload, '')
+    append(payload, 'Base Stats\n----------')
+    append(payload, '\n'.join(Stats.stat_descriptions(defiler, show_raw=True)))
+    append(payload, '\nInventory\n----------')
+    append(payload, '\n'.join(Inventory.inventory_contents(defiler)))
+    append(payload, '\n')
+
+    append(payload, '\nChoose Defiler?')
+    append(payload, '\n'.join('  {:2} -- {}'.format(i+1, x[0]) for i, x in enumerate(choices)))
+
+    payload.playernode.set_script_entry_point('define_defiler')
+
+def choose_defiler(payload):
+    perform_template_choice(payload, 'defiler')
+
 
 '''Fighter'''
 def make_fighter(payload):

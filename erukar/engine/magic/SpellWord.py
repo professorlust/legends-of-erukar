@@ -6,9 +6,14 @@ class SpellWord(MagicBase):
     PotionPriceMultiplier = 1.0
 
     ParametersWhichShouldBeOverridden = []
+    RequiredSkill = None
 
-    def on_cast(self, command, lifeform, parameters=None, efficacy=1.0):
-        super().on_cast(command, lifeform, parameters)
+    def on_cast(self, command, caster, parameters=None, efficacy=1.0):
+        # Do nothing if we don't have the skill necessary to cast this
+        if self.RequiredSkill is not None and not caster.get_skill(self.RequiredSkill) is None:
+            return parameters
+            
+        super().on_cast(command, caster, parameters)
         
         # Now to override
         for param in self.ParametersWhichShouldBeOverridden:
