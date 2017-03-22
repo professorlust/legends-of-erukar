@@ -8,3 +8,4 @@ class Enraged(SpellWord):
     ConditionType = 'Enraged'
 
     ParametersWhichShouldBeOverridden = ['ConditionType']
+    RequiredSkill = 'erukar.game.skills.brutality.Rage'

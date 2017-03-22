@@ -88,7 +88,7 @@ class Connector:
         '''Determines whether this is a Character, Creature, or neither'''
         if isinstance(target, erukar.engine.lifeforms.Player):
             return self.get_character(target.uid)
-        if self.is_persistible_enemy(target):
+        if Connector.is_persistible_enemy(target):
             schema = self.get_creature(target.uid)
             return schema
         
@@ -99,8 +99,8 @@ class Connector:
 
     def map_lifeform_to_schema(self, target, schema):
         '''Performs basic Lifeform mapping, then uses polymorphism on remaining fields'''
-        inventory = self.gen_to_dict(self.generate_inventory(target))
-        schema.effects = list(self.generate_effects(target))
+        inventory = Connector.gen_to_dict(Connector.generate_inventory(target))
+        schema.effects = list(Connector.generate_effects(target))
 
         # Set all of the SIMPLE MAP schema parameters on the out-object (character)
         Connector.map_list_of_parameters_to_schema(schema, target, Connector.simple_map_lifeform_params)
@@ -280,7 +280,7 @@ class Connector:
         schema = self.get_lifeform_schema(character)
         if schema is None: return
 
-        Connector.map_lifeform_to_schema(character, schema)
+        self.map_lifeform_to_schema(character, schema)
 
         self.session.add(schema)
         self.session.commit()

@@ -48,7 +48,7 @@ class Attack(ActionCommand):
             if not new_attack.is_valid():
                 continue
             self.perform_attack(new_attack)
-            dual_wielding_penalty *= self.character.dual_wielding_penalty
+            dual_wielding_penalty *= self.character.dual_wielding_penalty()
 
         # Succeed if we have results, otherwise fail with the UnableToAttackInRoom
         return self.succeed_if_any_results(msg_if_failure=self.UnableToAttackInRoom)

@@ -21,6 +21,7 @@ class Lifeform(RpgEntity):
     attack_slots = [ "left", "right" ]
     base_health = 4
     UnknownWordEfficiency = 0.01
+    BaseDualWieldingPenalty = 60
     ArcaneEnergyRegenPercentage = 0.05
 
     def __init__(self, name=""):
@@ -79,6 +80,8 @@ class Lifeform(RpgEntity):
         return 0 if not arcane_gift else arcane_gift.arcane_energy()
 
     def get_skill(self, skill_class):
+        if type(skill_class) is str:
+            return next((x for x in self.skills if x.__module__ == skill_class), None)
         return next((x for x in self.skills if isinstance(x, skill_class)), None)
 
     def initiate_aura(self, aura):
@@ -199,6 +202,13 @@ class Lifeform(RpgEntity):
         self.level = level
         self.max_health = sum([Lifeform.base_health + self.get('vitality') for x in range(level)])
         self.health = self.max_health
+
+    def dual_wielding_penalty(self):
+        '''Figures out the penalty for wielding a weapon in the character's offhand'''
+        dual_wielding = self.get_skill('erukar.game.skills.offensive.DualWielding')
+        reduction = 0 if not dual_wielding else dual_wielding.current_penalty_reduction()
+        print(reduction)
+        return (Lifeform.BaseDualWieldingPenalty - reduction) / 100.0
 
     def evasion(self):
         if self.is_incapacitated():
