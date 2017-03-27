@@ -4,6 +4,7 @@ from .Circular import Circular
 from .Explosive import Explosive
 from .Persistent import Persistent
 from .Ray import Ray
+from .TargetSelf import TargetSelf
 
 __all__ = [
     "Barrier", 
@@ -11,5 +12,6 @@ __all__ = [
     "Circular", 
     "Explosive", 
     "Persistent", 
-    "Ray"
+    "Ray", 
+    "TargetSelf"
 ]

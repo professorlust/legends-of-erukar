@@ -8,6 +8,9 @@ class SpellWord(MagicBase):
     ParametersWhichShouldBeOverridden = []
     RequiredSkill = None
 
+    # Used with certain words, which can be ignored in the spell chain. Examples are TargetSelf, ArcaneSource, and TapAll
+    Implied = False
+
     def on_cast(self, command, caster, parameters=None, efficacy=1.0):
         # Do nothing if we don't have the skill necessary to cast this
         if self.RequiredSkill is not None and not caster.get_skill(self.RequiredSkill) is None:

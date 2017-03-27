@@ -4,6 +4,7 @@ from .DamageSingleTarget import DamageSingleTarget
 from .InflictCondition import InflictCondition
 from .RemoveCondition import RemoveCondition
 from .Sunder import Sunder
+from .UndefinedChaos import UndefinedChaos
 
 from .conjuration import *
 from .demonic import *
@@ -15,5 +16,6 @@ __all__ = [
     "DamageSingleTarget", 
     "InflictCondition", 
     "RemoveCondition", 
-    "Sunder"
+    "Sunder",
+    "UndefinedChaos"
 ]
