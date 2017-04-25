@@ -1,9 +1,9 @@
-from erukar.engine.model.RpgEntity import RpgEntity
+from erukar.engine.model.Describable import Describable
 
-class Surface(RpgEntity):
+class Surface(Describable):
     def __init__(self, description="This is a wall."):
-        self.description = description
         super().__init__()
+        self.description = description
 
     def inspect_through(self, *_):
         return self.describe()

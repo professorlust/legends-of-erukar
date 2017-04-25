@@ -1,7 +1,6 @@
 from erukar.engine.model.Manager import Manager
 from erukar.data.Connector import Connector
 from erukar.server.TurnManager import TurnManager
-from erukar.server.DataAccess import DataAccess
 from erukar.engine.lifeforms.Player import Player
 from erukar.engine.model.PlayerNode import PlayerNode
 import erukar, threading, random
@@ -32,7 +31,6 @@ class Instance(Manager):
     def initialize_instance(self, action_commands, non_action_commands, sys_messages, responses):
         '''Turn on players and generate a dungeon'''
         self.turn_manager = TurnManager()
-        self.data = DataAccess()
         self.action_commands = action_commands
         self.non_action_commands = non_action_commands
         self.sys_messages = sys_messages
@@ -49,7 +47,7 @@ class Instance(Manager):
 
     def any_connected_players(self):
         '''Check to see if there are any currently connected players'''
-        return any([isinstance(x, PlayerNode) for x in self.data.players])
+        return any([isinstance(x, PlayerNode) for x in self.players])
 
     def subscribe_enemies(self):
         for room in self.dungeon.rooms:
@@ -76,11 +74,11 @@ class Instance(Manager):
         enemy.subscribe(self)
         self.command_contexts[enemy.uid] = None
         self.turn_manager.subscribe(enemy)
-        self.data.players.append(enemy)
+        self.players.append(enemy)
 
     def unsubscribe(self, player):
         self.turn_manager.unsubscribe(player)
-        self.data.players.remove(player)
+        self.players.remove(player)
         super().unsubscribe(player)
         player.lifeform().transition_properties.previous_identifier = self.identifier
         self.sys_messages[player.uid] = player.lifeform().transition_properties 
@@ -125,7 +123,7 @@ class Instance(Manager):
             self.connector.update_character(character)
 
         playernode.character = character
-        self.data.players.append(playernode)
+        self.players.append(playernode)
         return playernode
 
     def check_for_player_input(self):
@@ -184,7 +182,7 @@ class Instance(Manager):
         self.active_player = self.turn_manager.next()
         if self.turn_manager.needs_tick():
             self.dungeon.tick()
-            for player in self.data.players:
+            for player in self.players:
                 player.lifeform().tick()
 
     def get_active_player_action(self):
@@ -205,7 +203,7 @@ class Instance(Manager):
     def execute_command(self, cmd):
         cmd.server_properties = self.properties
         cmd.context = self.command_contexts[cmd.sender_uid]
-        cmd.data = self.data
+        cmd.player_info = self.active_player
         if cmd.context and not hasattr(cmd.context, 'server_properties'):
             cmd.context.server_properties = self.properties
         result = cmd.execute()
@@ -228,7 +226,7 @@ class Instance(Manager):
         return result
 
     def check_for_transitions(self, result):
-        for player in self.data.players:
+        for player in self.players:
             if hasattr(player.lifeform(), 'transition_properties') and player.lifeform().transition_properties is not None:
                 self.unsubscribe(player)
 

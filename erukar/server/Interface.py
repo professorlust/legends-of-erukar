@@ -1,6 +1,5 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.model.PlayerNode import PlayerNode
-from erukar.server.DataAccess import DataAccess
 import sys, inspect, erukar, threading
 
 class Interface:
@@ -9,7 +8,6 @@ class Interface:
 
     def __init__(self, shard):
         self.shard = shard
-        self.data = DataAccess()
         self.factory = FactoryBase()
         self.create_alias_list()
         self.messages = {}
@@ -48,7 +46,7 @@ class Interface:
 
     def execute(self, uid, line):
         command, payload = self.command_and_payload(line)
-        generation_parameters = {'sender_uid': uid, 'user_specified_payload': payload, 'data': self.data }
+        generation_parameters = {'sender_uid': uid, 'user_specified_payload': payload, 'environment': None }
 
         # Now actually make the thing with specified params
         created = self.check_for_aliases(command, generation_parameters)

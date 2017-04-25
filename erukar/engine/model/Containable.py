@@ -8,7 +8,10 @@ class Containable(EnvironmentPiece):
         self.contents_conjuntion = "Inside of the container:  "
 
     def get_object_by_uuid(self, uuid):
-        if uuid == self.uuid: return self
+        if uuid == self.uuid: 
+            yield self
+            raise StopIteration
+
         for obj in self.contents:
             if obj.uuid and obj.uuid == uuid:
                 yield obj

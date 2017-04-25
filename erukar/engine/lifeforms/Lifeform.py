@@ -25,6 +25,7 @@ class Lifeform(RpgEntity):
     ArcaneEnergyRegenPercentage = 0.05
 
     def __init__(self, name=""):
+        super().__init__()
         self.name       = name
         self.uid        = ""
         self.inventory  = []
@@ -41,6 +42,7 @@ class Lifeform(RpgEntity):
         self.skills         = []
         self.conditions     = []
         self.spell_words    = []
+        self.action_points  = 2
 
     def initialize_stats(self):
         self.stat_points    = 15

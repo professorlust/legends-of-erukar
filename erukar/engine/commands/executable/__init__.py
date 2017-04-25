@@ -1,4 +1,5 @@
 from .Attack import Attack
+from .BasicInteraction import BasicInteraction
 from .Cast import Cast
 from .Close import Close
 from .Converse import Converse
@@ -21,6 +22,7 @@ from .Use import Use
 
 __all__ = [
     "Attack", 
+    "BasicInteraction",
     "Cast", 
     "Close", 
     "Converse", 

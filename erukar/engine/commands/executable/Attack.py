@@ -16,7 +16,7 @@ class Attack(ActionCommand):
     aliases = ['attack']
     TrackedParameters = ['target']
 
-    def execute(self):
+    def perform(self):
         self.character = self.find_player().lifeform()
         self.room = self.character.current_room
 

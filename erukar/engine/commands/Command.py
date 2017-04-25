@@ -1,46 +1,36 @@
 from erukar.engine.model.Direction import Direction
 from erukar.engine.commands.CommandResult import CommandResult
-import erukar
+import erukar, uuid
 
 class Command:
     OverridesUntilSuccess = False
     not_found = "No object matching '{}' was found in this room."
-    MultipleOptions = "Multiple matches for '{}' were found, please specify with a number between 1 and {}.\n\n{}"
-    TrackedParameters = []
 
     def __init__(self):
         '''These parameters are assigned after instantiation'''
-        self.sender_uid = ''
-        self.data = None
-        self.context = None
-        self.user_specified_payload = ''
-        self.arguments = {}
+        self.player_info = None
+        self.world = None
+        self.args = {}
         self.dirtied_characters = []
-        self.indexed_items = {}
         self.results = {}
 
-    def check_for_arguments(self):
-        # Copy alreturol of the tracked Params into this command
-        payload = self.user_specified_payload
-        self.player = self.find_player()
-        self.lifeform = self.player.lifeform()
-        self.room = self.lifeform.current_room
+    def process_args(self):
+        if not self.world: raise
+        if not self.args: raise
 
-        if self.context and self.context.should_resolve(self) and payload.isdigit():
-            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
+        self.args['player_lifeform'] = self.player_info.lifeform()
 
-        for param_name in self.TrackedParameters:
-            method_name = 'resolve_{}'.format(param_name)
-            actual_method = getattr(self, method_name)
-            failed = actual_method(payload)
-            if failed: return failed
+        # Go through all uuids in args and replace with object refs
+        for argument in self.args:
+            try: arg_uuid = self.get_uuid_for_argument(argument)
+            except: continue
+            obj = self.world.get_object_by_uuid(arg_uuid)
+            if obj: self.args[argument] = obj
 
-        # Check to make sure all tracked parameters are set
-        return self.fail_if_requires_disambiguation()
-
-    def process_input_payload(self, payload):
-        '''Processes an input string and sets variables accordingly'''
-        return
+    def get_uuid_for_argument(self, arg):
+        if isinstance(self.args[arg], uuid.UUID):
+            return self.args[arg]
+        return uuid.UUID(self.args[arg])
 
     def clean(self, lifeform):
         if lifeform in self.dirtied_characters:
@@ -57,13 +47,8 @@ class Command:
         self.results[uid].append(result)
 
     def append_if_uid(self, obj, result):
-        if hasattr(obj, 'uid'):
-            self.append_result(obj.uid, result)
-
-    def add_items_to_context(self, items):
-        pre_insertion_length = len(self.indexed_items)+1
-        for index, alias in enumerate(items):
-            self.indexed_items.append(items[alias])
+        if hasattr(obj, 'uuid'):
+            self.append_result(obj.uuid, result)
 
     def succeed_if_any_results(self, msg_if_failure):
         if len(self.results) > 0:
@@ -71,196 +56,17 @@ class Command:
         return self.fail(msg_if_failure)
 
     def succeed(self):
-        result = CommandResult(True, self, self.results, self.indexed_items, self.dirtied_characters)
+        result = CommandResult(True, self, self.results, self.dirtied_characters)
         self.sever()
         return result
 
-    def fail(self, result):
-        failure_msg = {self.sender_uid: [result]}
-        result = CommandResult(False, self, failure_msg, self.indexed_items, None)
+    def fail(self, result=''):
+        failure_messages = {self.player_info.uuid: [result]} if result else self.results
+        result = CommandResult(False, self, failure_messages, None)
         self.sever()
         return result
 
     def sever(self):
-        self.indexed_items = None
         self.results = None
-        self.data = None
-        self.arguments = None
         self.context = None
 
-    def execute(self):
-        '''Run this Command as a player'''
-        player = self.find_player()
-
-    def find_lifeform(self, uid):
-        return self.data.find_player(uid).lifeform()
-
-    def find_player(self):
-        '''Attempt to find a player in the data access component'''
-        return self.data.find_player(self.sender_uid)
-
-    def find_in_target(self, payload, target, for_field_name, additionals=None):
-        '''Attempts to find something matching a payload in a super set of
-        target.contents, additionals, and self.player.reverse_index(target)'''
-        player = self.find_player()
-        full_map = additionals if additionals else {}
-        targets = set(target.contents + player.reverse_index(target) + self.container_contents(target, player))
-        target_contents_map = {x.alias(): x for x in targets}
-        full_map.update(target_contents_map)
-        matches = {alias: full_map[alias] for alias in full_map if self.any_matches(alias, payload)}
-        return self.post_process_search(matches, payload, for_field_name)
-
-    def container_contents(self, target, player):
-        results = []
-        if not hasattr(target, 'contents'):
-            return results
-        for content in target.contents:
-            if isinstance(content, erukar.engine.environment.Container):
-                results.extend(player.reverse_index(content))
-        return results
-
-    def any_matches(self, alias, payload):
-        '''Difficult function which checks 1:N substrings of an alias against the payload'''
-        max_words = len(payload.split())
-        if payload.lower() in alias.lower():
-            alias_substrings = alias.split()
-            for alias_substr_start in range(len(alias_substrings)):
-                for alias_substr_end in range(alias_substr_start, min(alias_substr_start+max_words+1, len(alias_substrings))):
-                    evaluated_substring = ' '.join(alias_substrings[x] for x in range(alias_substr_start, alias_substr_end+1))
-                    if evaluated_substring.lower().startswith(payload.lower()):
-                        return True
-
-    def find_in_dictionary(self, payload, dictionary, for_field_name):
-        matches = {alias: dictionary[alias] for alias in dictionary if self.any_matches(alias, payload)}
-        return self.post_process_search(matches, payload, for_field_name)
-        
-    def post_process_search(self, matches, payload, field_name):
-        '''
-        Handles edge cases on searching, sets indexed items for contextual  results.
-        If there are 0 results, it fails the command out. If there are >1 results, it fails
-        and requests further clarification. If there are exactly 1 results, it returns
-        that as the target.
-
-        Output: direct_match_if_not_failure, failure_object
-        '''
-        if len(matches) == 0:
-            failure = self.fail(self.not_found.format(payload))
-            failure.indexed_items = None
-            failure.requires_disambiguation = False
-            return failure
-
-        self.indexed_items = []
-        self.add_items_to_context(matches)
-
-        # If there's more than one, we must ask for clarification
-        if len(matches) > 1:
-            match_list = self.enumerate_options(matches)
-            failure = self.fail(self.MultipleOptions.format(payload, len(matches), match_list))
-            failure.disambiguating_parameter = field_name
-            failure.requires_disambiguation = True
-            return failure
-
-        setattr(self, field_name, next(iter(matches.values())))
-
-    def enumerate_options(self, targets):
-        return '\n'.join(['{:3}. {}'.format(i+1, self.readable(x)) for i,x in enumerate(targets)])
-
-    def readable(self, x):
-        if hasattr(x, 'format'):
-            return x.format()
-        if hasattr(x, 'alias'):
-            return x.alias()
-        return x
-
-    def lifeform(self, player_or_node):
-        if hasattr(player_or_node, 'character'):
-            return player_or_node.character
-        return player_or_node
-
-    def find_in_inventory(self, player, item_name, field_name):
-        '''Attempt to find an item in a player's inventory'''
-        inventory_list = {item.alias(): item for item in player.inventory}
-        return self.find_in_dictionary(item_name, inventory_list, field_name)
-
-    def find_spell(self, player, payload, field_name):
-        spell_book = {spell.alias(): spell for spell in player.spells} 
-        return self.find_in_dictionary(payload, spell_book, field_name)
-
-    def find_all_in_inventory(self, player, item_name):
-        return list(self.inventory_find(player, item_name))
-
-    def inventory_find(self, player, item_name):
-        for p in self.lifeform(player).inventory:
-            if p.matches(item_name):
-                yield p
-
-    def spell_find(self, lifeform, spell_name):
-        for p in lifeform.spells:
-            if spell_name.lower() in p.name.lower():
-                yield p
-
-    def determine_direction(self, text):
-        '''Take text and determine its respective cardinal direction'''
-        couples = [
-            { "keywords": ['n', 'north'], "direction": Direction.North },
-            { "keywords": ['e', 'east'], "direction": Direction.East },
-            { "keywords": ['s', 'south'], "direction": Direction.South },
-            { "keywords": ['w', 'west'], "direction": Direction.West } ]
-
-        return next((x['direction'] for x in couples \
-            if any([k == text for k in x['keywords']])), None)
-
-    def fail_if_requires_disambiguation(self):
-        for tracked in self.TrackedParameters:
-            tracked_val = getattr(self, tracked, None)
-            if not tracked_val:
-                failure = self.fail('Missing parameter {}'.format(tracked))
-                failure.disambiguating_parameter = tracked
-                failure.requires_disambiguation = True
-                return failure
-
-    def resolve_direction(self, opt_payload=''):
-        '''If we're tracking direction, it should default here'''
-        # If this is on the context, grab it and return
-        directions = {
-            'North': Direction.North,
-            'East': Direction.East,
-            'South': Direction.South,
-            'West': Direction.West
-        }
-
-        return self.find_in_dictionary(opt_payload, directions, 'direction')
-
-    def resolve_target(self, opt_payload=''):
-        # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self) and hasattr(self.context, 'target'):
-            self.target = getattr(self.context, 'target')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'target') and self.target: return
-
-        if not opt_payload or opt_payload == 'self':
-            self.target = self.find_player().lifeform()
-            return
-
-        direction = self.determine_direction(opt_payload.lower())
-        if direction:
-            return self.resolve_directional_target(direction)
-
-        failure_object = self.find_in_target(opt_payload, self.room, 'target')
-        return failure_object
-
-    def resolve_directional_target(self, direction):
-        '''Oftentimes, we just need the direction; advanced cases should be overridden'''
-        self.target = direction
-
-    def resolve_item(self, opt_payload=''):
-        # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self) and hasattr(self.context, 'item'):
-            self.item = getattr(self.context, 'item')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'item') and self.item: return
-
-        # Start looking at the payload for the item
-        return self.find_in_inventory(self.lifeform, opt_payload, 'item')

@@ -12,6 +12,7 @@ class Door(RpgEntity):
     generic_description = 'There is a door to the {direction}. It is {status}.'
 
     def __init__(self, description=""):
+        super().__init__()
         self.lock = None
         self.status = Door.Closed
         self.can_close = True
@@ -29,6 +30,9 @@ class Door(RpgEntity):
 
     def on_inspect(self, direction):
         return self.mutate(self.description, {'direction': direction.name})
+
+    def on_glance(self, player):
+        return 'Glanced at a door: {} ACU, {} SEN'.format(player.acuity, player.sense), True
 
     def peek(self, direction, room, lifeform, acu, sen):
         '''Does a single look through'''
@@ -59,21 +63,21 @@ class Door(RpgEntity):
         if self.can_close:
             if self.status == Door.Open:
                 self.status = Door.Closed
-                return Door.close_success
-            return Door.already_closed
+                return Door.close_success, True
+            return Door.already_closed, False
 
-        return "Cannot close this door."
+        return "Cannot close this door.", False
 
     def on_open(self, *_):
         if self.status == Door.Open:
-            return Door.already_open
+            return Door.already_open, False
 
         if self.lock is not None:
             if self.lock.is_locked:
-                return Door.is_locked
+                return Door.is_locked, False
 
         if self.can_close:
             self.status = Door.Open
-            return Door.open_success
+            return Door.open_success, True
 
-        return "Cannot open this door"
+        return "Cannot open this door", False
