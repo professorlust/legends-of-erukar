@@ -4,6 +4,7 @@ class Dungeon(RpgEntity):
     minimum_rooms = 3
 
     def __init__(self):
+        super().__init__()
         self.name = "Dungeon"
         self.description = ""
         self.region = ''
@@ -11,6 +12,12 @@ class Dungeon(RpgEntity):
         self.dungeon_map = {}
         self.rooms = []
         self.active_auras = set()
+
+    def get_object_by_uuid(self, uuid):
+        if uuid == self.uuid: return self
+        for room in self.rooms:
+            matched = next((room.get_object_by_uuid(uuid)), None)
+            if matched: return matched
 
     def get_applicable_auras(self, for_loc):
         '''Generator which gets all applicable, active auras at a location'''

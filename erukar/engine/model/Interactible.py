@@ -4,6 +4,10 @@ class Interactible:
     def __init__(self):
         self.uuid = uuid.uuid4()
 
+    def get_object_by_uuid(self, uuid):
+        if uuid == self.uuid: 
+            return self
+
     def is_detected(self, acuity, sense):
         return acuity > self.minimum_acuity_to_detect() or sense > self.minimum_sense_to_detect()
 
