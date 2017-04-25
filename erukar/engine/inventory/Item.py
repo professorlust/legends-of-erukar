@@ -39,6 +39,7 @@ class Item(Describable):
     }
 
     def __init__(self, item_type='Item', name="Item"):
+        super().__init__()
         self.stat_influences = self.BaseStatInfluences
         self.item_type = item_type
         self.owner = None
