@@ -13,6 +13,9 @@ class Indexer:
         for content in container.contents:
             self.index_item(content, container)
 
+    def item_is_indexed(self, item):
+        return item in self.item_indexer
+
     def index(self, item):
         '''Get a traverse path from the indexer (if it exists)'''
         if item in self.item_indexer:

@@ -4,55 +4,42 @@ import unittest
 class TakeTests(unittest.TestCase):
     def test_take_execution(self):
         p = Player()
-        p.uid = 'Bob'
-
-        pn = PlayerNode(p.uid, p)
-        data_store = DataAccess()
-        data_store.players.append(pn)
+        dungeon = Dungeon()
 
         w = Weapon()
-        w.name = 'Sword'
-        r = Room(Dungeon())
+        r = Room(dungeon)
         r.add(w)
+        r.add(p)
         p.link_to_room(r)
-        pn.move_to_room(r)
 
-        # Inspect the room to index the item
-        i = Inspect()
-        i.sender_uid = p.uid
-        i.data = data_store
-        i.execute()
+        p.index_item(w, r)
 
         # Now take it
         t = Take()
-        t.sender_uid = p.uid
-        t.data = data_store
-        t.user_specified_payload = 'sword'
+        t.world = dungeon
+        t.player_info = p
+        t.args = {'interaction_target': w.uuid}
         result = t.execute()
 
         self.assertTrue(w in p.inventory)
         self.assertTrue(w not in r.contents)
-        self.assertEqual(result.result_for('Bob')[0], Take.success.format('Sword'))
+        self.assertTrue(result.success)
 
     def test_take_execution_no_match(self):
         p = Player()
-        p.uid = 'Bob'
-
-        data_store = DataAccess()
-        data_store.players.append(PlayerNode(p.uid, p))
+        dungeon = Dungeon()
 
         w = Weapon()
-        w.name = 'Firearm'
-        r = Room(None)
+        r = Room(dungeon)
+        r.add(w); r.add(p)
         p.current_room = r
-        r.contents.append(w)
 
         t = Take()
-        t.sender_uid = p.uid
-        t.data = data_store
-        t.user_specified_payload = 'Sword'
+        t.world = dungeon
+        t.player_info = p
+        t.args = {'interaction_target': w.uuid}
         result = t.execute()
 
         self.assertTrue(w in r.contents)
         self.assertTrue(w not in p.inventory)
-        self.assertEqual(result.result_for('Bob')[0], 'No object matching \'Sword\' was found in this room.')
+        self.assertFalse(result.success)

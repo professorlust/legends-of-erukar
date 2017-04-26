@@ -32,8 +32,8 @@ class Container(Containable):
     def on_close(self, sender):
         if self.can_close:
             self.contents_visible = False
-            return self.mutate("Closed a {alias}")
-        return self.mutate("{alias} cannot be closed!")
+            return self.mutate("Closed a {alias}"), False
+        return self.mutate("{alias} cannot be closed!"), False
 
     def brief_inspect(self, lifeform, acu, sen, content_desc_format='{},'):
         if not self.visible_in_room_description: return ''

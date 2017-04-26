@@ -1,13 +1,20 @@
 from erukar.engine.model.Direction import Direction
 from erukar.engine.commands.CommandResult import CommandResult
 import erukar, uuid
+from enum import Enum
+
+class SearchScope(Enum):
+    World = 0
+    Inventory = 1
+    Both = 2
 
 class Command:
-    OverridesUntilSuccess = False
-    not_found = "No object matching '{}' was found in this room."
+    SearchTargetMustBeIndexed = False
+    LimitToLocal = False
 
     def __init__(self):
         '''These parameters are assigned after instantiation'''
+        self.search_scope = SearchScope.World
         self.player_info = None
         self.world = None
         self.args = {}
@@ -15,17 +22,38 @@ class Command:
         self.results = {}
 
     def process_args(self):
-        if not self.world: raise
-        if not self.args: raise
+        if not self.args: raise Exception('Cannot process args -- Command\'s args are undefined')
 
         self.args['player_lifeform'] = self.player_info.lifeform()
 
         # Go through all uuids in args and replace with object refs
+        if not self.world: raise Exception('Cannot process args -- Command\'s world is undefined')
         for argument in self.args:
             try: arg_uuid = self.get_uuid_for_argument(argument)
             except: continue
-            obj = self.world.get_object_by_uuid(arg_uuid)
-            if obj: self.args[argument] = obj
+
+            # Try World
+            if self.search_scope == SearchScope.World or self.search_scope == SearchScope.Both:
+                obj = self.world.get_object_by_uuid(arg_uuid)
+                if obj and self.object_index_is_valid(obj):
+                    self.args[argument] = obj
+                    continue
+
+            # Try Inventory
+            if self.search_scope == SearchScope.Inventory or self.search_scope == SearchScope.Both:
+                obj = self.args['player_lifeform'].get_object_by_uuid(arg_uuid)
+                if obj and self.object_index_is_valid(obj):
+                    self.args[argument] = obj
+
+    def object_index_is_valid(self, obj):
+        return not self.SearchTargetMustBeIndexed or self.args['player_lifeform'].item_is_indexed(obj)
+
+    def execute(self):
+        self.process_args()
+        return self.perform()
+
+    def perform(self):
+        return self.fail()
 
     def get_uuid_for_argument(self, arg):
         if isinstance(self.args[arg], uuid.UUID):

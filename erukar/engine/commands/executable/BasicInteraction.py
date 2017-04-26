@@ -3,6 +3,7 @@ import erukar
 
 class BasicInteraction(ActionCommand):
     ActionPointCost = 1
+    LimitToLocal = True
 
     def perform(self):
         '''
@@ -14,7 +15,7 @@ class BasicInteraction(ActionCommand):
         '''
         interaction_method = 'on_' + self.args['interaction_type']
         if not hasattr(self.args['interaction_target'], interaction_method):
-            raise Exception('Interaction Method {0} not defined'.format(interaction_method))
+            raise Exception('Interaction Method {0} not defined for '.format(interaction_method, self.args['interaction_target']))
         if self.args['player_lifeform'].action_points < self.ActionPointCost:
             return self.fail('Not enough action points!')
 

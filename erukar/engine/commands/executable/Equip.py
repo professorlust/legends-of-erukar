@@ -1,88 +1,56 @@
+from erukar.engine.commands.Command import SearchScope
 from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.inventory.Armor import Armor
 from erukar.engine.inventory.Weapon import Weapon
 import re
 
 class Equip(ActionCommand):
-    not_found = "Unable to find '{0}' in inventory"
-    cannot_equip = "'{}' was found but cannot be equipped"
+    NotFound = "Object cannot be equipped as it was not found"
+    CannotEquip = "'{}' was found but cannot be equipped"
+    MismatchedSlot = "Cannot equip {} at slot {}"
 
-    equipment_location_codes = {
-        'off': 'left',
-        'offhand': 'left',
-        'main': 'right',
-        'primary': 'right'
-    }
-    aliases = ['equip']
-    TrackedParameters = ['item','equip_location']
+    '''
+    Requires:
+        equipment_slot
+        inventory_item
+    '''
+    def __init__(self):
+        super().__init__()
+        self.search_scope = SearchScope.Inventory
 
-    def execute(self):
-        failure = self.check_for_arguments()
-        if failure: return failure
+    def perform(self):
+        # Error handling
+        if not self.args['inventory_item']: return self.fail(Equip.NotFound)
+        if self.args['equipment_slot'] not in self.args['inventory_item'].EquipmentLocations:
+            return self.fail(Equip.CannotEquip.format(self.args['inventory_item'].describe()))
 
-        # Check to see if the item's type exists as a field on the character
-        if hasattr(self.lifeform, self.equip_location):
-            setattr(self.lifeform, self.equip_location, self.item)
-            effects = self.item.on_equip(self.lifeform)
-            self.dirty(self.lifeform)
-            result = '{} equipped as {} successfully.'.format(self.item.describe(), self.equip_location)
-            self.append_result(self.sender_uid, result)
-            return self.succeed()
+        equipment = getattr(self.args['player_lifeform'], self.args['equipment_slot'])
+        cost = Equip.get_cost_to_equip(equipment, self.args['inventory_item'])
 
-        return self.fail(Equip.cannot_equip.format(self.item.describe()))
+        if self.args['player_lifeform'].action_points < cost:
+            return self.fail('Not enough action points to equip {} to {}'.format(equipment.alias(), self.args['equipment_slot']))
+        self.args['player_lifeform'].action_points -= cost
 
-    def resolve_equip_location(self, opt_payload=''):
-        if self.context and self.context.should_resolve(self):
-            self.equip_location = getattr(self.context, 'equip_location')
+        self.perform_swap(equipment)
+        result = '{} equipped as {} successfully.'.format(self.args['inventory_item'].describe(), self.args['equipment_slot'])
+        self.append_result(self.player_info.uuid, result)
+        return self.succeed()
 
-        if hasattr(self, 'equip_location') and self.equip_location: 
-            return
+    def get_cost_to_equip(equipped, to_equip):
+        '''Always takes the higher of the unequip and equip AP costs'''
+        if not equipped:
+            return to_equip.ActionPointCostToEquip
+        return max(to_equip.ActionPointCostToEquip, equipped.ActionPointCostToUnequip)
 
-        if hasattr(self, 'item') and self.item:
-            locations = {i.capitalize(): i for i in self.item.EquipmentLocations}
-            return self.find_in_dictionary(opt_payload, locations, 'equip_location')
+    def perform_swap(self, equipment):
+        setattr(self.args['player_lifeform'], self.args['equipment_slot'], self.args['inventory_item'])
+        self.dirty(self.args['player_lifeform'])
 
-        if opt_payload:
-            decoded = self.decode_location(opt_payload)
-            if decoded:
-                self.equip_location = decoded
-                return
+        # Unequip
+        if equipment:
+            result = equipment.on_unequip(self.args['player_lifeform'])
+            if result: self.append_result(self.player_info.uuid, result)
 
-        return self.fail('Nothing can be done for equip_location')
-
-    def check_for_arguments(self):
-        # Copy all of the tracked Params into this command
-        payload = self.user_specified_payload
-        self.payloads = None
-
-        self.player = self.find_player()
-        self.lifeform = self.player.lifeform()
-
-        if self.context and self.context.requires_disambiguation and payload.isdigit():
-            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
-
-        if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads and self.context.indexed_items:
-            self.payloads = getattr(self.context.context, 'payloads')
-
-        if not self.payloads:
-            if ' on ' in payload:
-                self.payloads = payload.split(' on ', 1)
-            else:
-                self.payloads = (payload, '')
-
-        fail = self.resolve_item(self.payloads[0])
-        if fail: return fail
-
-        fail = self.resolve_equip_location(self.payloads[1])
-        if fail: return fail
-
-    def decode_location(self, location_designation):
-        '''Attempt to find the location, first by matching, then by aliasing'''
-        lifeform = self.find_player().lifeform()
-        # Check for direct matches
-        if location_designation in lifeform.equipment_types:
-            return location_designation
-        # Check for aliases
-        if location_designation in self.equipment_location_codes:
-            return self.equipment_location_codes[location_designation]
-        return
+        # Equip new item
+        effects = self.args['inventory_item'].on_equip(self.args['player_lifeform'])
+        if effects: self.append_result(self.player_info.uuid, effects)

@@ -59,7 +59,6 @@ class Lifeform(RpgEntity):
         self.instance = instance.identifier
         self.arcane_energy = self.maximum_arcane_energy()
 
-
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''
         results = []
@@ -76,6 +75,11 @@ class Lifeform(RpgEntity):
         if not self.is_incapacitated() and self.arcane_energy < max_arcane:
             self.arcane_energy = min(max_arcane, self.arcane_energy + int(max_arcane * Lifeform.ArcaneEnergyRegenPercentage))
         return results
+
+    def get_object_by_uuid(self, uuid):
+        for item in self.inventory:
+            if item.uuid and item.uuid == uuid:
+                return item
 
     def maximum_arcane_energy(self):
         arcane_gift = self.get_skill(erukar.engine.base.skills.ArcaneGift)

@@ -17,6 +17,9 @@ class Item(Describable):
     BasePrice = 10
     EquipmentLocations = []
 
+    ActionPointCostToEquip = 1
+    ActionPointCostToUnequip = 1
+
     '''
     Stat scaling is a linear relationship between a specific attribute and the scaling_factor
     The Damage Range is essentially a proportion

@@ -2,89 +2,63 @@ from erukar import *
 import unittest
 
 class EquipTests(unittest.TestCase):
+    def test_cost_to_equip(self):
+        a = Armor('')
+        a.ActionPointCostToUnequip = 1
+        b = Armor('')
+        b.ActionPointCostToEquip = 2
+
+        result = Equip.get_cost_to_equip(a,b)
+        self.assertEqual(result, 2)
+
     def test_equip_weapon(self):
         p = Player()
-        p.uid = 'Bob'
-
-        data_store = DataAccess()
-        data_store.players.append(PlayerNode(p.uid, p))
+        dungeon = Dungeon()
 
         w = Weapon()
-        w.name = "Sword"
         p.inventory.append(w)
 
         e = Equip()
-        e.sender_uid = p.uid
-        e.data = data_store
-        e.user_specified_payload = 'sword on right'
+        e.world = dungeon
+        e.player_info = p
+        e.args = {'equipment_slot': 'right', 'inventory_item': w.uuid}
         result = e.execute()
 
         self.assertTrue(w in p.inventory)
         self.assertEqual(p.right, w)
-        self.assertIn('successfully', result.result_for('Bob')[0])
+        self.assertTrue(result.success)
 
     def test_equip_armor(self):
         p = Player()
-        p.uid = 'Bob'
+        dungeon = Dungeon()
 
-        data_store = DataAccess()
-        data_store.players.append(PlayerNode(p.uid, p))
-
-        a = Armor('Plate Mail')
-        a.equipment_types = ['chest']
-        self.assertEqual(a.item_type, 'armor')
-        self.assertEqual(a.name, 'Plate Mail')
+        a = Armor('')
         p.inventory.append(a)
 
         e = Equip()
-        e.sender_uid = p.uid
-        e.data = data_store
-        e.user_specified_payload = 'plate mail'
+        e.world = dungeon
+        e.player_info = p
+        e.args = {'equipment_slot': 'chest', 'inventory_item': a.uuid}
         result = e.execute()
 
         self.assertTrue(a in p.inventory)
         self.assertEqual(p.chest, a)
-        self.assertIn('successfully', result.result_for('Bob')[0])
+        self.assertTrue(result.success)
 
     def test_equip_item(self):
         p = Player()
-        p.uid = 'Bob'
-
-        data_store = DataAccess()
-        data_store.players.append(PlayerNode(p.uid, p))
+        dungeon = Dungeon()
 
         i = Item('Potion', 'Potion')
         p.inventory.append(i)
 
         e = Equip()
-        e.sender_uid = p.uid
-        e.data = data_store
-        e.user_specified_payload = 'potion'
+        e.world = dungeon
+        e.player_info = p
+        e.args = {'equipment_slot': 'chest', 'inventory_item': i.uuid}
         result = e.execute()
 
         self.assertTrue(i in p.inventory)
         self.assertNotEqual(p.chest, i)
         self.assertNotEqual(p.right, i)
-        self.assertEqual('Unable to find \'\' in inventory', result.result_for('Bob')[0])
-
-    def test_equip_no_match(self):
-        p = Player()
-        p.uid = 'Bob'
-
-        data_store = DataAccess()
-        data_store.players.append(PlayerNode(p.uid, p))
-
-        i = Item('Potion','Potion')
-        p.inventory.append(i)
-
-        e = Equip()
-        e.sender_uid = p.uid
-        e.data = data_store
-        e.user_specified_payload = 'sword'
-        result = e.execute()
-
-        self.assertTrue(i in p.inventory)
-        self.assertNotEqual(p.chest, i)
-        self.assertNotEqual(p.right, i)
-        self.assertEqual(Equip.not_found.format('sword'), result.result_for('Bob')[0])
-
+        self.assertFalse(result.success)

@@ -165,6 +165,7 @@ class Room(Containable):
         return self_describe
 
     def connect_room(self, direction, other_room, door=None):
+        if door: self.add(door)
         if other_room is not self:
             self.connections[direction] = Passage(room=other_room, door=door)
 

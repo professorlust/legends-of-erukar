@@ -1,6 +1,8 @@
-from erukar.engine.model.Indexer import Indexer
+'''
+The Player Node is maintained on the 
+'''
 
-class PlayerNode(Indexer):
+class PlayerNode():
     Disconnected  =-1  # Default State
     Idle          = 0  # When the player is in menus
     PrePlaying    = 1  # When the player is in a tutorial or building character
