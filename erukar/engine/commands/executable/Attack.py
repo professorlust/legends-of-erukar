@@ -1,3 +1,4 @@
+from erukar.engine.commands.Command import SearchScope
 from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.environment.Corpse import Corpse
 from erukar.engine.environment.Door import Door
@@ -20,8 +21,12 @@ class Attack(ActionCommand):
         interaction_target
         weapon
     '''
+    def __init__(self):
+        super().__init__()
+        self.search_scope = SearchScope.Both
 
     def cost_to_attack(self):
+        '''This will scale with weapon mass and strength as well as with aerodynamicity and dexterity'''
         return 1
 
     def perform(self):

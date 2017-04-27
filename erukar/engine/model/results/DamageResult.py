@@ -12,7 +12,7 @@ class DamageResult:
         self.xp_value = 0
 
     def init_instigator(self, instigator):
-        self.is_trap = not hasattr(instigator, 'uid')
+        self.is_trap = not hasattr(instigator, 'uuid')
         self.instigator = instigator
 
     def parse_status(self):

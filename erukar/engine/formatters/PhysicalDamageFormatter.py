@@ -13,15 +13,15 @@ class PhysicalDamageFormatter(DamageFormatter):
             attack_state.weapon.alias(), 
             attack_state.attack_roll))
 
-        cmd.append_if_uid(cmd.target, '\n'.join(target_results))
-        cmd.append_result(cmd.sender_uid, '\n'.join(attacker_results))
+        cmd.append_if_uid(cmd.args['interaction_target'].uuid, '\n'.join(target_results))
+        cmd.append_result(cmd.player_info.uuid, '\n'.join(attacker_results))
 
     def append_missed_attack_results(cmd, attack_state):
-        cmd.append_result(cmd.sender_uid, 'Your attack ({}) with {} misses {}.'.format(
+        cmd.append_result(cmd.player_info.uuid, 'Your attack ({}) with {} misses {}.'.format(
             attack_state.attack_roll, 
             attack_state.weapon.alias(), 
             attack_state.target.alias()))
-        cmd.append_if_uid(attack_state.target, 'You dodge {}\'s {} ({})!'.format(
+        cmd.append_if_uid(cmd.args['interaction_target'].uuid, 'You dodge {}\'s {} ({})!'.format(
             attack_state.attacker.alias(), 
             attack_state.weapon.alias(), 
             attack_state.attack_roll))

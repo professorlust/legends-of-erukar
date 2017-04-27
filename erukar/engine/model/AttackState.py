@@ -23,14 +23,7 @@ class AttackState:
 
     def origin(self):
         '''gets the origin (the room the attacker is in)'''
-        return self.attacker.current_room
-
-    def get_weapon(self, equipment_slot, use_unarmed_if_none=False):
-        '''Gets a weapon if it exists, otherwise gets an Unarmed Strike'''
-        if self.attacker:
-            self.weapon = getattr(self.attacker, equipment_slot)
-        # return an Unarmed Strike or None
-        self.weapon = UnarmedStrike() if (self.weapon is None and use_unarmed_if_none) else self.weapon
+        return self.attacker.room
 
     def is_valid(self):
         '''Do we have a weapon? If so, confirm that it can be used in either ranged or melee'''
@@ -45,7 +38,7 @@ class AttackState:
 
     def is_melee_valid(self):
         '''Make sure that melee attacks only happen in this room'''
-        return not self.is_projectile() and self.target.current_room == self.attacker.current_room
+        return not self.is_projectile() and self.target.room == self.attacker.room
 
     def calculate_attack(self):
         '''Get the basic attack roll, then modify it based on the weapon and weapon mods'''

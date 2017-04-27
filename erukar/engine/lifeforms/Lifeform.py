@@ -54,6 +54,7 @@ class Lifeform(RpgEntity):
         self.resolve        = 0
         self.experience     = 0
         self.arcane_energy  = 0
+        self.health         = self.base_health
 
     def subscribe(self, instance):
         self.instance = instance.identifier
