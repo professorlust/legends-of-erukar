@@ -1,56 +1,57 @@
 from erukar.engine.environment.Door import Door
 from erukar.engine.environment.Surface import Surface
+from erukar.engine.model.RpgEntity import RpgEntity 
 
-class Passage:
-    def __init__(self, wall=None, room=None, door=None):
+class Passage(RpgEntity):
+    def __init__(self, wall=None, rooms=None, door=None):
+        super().__init__()
         self.door = door
-        self.room = room
+        self.rooms = [] if not rooms else rooms 
         self.wall = wall
+        self.coordinates = (0,0)
 
-    def can_see_through(self):
-        return False if not self.is_door() \
-                else self.door is None or (self.door is not None and self.door.status is not Door.Closed)
+    def add_room(self, room):
+        if len(self.rooms) > 1:
+            raise Exception('Already at maximum capacity for rooms in passage {}'.format(self))
+        self.rooms.append(room)
 
-    def is_door(self):
-        return self.door is not None or self.room is not None
+    def is_valid(self):
+        return len(self.rooms) == 2
 
-    def can_see_or_sense(self, lifeform, depth=0):
-        if self.door is None:
-            return self.room is not None
-        acu = lifeform.calculate_effective_stat('acuity', depth)
+    def can_traverse_through(self):
+        return (self.door is not None and self.door.status is Door.Open) or (self.door is None and len(self.rooms) == 2)
+
+    def has_door(self):
+        return self.door is not None
+
+    def can_detect(self, lifeform, efficiency=1.0):
+        if not self.has_door():
+            return self.is_valid()
+        acu = lifeform.calculate_effective_stat('acuity') * efficiency
         return self.door.necessary_acuity() < acu
 
-    def is_not_empty(self):
-        return self.door is not None or self.room is not None
+    def next_room(self, from_room):
+        return next(x for x in self.rooms if x is not from_room)
+
+    def next_visible(self, from_room):
+        if self.has_door() and self.door.status is not Door.Open:
+            return self.door
+        return self.next_room(from_room)
 
     def directional_inspect(self, relative_dir, lifeform, depth=1):
-        acu = lifeform.calculate_effective_stat('acuity', depth)
-        depth += 1
-        # look through a door
-        if self.door is not None:
-            result = self.door.inspect_through(relative_dir, self.room, lifeform, depth)
-            if result is not '':
-                return '\nRoom {}: {}'.format(depth, result)
-            return result
-        # look through a hallway
-        if self.room is not None:
-            result = self.room.directional_inspect(relative_dir, lifeform, depth)
-            if result is not '':
-                return '\nRoom {}: {}'.format(depth, result)
-            return result
-        # look at a wall
-        if self.wall is not None:
-            return self.wall.on_inspect(lifeform, acu, 0)
-        return ''
+        return 'Directional inspection is undergoing a rework'
 
-    def peek(self, relative_dir, lifeform, acu, sen):
+    def peek(self, lifeform, acu, sen):
         '''Used when the current room is describing itself'''
-        if self.door is not None:
-            return self.door.peek(relative_dir, self.room, lifeform, acu, sen)
-        if self.room is not None:
-            return self.room.peek(lifeform, acu, sen)
-        return
+        return self.next_visible(lifeform.room).peek(lifeform, acu, sen)
 
     def on_open(self, player):
-        if self.door:
+        if self.has_door():
             return self.door.on_open(player)
+
+    def on_close(self, player):
+        if self.has_door():
+            return self.door.on_close(player)
+
+    def describe(self, from_room):
+        return 'Connection'

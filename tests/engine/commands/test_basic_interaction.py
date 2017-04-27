@@ -7,7 +7,7 @@ class BasicInteractionTests(unittest.TestCase):
         dungeon = Dungeon()
 
         r = Room(dungeon)
-        p.current_room = r
+        p.room = r
 
         o = BasicInteraction()
         o.world = dungeon
@@ -16,8 +16,7 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], BasicInteraction.nesw_no_door)
-        o.world = dungeon
+        self.assertEqual(result.result_for(p.uuid)[0], BasicInteraction.NoTarget)
 
     def test_execute_close_on_locked_door(self):
         p = Player()
@@ -26,9 +25,9 @@ class BasicInteractionTests(unittest.TestCase):
         n = Room(dungeon)
         s = Room(dungeon)
         d = Door()
-        p.current_room = n
+        p.room = n
         d.lock = Lock()
-        n.coestablish_connection(Direction.South, s, d)
+        n.connect(s, d)
 
         o = BasicInteraction()
         o.world = dungeon
@@ -45,9 +44,9 @@ class BasicInteractionTests(unittest.TestCase):
 
         n = Room(dungeon)
         s = Room(dungeon)
-        p.current_room = n
+        p.room = n
         d = Door()
-        n.coestablish_connection(Direction.South, s, d)
+        n.connect(s, d)
 
         o = BasicInteraction()
         o.world = dungeon
@@ -66,9 +65,9 @@ class BasicInteractionTests(unittest.TestCase):
         n = Room(dungeon)
         s = Room(dungeon)
         d = Door()
-        p.current_room = n
+        p.room = n
         d.status = Door.Open
-        n.coestablish_connection(Direction.South, s, d)
+        n.connect(s, d)
 
         o = BasicInteraction()
         o.world = dungeon
@@ -85,7 +84,7 @@ class BasicInteractionTests(unittest.TestCase):
         dungeon = Dungeon()
 
         n = Room(dungeon)
-        p.current_room = n
+        p.room = n
         chest = Container(aliases=['chest'])
         n.add(item=chest)
 
@@ -102,7 +101,7 @@ class BasicInteractionTests(unittest.TestCase):
         dungeon = Dungeon()
 
         r = Room(dungeon)
-        p.current_room = r
+        p.room = r
 
         o = BasicInteraction()
         o.world = dungeon
@@ -111,7 +110,7 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], BasicInteraction.nesw_no_door)
+        self.assertEqual(result.result_for(p.uuid)[0], BasicInteraction.NoTarget)
         o.world = dungeon
 
     def test_execute_open_on_locked_door(self):
@@ -121,9 +120,9 @@ class BasicInteractionTests(unittest.TestCase):
         n = Room(dungeon)
         s = Room(dungeon)
         d = Door()
-        p.current_room = n
+        p.room = n
         d.lock = Lock()
-        n.coestablish_connection(Direction.South, s, d)
+        n.connect(s, d)
 
         o = BasicInteraction()
         o.world = dungeon
@@ -132,7 +131,7 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.already_opened)
+        self.assertEqual(result.result_for(p.uuid)[0], Door.is_locked)
 
     def test_execute_open_through_opened_door(self):
         p = Player()
@@ -140,10 +139,10 @@ class BasicInteractionTests(unittest.TestCase):
 
         n = Room(dungeon)
         s = Room(dungeon)
-        p.current_room = n
+        p.room = n
         d = Door()
         d.status = Door.Open
-        n.coestablish_connection(Direction.South, s, d)
+        n.connect(s, d)
 
         o = BasicInteraction()
         o.world = dungeon
@@ -152,7 +151,7 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.already_opened)
+        self.assertEqual(result.result_for(p.uuid)[0], Door.already_open)
 
 
     def test_execute_open_through_closed_door(self):
@@ -162,9 +161,9 @@ class BasicInteractionTests(unittest.TestCase):
         n = Room(dungeon)
         s = Room(dungeon)
         d = Door()
-        p.current_room = n
+        p.room = n
         d.status = Door.Closed
-        n.coestablish_connection(Direction.South, s, d)
+        n.connect(s, d)
 
         o = BasicInteraction()
         o.world = dungeon
@@ -181,7 +180,7 @@ class BasicInteractionTests(unittest.TestCase):
         dungeon = Dungeon()
 
         n = Room(dungeon)
-        p.current_room = n
+        p.room = n
         chest = Container(aliases=['chest'])
         n.add(item=chest)
 
@@ -191,4 +190,4 @@ class BasicInteractionTests(unittest.TestCase):
         o.args = {'interaction_type': 'open', 'interaction_target': chest.uuid}
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], 'Opened a chest')
+        self.assertEqual(result.result_for(p.uuid)[0], Container.Opened)

@@ -16,14 +16,13 @@ class Map(Command):
     vert_door_open = '╷'
     player_marker = '@'
 
-    aliases = ['map']
-
-    def execute(self, *_):
+    def perform(self, *_):
         '''Converts the dungeon_map into a readable map for the user'''
-        player = self.find_player()
-        room = player.character.current_room
+        return self.fail()
+#       player = self.find_player()
+#       room = player.character.current_room
 
-        return self.dimensional_map(player, room)
+#       return self.dimensional_map(player, room)
 
     def translate_coordinates_to_grid(coords):
         return tuple(map(lambda y: 2*y+1, coords))

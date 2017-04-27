@@ -1,4 +1,3 @@
-from .DungeonGenerator import DungeonGenerator
 from .DungeonGeneratorRedux import DungeonGeneratorRedux
 from .FactoryBase import FactoryBase
 from .ModifierGenerator import ModifierGenerator
@@ -8,7 +7,6 @@ from .ProbablisticGenerator import ProbablisticGenerator
 from .RandomizedEntityFactory import RandomizedEntityFactory
 
 __all__ = [
-    "DungeonGenerator", 
     "DungeonGeneratorRedux", 
     "FactoryBase", 
     "ModifierGenerator", 

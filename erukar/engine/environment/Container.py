@@ -4,6 +4,8 @@ from erukar.engine.environment.Lock import Lock
 import random
 
 class Container(Containable):
+    Opened = "Opened a Chest"
+
     def __init__(self, aliases):
         '''visible_in_room_description here is used for Containers like Table Tops'''
         super().__init__(aliases)
@@ -16,14 +18,14 @@ class Container(Containable):
 
     def on_open(self, sender):
         if not self.can_close:
-            return self.mutate("You cannot open this {alias}.")
+            return self.mutate("You cannot open this {alias}."), False
 
         if self.lock is not None:
             if self.lock.is_locked:
-                return self.mutate("This {alias} is locked!")
+                return self.mutate("This {alias} is locked!"), False
 
         self.contents_visible = True
-        return self.mutate("Opened a {alias}.")
+        return self.mutate(Container.Opened), True
 
     def on_start(self, room):
         for content in self.contents:

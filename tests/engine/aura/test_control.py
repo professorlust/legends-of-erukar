@@ -37,26 +37,21 @@ class AuraControlTests(unittest.TestCase):
         p = Player()
         p.uid = 'bob'
         pn = PlayerNode('bob', p)
-        data = DataAccess()
-        data.players.append(pn)
         p.link_to_room(r)
         pn.move_to_room(r)
 
         i = Inspect()
         i.sender_uid = 'bob'
-        i.data = data
         i.execute()
 
         t = Take()
         t.user_specified_payload = 'sword'
         t.sender_uid = 'bob'
-        t.data = data
         t.execute()
 
         e = Equip()
         e.sender_uid = 'bob'
         e.user_specified_payload = 'sword on right'
-        e.data = data
         res = e.execute()
 
         self.assertTrue(len(d.active_auras) > 0)
@@ -73,32 +68,26 @@ class AuraControlTests(unittest.TestCase):
         p = Player()
         p.uid = 'bob'
         pn = PlayerNode('bob', p)
-        data = DataAccess()
-        data.players.append(pn)
         p.link_to_room(r)
         pn.move_to_room(r)
 
         i = Inspect()
         i.sender_uid = 'bob'
-        i.data = data
         i.execute()
 
         t = Take()
         t.user_specified_payload = 'sword'
         t.sender_uid = 'bob'
-        t.data = data
         t.execute()
 
         e = Equip()
         e.sender_uid = 'bob'
         e.user_specified_payload = 'sword'
-        e.data = data
         e.execute()
 
         u = Unequip()
         u.sender_uid = 'bob'
         u.user_specified_payload = 'sword'
-        u.data = data
         u.execute()
 
         self.assertTrue(len(list(x for x in d.active_auras if not x.is_expired)) == 0)
@@ -109,7 +98,7 @@ class AuraControlTests(unittest.TestCase):
         sr = Room(d, (0,0))
         nr = Room(d, (0,1))
         sr.add(item)
-        sr.coestablish_connection(Direction.North, nr, None)
+        sr.connect(nr, None)
 
         f = erukar.game.modifiers.inventory.Glowing()
         f.apply_to(item)
@@ -118,32 +107,26 @@ class AuraControlTests(unittest.TestCase):
         p.uid = 'bob'
         p.current_room = sr
         pn = PlayerNode('bob', p)
-        data = DataAccess()
-        data.players.append(pn)
         p.link_to_room(sr)
         pn.move_to_room(sr)
 
         i = Inspect()
         i.sender_uid = 'bob'
-        i.data = data
         i.execute()
 
         t = Take()
         t.user_specified_payload = 'sword'
         t.sender_uid = 'bob'
-        t.data = data
         t.execute()
 
         e = Equip()
         e.sender_uid = 'bob'
         e.user_specified_payload = 'sword'
-        e.data = data
         e.execute()
 
         m = Move()
         m.sender_uid = 'bob'
         m.user_specified_payload = 'North'
-        m.data = data
         m.execute()
 
         self.assertTrue(len(list(x for x in d.active_auras if not x.location.coordinates == (0,1))) == 0)
@@ -175,20 +158,16 @@ class AuraControlTests(unittest.TestCase):
         p.uid = 'bob'
         p.current_room = r
         pn = PlayerNode('bob', p)
-        data = DataAccess()
-        data.players.append(pn)
         p.link_to_room(r)
         pn.move_to_room(r)
 
         i = Inspect()
         i.sender_uid = 'bob'
-        i.data = data
         i.execute()
 
         t = Take()
         t.user_specified_payload = 'sword'
         t.sender_uid = 'bob'
-        t.data = data
         t.execute()
 
         self.assertEqual(len(list(x for x in d.active_auras if not x.is_expired)), 0)
@@ -207,26 +186,21 @@ class AuraControlTests(unittest.TestCase):
         p.uid = 'bob'
         p.current_room = r
         pn = PlayerNode('bob', p)
-        data = DataAccess()
-        data.players.append(pn)
         p.link_to_room(r)
         pn.move_to_room(r)
 
         i = Inspect()
         i.sender_uid = 'bob'
-        i.data = data
         i.execute()
 
         t = Take()
         t.user_specified_payload = 'sword'
         t.sender_uid = 'bob'
-        t.data = data
         t.execute()
 
         t = Drop()
         t.user_specified_payload = 'sword'
         t.sender_uid = 'bob'
-        t.data = data
         t.execute()
 
         self.assertEqual(len(list(x for x in d.active_auras if not x.is_expired)), 1)

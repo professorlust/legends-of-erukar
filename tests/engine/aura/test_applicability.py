@@ -12,10 +12,10 @@ class ApplicabilityTests(unittest.TestCase):
         n = Room(d, (0,1))
         w = Room(d, (-1,0))
         s = Room(d, (0,-1))
-        center.coestablish_connection(Direction.East, e, None)
-        center.coestablish_connection(Direction.North, n, None)
-        center.coestablish_connection(Direction.West, w, None)
-        center.coestablish_connection(Direction.South, s, None)
+        center.connect(e, None)
+        center.connect(n, None)
+        center.connect(w, None)
+        center.connect(s, None)
 
         self.assertTrue(aura.affects_tile(center))
         self.assertTrue(aura.affects_tile(e))
@@ -36,14 +36,14 @@ class ApplicabilityTests(unittest.TestCase):
         nn = Room(d, (0,2))
         ww = Room(d, (-2,0))
         ss = Room(d, (0,-2))
-        center.coestablish_connection(Direction.East, e, None)
-        e.coestablish_connection(Direction.East, ee, None)
-        center.coestablish_connection(Direction.North, n, None)
-        n.coestablish_connection(Direction.East, nn, None)
-        center.coestablish_connection(Direction.West, w, None)
-        w.coestablish_connection(Direction.East, ww, None)
-        center.coestablish_connection(Direction.South, s, None)
-        s.coestablish_connection(Direction.East, ss, None)
+        center.connect(e, None)
+        e.connect(ee, None)
+        center.connect(n, None)
+        n.connect(nn, None)
+        center.connect(w, None)
+        w.connect(ww, None)
+        center.connect(s, None)
+        s.connect(ss, None)
 
         self.assertFalse(aura.affects_tile(ee))
         self.assertFalse(aura.affects_tile(nn))
@@ -60,8 +60,8 @@ class ApplicabilityTests(unittest.TestCase):
         a2 = Aura(m)
         a3 = Aura(r)
 
-        l.coestablish_connection(Direction.East, m, None)
-        m.coestablish_connection(Direction.East, r, None)
+        l.connect(m, None)
+        m.connect(r, None)
         d.active_auras = set([a1, a2, a3])
         d.rooms = [l,m,r]
 
@@ -76,9 +76,9 @@ class ApplicabilityTests(unittest.TestCase):
         d = Dungeon()
         l = Room(d, (0,0))
         c = Room(d, (1,0))
-        l.coestablish_connection(Direction.East, c, None)
+        l.connect(c, None)
         r = Room(d, (2,0))
-        c.coestablish_connection(Direction.East, r, None)
+        c.connect(r, None)
 
         locations = [l,c]
         a1 = Aura(l)
@@ -130,7 +130,7 @@ class ApplicabilityTests(unittest.TestCase):
         l = Room(d, (0,0))
         r = Room(d, (1,0)) 
         d.rooms = [l, r]
-        l.coestablish_connection(Direction.East, r,None)
+        l.connect(r,None)
 
         a1 = Aura(l)
         a1.strength = 1
@@ -151,7 +151,7 @@ class ApplicabilityTests(unittest.TestCase):
         d = Dungeon()
         l = Room(d, (0,0))
         r = Room(d, (1,0))
-        l.coestablish_connection(Direction.East, r, None)
+        l.connect(r, None)
         d.rooms = [l, r]
 
         a1 = Aura(l)

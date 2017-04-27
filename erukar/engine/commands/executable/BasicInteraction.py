@@ -2,6 +2,8 @@ from erukar.engine.commands.ActionCommand import ActionCommand
 import erukar
 
 class BasicInteraction(ActionCommand):
+    NoTarget = 'Unable to locate interaction_target'
+
     ActionPointCost = 1
     LimitToLocal = True
 
@@ -14,6 +16,7 @@ class BasicInteraction(ActionCommand):
         glance           | on_glance        
         '''
         interaction_method = 'on_' + self.args['interaction_type']
+        if not self.args['interaction_target']: return self.fail(BasicInteraction.NoTarget)
         if not hasattr(self.args['interaction_target'], interaction_method):
             raise Exception('Interaction Method {0} not defined for '.format(interaction_method, self.args['interaction_target']))
         if self.args['player_lifeform'].action_points < self.ActionPointCost:

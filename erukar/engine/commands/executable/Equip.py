@@ -25,7 +25,7 @@ class Equip(ActionCommand):
             return self.fail(Equip.CannotEquip.format(self.args['inventory_item'].describe()))
 
         equipment = getattr(self.args['player_lifeform'], self.args['equipment_slot'])
-        cost = Equip.get_cost_to_equip(equipment, self.args['inventory_item'])
+        cost = Equip.cost_to_equip(equipment, self.args['inventory_item'])
 
         if self.args['player_lifeform'].action_points < cost:
             return self.fail('Not enough action points to equip {} to {}'.format(equipment.alias(), self.args['equipment_slot']))
@@ -36,7 +36,7 @@ class Equip(ActionCommand):
         self.append_result(self.player_info.uuid, result)
         return self.succeed()
 
-    def get_cost_to_equip(equipped, to_equip):
+    def cost_to_equip(equipped, to_equip):
         '''Always takes the higher of the unequip and equip AP costs'''
         if not equipped:
             return to_equip.ActionPointCostToEquip

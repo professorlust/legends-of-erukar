@@ -8,7 +8,7 @@ class EquipTests(unittest.TestCase):
         b = Armor('')
         b.ActionPointCostToEquip = 2
 
-        result = Equip.get_cost_to_equip(a,b)
+        result = Equip.cost_to_equip(a,b)
         self.assertEqual(result, 2)
 
     def test_equip_weapon(self):

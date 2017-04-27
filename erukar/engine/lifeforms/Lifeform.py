@@ -30,7 +30,7 @@ class Lifeform(RpgEntity):
         self.uid        = ""
         self.inventory  = []
         self.initialize_stats() 
-        self.current_room = None
+        self.room = None
         self.instance = ''
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
