@@ -226,6 +226,7 @@ class AuraControlTests(unittest.TestCase):
         t.world = d
         t.player_info = p
         res = t.execute()
+        self.assertIn(item, r.contents)
         self.assertTrue(res.success)
 
         self.assertEqual(len(list(x for x in d.active_auras if not x.is_expired)), 1)
