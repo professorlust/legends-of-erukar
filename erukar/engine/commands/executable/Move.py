@@ -35,7 +35,7 @@ class Move(ActionCommand):
 
         self.args['player_lifeform'].room.remove(self.args['player_lifeform'])
 
-        self.args['player_lifeform'].link_to_room(new_room)
+        self.args['player_lifeform'].on_move(new_room)
         self.append_result(self.player_info.uuid, 'Move successful')
 
         for content in new_room.contents:
@@ -52,8 +52,6 @@ class Move(ActionCommand):
             self.append_result(self.player_info.uuid, 'In the new room you see {}.'.format(content.alias()))
 
     def move_player(self, new_room):
-        self.args['player_lifeform'].move_to_room(new_room)
-
         i = Inspect()
         i.data = self.data
         i.sender_uid = self.player_info.uuid

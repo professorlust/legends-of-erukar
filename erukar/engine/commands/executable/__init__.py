@@ -1,7 +1,6 @@
 from .Attack import Attack
 from .BasicInteraction import BasicInteraction
 from .Cast import Cast
-from .Close import Close
 from .Converse import Converse
 from .Drop import Drop
 from .Equip import Equip
@@ -11,7 +10,6 @@ from .Inventory import Inventory
 from .Levelup import Levelup
 from .Map import Map
 from .Move import Move
-from .Open import Open
 from .Quit import Quit
 from .Skills import Skills
 from .Spells import Spells
@@ -24,7 +22,6 @@ __all__ = [
     "Attack", 
     "BasicInteraction",
     "Cast", 
-    "Close", 
     "Converse", 
     "Drop", 
     "Equip", 
@@ -34,7 +31,6 @@ __all__ = [
     "Levelup", 
     "Map", 
     "Move", 
-    "Open", 
     "Quit", 
     "Skills", 
     "Spells", 

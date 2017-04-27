@@ -10,7 +10,7 @@ class TakeTests(unittest.TestCase):
         r = Room(dungeon)
         r.add(w)
         r.add(p)
-        p.link_to_room(r)
+        p.on_move(r)
 
         p.index_item(w, r)
 

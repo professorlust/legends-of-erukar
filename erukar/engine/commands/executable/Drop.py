@@ -1,33 +1,34 @@
+from erukar.engine.commands.Command import SearchScope
 from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.commands.executable.Unequip import Unequip
 
 class Drop(ActionCommand):
-    no_item = 'Cannot find {} in inventory.'
-    dropped = 'You dropped {} in the current room.'
+    NoTarget = 'inventory_item not found'
+    NotEnoughAP = 'Not enough AP to drop!'
+    Successful = 'You dropped {}.'
 
-    aliases = ['drop']
-    TrackedParameters = ['item']
+    # Base. This is added to the Unequip cost if the item is equipped
+    ActionPointCost = 1
 
-    def execute(self):
-        failure = self.check_for_arguments()
-        if failure: return failure
+    '''
+    Requires:
+        inventory_item
+    '''
+    def __init__(self):
+        super().__init__()
+        self.search_scope = SearchScope.Inventory
 
-        # We have the item, so actually remove it
-        self.move_from_inventory()
-        drop_result = Drop.dropped.format(self.item.alias())
-        self.append_result(self.sender_uid, drop_result)
-        self.succeed()
+    def perform(self):
+        if 'inventory_item' not in self.args or not self.args['inventory_item']: return self.fail(Drop.NoTarget)
+        if self.args['player_lifeform'].action_points < self.ActionPointCost:
+            return self.fail(Drop.NotEnoughAP)
+            
+        self.args['player_lifeform'].action_points -= self.ActionPointCost
+        self.args['player_lifeform'].inventory.remove(self.args['inventory_item'])
+        self.args['player_lifeform'].room.add(self.args['inventory_item'])
+        
+        drop_result = self.args['inventory_item'].on_drop(self.args['player_lifeform'].room, self.args['player_lifeform'])
+        if drop_result: self.append_result(self.player_info.uuid, drop_result)
 
-    def move_from_inventory(self):
-        self.try_to_unequip()
-        self.lifeform.inventory.remove(self.item)
-        self.item.on_drop(self.room, self.lifeform)
-        self.room.add(self.item)
-        self.dirty(self.lifeform)
-
-    def try_to_unequip(self):
-        u = Unequip()
-        u.data = self.data
-        u.user_specified_payload = self.item.alias()
-        u.sender_uid = self.sender_uid
-        u.execute()
+        self.append_result(self.player_info.uuid, Drop.Successful.format(self.args['inventory_item'].describe()))
+        return self.succeed()

@@ -92,7 +92,7 @@ class Lifeform(RpgEntity):
 
     def initiate_aura(self, aura):
         '''Initiates an aura within the current room'''
-        self.current_room.initiate_aura(aura)
+        self.room.initiate_aura(aura)
 
     def calculate_effective_stat(self, stat_type, depth=0):
         '''Uses a decay factor based on distance'''
@@ -297,17 +297,17 @@ class Lifeform(RpgEntity):
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''
         self.conditions = [Dead(self, None)]
-        self.current_room.add(Corpse(self))
-        self.current_room.remove(self)
-        self.current_room = None
+        self.room.add(Corpse(self))
+        self.room.remove(self)
+        self.room = None
 
-    def link_to_room(self, room):
-        self.current_room = room
+    def on_move(self, room):
+        self.room = room
         for eq in self.equipment_types:
             equip = getattr(self, eq)
             if equip is not None:
                 equip.on_move(room)
-        room.contents.append(self)
+        room.add(self)
 
     def get(self, attribute):
         '''Alias for getattr(self, ____)'''

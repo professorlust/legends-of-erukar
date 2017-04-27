@@ -11,6 +11,7 @@ class SearchScope(Enum):
 class Command:
     SearchTargetMustBeIndexed = False
     LimitToLocal = False
+    NeedsArgs = True
 
     def __init__(self):
         '''These parameters are assigned after instantiation'''
@@ -22,7 +23,11 @@ class Command:
         self.results = {}
 
     def process_args(self):
-        if not self.args: raise Exception('Cannot process args -- Command\'s args are undefined')
+        if not self.args: 
+            if not self.NeedsArgs: 
+                self.args = {'player_lifeform': self.player_info.lifeform() }
+                return
+            raise Exception('Cannot process args -- Command\'s args are undefined')
 
         self.args['player_lifeform'] = self.player_info.lifeform()
 

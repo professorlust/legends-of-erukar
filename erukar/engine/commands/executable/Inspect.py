@@ -3,69 +3,37 @@ from erukar.engine.model.Containable import Containable
 import random, math, erukar
 
 class Inspect(ActionCommand):
-    not_found = "Nothing matching '{0}' was found in this room."
+    NoTarget = 'Unable to locate interaction_target'
+    NotEnoughAP = 'Not enough action points!'
     abyss = "There is nothing to your {0} except the abyss... plain and nothingness forever."
+    
+    NeedsArgs = False
+    ActionPointCost = 2
+    '''
+    Requires:
+        interaction_target
+    '''
 
-    TrackedParameters = ['target']
-    aliases = ['inspect', 'look', 'search']
+    def perform(self):
+        if 'interaction_target' not in self.args or not self.args['interaction_target']:
+            if not self.args['player_lifeform'].room: return self.fail(Inspect.NoTarget)
+            self.args['interaction_target'] = self.args['player_lifeform'].room
+        if self.args['player_lifeform'].action_points < self.ActionPointCost:
+            return self.fail(Inspect.NotEnoughAP)
 
-    def __init__(self):
-        super().__init__()
-
-    def execute(self):
-        player = self.find_player()
-        self.room = player.lifeform().current_room
-
-        self.acuity, self.sense = player.lifeform().get_detection_pair()
+        self.args['player_lifeform'].action_points -= self.ActionPointCost
 
         # Index in the player's active indexing tree
-        self.index(self.room, player)
-        failure = self.check_for_arguments()
-        if failure: return failure
+        acu, sen = self.args['player_lifeform'].lifeform().get_detection_pair()
+        self.index(acu, sen)
 
-        # Check to see if we're directionally inspecting
-        if isinstance(self.target, erukar.engine.model.Direction):
-            return self.directional_inspect()
-        return self.item_inspect()
-
-    def item_inspect(self):
-        result = self.target.on_inspect(self.find_player().lifeform(), self.acuity, self.sense)
-        self.player.index_container(self.target)
-        self.append_result(self.sender_uid, result)
+        inspect_result = self.args['interaction_target'].on_inspect(self.args['player_lifeform'], acu, sen)
+        self.append_result(self.player_info.uuid, inspect_result)
         return self.succeed()
 
-    def directional_inspect(self):
-        result = self.room.directional_inspect(self.target, self.find_player().lifeform())
-        self.append_result(self.sender_uid, result)
-        return self.succeed()
-
-    def resolve_target(self, opt_payload=''):
-        # If this is on the context, grab it and return
-        if self.context and self.context.should_resolve(self) and hasattr(self.context, 'target'):
-            self.target = getattr(self.context, 'target')
-
-        # If we have the parameter and it's not nully, assert that we're done
-        if hasattr(self, 'target') and self.target: return
-
-        direction = self.determine_direction(opt_payload.lower())
-        if direction:
-            self.target = direction
-            return
-
-        if opt_payload is '':
-            self.target = self.room
-            return
-
-        additionals = {
-            'room': self.room,
-            'floor': self.room.floor,
-            'ceiling': self.room.ceiling
-        }
-        failure_object = self.find_in_target(opt_payload, self.room, 'target', additionals)
-        return failure_object
-
-    def index(self, container, player):
+    def index(self, acu, sen):
         '''Indexes all items in a container for the PlayerNode's indexer'''
-        if issubclass(type(container), Containable):
-            for i in container.contents:
-                player.index_item(i, container)
+        pass
+#       if issubclass(type(container), Containable):
+#           for i in container.contents:
+#               player.index_item(i, container)

@@ -17,7 +17,7 @@ class AuraControlTests(unittest.TestCase):
         d = Dungeon()
         l = Lifeform()
         r = Room(d, (2,2))
-        l.link_to_room(r)
+        l.on_move(r)
 
         aura = Aura((-2,-2))
         l.initiate_aura(aura)
@@ -35,23 +35,31 @@ class AuraControlTests(unittest.TestCase):
         f.apply_to(item)
 
         p = Player()
-        p.uid = 'bob'
-        pn = PlayerNode('bob', p)
-        p.link_to_room(r)
-        pn.move_to_room(r)
+        p.room = r
+        p.world = d
+        r.add(p)
 
         i = Inspect()
-        i.sender_uid = 'bob'
-        i.execute()
+        i.world = d
+        i.player_info = p
+        i.args = {'a': 'b'}
+        inspect_result = i.execute()
+        self.assertTrue(inspect_result.success)
+        p.index_item(item, r)
 
+        p.action_points = 2
         t = Take()
-        t.user_specified_payload = 'sword'
-        t.sender_uid = 'bob'
-        t.execute()
+        t.args = {'interaction_target': item.uuid}
+        t.world = d
+        t.player_info = p
+        take_result = t.execute()
+        self.assertTrue(take_result.success)
+        self.assertIn(item, p.inventory)
 
         e = Equip()
-        e.sender_uid = 'bob'
-        e.user_specified_payload = 'sword on right'
+        e.world = d
+        e.player_info = p
+        e.args = {'inventory_item': item.uuid, 'equipment_slot': 'right'}
         res = e.execute()
 
         self.assertTrue(len(d.active_auras) > 0)
@@ -66,70 +74,91 @@ class AuraControlTests(unittest.TestCase):
         f.apply_to(item)
 
         p = Player()
-        p.uid = 'bob'
-        pn = PlayerNode('bob', p)
-        p.link_to_room(r)
-        pn.move_to_room(r)
+        p.room = r
+        p.world = d
+        r.add(p)
 
         i = Inspect()
-        i.sender_uid = 'bob'
-        i.execute()
+        i.world = d
+        i.player_info = p
+        i.args = {'a': 'b'}
+        inspect_result = i.execute()
+        self.assertTrue(inspect_result.success)
+        p.index_item(item, r)
 
+        p.action_points = 2
         t = Take()
-        t.user_specified_payload = 'sword'
-        t.sender_uid = 'bob'
-        t.execute()
+        t.args = {'interaction_target': item.uuid}
+        t.world = d
+        t.player_info = p
+        take_result = t.execute()
+        self.assertTrue(take_result.success)
+        self.assertIn(item, p.inventory)
 
         e = Equip()
-        e.sender_uid = 'bob'
-        e.user_specified_payload = 'sword'
-        e.execute()
+        e.world = d
+        e.player_info = p
+        e.args = {'inventory_item': item.uuid, 'equipment_slot': 'right'}
+        res = e.execute()
 
-        u = Unequip()
-        u.sender_uid = 'bob'
-        u.user_specified_payload = 'sword'
-        u.execute()
+        p.action_points = 2
+        ue = Unequip()
+        ue.world = d
+        ue.player_info = p
+        ue.args = {'inventory_item': item.uuid, 'equipment_slot': 'right'}
+        res = ue.execute()
 
         self.assertTrue(len(list(x for x in d.active_auras if not x.is_expired)) == 0)
 
     def test_move_moves_auras(self):
         item = Sword()
         d = Dungeon()
-        sr = Room(d, (0,0))
+        r = Room(d, (2,2))
+        r.add(item)
         nr = Room(d, (0,1))
-        sr.add(item)
-        sr.connect(nr, None)
+        nr.connect(r)
 
         f = erukar.game.modifiers.inventory.Glowing()
         f.apply_to(item)
 
         p = Player()
-        p.uid = 'bob'
-        p.current_room = sr
-        pn = PlayerNode('bob', p)
-        p.link_to_room(sr)
-        pn.move_to_room(sr)
+        p.room = r
+        p.world = d
+        r.add(p)
 
         i = Inspect()
-        i.sender_uid = 'bob'
-        i.execute()
+        i.world = d
+        i.player_info = p
+        i.args = {'a': 'b'}
+        inspect_result = i.execute()
+        self.assertTrue(inspect_result.success)
+        p.index_item(item, r)
 
+        p.action_points = 2
         t = Take()
-        t.user_specified_payload = 'sword'
-        t.sender_uid = 'bob'
-        t.execute()
+        t.args = {'interaction_target': item.uuid}
+        t.world = d
+        t.player_info = p
+        take_result = t.execute()
+        self.assertTrue(take_result.success)
+        self.assertIn(item, p.inventory)
 
         e = Equip()
-        e.sender_uid = 'bob'
-        e.user_specified_payload = 'sword'
-        e.execute()
+        e.world = d
+        e.player_info = p
+        e.args = {'inventory_item': item.uuid, 'equipment_slot': 'right'}
+        res = e.execute()
 
+        p.action_points = 2
         m = Move()
-        m.sender_uid = 'bob'
-        m.user_specified_payload = 'North'
-        m.execute()
+        m.world = d
+        m.player_info = p
+        m.args = {'passage': r.connections[0].uuid}
+        move_result = m.execute()
+        self.assertTrue(move_result.success)
 
-        self.assertTrue(len(list(x for x in d.active_auras if not x.location.coordinates == (0,1))) == 0)
+        self.assertEqual(len(list(x for x in d.active_auras if not x.location.coordinates == (0,1))), 0)
+        self.assertEqual(len(list(x for x in d.active_auras if x.location.coordinates == (0,1))), 1)
 
     def test_on_start_starts_auras(self):
         item = Sword()
@@ -157,18 +186,15 @@ class AuraControlTests(unittest.TestCase):
         p = Player()
         p.uid = 'bob'
         p.current_room = r
-        pn = PlayerNode('bob', p)
-        p.link_to_room(r)
-        pn.move_to_room(r)
+        p.on_move(r)
 
-        i = Inspect()
-        i.sender_uid = 'bob'
-        i.execute()
+        p.index_item(item, r)
 
         t = Take()
-        t.user_specified_payload = 'sword'
-        t.sender_uid = 'bob'
-        t.execute()
+        t.args = {'interaction_target': item.uuid}
+        t.world = d
+        t.player_info = p
+        self.assertTrue(t.execute().success)
 
         self.assertEqual(len(list(x for x in d.active_auras if not x.is_expired)), 0)
 
@@ -185,23 +211,22 @@ class AuraControlTests(unittest.TestCase):
         p = Player()
         p.uid = 'bob'
         p.current_room = r
-        pn = PlayerNode('bob', p)
-        p.link_to_room(r)
-        pn.move_to_room(r)
+        p.on_move(r)
 
-        i = Inspect()
-        i.sender_uid = 'bob'
-        i.execute()
+        p.index_item(item, r)
 
         t = Take()
-        t.user_specified_payload = 'sword'
-        t.sender_uid = 'bob'
-        t.execute()
+        t.args = {'interaction_target': item.uuid}
+        t.world = d
+        t.player_info = p
+        self.assertTrue(t.execute().success)
 
         t = Drop()
-        t.user_specified_payload = 'sword'
-        t.sender_uid = 'bob'
-        t.execute()
+        t.args = {'inventory_item': item.uuid}
+        t.world = d
+        t.player_info = p
+        res = t.execute()
+        self.assertTrue(res.success)
 
         self.assertEqual(len(list(x for x in d.active_auras if not x.is_expired)), 1)
 

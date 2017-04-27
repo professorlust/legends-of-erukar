@@ -174,3 +174,12 @@ class Room(Containable):
 
     def center(self):
         return self.shape.center(self)
+
+    def get_object_by_uuid(self, uuid):
+        for connection in self.connections:
+            if connection.uuid is uuid:
+                yield connection
+                raise StopIteration
+
+        for found in super().get_object_by_uuid(uuid):
+            yield found

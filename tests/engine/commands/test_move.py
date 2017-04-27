@@ -28,7 +28,7 @@ class MoveTests(unittest.TestCase):
 
         m = Move()
         m.player_info = p
-        m.args = {'passage': e.connections[0]}
+        m.args = {'passage': e.connections[0].uuid}
         m.world = d
         result = m.execute()
 
