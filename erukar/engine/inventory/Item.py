@@ -17,6 +17,7 @@ class Item(Describable):
     BasePrice = 10
     EquipmentLocations = []
 
+    RequiresTwoHands = False
     ActionPointCostToEquip = 1
     ActionPointCostToUnequip = 1
 

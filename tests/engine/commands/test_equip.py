@@ -8,7 +8,9 @@ class EquipTests(unittest.TestCase):
         b = Armor('')
         b.ActionPointCostToEquip = 2
 
-        result = Equip.cost_to_equip(a,b)
+        e = Equip()
+        e.args = {'inventory_item': a}
+        result = e.cost_to_equip(a,b)
         self.assertEqual(result, 2)
 
     def test_equip_weapon(self):
@@ -26,6 +28,95 @@ class EquipTests(unittest.TestCase):
 
         self.assertTrue(w in p.inventory)
         self.assertEqual(p.right, w)
+        self.assertTrue(result.success)
+
+    def test_equip_weapon_two_handed(self):
+        p = Player()
+        dungeon = Dungeon()
+
+        p.right = Weapon()
+        p.left = Shield('')
+
+        w = Weapon()
+        w.RequiresTwoHands = True
+        p.inventory.append(w)
+
+        e = Equip()
+        e.world = dungeon
+        e.player_info = p
+        e.args = {'equipment_slot': 'right', 'inventory_item': w.uuid}
+        result = e.execute()
+
+        self.assertTrue(w in p.inventory)
+        self.assertEqual(p.right, w)
+        self.assertEqual(p.left, None)
+        self.assertTrue(result.success)
+
+    def test_equip_when_two_handed_equipped_not_enough_ap(self):
+        p = Player()
+        dungeon = Dungeon()
+        p.action_points = 0
+
+        w = Weapon()
+        w.RequiresTwoHands = True
+        p.inventory.append(w)
+        p.right = w
+
+        new_w = Weapon()
+        p.inventory.append(new_w)
+
+        e = Equip()
+        e.world = dungeon
+        e.player_info = p
+        e.args = {'equipment_slot': 'left', 'inventory_item': new_w.uuid}
+        result = e.execute()
+
+        self.assertEqual(p.left, None)
+        self.assertEqual(p.right, w)
+        self.assertFalse(result.success)
+
+    def test_equip_when_two_handed_equipped_same_slot(self):
+        p = Player()
+        dungeon = Dungeon()
+
+        w = Weapon()
+        w.RequiresTwoHands = True
+        p.inventory.append(w)
+        p.right = w
+
+        new_w = Weapon()
+        p.inventory.append(new_w)
+
+        e = Equip()
+        e.world = dungeon
+        e.player_info = p
+        e.args = {'equipment_slot': 'right', 'inventory_item': new_w.uuid}
+        result = e.execute()
+
+        self.assertEqual(p.left, None)
+        self.assertEqual(p.right, new_w)
+        self.assertTrue(result.success)
+
+    def test_equip_when_two_handed_equipped_different_slot(self):
+        p = Player()
+        dungeon = Dungeon()
+
+        w = Weapon()
+        w.RequiresTwoHands = True
+        p.inventory.append(w)
+        p.left = w
+
+        new_w = Weapon()
+        p.inventory.append(new_w)
+
+        e = Equip()
+        e.world = dungeon
+        e.player_info = p
+        e.args = {'equipment_slot': 'right', 'inventory_item': new_w.uuid}
+        result = e.execute()
+
+        self.assertEqual(p.left, None)
+        self.assertEqual(p.right, new_w)
         self.assertTrue(result.success)
 
     def test_equip_armor(self):

@@ -20,8 +20,9 @@ class Bow(Weapon):
     Scale = 0.25
     DistributionProperties = (Shape, Scale)
 
-    RequiresAmmo = True
-    AmmoType     = 'Arrow'
+    RequiresTwoHands = True
+    RequiresAmmo     = True
+    AmmoType         = 'Arrow'
 
     BaseStatInfluences = {
         'dexterity':  {'requirement': 8, 'scaling_factor': 3, 'cutoff': 200},

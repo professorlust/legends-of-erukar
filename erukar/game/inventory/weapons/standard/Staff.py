@@ -15,6 +15,7 @@ class Staff(Weapon):
     # Distribution
     Distribution = np.random.uniform
     DistributionProperties = ()
+    RequiresTwoHands = True
 
     BaseStatInfluences = {
         'acuity':  {'requirement': 6, 'scaling_factor': 3, 'cutoff': 200},

@@ -19,6 +19,7 @@ class Halberd(Weapon):
     Size = 1
     DistributionProperties = (Scale, Size)
 
+    RequiresTwoHands = True
     BaseStatInfluences = {
         'strength': {'requirement': 4, 'scaling_factor': 3.5, 'cutoff': 200},
         'dexterity':  {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},

@@ -32,8 +32,8 @@ class Attack(ActionCommand):
     def perform(self):
         '''Attack an enemy within the current room'''
         # Attack with each weapon, keeping track of the penalties for dual wielding each time
-        if not self.args['interaction_target']: return self.fail(Attack.NotFound)
-        if not self.args['weapon']: return self.fail(Attack.NoWeapon)
+        if 'interaction_target' not in self.args or not self.args['interaction_target']: return self.fail(Attack.NotFound)
+        if 'weapon' not in self.args or not self.args['weapon']: return self.fail(Attack.NoWeapon)
 
         cost = self.cost_to_attack()
         if self.args['player_lifeform'].action_points < cost:
@@ -55,8 +55,8 @@ class Attack(ActionCommand):
         '''Factory method'''
         attack_state = AttackState()
         attack_state.attacker = self.args['player_lifeform']
-        attack_state.target = self.args['interaction_target']
-        attack_state.weapon = self.args['weapon']
+        attack_state.target   = self.args['interaction_target']
+        attack_state.weapon   = self.args['weapon']
         return attack_state
 
     def perform_attack(self, attack_state):
