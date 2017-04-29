@@ -1,48 +1,36 @@
 from erukar.engine.commands.Command import Command
 from erukar.engine.lifeforms.Lifeform import Lifeform
-import erukar
+import erukar, json
 
 class Inventory(Command):
-    header = 'INVENTORY\n----------\n{}\n----------\n{}'
-    item = "{:10}. {}"
+    def perform(self):
+        pass
 
-    aliases = ['inventory']
+    def format_item_json(item):
+        return json.dumps({
+            'id': str(item.uuid),
+            'alias': item.alias(),
+            'durability': {'current': item.durability(), 'max': item.max_durability()},
+            'desirabilityRating': item.rarity(),
+            'slots': item.EquipmentLocations,
+            'details': list(Inventory.generate_list_of_details(item)) #[
+#               {type: 'property', title: '', value: '3 to 4 Slashing Damage'},
+#               {type: 'standard', title: 'Weight', value: '10.50 levts'},
+#               {type: 'standard', title: 'Iron', value: 'A strong base metal -- hard to forge and fairly heavy but resilient'},
+#               {type: 'legendary', title: 'Legendary Magekiller', value: 'Has a 25% chance to burst stored hexcells'},
+#               {type: 'description', title: '', value: 'The pole of Ankithalis is a carved Iurwood reinforced with rings of platinum and adorned by sapphires. In its entirety, Ankithalis is roughly 6 feet and 3 inches long. The head of the halberd bears the insignia of King Tyroche Alar of Iuria, the Renegade King. Various symbols describe how Browr Trowr, Galadrast advocate of King Alar, used the weapon in defense of his liege.'}
+           #]
+        })
 
-    def execute(self, *_):
-        char = self.find_player().character
-        # All of the Other items
-        items = '\n'.join(Inventory.inventory_contents(char))
-        equipped_items = self.equipment(char)
-        wealth = '{:12} {} R'.format('Wealth:', char.wealth)
-        equip_load = '{:12} {} / {}'.format('Equip Load:', char.equip_load(), char.max_equip_load())
-        result = '\n------------\n'.join(['INVENTORY', '\n'.join([wealth, equip_load]), equipped_items, items])
-        self.append_result(self.sender_uid, result)
-        return self.succeed()
+    def generate_list_of_details(item):
+        yield Inventory.format_modifier(item.material)
+        for modifier in item.modifiers:
+            yield Inventory.format_modifier(modifier)
 
-    def equipment(self, character):
-        '''Draw (Equipped) Equipment'''
-        armor_results = []
-        for armor_type in Lifeform.equipment_types:
-            armor = getattr(character, armor_type)
-            armor_name = 'None'
-            if armor is not None:
-                armor_name = armor.on_inventory_inspect(character)
-            armor_results.append(self.item.format(armor_type.capitalize(), armor_name))
-        return '\n\n'.join(armor_results)
-
-    def inventory_contents(character):
-        '''All Items'''
-        for i, item in enumerate(character.inventory):
-            yield '{:2}. {}'.format(i+1, item.on_inventory())
-
-    def get_header(self, char):
-        '''Draw Equipment'''
-        result = Inventory.header
-        descriptions = (self.describe_attribute(char, item_type)\
-            for item_type in Lifeform.equipment_types)
-        return result.format(*descriptions)
-
-    def describe_attribute(self, character, name):
-        result = getattr(character, name)
-        if result is not None:
-            return result.describe()
+    def format_modifier(modifier):
+        return {
+            'type': modifier.rarity().name,
+            'title': modifier.InventoryName,
+            'value': modifier.InventoryDescription
+        }
+            

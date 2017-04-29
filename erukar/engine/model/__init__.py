@@ -16,6 +16,7 @@ from .ScriptPayload import ScriptPayload
 from .Shop import Shop
 from .Stance import Stance
 
+from .enum import *
 from .results import *
 
 __all__ = [

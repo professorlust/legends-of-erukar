@@ -1,4 +1,5 @@
 from erukar.engine.model.Describable import Describable
+from erukar.engine.model.enum.Rarity import Rarity
 
 class Modifier(Describable):
     NONE = 0
@@ -32,6 +33,9 @@ class Modifier(Describable):
         self.is_set = False
         self.target = None
         self.persistent = self.DefaultPersistence
+
+    def rarity(self):
+        return Rarity.Mundane
 
     def modify(self, entity):
         '''Safe-guarded modification entry point'''

@@ -1,6 +1,7 @@
 from erukar.engine.model.Describable import Describable
 from erukar.engine.calculators.Curves import Curves
-import functools, operator
+from erukar.engine.model.enum.Rarity import Rarity
+import functools, operator, math
 
 class Item(Describable):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
@@ -56,6 +57,11 @@ class Item(Describable):
         self.build_quality = None
         self.size = None
         self.modifiers = []
+
+    def rarity(self):
+        full_mod_list = self.modifiers + [self.material]
+        sum_of_modifier_rarity = sum([x.rarity().value*x.rarity().value for x in full_mod_list])
+        return math.sqrt(sum_of_modifier_rarity/len(full_mod_list))
 
     def efficacy_for(self, lifeform):
         total_scalar = 1.0

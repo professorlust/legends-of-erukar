@@ -1,12 +1,7 @@
 from erukar.engine.model.Direction import Direction
 from erukar.engine.commands.CommandResult import CommandResult
+from erukar.engine.model.enum.SearchScope import SearchScope
 import erukar, uuid
-from enum import Enum
-
-class SearchScope(Enum):
-    World = 0
-    Inventory = 1
-    Both = 2
 
 class Command:
     SearchTargetMustBeIndexed = False
