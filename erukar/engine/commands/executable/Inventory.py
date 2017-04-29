@@ -3,10 +3,14 @@ from erukar.engine.lifeforms.Lifeform import Lifeform
 import erukar, json
 
 class Inventory(Command):
-    def perform(self):
-        pass
+    NeedsArgs = False
 
-    def format_item_json(item):
+    def perform(self):
+        for item in self.args['player_lifeform'].inventory:
+            self.append_result(self.player_info.uuid, Inventory.format_item(item))
+        return self.succeed()
+
+    def format_item(item):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
@@ -26,7 +30,7 @@ class Inventory(Command):
             for name, mit in Inventory.armor_details(item):
                 object_output['protection'][name] = mit
 
-        return json.dumps(object_output)
+        return object_output
 
     def generate_list_of_details(item):
         yield Inventory.format_modifier(item.material)
