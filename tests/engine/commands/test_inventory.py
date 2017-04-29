@@ -36,3 +36,16 @@ class InventoryTests(unittest.TestCase):
 
         self.assertTrue(result.success)
         self.assertEqual(len(result.result_for(p.uuid)), 2)
+
+    def test_format_modifier(self):
+        def rarity(): return erukar.engine.model.enum.Rarity.Legendary
+        modifier = Modifier()
+        modifier.rarity = rarity
+        modifier.InventoryName = 'Injected Test Name'
+        modifier.InventoryDescription = 'Injected Test Description'
+
+        result = Inventory.format_modifier(modifier)
+
+        self.assertEqual(result['type'], 'Legendary')
+        self.assertEqual(result['title'], 'Injected Test Name')
+        self.assertEqual(result['value'], 'Injected Test Description')
