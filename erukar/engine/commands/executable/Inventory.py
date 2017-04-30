@@ -6,8 +6,27 @@ class Inventory(Command):
     NeedsArgs = False
 
     def perform(self):
+        items = []
         for item in self.args['player_lifeform'].inventory:
-            self.append_result(self.player_info.uuid, Inventory.format_item(item))
+            items.append(Inventory.format_item(item))
+        equipment = [
+            { 'slot': 'left', 'slotName': 'Left Hand', 'id': -1 },
+            { 'slot': 'right', 'slotName': 'Right Hand', 'id': -1 },
+            { 'slot': 'head', 'slotName': 'Head', 'id': -1 },
+            { 'slot': 'chest', 'slotName': 'Chest', 'id': -1 },
+            { 'slot': 'hands', 'slotName': 'Hands', 'id': -1 },
+            { 'slot': 'legs', 'slotName': 'Legs', 'id': -1 },
+            { 'slot': 'feet', 'slotName': 'Feet', 'id': -1 },
+            { 'slot': 'left_ring', 'slotName': 'Left Ring', 'id': -1 },
+            { 'slot': 'right_ring', 'slotName': 'Right Ring', 'id': -1 },
+            { 'slot': 'ammunition', 'slotName': 'Ammunition', 'id': -1 },
+            { 'slot': 'blessing', 'slotName': 'Blessing', 'id': -1 },
+        ]
+        obj_response = {
+            'inventory': items,
+            'equipment': equipment
+        }
+        self.append_result(self.player_info.uuid, obj_response)
         return self.succeed()
 
     def format_item(item):

@@ -68,7 +68,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
                 if previous and previous != current:
                     direction = Navigator.direction_between(current.coordinates, previous.coordinates)
-                    current.coestablish_connection(direction, previous, None)
+                    current.connect(previous, None)
 
                 previous = current
 
@@ -90,7 +90,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
             new_room = Room(self.dungeon, new_coords)
             if not new_room.is_valid:
                 break
-            current.coestablish_connection(direction, new_room, None)
+            current.connect(new_room, None)
             current = new_room
 
 

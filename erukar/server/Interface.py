@@ -20,14 +20,6 @@ class Interface:
             for a in obj().aliases:
                 self.aliases[a] = name
 
-    def received_whisper(self, whisper_msg):
-        '''received_whisper hook for whenever the node gets a whisper message'''
-        # Process the message to get everything you need to generate
-        uid = whisper_msg['sender']['uid']
-        line = whisper_msg['message']
-
-        return self.execute(uid, line)
-    
     def receive(self, uid, line):
         if not any(x.uid == uid for x in self.shard.connected_players):
             self.shard.subscribe(uid)

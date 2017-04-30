@@ -22,7 +22,7 @@ class Stats(Command):
                 'nextLevel': pawn.calculate_necessary_xp()
             },
 			'health': {'current': pawn.health, 'max': pawn.max_health},
-			'evasion': pawn.evasion,
+			'evasion': pawn.evasion(),
 			'equipLoad': {'current': pawn.equip_load(), 'max': pawn.max_equip_load()},
 			'arcaneEnergy': {'current': pawn.arcane_energy, 'max': pawn.maximum_arcane_energy()},
 			'strength':  {'base': pawn.strength, 'mod': Stats.get_mod(pawn, 'strength')},
