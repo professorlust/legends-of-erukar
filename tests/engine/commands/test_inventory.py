@@ -37,6 +37,11 @@ class InventoryTests(unittest.TestCase):
         self.assertTrue(result.success)
         self.assertEqual(len(result.result_for(p.uuid)), 2)
 
+    def test_format_armor_potion(self):
+        item = Potion()
+        result = Inventory.format_item(item)
+        self.assertTrue(True)
+
     def test_format_modifier(self):
         def rarity(): return erukar.engine.model.enum.Rarity.Legendary
         modifier = Modifier()

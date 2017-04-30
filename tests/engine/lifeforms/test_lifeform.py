@@ -58,7 +58,7 @@ class LifeformTests(unittest.TestCase):
         l = Lifeform()
         l.define_level(1)
 
-        l.conditions = [Dead(None)]
+        Dead(l)
 
         l.take_damage(5)
         self.assertTrue(l.has_condition(Dead))

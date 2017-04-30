@@ -60,6 +60,8 @@ class Item(Describable):
 
     def rarity(self):
         full_mod_list = self.modifiers + [self.material]
+        if not any([x for x in full_mod_list if x]):
+            return Rarity.Mundane
         sum_of_modifier_rarity = sum([x.rarity().value*x.rarity().value for x in full_mod_list])
         return math.sqrt(sum_of_modifier_rarity/len(full_mod_list))
 

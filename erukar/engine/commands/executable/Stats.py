@@ -3,10 +3,8 @@ from erukar.engine.model.Damage import Damage
 from erukar.engine.lifeforms import Lifeform
 
 class Stats(Command):
-    status = 'Health:    {} / {}\nEvasion:   {}'
-    level = 'Level:     {}\nXP:        {} / {}'
-    stat = "{name:12} {raw:>3} {mod:>3} = {total:3}"
-    raw_stat = "{name:12} {raw:>3}"
+    NeedsArgs = False
+
     attribute_types = [
         "strength",
         "dexterity",
@@ -14,66 +12,46 @@ class Stats(Command):
         "acuity",
         "sense",
         "resolve"]
-    descriptions = {
-        "strength": "A measure of brawn and physical power. A higher score allows you to deal more physical damage and exert more force on the world.",
-        "dexterity": "A measure of speed, reflexes, and overall finesse. A higher score allows you to evade attacks with greater ease, move faster than your opponents, and hit your opponents with specific dextrous attacks.",
-        "vitality": "A measure of physical fitness and fortitude. The higher your vitality score is, the more overall health you have and the more rapidly you can recover it.",
-        "acuity": "A measure of mental intellect, investigative prowess, and visual observation capacity. The higher this score is, the more damage you can deal with arcane magics and the better you can visually perceive the world around you.",
-        "sense": "A measure of gut instincts, common sense, and basic senses like smell and thermoreception. Your ability to intuitively judge the scenarios and situation of the world around you is governed by this ability score.",
-        "resolve": "A measure of mental fortitude and resilience. The higher your score is, the more likely you are to overcome afflictions and highly dangerous situations."
-    }
 
-    aliases = ['stats', 'attributes', 'vitals']
+    def perform(self):
+        pawn = self.args['player_lifeform']
+        output_result = {
+			'level': pawn.level,
+			'xp': {
+                'current': pawn.experience, 
+                'nextLevel': pawn.calculate_necessary_xp()
+            },
+			'health': {'current': pawn.health, 'max': pawn.max_health},
+			'evasion': pawn.evasion,
+			'equipLoad': {'current': pawn.equip_load(), 'max': pawn.max_equip_load()},
+			'arcaneEnergy': {'current': pawn.arcane_energy, 'max': pawn.maximum_arcane_energy()},
+			'strength':  {'base': pawn.strength, 'mod': Stats.get_mod(pawn, 'strength')},
+			'dexterity': {'base': pawn.dexterity, 'mod': Stats.get_mod(pawn, 'dexterity')},
+			'vitality':  {'base': pawn.vitality, 'mod': Stats.get_mod(pawn, 'vitality')},
+			'acuity':    {'base': pawn.acuity, 'mod': Stats.get_mod(pawn, 'acuity')},
+			'sense':     {'base': pawn.sense, 'mod': Stats.get_mod(pawn, 'sense')},
+            'resolve':   {'base': pawn.resolve, 'mod': Stats.get_mod(pawn, 'resolve')},
+            'mitigations': [],
+            'conditions': []
+        }
 
-    def execute(self, *_):
-        self.check_for_arguments()
+        for damage in Damage.Types:
+            output_result['mitigations'].append({
+                'type': damage.capitalize(),
+                'deflection': pawn.deflection(damage),
+                'mitigation': int(100.0 * (1 - pawn.mitigation(damage)))
+            })
 
-        max_arcane = self.lifeform.maximum_arcane_energy()
+        for condition in pawn.conditions:
+            output_result['conditions'].append({
+                'name': condition.name(),
+                'description': condition.describe(),
+                'durationRemaining': condition.duration_remaining(),
+                'isNegative': False
+            })
 
-        status_d = ''.join([
-            '{:12} {} / {}\n'.format('Health:', self.lifeform.health, self.lifeform.max_health), 
-            '{:12} {}\n'.format('Evasion:', self.lifeform.evasion()),
-            '' if max_arcane <= 0 else '{:12} {} / {}\n'.format('Energy:', self.lifeform.arcane_energy, max_arcane),
-            '{:12} {} / {}'.format('Equip Load:', self.lifeform.equip_load(), self.lifeform.max_equip_load()),
-        ])
-
-        level_d = self.level.format(
-            self.lifeform.level, 
-            self.lifeform.experience, 
-            self.lifeform.calculate_necessary_xp())
-
-        attribute_d = '\n'.join(Stats.stat_descriptions(self.lifeform))
-
-        mitigations = '\n'.join(['{:12} {:3}% MIT / {:2} DFL'.format(
-            dtype.capitalize(),
-            int(100.0*(1-self.lifeform.mitigation(dtype))), self.lifeform.deflection(dtype))
-            for dtype in Damage.Types])
-
-        conditions = '\n'.join([c.on_stats() for c in self.lifeform.conditions])
-        self.append_result(self.sender_uid, '\n--------------------\n'.join([level_d, status_d, attribute_d, mitigations, conditions]))
-
+        self.append_result(self.player_info.uuid, output_result)
         return self.succeed()
 
-    def give_details(self, wanted, lifeform):
-        desc = self.descriptions[wanted]
-        result = ['{}: {}'.format(wanted.capitalize(), desc),\
-                'Your current {} score:  {}'.format(wanted, lifeform.calculate_stat_score(wanted))]
-        return '\n\n'.join(result)
-
-    def stat_descriptions(lifeform, show_raw=False):
-        for stat in Stats.attribute_types:
-            full_value = lifeform.calculate_stat_score(stat)
-            raw = lifeform.get(stat)
-            if show_raw:
-                yield Stats.raw_stat.format(
-                    name = stat.capitalize(),
-                    raw = Stats.signed(raw))
-            else:
-                yield Stats.stat.format(
-                    name = stat.capitalize(),
-                    raw = Stats.signed(raw),
-                    mod = Stats.signed(full_value-raw),
-                    total = Stats.signed(full_value))
-        
-    def signed(number):
-        return ('{}' if number < 0 else '+{}').format(number)
+    def get_mod(pawn, stat):
+        return pawn.calculate_effective_stat(stat) - getattr(pawn, stat)

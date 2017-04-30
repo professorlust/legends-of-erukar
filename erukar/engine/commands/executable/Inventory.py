@@ -14,11 +14,13 @@ class Inventory(Command):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
-            'durability': {'current': item.durability(), 'max': item.max_durability()},
             'desirabilityRating': item.rarity(),
             'slots': item.EquipmentLocations,
             'details': list(Inventory.generate_list_of_details(item)) 
         }
+
+        if item.material:
+            object_output['durability'] = {'current': item.durability(), 'max': item.max_durability()}
 
         if isinstance(item, erukar.engine.inventory.Weapon):
             object_output['damage'] = {}
@@ -33,7 +35,8 @@ class Inventory(Command):
         return object_output
 
     def generate_list_of_details(item):
-        yield Inventory.format_modifier(item.material)
+        if item.material:
+            yield Inventory.format_modifier(item.material)
         for modifier in item.modifiers:
             yield Inventory.format_modifier(modifier)
         # Description here
