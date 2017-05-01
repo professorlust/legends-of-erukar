@@ -9,6 +9,7 @@ def create_random_character():
     p.inventory.append(s)
     erukar.game.modifiers.Steel().apply_to(s)
     erukar.game.modifiers.Bane().apply_to(s)
+    p.right = s
 
     h = Hauberk()
     p.inventory.append(h)

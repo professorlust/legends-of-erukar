@@ -9,7 +9,7 @@ class AdditionalDamage(WeaponMod):
     Desirability = 8.0
 
     ShouldRandomizeOnApply = True
-    PersistentAttributes = ['min_damage', 'max_damage', 'damage_type', 'InventoryDescription', 'InventoryName']
+    PersistentAttributes = ['rarity', 'min_damage', 'max_damage', 'damage_type', 'InventoryDescription', 'InventoryName']
 
     DamageRanges = [
         [1, 4],

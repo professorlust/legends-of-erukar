@@ -49,14 +49,14 @@ class Inventory(Command):
     def uid_for_slot(pawn, slot):
         if hasattr(pawn, slot):
             item = getattr(pawn, slot)
-            if item: return item.uuid
+            if item: return str(item.uuid)
         return -1
 
     def format_item(item):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
-            'desirabilityRating': item.rarity(),
+            'desirabilityRating': item.rarity().name,
             'slots': item.EquipmentLocations,
             'details': list(Inventory.generate_list_of_details(item)) 
         }
@@ -93,7 +93,7 @@ class Inventory(Command):
 
     def format_modifier(modifier):
         return {
-            'type': modifier.rarity().name,
+            'type': modifier.rarity.name,
             'title': modifier.InventoryName,
             'value': modifier.InventoryDescription
         }

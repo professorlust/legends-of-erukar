@@ -33,9 +33,7 @@ class Modifier(Describable):
         self.is_set = False
         self.target = None
         self.persistent = self.DefaultPersistence
-
-    def rarity(self):
-        return Rarity.Mundane
+        self.rarity = Rarity.Mundane
 
     def modify(self, entity):
         '''Safe-guarded modification entry point'''

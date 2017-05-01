@@ -1,5 +1,6 @@
 from erukar.game.modifiers.WeaponMod import WeaponMod
 from erukar.engine.model.Damage import Damage
+from erukar.engine.model.enum.Rarity import Rarity
 import erukar, random
 
 class Bane(WeaponMod):
@@ -7,7 +8,7 @@ class Bane(WeaponMod):
     Desirability = 8.0
 
     ShouldRandomizeOnApply = True
-    PersistentAttributes = ['damage_increase', 'target_type', 'InventoryDescription', 'InventoryName']
+    PersistentAttributes = ['rarity', 'damage_increase', 'target_type', 'InventoryDescription', 'InventoryName']
 
     Types = [
         'Undead',
@@ -30,6 +31,7 @@ class Bane(WeaponMod):
     def randomize(self, parameters=None):
         '''In the future we will determine level based on the generation parameters level and desirability''' 
         self.level = int(random.random() * len(self.Levels))
+        self.rarity = Rarity(self.level)
         self.damage_increase = 0.075 * (self.level + 1)
         self.target_type = random.choice(self.Types)
         self.InventoryName = '{} {}bane'.format(self.Levels[self.level], self.target_type).strip()

@@ -43,9 +43,8 @@ class InventoryTests(unittest.TestCase):
         self.assertTrue(True)
 
     def test_format_modifier(self):
-        def rarity(): return erukar.engine.model.enum.Rarity.Legendary
         modifier = Modifier()
-        modifier.rarity = rarity
+        modifier.rarity = erukar.engine.model.enum.Rarity.Legendary
         modifier.InventoryName = 'Injected Test Name'
         modifier.InventoryDescription = 'Injected Test Description'
 
