@@ -4,30 +4,53 @@ import erukar, json
 
 class Inventory(Command):
     NeedsArgs = False
+    InventorySlots = [
+        'left', 
+        'right',
+        'head',
+        'chest',
+        'hands',
+        'legs',
+        'ring',
+        'blessing',
+        'ammunition'
+    ]
+    SlotName = {
+        'left': 'Left Hand',
+        'right': 'Right Hand',
+        'head': 'Head',
+        'chest': 'Chest',
+        'hands': 'Arms',
+        'legs': 'Legs',
+        'ring': 'Ring',
+        'blessing': 'Blessing',
+        'ammunition': 'Ammunition',
+    }
 
     def perform(self):
         items = []
         for item in self.args['player_lifeform'].inventory:
             items.append(Inventory.format_item(item))
-        equipment = [
-            { 'slot': 'left', 'slotName': 'Left Hand', 'id': -1 },
-            { 'slot': 'right', 'slotName': 'Right Hand', 'id': -1 },
-            { 'slot': 'head', 'slotName': 'Head', 'id': -1 },
-            { 'slot': 'chest', 'slotName': 'Chest', 'id': -1 },
-            { 'slot': 'hands', 'slotName': 'Hands', 'id': -1 },
-            { 'slot': 'legs', 'slotName': 'Legs', 'id': -1 },
-            { 'slot': 'feet', 'slotName': 'Feet', 'id': -1 },
-            { 'slot': 'left_ring', 'slotName': 'Left Ring', 'id': -1 },
-            { 'slot': 'right_ring', 'slotName': 'Right Ring', 'id': -1 },
-            { 'slot': 'ammunition', 'slotName': 'Ammunition', 'id': -1 },
-            { 'slot': 'blessing', 'slotName': 'Blessing', 'id': -1 },
-        ]
         obj_response = {
             'inventory': items,
-            'equipment': equipment
+            'equipment': list(self.assemble_equipment())
         }
         self.append_result(self.player_info.uuid, obj_response)
         return self.succeed()
+
+    def assemble_equipment(self):
+        for slot in Inventory.InventorySlots:
+            yield {
+                'slot': slot,
+                'slotName': Inventory.SlotName[slot],
+                'id': Inventory.uid_for_slot(self.args['player_lifeform'], slot)
+            }
+
+    def uid_for_slot(pawn, slot):
+        if hasattr(pawn, slot):
+            item = getattr(pawn, slot)
+            if item: return item.uuid
+        return -1
 
     def format_item(item):
         object_output = {
@@ -42,9 +65,9 @@ class Inventory(Command):
             object_output['durability'] = {'current': item.durability(), 'max': item.max_durability()}
 
         if isinstance(item, erukar.engine.inventory.Weapon):
-            object_output['damage'] = {}
+            object_output['damages'] = {}
             for name, d_range in Inventory.weapon_details(item):
-                object_output['damage'][name] = d_range
+                object_output['damages'][name] = d_range
 
         if isinstance(item, erukar.engine.inventory.Armor):
             object_output['protection'] = {}

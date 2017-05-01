@@ -8,7 +8,7 @@ class InventoryTests(unittest.TestCase):
         result = Inventory.format_item(item)
 
         self.assertEqual(result['id'], str(item.uuid))
-        self.assertIn('Slashing', result['damage'])
+        self.assertIn('Slashing', result['damages'])
 
     def test_format_armor_json(self):
         item = Hauberk()
@@ -35,7 +35,7 @@ class InventoryTests(unittest.TestCase):
         result = cmd.execute() 
 
         self.assertTrue(result.success)
-        self.assertEqual(len(result.result_for(p.uuid)), 2)
+        self.assertEqual(len(result.result_for(p.uuid)[0]['inventory']), 2)
 
     def test_format_armor_potion(self):
         item = Potion()

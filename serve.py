@@ -8,6 +8,11 @@ def create_random_character():
     s = Sword()
     p.inventory.append(s)
     erukar.game.modifiers.Steel().apply_to(s)
+    erukar.game.modifiers.Bane().apply_to(s)
+
+    h = Hauberk()
+    p.inventory.append(h)
+    erukar.game.modifiers.Salericite().apply_to(h)
     return p
 
 def process_state(p, d):
@@ -15,7 +20,6 @@ def process_state(p, d):
     inv_cmd.world = d
     inv_cmd.player_info = p
     inv_res = inv_cmd.execute().result_for(p.uuid)[0]
-    print(inv_res)
 
     stat_cmd = Stats()
     stat_cmd.world = d
