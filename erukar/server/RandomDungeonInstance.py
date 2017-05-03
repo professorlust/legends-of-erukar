@@ -5,18 +5,18 @@ import erukar
 
 class RandomDungeonInstance(Instance):
     BaseModule = "erukar.game.modifiers.room.{0}"
-    SubModules = [
-        (ModuleDecorator, "materials.floors"),
-        (ModuleDecorator, "materials.walls"),
-        (ModuleDecorator, "materials.ceilings"),
-        (ModuleDecorator, "structure.ceilings"),
-        (ModuleDecorator, "qualities.air"),
-        (ModuleDecorator, "qualities.sounds"),
-        #(ModuleDecorator, "contents.enemies"),
-        (MultipleModuleDecorator, "contents.decorations"),
-        (ModuleDecorator, "contents.items"),
+    SubModules = []
+#       (ModuleDecorator, "materials.floors"),
+#       (ModuleDecorator, "materials.walls"),
+#       (ModuleDecorator, "materials.ceilings"),
+#       (ModuleDecorator, "structure.ceilings"),
+#       (ModuleDecorator, "qualities.air"),
+#       (ModuleDecorator, "qualities.sounds"),
+#       #(ModuleDecorator, "contents.enemies"),
+#       (MultipleModuleDecorator, "contents.decorations"),
+#       (ModuleDecorator, "contents.items"),
 #       (ModuleDecorator, "structure.passages"),
-        (ModuleDecorator, "phenomena")]
+#       (ModuleDecorator, "phenomena")]
 
     def __init__(self, level=-1, level_variance=0.2, generation_properties=None, previous_identifier=''):
         super().__init__()

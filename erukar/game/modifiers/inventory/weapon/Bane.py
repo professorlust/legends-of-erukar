@@ -24,14 +24,15 @@ class Bane(WeaponMod):
         '',
         'Major',
         'Epic',
-        'Legendary',
-        'Mythical'
+#       'Legendary',
+#       'Mythical'
     ]
 
     def randomize(self, parameters=None):
         '''In the future we will determine level based on the generation parameters level and desirability''' 
         self.level = int(random.random() * len(self.Levels))
-        self.rarity = Rarity(self.level)
+        
+
         self.damage_increase = 0.075 * (self.level + 1)
         self.target_type = random.choice(self.Types)
         self.InventoryName = '{} {}bane'.format(self.Levels[self.level], self.target_type).strip()

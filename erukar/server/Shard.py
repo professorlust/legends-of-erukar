@@ -1,10 +1,12 @@
+from erukar.engine.commands.executable.Inventory import Inventory
+from erukar.engine.commands.executable.Stats import Stats
 from erukar.data.ConnectorFactory import ConnectorFactory
 from erukar.engine.model import *
 from erukar.engine.lifeforms.Player import Player
 from erukar.server.Interface import Interface
 from erukar.server.InstanceInfo import InstanceInfo
 from erukar.server.ServerProperties import ServerProperties
-import erukar, threading
+import erukar, threading, json
 import numpy as np
 
 class Shard(Manager):
@@ -45,11 +47,11 @@ class Shard(Manager):
         super().subscribe(uid)
         # Check Connector for plaOyer
         player = self.get_playernode_from_uid(uid)
-        self.interface.data.players.append(player)
         self.connected_players.add(player)
         character = self.get_character_from_playernode(player)
         if character:
             self.start_playing(uid, character)
+            print(player)
 
     def start_playing(self, uid, character):
         '''Callback from character creation or subscription'''
@@ -185,3 +187,28 @@ class Shard(Manager):
         else:
             info = self.get_instance_for(character, properties.identifier)
         self.move_player_to_instance(uid, info)
+
+    async def get_outbound_messages(self):
+        uid = 'Evan'
+        player = self.get_playernode_from_uid(uid)
+        character = self.get_character_from_playernode(player)
+        d = self.player_current_instance('Evan').instance.dungeon
+        print(character)
+        inv_cmd = Inventory()
+        inv_cmd.world = d
+        inv_cmd.player_info = character
+        inv_res = inv_cmd.execute().result_for(character.uuid)[0]
+
+        stat_cmd = Stats()
+        stat_cmd.world = d
+        stat_cmd.player_info = character
+        stat_res = stat_cmd.execute().result_for(character.uuid)
+
+        return json.dumps({
+            'inventory': inv_res['inventory'],
+            'equipment': inv_res['equipment'],
+            'vitals': stat_res[0]
+        })
+
+    async def consume_message(self, message):
+        print(message)

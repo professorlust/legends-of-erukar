@@ -27,7 +27,9 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
     def generate(self, previous_instance_identifier=''):
         self.dungeon = Dungeon()
-        self.create_dungeon()
+        room = Room(self.dungeon)
+        room.walls = [Surface()]
+        #self.create_dungeon()
         return self.dungeon
 
     def create_dungeon(self):

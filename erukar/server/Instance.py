@@ -95,7 +95,8 @@ class Instance(Manager):
         player = self.launch_player(uid)
         super().subscribe(player)
         room = self.dungeon.rooms[0]
-        player.character.link_to_room(room)
+        player.character.room = room
+        #player.character.link_to_room(room)
         player.character.subscribe(self)
         player.move_to_room(room)
         # Run on_equip for all equipped items
