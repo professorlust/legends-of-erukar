@@ -16,6 +16,7 @@ class Lifeform(RpgEntity):
         "legs",
         "ring",
         "amulet",
+        "blessing",
         "ammunition",
     ]
     attack_slots = [ "left", "right" ]

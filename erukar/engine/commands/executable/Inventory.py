@@ -5,24 +5,28 @@ import erukar, json
 class Inventory(Command):
     NeedsArgs = False
     InventorySlots = [
-        'left', 
-        'right',
-        'head',
-        'chest',
-        'hands',
-        'legs',
-        'ring',
-        'blessing',
-        'ammunition'
+        "left",
+        "right",
+        "chest",
+        "head",
+        "feet",
+        "arms",
+        "legs",
+        "ring",
+        "amulet",
+        "blessing",
+        "ammunition",
     ]
     SlotName = {
         'left': 'Left Hand',
         'right': 'Right Hand',
         'head': 'Head',
         'chest': 'Chest',
-        'hands': 'Arms',
+        'arms': 'Arms',
         'legs': 'Legs',
+        'feet': 'Feet',
         'ring': 'Ring',
+        'amulet': 'Amulet',
         'blessing': 'Blessing',
         'ammunition': 'Ammunition',
     }

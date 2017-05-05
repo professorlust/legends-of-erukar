@@ -1,4 +1,7 @@
+from autobahn.asyncio.websocket import WebSocketServerProtocol, \
+    WebSocketServerFactory
 from erukar import *
+import logging
 import erukar
 import asyncio, websockets, json, os, sys, datetime
 import numpy as np
@@ -14,68 +17,51 @@ config_directories = [
 for cd in config_directories:
     sys.path.append(os.getcwd() + '/config/' + cd)
 
-class WebsocketServer:
+class ErukarServer(WebSocketServerProtocol):
+    PollTime = 3
+
     def __init__(self):
         self.shard = Shard()
         self.shard.activate()
         self.shard.subscribe('Evan')
 
-    async def handle_outbound(self, ws):
-        '''Handles all outbound messages'''
-        message = await self.shard.get_outbound_messages()
-        await ws.send(message)
+    def onConnect(self, request):
+        print("Client connecting: {0}".format(request.peer))
 
-    async def handle_inbound(self, ws):
-        message = await ws.recv()
-        await self.shard.consume_message(message)
+    def onOpen(self):
+        print("WebSocket connection open.")
+        asyncio.ensure_future(self.poll_responses_for('Evan'))
 
-    async def handler(self, ws, path):
-        inbound = asyncio.ensure_future(self.handle_inbound(ws))
-        outbound = asyncio.ensure_future(self.handle_outbound(ws))
-        done, pending = await asyncio.wait(
-            [inbound, outbound],
-            return_when=asyncio.FIRST_COMPLETED,
-        )
+    async def poll_responses_for(self, uid):
+        while True:
+            messages = await self.shard.get_outbound_messages()
+            self.sendMessage(messages, False)
+            await asyncio.sleep(ErukarServer.PollTime)
 
-        for task in pending:
-            task.cancel()   
+    def onMessage(self, payload, isBinary):
+        if isBinary:
+            print("Binary message received: {0} bytes".format(len(payload)))
+        else:
+            print("Text message received: {0}".format(payload.decode('utf8')))
+            self.shard.consume_command(payload.decode('utf8'))
 
-    def start(self):
-        start_server = websockets.serve(self.handler, '127.0.0.1', 5678)
+    def onClose(self, wasClean, code, reason):
+        print("WebSocket connection closed: {0}".format(reason))
 
-        asyncio.get_event_loop().run_until_complete(start_server)
-        asyncio.get_event_loop().run_forever()
+if __name__ == '__main__':
+    import asyncio
 
-ws = WebsocketServer()
-ws.start()
+    factory = WebSocketServerFactory(u"ws://127.0.0.1:9000")
+    factory.protocol = ErukarServer
 
-#def process_state(p, d):
-#    inv_cmd = Inventory()
-#    inv_cmd.world = d
-#    inv_cmd.player_info = p
-#    inv_res = inv_cmd.execute().result_for(p.uuid)[0]
-#
-#    stat_cmd = Stats()
-#    stat_cmd.world = d
-#    stat_cmd.player_info = p
-#    stat_res = stat_cmd.execute().result_for(p.uuid)
-#
-#    return {
-#        'inventory': inv_res['inventory'],
-#        'equipment': inv_res['equipment'],
-#        'vitals': stat_res[0]
-#    }
-#
-#async def do_run(websocket, path):
-#    p = create_random_character()
-#    d = Dungeon()
-#    while True:
-#        data = process_state(p, d)
-#        await websocket.send(json.dumps(data))
-#        await asyncio.sleep(5)
-#
-#start_server = websockets.serve(do_run, '127.0.0.1', 5678)
-#
-#asyncio.get_event_loop().run_until_complete(start_server)
-#asyncio.get_event_loop().run_forever()
-#
+    loop = asyncio.get_event_loop()
+    coro = loop.create_server(factory, '0.0.0.0', 9000)
+    server = loop.run_until_complete(coro)
+
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.close()
+        loop.close()

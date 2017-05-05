@@ -51,7 +51,6 @@ class Shard(Manager):
         character = self.get_character_from_playernode(player)
         if character:
             self.start_playing(uid, character)
-            print(player)
 
     def start_playing(self, uid, character):
         '''Callback from character creation or subscription'''
@@ -191,24 +190,9 @@ class Shard(Manager):
     async def get_outbound_messages(self):
         uid = 'Evan'
         player = self.get_playernode_from_uid(uid)
-        character = self.get_character_from_playernode(player)
-        d = self.player_current_instance('Evan').instance.dungeon
-        print(character)
-        inv_cmd = Inventory()
-        inv_cmd.world = d
-        inv_cmd.player_info = character
-        inv_res = inv_cmd.execute().result_for(character.uuid)[0]
+        return self.player_current_instance(uid).instance.get_messages_for(uid).encode('utf8')
 
-        stat_cmd = Stats()
-        stat_cmd.world = d
-        stat_cmd.player_info = character
-        stat_res = stat_cmd.execute().result_for(character.uuid)
-
-        return json.dumps({
-            'inventory': inv_res['inventory'],
-            'equipment': inv_res['equipment'],
-            'vitals': stat_res[0]
-        })
-
-    async def consume_message(self, message):
-        print(message)
+    def consume_command(self, data):
+        data_object = json.loads(data)
+        uid = self.get_active_playernode(data_object['uid'])
+        self.interface.receive(uid, data)

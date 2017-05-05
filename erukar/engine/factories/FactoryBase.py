@@ -27,11 +27,13 @@ class FactoryBase(RpgEntity):
         Create an object template and then use a dictionary to assign values to
         the new object.
         '''
-        try:
-            shell = self.create_template(type_to_generate)
-        except:
-            return None
+#       try:
+        shell = self.create_template(type_to_generate)
+#       except Error e:
+#           print(e)
+#           return None
 
-        for param in [x for x in generation_parameters if hasattr(shell, x)]:
-            setattr(shell, param, generation_parameters[param])
+        if generation_parameters:
+            for param in [x for x in generation_parameters if hasattr(shell, x)]:
+                setattr(shell, param, generation_parameters[param])
         return shell

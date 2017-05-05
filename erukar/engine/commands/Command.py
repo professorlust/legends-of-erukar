@@ -89,7 +89,7 @@ class Command:
         return result
 
     def fail(self, result=''):
-        failure_messages = {self.player_info.uuid: [result]} if result else self.results
+        failure_messages = {self.player_info.uid: [result]} if result else self.results
         result = CommandResult(False, self, failure_messages, None)
         self.sever()
         return result

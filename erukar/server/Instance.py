@@ -3,7 +3,9 @@ from erukar.data.Connector import Connector
 from erukar.server.TurnManager import TurnManager
 from erukar.engine.lifeforms.Player import Player
 from erukar.engine.model.PlayerNode import PlayerNode
-import erukar, threading, random
+from erukar.engine.commands.executable.Inventory import Inventory
+from erukar.engine.commands.executable.Stats import Stats
+import erukar, threading, random, datetime, json
 
 class Instance(Manager):
     MaximumTurnTime = 30.0 # In seconds
@@ -188,7 +190,7 @@ class Instance(Manager):
 
     def get_active_player_action(self):
         for command in self.action_commands:
-            if command.sender_uid == self.active_player.uid:
+            if command.player_info.uid == self.active_player.uid:
                 while len(self.action_commands) > 0:
                     self.action_commands.pop()
                 return command
@@ -203,10 +205,11 @@ class Instance(Manager):
 
     def execute_command(self, cmd):
         cmd.server_properties = self.properties
-        cmd.context = self.command_contexts[cmd.sender_uid]
+        cmd.context = self.command_contexts[cmd.player_info.uid]
         cmd.player_info = self.active_player
         if cmd.context and not hasattr(cmd.context, 'server_properties'):
             cmd.context.server_properties = self.properties
+        cmd.world = self.dungeon
         result = cmd.execute()
 
         # Check results
@@ -221,7 +224,7 @@ class Instance(Manager):
                     self.connector.update_character(dirty)
 
             # Set context for player
-            self.command_contexts[cmd.sender_uid] = result
+            self.command_contexts[cmd.player_info.uid] = result
 
         self.check_for_transitions(result)
         return result
@@ -240,3 +243,35 @@ class Instance(Manager):
             self.responses[uid] = [response]
             return
         self.responses[uid] = self.responses[uid] + [response]
+
+    def get_messages_for(self, uid):
+        player_node = self.get_player_from_uid(uid)
+        if not player_node:
+            return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
+        character = player_node.lifeform()
+        d = self.dungeon
+
+        inv_cmd = Inventory()
+        inv_cmd.world = d
+        inv_cmd.player_info = character
+        result = inv_cmd.execute()
+        inv_res = result.result_for(character.uuid)[0]
+
+        stat_cmd = Stats()
+        stat_cmd.world = d
+        stat_cmd.player_info = character
+        stat_res = stat_cmd.execute().result_for(character.uuid)
+
+        log = []
+        if uid in self.responses and len(self.responses[uid]) > 0:
+            responses =  self.responses.pop(uid, [])
+            for line in responses:
+                print(line)
+                log.append({'text':line, 'when': str(datetime.datetime.now())})
+
+        return json.dumps({
+            'inventory': inv_res['inventory'],
+            'equipment': inv_res['equipment'],
+            'vitals': stat_res[0],
+            'log': log
+        })

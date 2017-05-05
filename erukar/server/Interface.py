@@ -1,6 +1,6 @@
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.model.PlayerNode import PlayerNode
-import sys, inspect, erukar, threading
+import sys, inspect, erukar, threading, json
 
 class Interface:
     command_location = 'erukar.engine.commands.executable'
@@ -20,38 +20,16 @@ class Interface:
             for a in obj().aliases:
                 self.aliases[a] = name
 
-    def receive(self, uid, line):
-        if not any(x.uid == uid for x in self.shard.connected_players):
-            self.shard.subscribe(uid)
-            return
-
-        if self.shard.is_playing(uid):
-            self.execute(uid, line)
-            return
-
-        pn = self.shard.get_active_playernode(uid) 
-        if pn.status == PlayerNode.RunningScript:
-            self.shard.continue_script(pn, line)
-            return
-
-        self.append_result(uid, 'Not accepting results') 
-
-    def execute(self, uid, line):
-        command, payload = self.command_and_payload(line)
-        generation_parameters = {'sender_uid': uid, 'user_specified_payload': payload, 'environment': None }
-
-        # Now actually make the thing with specified params
-        created = self.check_for_aliases(command, generation_parameters)
-
-        # Prevent noninstances from breaking through here
-        if created is None or not isinstance(created, erukar.engine.commands.Command):
-            generation_parameters['user_specified_payload'] = line
-            created = self.factory.create_one('erukar.engine.commands.AmbiguousCommand', generation_parameters)
-
-        # The Command can return something if it needs to for some reason
-        instance = self.shard.player_current_instance(uid)
+    def receive(self, playernode, line):
+        data = json.loads(line)
+        target_command = '{0}.{1}'.format(Interface.command_location, data['action'])
+        cmd = self.factory.create_one(target_command, None)
+        if not cmd: return
+        cmd.args = data
+        cmd.player_info = playernode
+        instance = self.shard.player_current_instance(playernode.uid)
         if instance is not None:
-            instance.append(created)
+            instance.append(cmd)
 
     def get_messages_for(self, uid):
         instance = self.shard.player_current_instance(uid)
@@ -65,7 +43,6 @@ class Interface:
         '''checks to see if the uid is marked to leave an instance'''
         if uid in instance.sys_messages:
             parameters = instance.sys_messages.pop(uid, [])
-            print(parameters)
             instance.remove_player(uid)
             self.shard.transfer_instances(uid, parameters)
 
@@ -79,15 +56,5 @@ class Interface:
         if command not in self.aliases:
             return
         aliased = self.aliases[command]
-        target_command = '{0}.{1}'.format(Interface.command_location, aliased.capitalize())
         res = self.factory.create_one(target_command, generation_parameters)
         return res
-
-    def command_and_payload(self, message):
-        '''
-        Split the received chat message into the first word (will be used to
-        create the command object) and the remaining data, which will be used
-        as the payload into the instantiated object
-        '''
-        out = message.split(' ', 1)
-        return [out[i] if i < len(out) else '' for i in [0, 1]]
