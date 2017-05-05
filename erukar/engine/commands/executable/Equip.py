@@ -13,7 +13,7 @@ class Equip(ActionCommand):
     '''
     Requires:
         equipment_slot
-        inventory_item
+        interaction_target
     '''
     def __init__(self):
         super().__init__()
@@ -21,9 +21,9 @@ class Equip(ActionCommand):
 
     def perform(self):
         # Error handling
-        if not self.args['inventory_item']: return self.fail(Equip.NotFound)
-        if self.args['equipment_slot'] not in self.args['inventory_item'].EquipmentLocations:
-            return self.fail(Equip.CannotEquip.format(self.args['inventory_item'].describe()))
+        if not self.args['interaction_target']: return self.fail(Equip.NotFound)
+        if self.args['equipment_slot'] not in self.args['interaction_target'].EquipmentLocations:
+            return self.fail(Equip.CannotEquip.format(self.args['interaction_target'].describe()))
 
         if self.args['equipment_slot'] in ['left', 'right']:
             left = self.args['player_lifeform'].left
@@ -42,9 +42,9 @@ class Equip(ActionCommand):
         if err: return err
 
         self.remove_equipment(equipment, two_handed_slot)
-        setattr(self.args['player_lifeform'], self.args['equipment_slot'], self.args['inventory_item'])
-        result = '{} equipped as {} successfully.'.format(self.args['inventory_item'].describe(), self.args['equipment_slot'])
-        self.append_result(self.player_info.uuid, result)
+        setattr(self.args['player_lifeform'], self.args['equipment_slot'], self.args['interaction_target'])
+        result = '{} equipped as {} successfully.'.format(self.args['interaction_target'].describe(), self.args['equipment_slot'])
+        self.append_result(self.player_info.uid, result)
         return self.succeed()
 
     def equip_in_place(self):
@@ -54,14 +54,14 @@ class Equip(ActionCommand):
         if err: return err
 
         self.perform_swap(equipment)
-        result = '{} equipped as {} successfully.'.format(self.args['inventory_item'].describe(), self.args['equipment_slot'])
-        self.append_result(self.player_info.uuid, result)
+        result = '{} equipped as {} successfully.'.format(self.args['interaction_target'].describe(), self.args['equipment_slot'])
+        self.append_result(self.player_info.uid, result)
         return self.succeed()
 
     def check_cost(self, equipment):
-        cost = self.cost_to_equip(equipment, self.args['inventory_item'])
+        cost = self.cost_to_equip(equipment, self.args['interaction_target'])
         if self.args['player_lifeform'].action_points < cost:
-            return self.fail(Equip.NotEnoughPoints.format(equipment.alias(), self.args['equipment_slot']))
+            return self.fail(Equip.NotEnoughPoints.format(equipment.describe(), self.args['equipment_slot']))
         self.args['player_lifeform'].action_points -= cost
 
     def cost_to_equip(self, equipped, to_equip):
@@ -69,7 +69,7 @@ class Equip(ActionCommand):
         if not equipped:
             return to_equip.ActionPointCostToEquip
 
-        if self.args['inventory_item'].RequiresTwoHands:
+        if self.args['interaction_target'].RequiresTwoHands:
             ap_costs = [
                 0 if not self.args['player_lifeform'].left  else self.args['player_lifeform'].left.ActionPointCostToUnequip,
                 0 if not self.args['player_lifeform'].right else self.args['player_lifeform'].right.ActionPointCostToUnequip,
@@ -80,16 +80,16 @@ class Equip(ActionCommand):
         return max(to_equip.ActionPointCostToEquip, equipped.ActionPointCostToUnequip)
 
     def perform_swap(self, equipment):
-        if isinstance(self.args['inventory_item'], Weapon) and self.args['inventory_item'].RequiresTwoHands:
+        if isinstance(self.args['interaction_target'], Weapon) and self.args['interaction_target'].RequiresTwoHands:
             self.swap_two_handed()
         else: self.remove_equipment(equipment, self.args['equipment_slot'])
 
-        setattr(self.args['player_lifeform'], self.args['equipment_slot'], self.args['inventory_item'])
+        setattr(self.args['player_lifeform'], self.args['equipment_slot'], self.args['interaction_target'])
         self.dirty(self.args['player_lifeform'])
 
         # Equip new item
-        effects = self.args['inventory_item'].on_equip(self.args['player_lifeform'])
-        if effects: self.append_result(self.player_info.uuid, effects)
+        effects = self.args['interaction_target'].on_equip(self.args['player_lifeform'])
+        if effects: self.append_result(self.player_info.uid, effects)
 
     def swap_two_handed(self):
         for hand in ['left', 'right']:
@@ -99,4 +99,4 @@ class Equip(ActionCommand):
         setattr(self.args['player_lifeform'], eq_slot, None)
         if equipment:
             result = equipment.on_unequip(self.args['player_lifeform'])
-            if result: self.append_result(self.player_info.uuid, result)
+            if result: self.append_result(self.player_info.uid, result)

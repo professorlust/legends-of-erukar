@@ -22,7 +22,7 @@ class Interface:
 
     def receive(self, playernode, line):
         data = json.loads(line)
-        target_command = '{0}.{1}'.format(Interface.command_location, data['action'])
+        target_command = '{0}.{1}'.format(Interface.command_location, data['command'])
         cmd = self.factory.create_one(target_command, None)
         if not cmd: return
         cmd.args = data

@@ -18,7 +18,7 @@ for cd in config_directories:
     sys.path.append(os.getcwd() + '/config/' + cd)
 
 class ErukarServer(WebSocketServerProtocol):
-    PollTime = 3
+    PollTime = 0.25
 
     def __init__(self):
         self.shard = Shard()
@@ -38,7 +38,7 @@ class ErukarServer(WebSocketServerProtocol):
             self.sendMessage(messages, False)
             await asyncio.sleep(ErukarServer.PollTime)
 
-    def onMessage(self, payload, isBinary):
+    async def onMessage(self, payload, isBinary):
         if isBinary:
             print("Binary message received: {0} bytes".format(len(payload)))
         else:
