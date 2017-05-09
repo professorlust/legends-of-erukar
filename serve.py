@@ -17,42 +17,69 @@ config_directories = [
 for cd in config_directories:
     sys.path.append(os.getcwd() + '/config/' + cd)
 
-class ErukarServer(WebSocketServerProtocol):
-    PollTime = 0.25
+class ErukarServerFactory(WebSocketServerFactory):
+    PollTime = 0.5
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.shard = Shard()
         self.shard.activate()
-        self.shard.subscribe('Evan')
+        self.clients = {} # eid: client
+        asyncio.ensure_future(self.poll_responses())
 
-    def onConnect(self, request):
-        print("Client connecting: {0}".format(request.peer))
+    async def register(self, client, eid):
+        print('Registered eid {}'.format(eid))
+        self.shard.subscribe(eid)
+        self.clients[client] = eid
 
-    def onOpen(self):
-        print("WebSocket connection open.")
-        asyncio.ensure_future(self.poll_responses_for('Evan'))
+    async def request_authentication(self, client):
+        client.sendMessage(json.dumps({'type': 'authenticationRequest'}).encode('utf8'), False)
 
-    async def poll_responses_for(self, uid):
+    async def confirm_authentication(self, client, payload):
+        print('Confirmation received')
+        await self.register(client, payload['eid'])
+
+    def unregister(self, client):
+        print('Unregistered {}'.format(self.clients[client]))
+        self.clients.pop(client)
+
+    async def poll_responses(self):
         while True:
-            messages = await self.shard.get_outbound_messages()
-            self.sendMessage(messages, False)
-            await asyncio.sleep(ErukarServer.PollTime)
+            for client in self.clients:
+                await self.send_update(client)
+            await asyncio.sleep(ErukarServerFactory.PollTime)
+
+    async def send_update(self, client):
+        eid = self.clients[client]
+        payload = await self.shard.get_outbound_messages(eid)
+        client.sendMessage(payload)
+
+class ErukarServerProtocol(WebSocketServerProtocol):
+    async def onConnect(self, request):
+        print('Connection establishing at {}'.format(request.peer))
+
+    async def onOpen(self):
+        print('Connection established -- requesting authentication')
+        await self.factory.request_authentication(self)
 
     async def onMessage(self, payload, isBinary):
-        if isBinary:
-            print("Binary message received: {0} bytes".format(len(payload)))
-        else:
-            print("Text message received: {0}".format(payload.decode('utf8')))
-            self.shard.consume_command(payload.decode('utf8'))
+        message = json.loads(payload.decode('utf8')) 
+        if 'type' not in message: return
+
+        if message['type'] == 'interaction':
+            self.factory.shard.consume_command(message['payload'])
+        if message['type'] == 'authenticationConfirmation':
+            await self.factory.confirm_authentication(self, message)
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
+        self.factory.unregister(self)
 
 if __name__ == '__main__':
     import asyncio
 
-    factory = WebSocketServerFactory(u"ws://127.0.0.1:9000")
-    factory.protocol = ErukarServer
+    factory = ErukarServerFactory(u"ws://127.0.0.1:9000")
+    factory.protocol = ErukarServerProtocol
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, '0.0.0.0', 9000)

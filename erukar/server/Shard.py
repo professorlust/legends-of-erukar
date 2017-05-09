@@ -187,10 +187,9 @@ class Shard(Manager):
             info = self.get_instance_for(character, properties.identifier)
         self.move_player_to_instance(uid, info)
 
-    async def get_outbound_messages(self):
-        uid = 'Evan'
-        player = self.get_playernode_from_uid(uid)
-        return self.player_current_instance(uid).instance.get_messages_for(uid).encode('utf8')
+    async def get_outbound_messages(self, eid):
+        player = self.get_playernode_from_uid(eid)
+        return self.player_current_instance(eid).instance.get_messages_for(eid).encode('utf8')
 
     def consume_command(self, data):
         data_object = json.loads(data)

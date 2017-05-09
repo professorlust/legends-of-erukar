@@ -31,9 +31,6 @@ class MessageTracker:
 
     def check_for_messages(self):
         msgs = self.interface.get_messages_for(self.alias)
-        if msgs: 
-            print('\n'.join(msgs))
-
         if self.timer:
             self.timer.cancel()
         self.start()

@@ -266,10 +266,12 @@ class Instance(Manager):
         if uid in self.responses and len(self.responses[uid]) > 0:
             responses =  self.responses.pop(uid, [])
             for line in responses:
-                print(line)
                 log.append({'text':line, 'when': str(datetime.datetime.now())})
 
         return json.dumps({
+            'statPoints': character.stat_points,
+            'skillPoints': character.skill_points,
+            'actionPoints': character.action_points,
             'inventory': inv_res['inventory'],
             'equipment': inv_res['equipment'],
             'vitals': stat_res[0],
