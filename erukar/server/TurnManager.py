@@ -2,24 +2,27 @@ import erukar
 from erukar.engine.model.Manager import Manager
 
 class TurnManager(Manager):
-    MaximumTurnCount = 100
+    TickIndicator = '5 Second Tick'
+    MaximumTurnCount = 100000
     TickCount = 50
+    MinimumOnDeck = 2
 
     def __init__(self):
         super().__init__()
-        self.current_turn_count = 0
-        self.turn_order = None  # This will be a generator
         self.most_recent_active_commands = {}
-        self.tick_time = False
+        self.current_turn_count = 0
+        self.previous_player = None
+        self.active_player = None
+        self.on_deck = [] 
 
     def subscribe(self, player):
         super().subscribe(player)
-        self.turn_order = self.turn_order_generator(self.current_turn_count)
         self.most_recent_active_commands[player] = None
+        self.refresh_deck()
 
     def unsubscribe(self, player):
         super().unsubscribe(player)
-        self.turn_order = self.turn_order_generator(self.current_turn_count)
+        self.refresh_deck()
 
     def received_command(self, player, command):
         if isinstance(command, erukar.engine.model.ActionCommand):
@@ -31,32 +34,25 @@ class TurnManager(Manager):
         return command
 
     def next(self):
-        if not self.turn_order:
-            return None
-        next_player, self.current_turn_count = next(self.turn_order)
-        return next_player
+        while len(self.on_deck) > 0:
+            self.previous_player = self.active_player
+            self.active_player = self.on_deck.pop(0)
+            if len(self.on_deck) < self.MinimumOnDeck:
+                self.refresh_deck()
+            if isinstance(self.active_player, erukar.engine.lifeforms.Lifeform) and self.active_player.is_incapacitated():
+                continue
+            return self.active_player
 
-    def needs_tick(self):
-        result = self.tick_time
-        self.tick_time = False
-        return result
-
-    def turn_order_generator(self, current_turn_count=0):
-        '''
-        (Generator) Turn Order Calculator: Calculates which of the subscribed
-        players should go next in turn order according to his or her dexterity modifier.
-        * current_turn_count allows the system to restart the turn count if a
-        lifeform dies/disconnects or joins the server.
-        '''
-        while True:
-            current_turn_count = (current_turn_count + 1) % TurnManager.MaximumTurnCount
-            if current_turn_count % self.TickCount is 0:
-                self.tick_time = True
+    def refresh_deck(self):
+        if len(self.players) < 1: return
+        while len(self.on_deck) < TurnManager.MinimumOnDeck:
+            self.current_turn_count = (self.current_turn_count + 1) % TurnManager.MaximumTurnCount
+            if self.current_turn_count % self.TickCount == 0:
+                self.on_deck.append(TurnManager.TickIndicator)
             for player in self.players:
-                if (current_turn_count+1) % player.turn_modifier() == 0:
-                    if player.is_incapacitated():
-                        continue
-                    yield (player, current_turn_count)
+                mod = player.turn_modifier()
+                if (self.current_turn_count+1) % player.turn_modifier() == 0:
+                    self.on_deck.append(player)
 
     def has_players(self):
         return any([p for p in self.players if self.is_playable(p)])
@@ -65,3 +61,11 @@ class TurnManager(Manager):
         if isinstance(p, erukar.engine.model.PlayerNode):
             return not p.has_condition(erukar.engine.conditions.Dead)
         return False
+
+    def frontend_readable_turn_order(self):
+        turn_order = [self.previous_player, self.active_player] + self.on_deck
+        return [TurnManager.to_str(x) for x in turn_order]
+
+    def to_str(player):
+        if not player: return 'N/A'
+        return player if isinstance(player, str) else player.lifeform().alias()

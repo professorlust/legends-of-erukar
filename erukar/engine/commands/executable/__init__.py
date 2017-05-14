@@ -17,10 +17,11 @@ from .Stats import Stats
 from .Take import Take
 from .Unequip import Unequip
 from .Use import Use
+from .Wait import Wait
 
 __all__ = [
     "Attack", 
-    "BasicInteraction",
+    "BasicInteraction", 
     "Cast", 
     "Converse", 
     "Drop", 
@@ -37,5 +38,6 @@ __all__ = [
     "Stats", 
     "Take", 
     "Unequip", 
-    "Use"
+    "Use", 
+    "Wait"
 ]

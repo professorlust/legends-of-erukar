@@ -5,6 +5,7 @@ from erukar.engine.lifeforms.Player import Player
 from erukar.engine.model.PlayerNode import PlayerNode
 from erukar.engine.commands.executable.Inventory import Inventory
 from erukar.engine.commands.executable.Stats import Stats
+from erukar.engine.commands.executable.Wait import Wait
 import erukar, threading, random, datetime, json
 
 class Instance(Manager):
@@ -146,21 +147,31 @@ class Instance(Manager):
             player_cmd = self.get_active_player_action()
             if player_cmd is None:
                 return
+            print(player_cmd)
             result = self.execute_command(player_cmd)
             if result is None or (result is not None and not result.success):
                 return
 
-            self.get_next_player()
+            if self.active_player.lifeform().action_points == 0 or isinstance(player_cmd, Wait):
+                self.get_next_player()
 
         # Go ahead and execute ai turns
-        while self.turn_manager.has_players() and issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
-            if not self.active_player.is_incapacitated():
-                self.execute_ai_turn()
-            self.get_next_player()
+        while self.turn_manager.has_players() and not isinstance(self.active_player, erukar.engine.model.PlayerNode):
+            self.do_non_player_turn()
 
         self.timer.cancel()
         self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
         self.timer.start()
+
+    def do_non_player_turn(self):
+        if isinstance(self.active_player, str):
+            self.tick()
+    
+        if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
+            if not self.active_player.is_incapacitated():
+                self.execute_ai_turn()
+
+        self.get_next_player()
 
     def execute_ai_turn(self):
         cmd = self.active_player.perform_turn()
@@ -168,25 +179,23 @@ class Instance(Manager):
             result = self.execute_command(cmd)
 
     def get_next_player(self):
-        if self.active_player is not None:
+        if self.active_player is not None and not isinstance(self.active_player, str):
             res = self.active_player.end_turn()
             #TODO: Replace with Results object later
             if len(res) > 0:
                 self.append_response(self.active_player.uid, res)
 
-        self.grab_from_turn_manager()
-        if self.active_player is not None:
+        self.active_player = self.turn_manager.next()
+        if self.active_player is not None and not isinstance(self.active_player, str):
             res = self.active_player.begin_turn()
             #TODO: Same as above
             if len(res) > 0:
                 self.append_response(self.active_player.uid, res)
 
-    def grab_from_turn_manager(self):
-        self.active_player = self.turn_manager.next()
-        if self.turn_manager.needs_tick():
-            self.dungeon.tick()
-            for player in self.players:
-                player.lifeform().tick()
+    def tick(self):
+        self.dungeon.tick()
+        for player in self.players:
+            player.lifeform().tick()
 
     def get_active_player_action(self):
         for command in self.action_commands:
@@ -269,6 +278,7 @@ class Instance(Manager):
                 log.append({'text':line, 'when': str(datetime.datetime.now())})
 
         return json.dumps({
+            'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],
             'statPoints': character.stat_points,
             'skillPoints': character.skill_points,
             'actionPoints': character.action_points,

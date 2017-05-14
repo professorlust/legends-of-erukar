@@ -19,6 +19,7 @@ class Lifeform(RpgEntity):
         "blessing",
         "ammunition",
     ]
+    ApPerTurn = 2
     attack_slots = [ "left", "right" ]
     base_health = 4
     UnknownWordEfficiency = 0.01
@@ -43,7 +44,7 @@ class Lifeform(RpgEntity):
         self.skills         = []
         self.conditions     = []
         self.spell_words    = []
-        self.action_points  = 2
+        self.action_points  = 0
 
     def initialize_stats(self):
         self.stat_points    = 15
@@ -203,7 +204,7 @@ class Lifeform(RpgEntity):
         return any(aff for aff in self.conditions if aff.Incapacitates)
 
     def turn_modifier(self):
-        return round(600/(0.15*self.dexterity+10)+15 )
+        return math.floor(50 - 0.5*self.dexterity)
 
     def define_level(self, level):
         '''Set this lifeform's level and defined the health appropriately'''
@@ -322,6 +323,7 @@ class Lifeform(RpgEntity):
         return self.name
 
     def begin_turn(self):
+        self.action_points += Lifeform.ApPerTurn
         results = [aff.do_begin_of_turn_effect() for aff in self.conditions]
         return '\n'.join(r for r in results if r is not '')
 

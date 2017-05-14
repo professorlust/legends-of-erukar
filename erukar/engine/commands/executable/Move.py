@@ -1,8 +1,7 @@
 from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.ActionCommand import ActionCommand
-from erukar.engine.model.Direction import Direction
-from erukar.engine.environment import *
-import erukar
+from erukar.engine.calculators.meta.AStarBase import AStarBase
+import erukar, math
 
 class Move(ActionCommand):
     move_through_closed_door = 'You cannot move this way because a door prevents you from doing so'
@@ -11,49 +10,38 @@ class Move(ActionCommand):
 
     '''
     Requires:
-        passage
+        coordinates
     '''
     
-    def cost_to_move(self):
-        '''In the future, Larger rooms may cost more AP to move'''
-        return 1
+    def cost_to_move(self, path):
+        '''
+        Use A* to figure out the distance from where we are to the new coordinates
+        If the path is inaccessible (either because the fog of war has not revealed that
+        area or there is just no path to it), this should return -1
+        '''
+        if len(path) < 2: return -1
+
+        total_move_distance = 5
+        return math.ceil(total_move_distance / self.args['player_lifeform'].move_speed())
 
     def perform(self):
-        if 'passage' not in self.args or not self.args['passage']: return self.fail('Passage not specified')
-        #if self.args['passage'].door
+        if 'coordinates' not in self.args or not self.args['coordinates']:
+            return self.fail('No coordinates found')
+        path = [self.args['player_lifeform'].coordinates, self.args['coordinates']]
 
-        cost = self.cost_to_move()
+        cost = self.cost_to_move(path)
+        if cost == -1: 
+            return self.fail('A path could not be found to reach {}'.format(self.args['coordinates']))
         if self.args['player_lifeform'].action_points < cost:
             return self.fail('You do not have enough Action Points to move that way.')
         self.args['player_lifeform'].action_points -= cost
 
-        new_room = self.args['passage'].next_room(self.args['player_lifeform'].room)
-        return self.change_room(new_room)
+        return self.do_move(path)
 
-    def change_room(self, new_room):
-        '''Used to transfer the character from one room to the next'''
-
-        self.args['player_lifeform'].room.remove(self.args['player_lifeform'])
-
-        self.args['player_lifeform'].on_move(new_room)
-        self.append_result(self.player_info.uuid, 'Move successful')
-
-        for content in new_room.contents:
-            self.inform_of_movement(content)
-
-        if isinstance(self.player_info, erukar.engine.model.PlayerNode):
-            self.move_player(new_room)
-        return self.succeed()
-
-    def inform_of_movement(self, content):
-        if not hasattr(content, 'uid'): return
-        
-        if content.uid != self.player_info.uuid:
-            self.append_result(self.player_info.uuid, 'In the new room you see {}.'.format(content.alias()))
-
-    def move_player(self, new_room):
-        i = Inspect()
-        i.data = self.data
-        i.sender_uid = self.player_info.uuid
-        inspection_result = i.execute()
-        self.append_result(self.player_info.uuid, ' '.join(inspection_result.results[self.player_info.uuid]))
+    def do_move(self, path):
+        '''Here we move over each coordinate, allowing others the chance to see us and giving
+        ourselves the ability to see things as we go. It's also rather insidious, as it 
+        potentially forces us '''
+        for coordinate in path:
+            print(coordinate)
+        return self.success()
