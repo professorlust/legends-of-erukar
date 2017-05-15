@@ -281,7 +281,7 @@ class Instance(Manager):
             'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],
             'statPoints': character.stat_points,
             'skillPoints': character.skill_points,
-            'actionPoints': character.action_points(),
+            'actionPoints': { 'current': character.current_action_points, 'reserved': character.reserved_action_points },
             'inventory': inv_res['inventory'],
             'equipment': inv_res['equipment'],
             'vitals': stat_res[0],
