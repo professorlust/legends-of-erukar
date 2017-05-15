@@ -18,10 +18,11 @@ class Inspect(ActionCommand):
         if 'interaction_target' not in self.args or not self.args['interaction_target']:
             if not self.args['player_lifeform'].room: return self.fail(Inspect.NoTarget)
             self.args['interaction_target'] = self.args['player_lifeform'].room
-        if self.args['player_lifeform'].action_points < self.ActionPointCost:
-            return self.fail(Inspect.NotEnoughAP)
 
-        self.args['player_lifeform'].action_points -= self.ActionPointCost
+
+        if self.args['player_lifeform'].action_points() < self.ActionPointCost:
+            return self.fail(Inspect.NotEnoughAP)
+        self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
 
         # Index in the player's active indexing tree
         acu, sen = self.args['player_lifeform'].lifeform().get_detection_pair()

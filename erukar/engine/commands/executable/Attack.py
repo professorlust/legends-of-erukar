@@ -36,9 +36,9 @@ class Attack(ActionCommand):
         if 'weapon' not in self.args or not self.args['weapon']: return self.fail(Attack.NoWeapon)
 
         cost = self.cost_to_attack()
-        if self.args['player_lifeform'].action_points < cost:
+        if self.args['player_lifeform'].action_points() < cost:
             return self.fail('Not enough action points!')
-        self.args['player_lifeform'].action_points -= cost
+        self.args['player_lifeform'].consume_action_points(cost)
 
         new_attack = self.build_attack_state()
         new_attack.efficiency = 1.0

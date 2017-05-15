@@ -152,7 +152,7 @@ class Instance(Manager):
             if result is None or (result is not None and not result.success):
                 return
 
-            if self.active_player.lifeform().action_points == 0 or isinstance(player_cmd, Wait):
+            if self.active_player.lifeform().action_points() == 0 or isinstance(player_cmd, Wait):
                 self.get_next_player()
 
         # Go ahead and execute ai turns
@@ -281,7 +281,7 @@ class Instance(Manager):
             'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],
             'statPoints': character.stat_points,
             'skillPoints': character.skill_points,
-            'actionPoints': character.action_points,
+            'actionPoints': character.action_points(),
             'inventory': inv_res['inventory'],
             'equipment': inv_res['equipment'],
             'vitals': stat_res[0],

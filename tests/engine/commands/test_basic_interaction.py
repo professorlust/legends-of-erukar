@@ -4,6 +4,7 @@ import unittest
 class BasicInteractionTests(unittest.TestCase):
     def test_execute_close_through_wall(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         r = Room(dungeon)
@@ -16,10 +17,11 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], BasicInteraction.NoTarget)
+        self.assertEqual(result.result_for(p.uid)[0], BasicInteraction.NoTarget)
 
     def test_execute_close_on_locked_door(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -36,10 +38,11 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.already_closed)
+        self.assertEqual(result.result_for(p.uid)[0], Door.already_closed)
 
     def test_execute_close_through_closed_door(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -55,11 +58,12 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.already_closed)
+        self.assertEqual(result.result_for(p.uid)[0], Door.already_closed)
 
 
     def test_execute_close_through_open_door(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -76,11 +80,12 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.close_success)
+        self.assertEqual(result.result_for(p.uid)[0], Door.close_success)
         self.assertEqual(d.status, Door.Closed)
 
     def test_execute_close_on_chest(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -94,10 +99,11 @@ class BasicInteractionTests(unittest.TestCase):
         o.args = {'interaction_type': 'close', 'interaction_target': chest.uuid}
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], 'Closed a chest')
+        self.assertEqual(result.result_for(p.uid)[0], 'Closed a chest')
 
     def test_execute_open_through_wall(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         r = Room(dungeon)
@@ -110,11 +116,12 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], BasicInteraction.NoTarget)
+        self.assertEqual(result.result_for(p.uid)[0], BasicInteraction.NoTarget)
         o.world = dungeon
 
     def test_execute_open_on_locked_door(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -131,10 +138,11 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.is_locked)
+        self.assertEqual(result.result_for(p.uid)[0], Door.is_locked)
 
     def test_execute_open_through_opened_door(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -151,11 +159,11 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.already_open)
-
+        self.assertEqual(result.result_for(p.uid)[0], Door.already_open)
 
     def test_execute_open_through_closed_door(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -172,11 +180,12 @@ class BasicInteractionTests(unittest.TestCase):
 
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Door.open_success)
+        self.assertEqual(result.result_for(p.uid)[0], Door.open_success)
         self.assertEqual(d.status, Door.Open)
 
     def test_execute_open_on_chest(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         n = Room(dungeon)
@@ -190,4 +199,4 @@ class BasicInteractionTests(unittest.TestCase):
         o.args = {'interaction_type': 'open', 'interaction_target': chest.uuid}
         result = o.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Container.Opened)
+        self.assertEqual(result.result_for(p.uid)[0], Container.Opened)

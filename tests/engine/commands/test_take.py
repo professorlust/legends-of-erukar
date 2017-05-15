@@ -4,6 +4,7 @@ import unittest
 class TakeTests(unittest.TestCase):
     def test_take_execution(self):
         p = Player()
+        p.current_action_points = 2
         dungeon = Dungeon()
 
         w = Weapon()
@@ -18,16 +19,17 @@ class TakeTests(unittest.TestCase):
         t = Take()
         t.world = dungeon
         t.player_info = p
-        t.args = {'interaction_target': w.uuid}
+        t.args = {'interaction_target': str(w.uuid)}
         result = t.execute()
 
+        self.assertTrue(result.success)
         self.assertTrue(w in p.inventory)
         self.assertTrue(w not in r.contents)
-        self.assertTrue(result.success)
 
     def test_take_execution_no_match(self):
         p = Player()
         dungeon = Dungeon()
+        p.current_action_points = 2
 
         w = Weapon()
         r = Room(dungeon)
@@ -37,9 +39,9 @@ class TakeTests(unittest.TestCase):
         t = Take()
         t.world = dungeon
         t.player_info = p
-        t.args = {'interaction_target': w.uuid}
+        t.args = {'interaction_target': str(w.uuid)}
         result = t.execute()
 
+        self.assertFalse(result.success)
         self.assertTrue(w in r.contents)
         self.assertTrue(w not in p.inventory)
-        self.assertFalse(result.success)

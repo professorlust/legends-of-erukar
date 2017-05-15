@@ -62,3 +62,14 @@ class LifeformTests(unittest.TestCase):
 
         l.take_damage(5)
         self.assertTrue(l.has_condition(Dead))
+
+    def consume_action_point_should_take_from_current_first(self):
+        l = Lifeform()
+        cost = 1
+        self.assertTrue(False)
+#       l.current_action_points = 2
+#       l.reserved_action_points = 2
+
+#       l.consume_action_point(cost)
+#       self.assertEqual(l.current_action_points, 0)
+#       self.assertEqual(l.reserved_action_points, 2)

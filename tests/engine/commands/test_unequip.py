@@ -4,6 +4,7 @@ import unittest
 class UnequipTests(unittest.TestCase):
     def test_unequip_weapon(self):
         p = Player()
+        p.current_action_points = 2
         dungeon = Dungeon()
         room = Room(dungeon)
         room.add(p)
@@ -16,15 +17,16 @@ class UnequipTests(unittest.TestCase):
         u = Unequip()
         u.world = dungeon
         u.player_info = p
-        u.args = {'equipment_slot': 'right'}
+        u.args = {'inventory_item': str(w.uuid)}
         result = u.execute()
 
         self.assertTrue(w in p.inventory)
         self.assertEqual(p.right, None)
-        self.assertIn('successfully', result.result_for(p.uuid)[0])
+        self.assertTrue(result.success)
 
     def test_unequip_armor(self):
         p = Player()
+        p.current_action_points = 2
         dungeon = Dungeon()
         room = Room(dungeon)
         room.add(p)
@@ -37,16 +39,16 @@ class UnequipTests(unittest.TestCase):
         u = Unequip()
         u.world = dungeon
         u.player_info = p
-        u.args = {'equipment_slot': 'chest'}
+        u.args = {'inventory_item': str(a.uuid)}
         result = u.execute()
 
         self.assertTrue(a in p.inventory)
         self.assertEqual(p.chest, None)
-        self.assertIn('successfully', result.result_for(p.uuid)[0])
+        self.assertTrue(result.success)
 
     def test_unequip_armor_without_action_points(self):
         p = Player()
-        p.action_points = 0
+        p.current_action_points = 0
         dungeon = Dungeon()
         room = Room(dungeon)
         room.add(p)
@@ -59,7 +61,7 @@ class UnequipTests(unittest.TestCase):
         u = Unequip()
         u.world = dungeon
         u.player_info = p
-        u.args = {'equipment_slot': 'chest'}
+        u.args = {'inventory_item': str(a.uuid)}
         result = u.execute()
 
         self.assertTrue(a in p.inventory)
@@ -68,6 +70,7 @@ class UnequipTests(unittest.TestCase):
 
     def test_unequip_item(self):
         p = Player()
+        p.current_action_points = 2
         dungeon = Dungeon()
         room = Room(dungeon)
         room.add(p)
@@ -79,7 +82,7 @@ class UnequipTests(unittest.TestCase):
         u = Unequip()
         u.world = dungeon
         u.player_info = p
-        u.args = {'equipment_slot': 'chest'}
+        u.args = {'inventory_item': str(i.uuid)}
         result = u.execute()
 
         self.assertTrue(i in p.inventory)

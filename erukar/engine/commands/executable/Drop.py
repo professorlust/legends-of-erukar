@@ -20,10 +20,10 @@ class Drop(ActionCommand):
 
     def perform(self):
         if 'inventory_item' not in self.args or not self.args['inventory_item']: return self.fail(Drop.NoTarget)
-        if self.args['player_lifeform'].action_points < self.ActionPointCost:
+        if self.args['player_lifeform'].action_points() < self.ActionPointCost:
             return self.fail(Drop.NotEnoughAP)
             
-        self.args['player_lifeform'].action_points -= self.ActionPointCost
+        self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
         self.args['player_lifeform'].inventory.remove(self.args['inventory_item'])
         self.args['player_lifeform'].room.add(self.args['inventory_item'])
         

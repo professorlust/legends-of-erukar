@@ -4,6 +4,7 @@ import unittest
 class InspectTests(unittest.TestCase):
     def test_inspect_no_target(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         w = Weapon()
@@ -16,14 +17,14 @@ class InspectTests(unittest.TestCase):
         i = Inspect()
         i.world = dungeon
         i.player_info = p
-        i.args = {'a': w.uuid}
+        i.args = {'a': str(w.uuid)}
         result = i.execute()
 
         self.assertTrue(result.success)
 
     def test_inspect_not_enough_ap(self):
         p = Player()
-        p.action_points = 1
+        p.uid = 'Evan'
         dungeon = Dungeon()
 
         w = Weapon()
@@ -36,15 +37,15 @@ class InspectTests(unittest.TestCase):
         i = Inspect()
         i.world = dungeon
         i.player_info = p
-        i.args = {'interaction_target': w.uuid}
+        i.args = {'interaction_target': str(w.uuid)}
         result = i.execute()
 
-        self.assertEqual(result.result_for(p.uuid)[0], Inspect.NotEnoughAP)
         self.assertFalse(result.success)
+        self.assertEqual(result.result_for(p.uid)[0], Inspect.NotEnoughAP)
 
     def test_inspect_success(self):
         p = Player()
-        p.action_points = 2
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         w = Weapon()
@@ -57,7 +58,7 @@ class InspectTests(unittest.TestCase):
         i = Inspect()
         i.world = dungeon
         i.player_info = p
-        i.args = {'interaction_target': w.uuid}
+        i.args = {'interaction_target': str(w.uuid)}
         result = i.execute()
 
         self.assertTrue(result.success)

@@ -26,10 +26,10 @@ class Take(ActionCommand):
 
         # Check to see if there are a sufficient number of Action Points available
         cost = self.cost_to_take()
-        if self.args['player_lifeform'].action_points < cost:
+        if self.args['player_lifeform'].action_points() < cost:
             return self.fail('Not enough action points!')
         
-        self.args['player_lifeform'].action_points -= cost
+        self.args['player_lifeform'].consume_action_points(cost)
         
         self.move_to_inventory()
         return self.succeed()

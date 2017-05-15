@@ -20,10 +20,10 @@ class Unequip(ActionCommand):
         equipment_slot = self.get_equip_slot()
         if not equipment_slot: return self.fail(Unequip.NotFound)
 
-        if self.args['player_lifeform'].action_points < self.args['inventory_item'].ActionPointCostToUnequip:
+        if self.args['player_lifeform'].action_points() < self.args['inventory_item'].ActionPointCostToUnequip:
             return self.fail('Not enough action points to unequip {} from {}'.format(self.args['inventory_item'].alias(), equipment_slot))
             
-        self.args['player_lifeform'].action_points -= self.args['inventory_item'].ActionPointCostToUnequip
+        self.args['player_lifeform'].consume_action_points(self.args['inventory_item'].ActionPointCostToUnequip)
         setattr(self.args['player_lifeform'], equipment_slot, None)
         result = self.args['inventory_item'].on_unequip(self.args['player_lifeform'])
         if result: self.append_result(self.player_info.uuid, result)

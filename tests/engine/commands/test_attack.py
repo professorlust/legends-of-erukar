@@ -4,6 +4,7 @@ import unittest
 class AttackTests(unittest.TestCase):
     def test_basic_melee_attack(self):
         p = Player()
+        p.current_action_points = 20
         p.name = 'Player'
         dungeon = Dungeon()
         r = Room(dungeon)
@@ -29,6 +30,7 @@ class AttackTests(unittest.TestCase):
 
     def test_basic_ranged_attack_no_ammo(self):
         p = Player()
+        p.current_action_points = 20
         p.name = 'Player'
         dungeon = Dungeon()
         r = Room(dungeon)
@@ -54,6 +56,7 @@ class AttackTests(unittest.TestCase):
 
     def test_basic_ranged_attack_with_ammo(self):
         p = Player()
+        p.current_action_points = 20
         p.name = 'Player'
         dungeon = Dungeon()
         r = Room(dungeon)
@@ -84,6 +87,7 @@ class AttackTests(unittest.TestCase):
 
     def test_basic_melee_attack_no_weapon(self):
         p = Player()
+        p.current_action_points = 20
         p.name = 'Player'
         dungeon = Dungeon()
         r = Room(dungeon)
@@ -106,7 +110,6 @@ class AttackTests(unittest.TestCase):
     def test_basic_melee_attack_no_ap(self):
         p = Player()
         p.name = 'Player'
-        p.action_points = 0
         dungeon = Dungeon()
         r = Room(dungeon)
         p.on_move(r)

@@ -19,12 +19,12 @@ class BasicInteraction(ActionCommand):
         if not self.args['interaction_target']: return self.fail(BasicInteraction.NoTarget)
         if not hasattr(self.args['interaction_target'], interaction_method):
             raise Exception('Interaction Method {0} not defined for '.format(interaction_method, self.args['interaction_target']))
-        if self.args['player_lifeform'].action_points < self.ActionPointCost:
+        if self.args['player_lifeform'].action_points() < self.ActionPointCost:
             return self.fail('Not enough action points!')
 
         result, was_success = getattr(self.args['interaction_target'], interaction_method)(self.args['player_lifeform'])
-        self.append_result(self.player_info.uuid, result)
+        self.append_result(self.player_info.uid, result)
         if was_success:
-            self.args['player_lifeform'].action_points -= self.ActionPointCost
+            self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
             return self.succeed()
         return self.fail()

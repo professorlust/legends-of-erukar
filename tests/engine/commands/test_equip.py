@@ -9,12 +9,13 @@ class EquipTests(unittest.TestCase):
         b.ActionPointCostToEquip = 2
 
         e = Equip()
-        e.args = {'inventory_item': a}
+        e.args = {'interaction_target': a}
         result = e.cost_to_equip(a,b)
         self.assertEqual(result, 2)
 
     def test_equip_weapon(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         w = Weapon()
@@ -23,7 +24,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.world = dungeon
         e.player_info = p
-        e.args = {'equipment_slot': 'right', 'inventory_item': w.uuid}
+        e.args = {'equipment_slot': 'right', 'interaction_target': w.uuid}
         result = e.execute()
 
         self.assertTrue(w in p.inventory)
@@ -32,6 +33,7 @@ class EquipTests(unittest.TestCase):
 
     def test_equip_weapon_two_handed(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         p.right = Weapon()
@@ -44,7 +46,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.world = dungeon
         e.player_info = p
-        e.args = {'equipment_slot': 'right', 'inventory_item': w.uuid}
+        e.args = {'equipment_slot': 'right', 'interaction_target': w.uuid}
         result = e.execute()
 
         self.assertTrue(w in p.inventory)
@@ -55,7 +57,6 @@ class EquipTests(unittest.TestCase):
     def test_equip_when_two_handed_equipped_not_enough_ap(self):
         p = Player()
         dungeon = Dungeon()
-        p.action_points = 0
 
         w = Weapon()
         w.RequiresTwoHands = True
@@ -68,7 +69,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.world = dungeon
         e.player_info = p
-        e.args = {'equipment_slot': 'left', 'inventory_item': new_w.uuid}
+        e.args = {'equipment_slot': 'left', 'interaction_target': new_w.uuid}
         result = e.execute()
 
         self.assertEqual(p.left, None)
@@ -77,6 +78,7 @@ class EquipTests(unittest.TestCase):
 
     def test_equip_when_two_handed_equipped_same_slot(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         w = Weapon()
@@ -90,7 +92,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.world = dungeon
         e.player_info = p
-        e.args = {'equipment_slot': 'right', 'inventory_item': new_w.uuid}
+        e.args = {'equipment_slot': 'right', 'interaction_target': new_w.uuid}
         result = e.execute()
 
         self.assertEqual(p.left, None)
@@ -99,6 +101,7 @@ class EquipTests(unittest.TestCase):
 
     def test_equip_when_two_handed_equipped_different_slot(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         w = Weapon()
@@ -112,7 +115,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.world = dungeon
         e.player_info = p
-        e.args = {'equipment_slot': 'right', 'inventory_item': new_w.uuid}
+        e.args = {'equipment_slot': 'right', 'interaction_target': new_w.uuid}
         result = e.execute()
 
         self.assertEqual(p.left, None)
@@ -121,6 +124,7 @@ class EquipTests(unittest.TestCase):
 
     def test_equip_armor(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         a = Armor('')
@@ -129,7 +133,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.world = dungeon
         e.player_info = p
-        e.args = {'equipment_slot': 'chest', 'inventory_item': a.uuid}
+        e.args = {'equipment_slot': 'chest', 'interaction_target': a.uuid}
         result = e.execute()
 
         self.assertTrue(a in p.inventory)
@@ -138,6 +142,7 @@ class EquipTests(unittest.TestCase):
 
     def test_equip_item(self):
         p = Player()
+        p.current_action_points = 20
         dungeon = Dungeon()
 
         i = Item('Potion', 'Potion')
@@ -146,7 +151,7 @@ class EquipTests(unittest.TestCase):
         e = Equip()
         e.world = dungeon
         e.player_info = p
-        e.args = {'equipment_slot': 'chest', 'inventory_item': i.uuid}
+        e.args = {'equipment_slot': 'chest', 'interaction_target': i.uuid}
         result = e.execute()
 
         self.assertTrue(i in p.inventory)

@@ -60,9 +60,9 @@ class Equip(ActionCommand):
 
     def check_cost(self, equipment):
         cost = self.cost_to_equip(equipment, self.args['interaction_target'])
-        if self.args['player_lifeform'].action_points < cost:
+        if self.args['player_lifeform'].action_points() < cost:
             return self.fail(Equip.NotEnoughPoints.format(equipment.describe(), self.args['equipment_slot']))
-        self.args['player_lifeform'].action_points -= cost
+        self.args['player_lifeform'].consume_action_points(cost)
 
     def cost_to_equip(self, equipped, to_equip):
         '''Always takes the higher of the unequip and equip AP costs'''

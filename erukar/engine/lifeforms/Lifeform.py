@@ -19,7 +19,6 @@ class Lifeform(RpgEntity):
         "blessing",
         "ammunition",
     ]
-    ApPerTurn = 2
     attack_slots = [ "left", "right" ]
     base_health = 4
     UnknownWordEfficiency = 0.01
@@ -44,7 +43,8 @@ class Lifeform(RpgEntity):
         self.skills         = []
         self.conditions     = []
         self.spell_words    = []
-        self.action_points  = 0
+        self.reserved_action_points  = 0
+        self.current_action_points  = 0
 
     def initialize_stats(self):
         self.stat_points    = 15
@@ -322,8 +322,20 @@ class Lifeform(RpgEntity):
     def alias(self):
         return self.name
 
+    def gain_action_points(self):
+        self.reserved_action_points = self.current_action_points
+        self.current_action_points = 2
+
+    def action_points(self):
+        return self.current_action_points + self.reserved_action_points
+
+    def consume_action_points(self, amount):
+        remainder = max(0, amount - self.current_action_points)
+        self.current_action_points -= amount - remainder
+        self.reserved_action_points -= remainder
+
     def begin_turn(self):
-        self.action_points += Lifeform.ApPerTurn
+        self.gain_action_points()
         results = [aff.do_begin_of_turn_effect() for aff in self.conditions]
         return '\n'.join(r for r in results if r is not '')
 
