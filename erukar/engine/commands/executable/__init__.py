@@ -1,3 +1,4 @@
+from .AddStatPoint import AddStatPoint
 from .Attack import Attack
 from .BasicInteraction import BasicInteraction
 from .Cast import Cast
@@ -20,6 +21,7 @@ from .Use import Use
 from .Wait import Wait
 
 __all__ = [
+    "AddStatPoint", 
     "Attack", 
     "BasicInteraction", 
     "Cast", 

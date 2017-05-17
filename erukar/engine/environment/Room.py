@@ -18,26 +18,18 @@ class Room(Containable):
         Observation(acuity=0, sense=0, result="This is a room.")
     ]
 
-    def __init__(self, dungeon, coordinates=(0,0), shape=None, dimensions=(1, 1)):
+    def __init__(self, dungeon, coordinates=None):
         super().__init__([])
         self.linearity = 0
         self.dungeon = dungeon
-        self.shape = shape if shape is not None else erukar.engine.environment.roomshapes.Rectangle
-        self.width, self.height = dimensions
-        self.is_valid = self.dungeon.add_room(self, coordinates)
+        self.coordinates = [] if not coordinates else coordinates
+        self.dungeon.add_room(self, coordinates)
         self.floor = None
         self.ceiling = None
-        self.coordinates = coordinates
-        self.connections = []
         self.visible_in_room_description = False
 
     def calculate_luminosity(self):
-        luminosity = 0
-        for aura in self.dungeon.get_applicable_auras(self):
-            if hasattr(aura, 'modify_light'):
-                decay = aura.get_decay_at(self)
-                luminosity += aura.modify_light(decay)
-        return min(1.0, luminosity)
+        return 1.0
 
     def calculate_danger(self):
         return 1.0
@@ -122,12 +114,11 @@ class Room(Containable):
         if light_mod <= 0.01:
             return 'This room is completely dark.'
         threats = ' '.join(list(self.threat_descriptions(lifeform, acu, sen)))
-        auras = ' '.join(list(self.aura_descriptions(lifeform, acu, sen))[:3])
+        auras = ' '#.join(list(self.aura_descriptions(lifeform, acu, sen))[:3])
         self_desc = self.describe(lifeform, acu, sen)
         container_desc = Describable.erjoin(list(self.container_descriptions(lifeform, acu, sen)))
         container = self.ContainerDescription.format(container_desc) if len(container_desc) > 0 else ''
-        peeks = '\n'.join(list(self.directional_descriptions(lifeform, acu, sen)))
-        return '\n\n'.join(x for x in [threats,auras,self_desc,container,peeks] if x is not '')
+        return '\n\n'.join(x for x in [threats,auras,self_desc,container] if x is not '')
 
     def append_if_nonempty(self, collection, string, with_format):
         if string is not '':
@@ -151,7 +142,7 @@ class Room(Containable):
 
         self_describe = self.SelfDescription
         if depth == 0:
-            self_describe = ' '.join([self_describe, self.surfaces_at_a_glance(lifeform, acu, sen)])
+            self_describe = ' '.join([self_describe])
         if len(describable_contents) > 0:
             return self_describe + ' ' + self.DecoDescription.format(Describable.erjoin(describable_contents[:3]))
         return self_describe
@@ -176,10 +167,5 @@ class Room(Containable):
         return self.shape.center(self)
 
     def get_object_by_uuid(self, uuid):
-        for connection in self.connections:
-            if connection.uuid is uuid:
-                yield connection
-                raise StopIteration
-
         for found in super().get_object_by_uuid(uuid):
             yield found

@@ -102,8 +102,8 @@ class ApplicabilityTests(unittest.TestCase):
 
     def test_dungeon_cleanup(self):
         d = Dungeon()
-        l = Room(d, (0,0))
-        r = Room(d, (1,0)) 
+        l = Room(d, [(0,0)])
+        r = Room(d, [(1,0)]) 
         d.rooms = [l, r]
 
         a1 = Aura(l)

@@ -19,7 +19,6 @@ class Inspect(ActionCommand):
             if not self.args['player_lifeform'].room: return self.fail(Inspect.NoTarget)
             self.args['interaction_target'] = self.args['player_lifeform'].room
 
-
         if self.args['player_lifeform'].action_points() < self.ActionPointCost:
             return self.fail(Inspect.NotEnoughAP)
         self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
@@ -29,7 +28,7 @@ class Inspect(ActionCommand):
         self.index(acu, sen)
 
         inspect_result = self.args['interaction_target'].on_inspect(self.args['player_lifeform'], acu, sen)
-        self.append_result(self.player_info.uuid, inspect_result)
+        self.append_result(self.player_info.uid, inspect_result)
         return self.succeed()
 
     def index(self, acu, sen):

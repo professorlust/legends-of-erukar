@@ -96,7 +96,7 @@ class Shard(Manager):
         return it. Otherwise, run the player through the script @CharacterCreationPath
         '''
         uid = playernode.uid
-        playernode.character = Player()
+        playernode.character = Player(None)
         playernode.character.uid = uid
         if not self.data.load_player(uid, playernode.character):
             playernode.script_completion_callback = self.character_creation_callback

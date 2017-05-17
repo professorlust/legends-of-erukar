@@ -3,6 +3,8 @@ from erukar.data.Connector import Connector
 from erukar.server.TurnManager import TurnManager
 from erukar.engine.lifeforms.Player import Player
 from erukar.engine.model.PlayerNode import PlayerNode
+from erukar.engine.commands.executable.Map import Map
+from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.executable.Inventory import Inventory
 from erukar.engine.commands.executable.Stats import Stats
 from erukar.engine.commands.executable.Wait import Wait
@@ -111,14 +113,21 @@ class Instance(Manager):
         self.command_contexts[uid] = None
         if not prejoin:
             self.get_next_player()
+        self.execute_pre_inspect(player)
+
+    def execute_pre_inspect(self, player):
+        player.lifeform().current_action_points += Inspect.ActionPointCost
+        ins = player.create_command(Inspect)
+        self.execute_command(ins)
 
     def launch_player(self, uid):
         # Create the base object
-        character = Player()
+        character = Player(self.dungeon)
         playernode = self.connector.get_player({'uid': uid})
         if playernode is None:
             playernode = PlayerNode(uid)
             self.connector.add_player(playernode)
+        playernode.world = self.dungeon
         character.uid = uid
 
         # If this is a new character, mark it for Initialization
@@ -147,7 +156,6 @@ class Instance(Manager):
             player_cmd = self.get_active_player_action()
             if player_cmd is None:
                 return
-            print(player_cmd)
             result = self.execute_command(player_cmd)
             if result is None or (result is not None and not result.success):
                 return
@@ -260,16 +268,15 @@ class Instance(Manager):
         character = player_node.lifeform()
         d = self.dungeon
 
-        inv_cmd = Inventory()
-        inv_cmd.world = d
-        inv_cmd.player_info = character
+        inv_cmd = player_node.create_command(Inventory)
         result = inv_cmd.execute()
-        inv_res = result.result_for(character.uuid)[0]
+        inv_res = result.result_for(player_node.uid)[0]
 
-        stat_cmd = Stats()
-        stat_cmd.world = d
-        stat_cmd.player_info = character
-        stat_res = stat_cmd.execute().result_for(character.uuid)
+        stat_cmd = player_node.create_command(Stats)
+        stat_res = stat_cmd.execute().result_for(player_node.uid)
+
+        map_cmd = player_node.create_command(Map)
+        map_res = map_cmd.execute().result_for(player_node.uid)
 
         log = []
         if uid in self.responses and len(self.responses[uid]) > 0:
@@ -285,5 +292,6 @@ class Instance(Manager):
             'inventory': inv_res['inventory'],
             'equipment': inv_res['equipment'],
             'vitals': stat_res[0],
+            'map': map_res[0],
             'log': log
         })

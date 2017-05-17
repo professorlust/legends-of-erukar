@@ -3,12 +3,12 @@ import unittest
 
 class InspectTests(unittest.TestCase):
     def test_inspect_no_target(self):
-        p = Player()
-        p.current_action_points = 20
         dungeon = Dungeon()
+        p = Player(dungeon)
+        p.current_action_points = 20
 
         w = Weapon()
-        r = Room(dungeon)
+        r = Room(dungeon, [(0,1)])
         r.add(w)
         r.add(p)
         p.room = r
@@ -23,12 +23,12 @@ class InspectTests(unittest.TestCase):
         self.assertTrue(result.success)
 
     def test_inspect_not_enough_ap(self):
-        p = Player()
-        p.uid = 'Evan'
         dungeon = Dungeon()
+        p = Player(dungeon)
+        p.uid = 'Evan'
 
         w = Weapon()
-        r = Room(dungeon)
+        r = Room(dungeon, [(0,1)])
         r.add(w)
         r.add(p)
         p.on_move(r)
@@ -44,12 +44,12 @@ class InspectTests(unittest.TestCase):
         self.assertEqual(result.result_for(p.uid)[0], Inspect.NotEnoughAP)
 
     def test_inspect_success(self):
-        p = Player()
-        p.current_action_points = 20
         dungeon = Dungeon()
+        p = Player(dungeon)
+        p.current_action_points = 20
 
         w = Weapon()
-        r = Room(dungeon)
+        r = Room(dungeon, [(0,1)])
         r.add(w)
         r.add(p)
         p.on_move(r)

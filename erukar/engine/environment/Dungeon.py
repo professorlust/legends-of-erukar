@@ -30,15 +30,16 @@ class Dungeon(RpgEntity):
             if aura.affects_tile(room_at):
                 yield aura
 
-    def add_room(self, new_room, coord):
+    def add_room(self, new_room, coordinates):
         '''Adds a safeguard to prevent duplication'''
-        unique = not self.get_room_at(coord)
-        if unique:
-            self.rooms.append(new_room)
-        return unique
+        self.rooms.append(new_room)
+        for coord in coordinates:
+            self.dungeon_map[coord] = new_room
 
     def get_room_at(self, location):
-        return next((x for x in self.rooms if x.coordinates == location), None)
+        if location in self.dungeon_map:
+            return self.dungeon_map[location]
+        return None
 
     def auras_for_locations(self, locations):
         '''

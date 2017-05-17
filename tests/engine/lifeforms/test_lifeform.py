@@ -4,7 +4,7 @@ import unittest
 class LifeformTests(unittest.TestCase):
     def test_define_stats_no_entry(self):
         # Test Case: 0 0 0
-        l = Lifeform()
+        l = Lifeform(None)
 
         self.assertEqual(l.strength, 0)
         self.assertEqual(l.dexterity, 0)
@@ -12,7 +12,7 @@ class LifeformTests(unittest.TestCase):
 
     def test_define_stats_stronly(self):
         # Test Case: 2 0 0
-        l = Lifeform()
+        l = Lifeform(None)
         l.strength = 2
         self.assertEqual(l.strength, 2)
         self.assertEqual(l.dexterity, 0)
@@ -20,7 +20,7 @@ class LifeformTests(unittest.TestCase):
 
     def test_define_stats_dexonly(self):
         # Test Case: 0 2 0
-        l = Lifeform()
+        l = Lifeform(None)
         l.dexterity = 2
         self.assertEqual(l.strength, 0)
         self.assertEqual(l.dexterity, 2)
@@ -28,19 +28,19 @@ class LifeformTests(unittest.TestCase):
 
     def test_define_stats_vitonly(self):
         # Test Case: 0 0 2
-        l = Lifeform()
+        l = Lifeform(None)
         l.vitality = 2
         self.assertEqual(l.strength, 0)
         self.assertEqual(l.dexterity, 0)
         self.assertEqual(l.vitality, 2)
 
     def test_define_level_creates_appropriate_health(self):
-        l = Lifeform()
+        l = Lifeform(None)
         l.define_level(3)
         self.assertEqual(4*3, l.health)
 
     def test_take_damage_not_fatal(self):
-        l = Lifeform()
+        l = Lifeform(None)
         l.vitality = 2
         l.define_level(3)
 
@@ -48,14 +48,14 @@ class LifeformTests(unittest.TestCase):
         self.assertTrue('dying' not in l.conditions)
 
     def test_take_damage_fatal(self):
-        l = Lifeform()
+        l = Lifeform(None)
         l.define_level(1)
 
         l.take_damage(5)
         self.assertTrue(l.has_condition(Dying))
 
     def test_take_damage_coup_de_grace(self):
-        l = Lifeform()
+        l = Lifeform(None)
         l.define_level(1)
 
         Dead(l)
@@ -64,7 +64,7 @@ class LifeformTests(unittest.TestCase):
         self.assertTrue(l.has_condition(Dead))
 
     def consume_action_point_should_take_from_current_first(self):
-        l = Lifeform()
+        l = Lifeform(None)
         cost = 1
         self.assertTrue(False)
 #       l.current_action_points = 2

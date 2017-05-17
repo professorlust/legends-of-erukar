@@ -3,12 +3,12 @@ import unittest
 
 class TakeTests(unittest.TestCase):
     def test_take_execution(self):
-        p = Player()
-        p.current_action_points = 2
         dungeon = Dungeon()
+        p = Player(dungeon)
+        p.current_action_points = 2
 
         w = Weapon()
-        r = Room(dungeon)
+        r = Room(dungeon, [(0,1)])
         r.add(w)
         r.add(p)
         p.on_move(r)
@@ -27,12 +27,12 @@ class TakeTests(unittest.TestCase):
         self.assertTrue(w not in r.contents)
 
     def test_take_execution_no_match(self):
-        p = Player()
         dungeon = Dungeon()
+        p = Player(dungeon)
         p.current_action_points = 2
 
         w = Weapon()
-        r = Room(dungeon)
+        r = Room(dungeon, [(0,1)])
         r.add(w); r.add(p)
         p.current_room = r
 

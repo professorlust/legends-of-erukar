@@ -25,13 +25,14 @@ class Lifeform(RpgEntity):
     BaseDualWieldingPenalty = 60
     ArcaneEnergyRegenPercentage = 0.05
 
-    def __init__(self, name=""):
+    def __init__(self, world, name=""):
         super().__init__()
         self.name       = name
         self.uid        = ""
         self.inventory  = []
         self.initialize_stats() 
-        self.room = None
+        self.coordinates = (0,0)
+        self.world = world
         self.instance = ''
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
@@ -95,7 +96,8 @@ class Lifeform(RpgEntity):
 
     def initiate_aura(self, aura):
         '''Initiates an aura within the current room'''
-        self.room.initiate_aura(aura)
+        room = self.world.get_room_at(self.coordinates)
+        room.initiate_aura(aura)
 
     def calculate_effective_stat(self, stat_type, depth=0):
         '''Uses a decay factor based on distance'''
@@ -300,12 +302,15 @@ class Lifeform(RpgEntity):
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''
         self.conditions = [Dead(self, None)]
-        self.room.add(Corpse(self))
-        self.room.remove(self)
-        self.room = None
+        room = self.world.get_room_at(self.coordinates)
+        room.add(Corpse(self))
+        room.remove(self)
 
-    def on_move(self, room):
-        self.room = room
+    def on_move(self, new_coordinates):
+        '''Called after Move command starts'''
+        room = self.world.get_room_at(new_coordinates)
+        if not room: return
+        self.coordinates = new_coordinates
         for eq in self.equipment_types:
             equip = getattr(self, eq)
             if equip is not None:

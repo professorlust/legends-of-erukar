@@ -13,7 +13,7 @@ dungeon.description = "An introduction to Legends of Erukar, this dungeon is reg
 woodlands_properties = GenerationProfile.Woodlands()
 
 # Entry Room
-entry = Room(dungeon, (0,0), dimensions = (2,1))
+entry = Room(dungeon, coordinates=[(0,0), (1,0), (2,0)])
 entry.SelfDescription = 'A cold draft wafts through this room. Columns line the northern and southern walls.'
 entry.Glances = [
     Observation(acuity=0,  sense=0,  result='The room in this direction is long and narrow.'),
@@ -34,33 +34,29 @@ bow = Shop.create(Bow, erukar.game.modifiers.material.Oak)
 erukar.game.modifiers.inventory.universal.Quality().apply_to(bow)
 entry.add(bow)
 
-'''First Room'''
-first_room = Room(dungeon, (2,0), dimensions=(2,2))
-first_room.Glances = [
-    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
-]
-first_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
+second_room = Room(dungeon, coordinates=[(x,y) for x in range(3,5) for y in range(-1,2)])
 
-entry.coestablish_connection(Direction.East, first_room)
-
-undead = erukar.game.enemies.undead.Skeleton()
-undead.link_to_room(first_room)
-
-t = Torch()
-t.fuel = 100
-first_room.add(t)
-
-'''Second Room'''
-second_room = Room(dungeon, (4,0), dimensions=(1,1))
-second_room.Glances = [
-    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
-]
-second_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
-
+#'''First Room'''
+#first_room = Room(dungeon, (2,0), dimensions=(2,2))
+#first_room.Glances = [
+#    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
+#]
+#first_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
+#
+#
+#
+#t = Torch()
+#t.fuel = 100
+#first_room.add(t)
+##
+##'''Second Room'''
+#second_room = Room(dungeon, (4,0), dimensions=(1,1))
+#second_room.Glances = [
+#    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
+#]
+#second_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
+#
 #first_room.coestablish_connection(Direction.East, second_room)
-
-undead = erukar.game.enemies.undead.Skeleton()
-undead.link_to_room(second_room)
-
-dummy_room = Room(dungeon, (5,0), dimensions=(1,1))
-first_room.coestablish_connection(Direction.East, dummy_room, RandomInstanceTransition('Instance transition door', woodlands_properties))
+#
+#
+#dummy_room = Room(dungeon, (5,0), dimensions=(1,1))

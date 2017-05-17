@@ -39,7 +39,7 @@ class Inventory(Command):
             'inventory': items,
             'equipment': list(self.assemble_equipment())
         }
-        self.append_result(self.player_info.uuid, obj_response)
+        self.append_result(self.player_info.uid, obj_response)
         return self.succeed()
 
     def assemble_equipment(self):

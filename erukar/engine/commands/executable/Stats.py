@@ -50,7 +50,7 @@ class Stats(Command):
                 'isNegative': False
             })
 
-        self.append_result(self.player_info.uuid, output_result)
+        self.append_result(self.player_info.uid, output_result)
         return self.succeed()
 
     def get_mod(pawn, stat):

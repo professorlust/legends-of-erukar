@@ -3,9 +3,9 @@ import unittest
 
 class MoveTests(unittest.TestCase):
     def test_execute_through_wall(self):
-        p = Player()
         d = Dungeon()
-        r = Room(d)
+        p = Player(d)
+        r = Room(d, [(0,1)])
         r.add(p)
 
         m = Move()

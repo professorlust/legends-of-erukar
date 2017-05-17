@@ -2,9 +2,9 @@ from erukar.engine.model.Indexer import Indexer
 from erukar.engine.lifeforms.Lifeform import Lifeform
 
 class Player(Lifeform, Indexer):
-    def __init__(self):
+    def __init__(self, world):
         Indexer.__init__(self)
-        super().__init__()
+        super().__init__(world)
         self.uid = '' # Player UID
         self.credits = 0
         self.define_level(1)

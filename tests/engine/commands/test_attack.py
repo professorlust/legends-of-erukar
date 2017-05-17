@@ -3,11 +3,11 @@ import unittest
 
 class AttackTests(unittest.TestCase):
     def test_basic_melee_attack(self):
-        p = Player()
+        d = Dungeon()
+        p = Player(d)
         p.current_action_points = 20
         p.name = 'Player'
-        dungeon = Dungeon()
-        r = Room(dungeon)
+        r = Room(d)
         p.on_move(r)
         self.assertIn(p, r.contents)
 
@@ -29,11 +29,11 @@ class AttackTests(unittest.TestCase):
         self.assertTrue(result.success)
 
     def test_basic_ranged_attack_no_ammo(self):
-        p = Player()
+        d = Dungeon()
+        p = Player(d)
         p.current_action_points = 20
         p.name = 'Player'
-        dungeon = Dungeon()
-        r = Room(dungeon)
+        r = Room(d)
         p.on_move(r)
         self.assertIn(p, r.contents)
 
@@ -55,11 +55,11 @@ class AttackTests(unittest.TestCase):
         self.assertFalse(result.success)
 
     def test_basic_ranged_attack_with_ammo(self):
-        p = Player()
+        d = Dungeon()
+        p = Player(d)
         p.current_action_points = 20
         p.name = 'Player'
-        dungeon = Dungeon()
-        r = Room(dungeon)
+        r = Room(d)
         p.on_move(r)
         self.assertIn(p, r.contents)
 
@@ -86,11 +86,11 @@ class AttackTests(unittest.TestCase):
         self.assertTrue(result.success)
 
     def test_basic_melee_attack_no_weapon(self):
-        p = Player()
+        d = Dungeon()
+        p = Player(d)
         p.current_action_points = 20
         p.name = 'Player'
-        dungeon = Dungeon()
-        r = Room(dungeon)
+        r = Room(d)
         p.on_move(r)
         self.assertIn(p, r.contents)
 
@@ -108,10 +108,10 @@ class AttackTests(unittest.TestCase):
         self.assertFalse(result.success)
 
     def test_basic_melee_attack_no_ap(self):
-        p = Player()
+        d = Dungeon()
+        p = Player(d)
         p.name = 'Player'
-        dungeon = Dungeon()
-        r = Room(dungeon)
+        r = Room(d)
         p.on_move(r)
         self.assertIn(p, r.contents)
 

@@ -3,10 +3,10 @@ import unittest
 
 class UnequipTests(unittest.TestCase):
     def test_unequip_weapon(self):
-        p = Player()
-        p.current_action_points = 2
         dungeon = Dungeon()
-        room = Room(dungeon)
+        p = Player(dungeon)
+        p.current_action_points = 2
+        room = Room(dungeon, [(0,1)])
         room.add(p)
 
         w = Weapon()
@@ -25,10 +25,10 @@ class UnequipTests(unittest.TestCase):
         self.assertTrue(result.success)
 
     def test_unequip_armor(self):
-        p = Player()
-        p.current_action_points = 2
         dungeon = Dungeon()
-        room = Room(dungeon)
+        p = Player(dungeon)
+        p.current_action_points = 2
+        room = Room(dungeon, [(0,1)])
         room.add(p)
 
         a = Armor()
@@ -47,10 +47,10 @@ class UnequipTests(unittest.TestCase):
         self.assertTrue(result.success)
 
     def test_unequip_armor_without_action_points(self):
-        p = Player()
-        p.current_action_points = 0
         dungeon = Dungeon()
-        room = Room(dungeon)
+        p = Player(dungeon)
+        p.current_action_points = 0
+        room = Room(dungeon, [(0,1)])
         room.add(p)
 
         a = Armor()
@@ -69,10 +69,10 @@ class UnequipTests(unittest.TestCase):
         self.assertFalse(result.success)
 
     def test_unequip_item(self):
-        p = Player()
-        p.current_action_points = 2
         dungeon = Dungeon()
-        room = Room(dungeon)
+        p = Player(dungeon)
+        p.current_action_points = 2
+        room = Room(dungeon, [(0,1)])
         room.add(p)
 
         i = Item()
