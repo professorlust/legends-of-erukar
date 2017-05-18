@@ -13,7 +13,6 @@ class AddStatPoint(Command):
 
     def perform(self):
         if 'stat' not in self.args: raise Exception('Malformed message received by Add Stat Point')
-        print(self.args['stat'])
         if self.args['stat'].lower() not in AddStatPoint.ValidStats:
             return self.fail('Not a valid stat to upgrade')
 

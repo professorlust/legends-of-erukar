@@ -24,6 +24,8 @@ class Map(Command):
 #       self.dungeon = room.dungeon
 #       # Iterate over all of the rooms the player knows about
         results = {
+            'minX': 0,
+            'minY': 0,
             'height': 1,
             'width': 1,
             'floors': [],
@@ -43,6 +45,8 @@ class Map(Command):
 #       # Now get the min and max range for x and y
         max_x, max_y = map(max, zip(*self.open_space))
         min_x, min_y = map(min, zip(*self.open_space))
+        results['minX'] = min_x-1
+        results['minY'] = min_y-1
         results['width'] = 3 + max_x - min_x
         results['height'] = 3 + max_y - min_y
         for y in range(min_y-1, max_y+2):

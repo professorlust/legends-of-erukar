@@ -34,7 +34,7 @@ class Inventory(Command):
     def perform(self):
         items = []
         for item in self.args['player_lifeform'].inventory:
-            items.append(Inventory.format_item(item))
+            items.append(self.format_item(item))
         obj_response = {
             'inventory': items,
             'equipment': list(self.assemble_equipment())
@@ -56,7 +56,7 @@ class Inventory(Command):
             if item: return str(item.uuid)
         return -1
 
-    def format_item(item):
+    def format_item(self, item):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
@@ -69,9 +69,7 @@ class Inventory(Command):
             object_output['durability'] = {'current': item.durability(), 'max': item.max_durability()}
 
         if isinstance(item, erukar.engine.inventory.Weapon):
-            object_output['damages'] = {}
-            for name, d_range in Inventory.weapon_details(item):
-                object_output['damages'][name] = d_range
+            object_output['damages'] = list(self.weapon_details(item))
 
         if isinstance(item, erukar.engine.inventory.Armor):
             object_output['protection'] = {}
@@ -87,9 +85,13 @@ class Inventory(Command):
             yield Inventory.format_modifier(modifier)
         # Description here
 
-    def weapon_details(item):
+    def weapon_details(self, item):
         for damage in item.damages:
-            yield damage.name.capitalize(), '{} to {}'.format(damage.damage[0], damage.damage[1])
+            yield {
+                'name': damage.name.capitalize(),
+                'range': '{} to {}'.format(*damage.scaled_values(self.args['player_lifeform'])),
+                'scaling': '{} x{:.2f} [{},{}]'.format(damage.modifier[:3].upper(), damage.scalar, damage.requirement, damage.max_scale)
+            }
 
     def armor_details(item):
         for mit in item.DamageMitigations:

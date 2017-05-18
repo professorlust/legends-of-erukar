@@ -20,6 +20,9 @@ class Damage:
         self.damage = damage_range
         self.modifier = mod
         self.distribution, self.dist_params = dist_and_params
+        self.requirement = 8
+        self.max_scale = 100
+        self.scalar = 2.5
 
     def roll(self, attacker):
         # Get a random value from the distribution passed in 
@@ -30,6 +33,15 @@ class Damage:
         if hasattr(attacker, self.modifier) and self.scales:
             return int(raw) + getattr(attacker, self.modifier)
         return int(raw)
+
+    def scaled_values(self, for_player):
+        return self.scale(for_player, self.damage[0]), self.scale(for_player, self.damage[1])
+
+    def scale(self, for_player, value):
+        if not self.scales: return value
+        stat = getattr(for_player, self.modifier)
+        if stat < self.requirement: return 1
+        return int((1+min(self.max_scale, (stat - self.requirement))) * self.scalar + value)
 
     @staticmethod
     def actual_damage_values(instigator, enemy, weapon, damages):
