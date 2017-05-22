@@ -12,9 +12,15 @@ class Container(Containable):
         self.on_glance_prefix = ''
         self.on_inspect_prefix = ''
         self.visible_in_room_description = True
-        self.can_close = True
-        self.contents_visible = False
+        self.is_open = False
         self.lock = None
+        self.can_open_or_close = True
+
+    def can_close(self):
+        return self.can_open_or_close and self.is_open
+
+    def can_open(self):
+        return self.can_open_or_close and not self.is_open and (self.lock is None or not self.lock.is_locked)
 
     def on_open(self, sender):
         if not self.can_close:
@@ -24,7 +30,7 @@ class Container(Containable):
             if self.lock.is_locked:
                 return self.mutate("This {alias} is locked!"), False
 
-        self.contents_visible = True
+        self.is_open = True
         return self.mutate(Container.Opened), True
 
     def on_start(self, room):
@@ -32,8 +38,8 @@ class Container(Containable):
             content.on_start(room)
 
     def on_close(self, sender):
-        if self.can_close:
-            self.contents_visible = False
+        if self.can_close():
+            self.is_open = False
             return self.mutate("Closed a {alias}"), False
         return self.mutate("{alias} cannot be closed!"), False
 
@@ -55,7 +61,7 @@ class Container(Containable):
         return self.glance_inside(no_preface=True)
 
     def glance_inside(self, no_preface=False, from_inspect=False):
-        if len(self.contents) > 0 and self.contents_visible:
+        if len(self.contents) > 0 and self.is_open:
             # The following should be reworked to show the most visible items
             acuity = random.uniform(0, 50)
             sense = random.uniform(0, 50)
@@ -68,6 +74,6 @@ class Container(Containable):
         return ''
 
     def on_inspect(self, player, acuity, sense):
-        if self.contents_visible:
+        if self.is_open:
             return super().on_inspect(player, acuity, sense)
         return self.mutate(Describable.get_best_match(self.Inspects, acuity, sense))

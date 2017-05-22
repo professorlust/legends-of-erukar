@@ -1,4 +1,5 @@
 from erukar.engine.model.RpgEntity import RpgEntity
+from erukar.engine.calculators.Navigator import Navigator
 
 class Dungeon(RpgEntity):
     minimum_rooms = 3
@@ -12,6 +13,7 @@ class Dungeon(RpgEntity):
         self.dungeon_map = {}
         self.rooms = []
         self.active_auras = set()
+        self.actors = set()
 
     def get_object_by_uuid(self, uuid):
         if uuid == self.uuid: return self
@@ -54,3 +56,12 @@ class Dungeon(RpgEntity):
 
     def clean_up_auras(self):
         self.active_auras = set(x for x in self.active_auras if not x.is_expired)
+
+    def add_actor(self, actor, coordinates):
+        self.actors.add(actor)
+        actor.coordinates = coordinates
+
+    def actors_in_range(self, start, distance):
+        for actor in self.actors:
+            if Navigator.distance(start, actor.coordinates) <= distance:
+                yield actor

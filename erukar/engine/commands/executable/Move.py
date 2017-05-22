@@ -28,7 +28,7 @@ class Move(ActionCommand):
         if 'coordinates' not in self.args or not self.args['coordinates']:
             return self.fail('No coordinates found')
 
-        self.args['coordinates'] = tuple([int(x) for x in self.args['coordinates'].split(',')])
+        self.args['coordinates'] = self.specified_coordinates()
         #path = [self.args['player_lifeform'].coordinates, self.args['coordinates']]
 
         cost = 1#self.cost_to_move(path)

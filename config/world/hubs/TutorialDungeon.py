@@ -25,38 +25,19 @@ sword = Shop.create(Sword, erukar.game.modifiers.material.Steel)
 erukar.game.modifiers.inventory.universal.Quality().apply_to(sword)
 erukar.game.modifiers.inventory.universal.Size().apply_to(sword)
 erukar.game.modifiers.inventory.weapon.Bane().apply_to(sword)
-entry.add(sword)
+dungeon.add_actor(sword, (0,1))
 
 arrow = Shop.create(Arrow, erukar.game.modifiers.material.Oak)
-entry.add(arrow)
+dungeon.add_actor(arrow, (0,1))
 
 bow = Shop.create(Bow, erukar.game.modifiers.material.Oak)
 erukar.game.modifiers.inventory.universal.Quality().apply_to(bow)
-entry.add(bow)
+dungeon.add_actor(bow, (0,2))
 
 second_room = Room(dungeon, coordinates=[(x,y) for x in range(3,5) for y in range(-1,2)])
 
-#'''First Room'''
-#first_room = Room(dungeon, (2,0), dimensions=(2,2))
-#first_room.Glances = [
-#    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
-#]
-#first_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
-#
-#
-#
-#t = Torch()
-#t.fuel = 100
-#first_room.add(t)
-##
-##'''Second Room'''
-#second_room = Room(dungeon, (4,0), dimensions=(1,1))
-#second_room.Glances = [
-#    Observation(acuity = 0, sense=0, result='There is an abnormal chill in the air.')
-#]
-#second_room.SelfDescription = 'Your breath visibly mists in front of you -- the air here is terribly brisk'
-#
-#first_room.coestablish_connection(Direction.East, second_room)
-#
-#
-#dummy_room = Room(dungeon, (5,0), dimensions=(1,1))
+sk = Skeleton()
+dungeon.add_actor(sk, (3, -1))
+
+third_room = Room(dungeon, coordinates=[(5,1)] + [(6,1+x) for x in range(0,5)])
+fourth_room = Room(dungeon, coordinates=[(x,y) for x in range(2,6) for y in range(4,6)])

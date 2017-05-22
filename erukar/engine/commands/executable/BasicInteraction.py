@@ -9,13 +9,13 @@ class BasicInteraction(ActionCommand):
 
     def perform(self):
         '''
-        interaction_type | Behavior
+        interactionType | Behavior
         ===========================
         open             | on_open        
         close            | on_close
         glance           | on_glance        
         '''
-        interaction_method = 'on_' + self.args['interaction_type']
+        interaction_method = 'on_' + self.args['interactionType']
         if not self.args['interaction_target']: return self.fail(BasicInteraction.NoTarget)
         if not hasattr(self.args['interaction_target'], interaction_method):
             raise Exception('Interaction Method {0} not defined for '.format(interaction_method, self.args['interaction_target']))

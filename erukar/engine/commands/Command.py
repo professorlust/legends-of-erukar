@@ -98,3 +98,7 @@ class Command:
         self.results = None
         self.context = None
 
+    def specified_coordinates(self):
+        if 'coordinates' in self.args:
+            return tuple([int(x) for x in self.args['coordinates'].split(',')])
+        return self.args['player_lifeform'].coordinates

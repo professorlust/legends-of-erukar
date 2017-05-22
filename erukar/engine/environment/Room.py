@@ -83,13 +83,13 @@ class Room(Containable):
         for content in self.detected_lifeforms(lifeform, acuity, sense):
             yield content.describe_as_threat(lifeform, acuity, sense)
 
-    def detected_contents(self, lifeform, acuity, sense):
+    def detected_contents(self, acuity, sense):
         for content in self.contents:
             if content.is_detected(acuity, sense):
                 yield content
 
     def detected_lifeforms(self, lifeform, acuity, sense):
-        for content in self.detected_contents(lifeform, acuity, sense):
+        for content in self.detected_contents(acuity, sense):
             if isinstance(content, erukar.engine.lifeforms.Lifeform) and content is not lifeform:
                 yield content
 

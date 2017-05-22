@@ -327,7 +327,7 @@ class Connector:
 
     def create_inventory_schema(item):
         '''Create an Inventory Item Schema using an instance of an Item'''
-        modifiers = [self.create_modifier_schema(m) for m in item.modifiers if m.persistent]
+        modifiers = [Connector.create_modifier_schema(m) for m in item.modifiers if m.persistent]
         item_attributes = item.persistable_attributes()
         material_module = '' if not item.material else item.material.__module__
         return erukar.data.Schema.Item(\
@@ -336,7 +336,7 @@ class Connector:
                 modifiers = modifiers,\
                 item_attributes = item_attributes)
 
-    def create_modifier_schema(self, mod):
+    def create_modifier_schema(mod):
         '''create a schema from a modifier instance'''
         return erukar.data.Schema.Modifier(\
                 modifier_type=mod.__module__,\

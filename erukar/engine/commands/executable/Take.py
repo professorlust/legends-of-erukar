@@ -6,7 +6,7 @@ class Take(ActionCommand):
     CannotTake = "'{}' cannot be taken."
     success = "Successfully took {0}"
     LimitToLocal = True
-    SearchTargetMustBeIndexed = True
+    SearchTargetMustBeIndexed = False
 
     '''
     requires:
@@ -37,13 +37,13 @@ class Take(ActionCommand):
     def move_to_inventory(self):
         # We found it, so give it to the player and return a success msg
         self.args['player_lifeform'].inventory.append(self.args['interaction_target'])
-        container = self.player_info.index(self.args['interaction_target'])
+        container = self.player_info.get_parent(self.args['interaction_target'])
         self.player_info.remove_index(self.args['interaction_target'])
-        if len(container) > 0:
-            container[-1].remove(self.args['interaction_target'])
+        if container:
+            container.remove(self.args['interaction_target'])
 
         take_result = self.args['interaction_target'].on_take(self.args['player_lifeform'])
-        if take_result: self.append_result(self.player_info.uuid, take_result)
+        if take_result: self.append_result(self.player_info.uid, take_result)
 
         self.dirty(self.args['player_lifeform'])
-        self.append_result(self.player_info.uuid, Take.success.format(self.args['interaction_target'].describe()))
+        self.append_result(self.player_info.uid, Take.success.format(self.args['interaction_target'].describe()))

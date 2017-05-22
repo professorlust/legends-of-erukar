@@ -9,6 +9,7 @@ from .Give import Give
 from .Inspect import Inspect
 from .Inventory import Inventory
 from .Levelup import Levelup
+from .LocalIndex import LocalIndex
 from .Map import Map
 from .Move import Move
 from .Quit import Quit
@@ -32,6 +33,7 @@ __all__ = [
     "Inspect", 
     "Inventory", 
     "Levelup", 
+    "LocalIndex", 
     "Map", 
     "Move", 
     "Quit", 

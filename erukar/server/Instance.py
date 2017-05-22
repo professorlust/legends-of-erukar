@@ -3,6 +3,7 @@ from erukar.data.Connector import Connector
 from erukar.server.TurnManager import TurnManager
 from erukar.engine.lifeforms.Player import Player
 from erukar.engine.model.PlayerNode import PlayerNode
+from erukar.engine.commands.executable.LocalIndex import LocalIndex
 from erukar.engine.commands.executable.Map import Map
 from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.executable.Inventory import Inventory
@@ -100,8 +101,6 @@ class Instance(Manager):
         player = self.launch_player(uid)
         super().subscribe(player)
         room = self.dungeon.rooms[0]
-        player.character.room = room
-        #player.character.link_to_room(room)
         player.character.subscribe(self)
         player.move_to_room(room)
         # Run on_equip for all equipped items
@@ -278,6 +277,9 @@ class Instance(Manager):
         map_cmd = player_node.create_command(Map)
         map_res = map_cmd.execute().result_for(player_node.uid)
 
+        li_cmd = player_node.create_command(LocalIndex)
+        li_res = li_cmd.execute().result_for(player_node.uid)
+
         log = []
         if uid in self.responses and len(self.responses[uid]) > 0:
             responses =  self.responses.pop(uid, [])
@@ -293,5 +295,6 @@ class Instance(Manager):
             'equipment': inv_res['equipment'],
             'vitals': stat_res[0],
             'map': map_res[0],
+            'localList': li_res[0],
             'log': log
         })

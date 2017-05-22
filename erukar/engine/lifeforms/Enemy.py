@@ -233,3 +233,7 @@ class Enemy(Lifeform, Indexer):
 
     def request_persisted_enemy(self):
         self.requesting_persisted = True
+
+    def on_inspect(self, lifeform, acu, sen):
+        return 'A skeleton' 
+        

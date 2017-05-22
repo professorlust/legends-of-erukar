@@ -8,7 +8,7 @@ class Bane(WeaponMod):
     Desirability = 8.0
 
     ShouldRandomizeOnApply = True
-    PersistentAttributes = ['rarity', 'damage_increase', 'target_type', 'InventoryDescription', 'InventoryName']
+    PersistentAttributes = ['damage_increase', 'target_type', 'InventoryDescription', 'InventoryName']
 
     Types = [
         'Undead',
