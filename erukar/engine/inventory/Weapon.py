@@ -7,7 +7,7 @@ class Weapon(Item):
     Persistent = True
     BaseName = "Weapon"
     EssentialPart = "weapon"
-    AttackRange = 0 # Maximum number of rooms beyond our current room that we can reach
+    MaximumRange = 4
     RangePenalty = 5
     EquipmentLocations = ['right','left']
 
@@ -25,8 +25,8 @@ class Weapon(Item):
     RequiresAmmo = False
     AmmoType = ''
 
-    def __init__(self):
-        super().__init__(self.BaseName)
+    def __init__(self, modifiers=None):
+        super().__init__(self.BaseName,modifiers=modifiers)
         self.name = self.BaseName
         self.item_type = "weapon"
         self.damages = [Damage(
@@ -37,19 +37,20 @@ class Weapon(Item):
             scales=True
         )]
 
-    def on_calculate_attack(self, attack_state):
+    def on_calculate_attack(self, attack_cmd):
         '''Needs implementation''' 
-        if self.RequiresAmmo and attack_state.ammunition:
-            # This should mutate an AttackParameters object 
-            attack_state.ammunition.on_calculate_attack(attack_state)
-            attack_state.ammunition.consume()
-        super().on_attack(attack_state.attacker)
+        pass
+#       if self.RequiresAmmo and attack_state.ammunition:
+#           # This should mutate an AttackParameters object 
+#           attack_state.ammunition.on_calculate_attack(attack_state)
+#           attack_state.ammunition.consume()
+#       super().on_attack(attack_state.attacker)
+
+    def on_calculate_attack_roll(self, base_attack_roll, attacker, target):
+        return base_attack_roll
 
     def has_correct_ammo(self, ammo):
         return isinstance(ammo, getattr(erukar.game.inventory.ammunition, self.AmmoType))
-
-    def can_attack(self, attacker):
-        return not self.RequiresAmmo or self.get_ammo() is not None
 
     def roll(self, attacker):
         scalar, offset = self.efficacy_for(attacker)
@@ -57,20 +58,15 @@ class Weapon(Item):
 
     def rolled_damage(self, damage, attacker):
         '''used to get processed result for a single damage type'''
-        amount = d.roll(attacker)
-        scalar, offset = self.efficacy_for(attacker)
-        if damage.scales:
-            mod = attacker.get(damage.modifier)
-            amount = scalar * amount + offset + mod
-        return amount, damage.name
+        return int(np.random.uniform(*damage.scaled_values(attacker))), damage.name
 
-    def on_calculate_attack_roll(self, raw, target):
-        result = raw
-        if self.material:
-            result = self.material.on_calculate_attack_roll(result, target)
-        for modifier in self.modifiers:
-            result = modifier.on_calculate_attack_roll(result, target) 
-        return result
+#   def on_calculate_attack_roll(self, raw, target):
+#       result = raw
+#       if self.material:
+#           result = self.material.on_calculate_attack_roll(result, target)
+#       for modifier in self.modifiers:
+#           result = modifier.on_calculate_attack_roll(result, target) 
+#       return result
 
     def on_process_damage(self, attack_state, command):
         for modifier in self.modifiers:

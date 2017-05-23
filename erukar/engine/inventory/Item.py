@@ -43,7 +43,7 @@ class Item(Describable):
     BaseStatInfluences = {
     }
 
-    def __init__(self, item_type='Item', name="Item"):
+    def __init__(self, item_type='Item', name="Item", modifiers=None):
         super().__init__()
         self.stat_influences = self.BaseStatInfluences
         self.item_type = item_type
@@ -57,6 +57,10 @@ class Item(Describable):
         self.build_quality = None
         self.size = None
         self.modifiers = []
+
+        if modifiers:
+            for modifier in modifiers:
+                modifier().apply_to(self)
 
     def rarity(self):
         full_mod_list = self.modifiers + [self.material]

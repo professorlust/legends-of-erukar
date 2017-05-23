@@ -56,9 +56,8 @@ class Map(Command):
                     results['walls'].append('wood wall')
                 else: results['walls'].append('')
                 results['decor'].append('')
-                if self.args['player_lifeform'].coordinates == (x,y):
-                    results['movingParts'].append('player')
-                else: results['movingParts'].append('')
+                moving_parts_here = self.world.moving_parts_at((x,y))
+                results['movingParts'].append(moving_parts_here)
         self.append_result(self.player_info.uid, results)
 
 #   def should_draw_as_wall(self, coord):

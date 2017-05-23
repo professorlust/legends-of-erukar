@@ -5,8 +5,8 @@ class StackableItem(Item):
     PersistentAttributes = ['quantity']
     MaximumStackQuantity = 100
 
-    def __init__(self, name, quantity=1):
-        super().__init__(name, name)
+    def __init__(self, name, quantity=1, modifiers=None):
+        super().__init__(name, name, modifiers=modifiers)
         self.quantity = quantity
 
     def on_take(self, lifeform):

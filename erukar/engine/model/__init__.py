@@ -1,4 +1,3 @@
-from .AttackState import AttackState
 from .TransitionState import TransitionState
 from .Condition import Condition
 from .Containable import Containable
@@ -20,7 +19,6 @@ from .enum import *
 from .results import *
 
 __all__ = [
-    "AttackState",
     "Condition",
     "Containable",
     "Damage",

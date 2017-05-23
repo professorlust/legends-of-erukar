@@ -83,6 +83,7 @@ class Instance(Manager):
         self.players.append(enemy)
 
     def unsubscribe(self, player):
+        self.dungeon.actors.remove(player.lifeform())
         self.turn_manager.unsubscribe(player)
         self.players.remove(player)
         super().unsubscribe(player)
@@ -102,7 +103,7 @@ class Instance(Manager):
         super().subscribe(player)
         room = self.dungeon.rooms[0]
         player.character.subscribe(self)
-        player.move_to_room(room)
+        self.dungeon.add_actor(player.lifeform(), (0,0))
         # Run on_equip for all equipped items
         for equip in player.character.equipment_types:
             equipped = getattr(player.character, equip)

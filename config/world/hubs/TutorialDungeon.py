@@ -3,6 +3,7 @@ sys.path.append(os.getcwd())
 
 from erukar import *
 from erukar.engine.model.Observation import Observation
+from erukar.game.modifiers import *
 import erukar
 
 dungeon = Dungeon()
@@ -21,13 +22,10 @@ entry.Glances = [
     Observation(acuity=15, sense=0,  result='You see rows of columns on the north and south of this long, narrow room.'),
 ]
 
-sword = Shop.create(Sword, erukar.game.modifiers.material.Steel)
-erukar.game.modifiers.inventory.universal.Quality().apply_to(sword)
-erukar.game.modifiers.inventory.universal.Size().apply_to(sword)
-erukar.game.modifiers.inventory.weapon.Bane().apply_to(sword)
+sword = Sword(modifiers=[modifiers.Salericite, modifiers.Quality, modifiers.Size, modifiers.Bane])
 dungeon.add_actor(sword, (0,1))
 
-arrow = Shop.create(Arrow, erukar.game.modifiers.material.Oak)
+arrow = Arrow(modifiers=[modifiers.Steel])
 dungeon.add_actor(arrow, (0,1))
 
 bow = Shop.create(Bow, erukar.game.modifiers.material.Oak)

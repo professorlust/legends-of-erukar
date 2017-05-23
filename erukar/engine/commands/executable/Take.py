@@ -39,6 +39,7 @@ class Take(ActionCommand):
         self.args['player_lifeform'].inventory.append(self.args['interaction_target'])
         container = self.player_info.get_parent(self.args['interaction_target'])
         self.player_info.remove_index(self.args['interaction_target'])
+        self.world.remove_actor(self.args['interaction_target'])
         if container:
             container.remove(self.args['interaction_target'])
 

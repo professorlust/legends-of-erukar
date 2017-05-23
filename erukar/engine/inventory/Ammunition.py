@@ -6,8 +6,8 @@ class Ammunition(StackableItem):
     BaseName = "Ammunition"
     EquipmentLocations = ['ammunition']
 
-    def __init__(self):
-        super().__init__(self.BaseName)
+    def __init__(self, modifiers=None):
+        super().__init__(self.BaseName, modifiers=modifiers)
 
     def on_calculate_attack(self, attack_state):
         for modifier in self.modifiers:

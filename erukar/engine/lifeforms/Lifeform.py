@@ -141,6 +141,30 @@ class Lifeform(RpgEntity):
         attack_mod = sum([x.modify_attack_roll(target) for x in self.conditions])
         return int((raw + attack_mod) * efficiency)
 
+    def on_check_for_hit(self, attacker, weapon, attack_roll):
+        return attack_roll
+
+    def on_successful_hit(self, target, weapon, attack_roll):
+        return weapon.roll(self)
+
+    def on_failed_dodge(self, attacker, weapon, attack_roll):
+        pass
+
+    def on_successful_dodge(self, attacker, weapon, attack_roll):
+        pass
+
+    def on_missed_hit(self, target, weapon, attack_roll):
+        pass
+
+    def apply_deflection(self, attacker, weapon, damages):
+        return damages
+
+    def apply_mitigation(self, attacker, weapon, damages):
+        return damages
+
+    def apply_damage(self, attacker, weapon, damages):
+        self.take_damage(sum(x[0] for x in damages), attacker)
+
     def on_process_damage(self, attack_state, command):
         '''Called after a successful attack'''
         for condition in self.conditions:
@@ -302,9 +326,6 @@ class Lifeform(RpgEntity):
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''
         self.conditions = [Dead(self, None)]
-        room = self.world.get_room_at(self.coordinates)
-        room.add(Corpse(self))
-        room.remove(self)
 
     def on_move(self, new_coordinates):
         '''Called after Move command starts'''

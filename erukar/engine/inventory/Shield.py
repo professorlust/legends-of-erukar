@@ -4,5 +4,5 @@ class Shield(Armor):
     EssentialPart = "shield"
     EquipmentLocations = ['right','left']
 
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, name, modifiers=None):
+        super().__init__(name, modifiers=modifiers)

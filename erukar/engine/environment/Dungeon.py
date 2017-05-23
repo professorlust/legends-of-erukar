@@ -1,3 +1,4 @@
+import erukar
 from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.calculators.Navigator import Navigator
 
@@ -17,6 +18,14 @@ class Dungeon(RpgEntity):
 
     def get_object_by_uuid(self, uuid):
         if uuid == self.uuid: return self
+
+        matched = next((x for x in self.actors if x.uuid == uuid), None)
+        if matched: return matched
+
+        for lifeform in (x for x in self.actors if isinstance(x, erukar.engine.lifeforms.Lifeform)):
+            matched = lifeform.get_object_by_uuid(uuid)
+            if matched: return matched
+
         for room in self.rooms:
             matched = next((room.get_object_by_uuid(uuid)), None)
             if matched: return matched
@@ -61,7 +70,21 @@ class Dungeon(RpgEntity):
         self.actors.add(actor)
         actor.coordinates = coordinates
 
+    def remove_actor(self, actor):
+        self.actors.remove(actor)
+
     def actors_in_range(self, start, distance):
         for actor in self.actors:
             if Navigator.distance(start, actor.coordinates) <= distance:
                 yield actor
+
+    def moving_parts_at(self, coordinates):
+        for actor in self.actors:
+            if actor.coordinates != coordinates: continue
+            if issubclass(type(actor), erukar.engine.inventory.Item):
+                return 'item'
+            if issubclass(type(actor), erukar.engine.lifeforms.Player):
+                return 'player'
+            if issubclass(type(actor), erukar.engine.lifeforms.Enemy):
+                return 'enemy'
+        return ''

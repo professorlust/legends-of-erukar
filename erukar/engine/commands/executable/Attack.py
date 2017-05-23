@@ -4,9 +4,9 @@ from erukar.engine.environment.Corpse import Corpse
 from erukar.engine.environment.Door import Door
 from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Damage import Damage
-from erukar.engine.model.AttackState import AttackState
-from erukar.engine.formatters.PhysicalDamageFormatter import PhysicalDamageFormatter
+from erukar.engine.inventory.Weapon import Weapon
 from erukar.engine.calculators.Navigator import Navigator
+from erukar.engine.conditions.Dead import Dead
 import erukar, random, math
 
 class Attack(ActionCommand):
@@ -40,40 +40,100 @@ class Attack(ActionCommand):
             return self.fail('Not enough action points!')
         self.args['player_lifeform'].consume_action_points(cost)
 
-        new_attack = self.build_attack_state()
-        new_attack.efficiency = 1.0
-        if isinstance(new_attack.weapon, erukar.engine.inventory.Weapon) and new_attack.weapon.RequiresAmmo:
-            new_attack.ammunition = self.args['player_lifeform'].ammunition
-        if not new_attack.is_valid():
-            return self.fail('Attack state is not valid')
-        self.perform_attack(new_attack)
+        if not self.weapon_exists():
+            return self.fail('Cannot Attack -- Weapon is invalid')
+        if not self.has_ammo_if_needed():
+            return self.fail('The appropriate ammo for this weapon is not equipped!')
+        if not self.is_in_valid_range():
+            return self.fail('Target is outside of maximum range!')
 
-        # Succeed if we have results, otherwise fail with the UnableToAttackInRoom
-        return self.succeed_if_any_results(msg_if_failure=self.UnableToAttackInRoom)
+        return self.perform_attack()
 
-    def build_attack_state(self):
-        '''Factory method'''
-        attack_state = AttackState()
-        attack_state.attacker = self.args['player_lifeform']
-        attack_state.target   = self.args['interaction_target']
-        attack_state.weapon   = self.args['weapon']
-        return attack_state
-
-    def perform_attack(self, attack_state):
+    def perform_attack(self):
         '''Used to actually resolve an attack roll made between a character and target'''
-        attack_state.calculate_attack()
+        attack_roll = self.calculate_attack()
 
-        if not attack_state.attack_successful():
-            PhysicalDamageFormatter.append_missed_attack_results(self, attack_state)
-            return
+        final_attack_roll, did_hit = self.check_for_hit(attack_roll)
+        if not did_hit: return self.succeed()
 
         self.dirty(self.args['player_lifeform'])
         self.dirty(self.args['interaction_target'])
 
-        attack_state.on_process_damage(self)
-        attack_state.confirm()
-        PhysicalDamageFormatter.process_and_append_damage_result(self, attack_state)
+        self.execute_damage_application_sequence(final_attack_roll)
 
-        if attack_state.processed_damage_result.xp_value > 0:
-            self.character.award_xp(attack_state.processed_damage_result.xp_value, self)
+        return self.succeed()
 
+    def execute_damage_application_sequence(self, final_attack_roll):
+        '''Runs through the application and reduction sequence'''
+        raw_damage = self.process_raw_damage(final_attack_roll)
+        post_deflection_damage = self.process_deflections(raw_damage)
+        final_damages = self.process_mitigations(post_deflection_damage)
+        self.do_damage_application(final_damages)
+        self.check_for_killed_enemy()
+
+    def process_raw_damage(self, final_attack_roll):
+        damages = self.args['player_lifeform'].on_successful_hit(self.args['interaction_target'], self.args['weapon'], final_attack_roll)
+        #self.add_raw_damage_commentary(damages, final_attack_roll)
+        return damages
+        
+    def process_deflections(self, damages):
+        post_deflection_damage = self.args['interaction_target'].apply_deflection(self.args['player_lifeform'], self.args['weapon'], damages)
+        #self.add_deflected_damage_commentary(post_deflection_damage)
+        return post_deflection_damage
+
+    def process_mitigations(self, damages):
+        final_damages = self.args['interaction_target'].apply_mitigation(self.args['player_lifeform'], self.args['weapon'], damages)
+        #self.add_final_damage_commentary(final_damages)
+        return final_damages 
+
+    def do_damage_application(self, final_damages):
+        self.args['interaction_target'].apply_damage(self.args['player_lifeform'], self.args['weapon'], final_damages)
+        self.append_result(self.player_info.uid, 'You have dealt {} damage!'.format(', '.join('{} {}'.format(*x) for x in final_damages)))
+
+    def check_for_killed_enemy(self):
+        if self.args['interaction_target'].has_condition(Dead):
+            self.world.remove_actor(self.args['interaction_target'])
+            self.world.add_actor(Corpse(self.args['interaction_target']), self.args['interaction_target'].coordinates)
+            xp = self.args['interaction_target'].calculate_xp_worth()
+            self.args['player_lifeform'].award_xp(xp, self)
+
+    def weapon_exists(self):
+        '''Is the weapon real and valid?'''
+        return self.args['weapon'] and isinstance(self.args['weapon'], Weapon)
+
+    def is_in_valid_range(self):
+        '''Is the distance between us and the target within the maximum range?'''
+        dist = Navigator.distance(self.args['player_lifeform'].coordinates, self.args['interaction_target'].coordinates)
+        return dist <= self.args['weapon'].MaximumRange
+
+    def has_ammo_if_needed(self):
+        '''Do we consume ammo and have the right ammo?'''
+        return not self.args['weapon'].RequiresAmmo or self.args['weapon'].has_correct_ammo(self.args['player_lifeform'].ammunition)
+
+    def calculate_attack(self):
+        self.args['weapon'].on_calculate_attack(self)
+        base_attack_roll = self.args['player_lifeform'].calculate_attack_roll(1.0, self.args['interaction_target'])
+        modified_attack_roll = self.args['weapon'].on_calculate_attack_roll(base_attack_roll, self.args['player_lifeform'], self.args['interaction_target'])
+
+        self.append_result(self.player_info.uid, 'Your attack roll is {} (base: {})'.format(base_attack_roll, modified_attack_roll))
+        self.append_result(self.args['interaction_target'].uid, 'The enemy\'s attack roll is {} (base: {})'.format(base_attack_roll, modified_attack_roll))
+
+        return modified_attack_roll
+
+    def check_for_hit(self, attack_roll):
+        modified_attack_roll = self.args['interaction_target'].on_check_for_hit(self.args['player_lifeform'], self.args['weapon'], attack_roll)
+        if modified_attack_roll <= self.args['interaction_target'].evasion():
+            # Events for both target and attacker
+            self.args['interaction_target'].on_successful_dodge(self.args['player_lifeform'], self.args['weapon'], modified_attack_roll)
+            self.args['player_lifeform'].on_missed_hit(self.args['interaction_target'], self.args['weapon'], modified_attack_roll)
+
+            self.append_result(self.player_info.uid, '{} dodged out of the way of your attack ({} evasion)!'.format(self.args['interaction_target'].alias(), self.args['interaction_target'].evasion()))
+            self.append_result(self.args['interaction_target'].uid, 'You dodge out of the way of {}\'s attack!'.format(self.args['player_lifeform'].alias()))
+            return 0, False
+
+        self.args['interaction_target'].on_failed_dodge(self.args['player_lifeform'], self.args['weapon'], modified_attack_roll)
+        self.args['player_lifeform'].on_successful_hit(self.args['interaction_target'], self.args['weapon'], modified_attack_roll)
+        return modified_attack_roll, True
+
+    def attacker_args(self, damages):
+        return damages, self.args['interaction_target'], self.args['weapon']
