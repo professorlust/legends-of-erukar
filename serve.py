@@ -41,6 +41,7 @@ class ErukarServerFactory(WebSocketServerFactory):
 
     def unregister(self, client):
         print('Unregistered {}'.format(self.clients[client]))
+        #self.shard.unsubscribe(self.clients[client])
         self.clients.pop(client)
 
     async def poll_responses(self):

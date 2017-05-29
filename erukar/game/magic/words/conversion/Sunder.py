@@ -1,7 +1,6 @@
 from erukar.engine.magic.SpellWord import SpellWord
 from erukar.engine.model.Damage import Damage
 from erukar.engine.inventory.SpellAttack import SpellAttack
-from erukar.engine.formatters.MagicDamageFormatter import MagicDamageFormatter
 import random, erukar
 
 class Sunder(SpellWord):

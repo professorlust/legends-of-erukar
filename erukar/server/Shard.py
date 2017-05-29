@@ -41,6 +41,13 @@ class Shard(Manager):
         for info in self.instances:
             self.launch_dungeon_instance(info)
 
+    def unsubscribe(self, eid):
+        player = self.get_playernode_from_uid(eid)
+        cur_instance = self.player_current_instance(eid)
+        if cur_instance:
+            return cur_instance.instance.unsubscribe(eid)
+        super().unsubscribe(eid)
+
     def subscribe(self, uid):
         '''Called when a player (with uid) is connecting'''
         self.run_script(self.SplashPath, uid)

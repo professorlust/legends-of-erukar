@@ -29,7 +29,6 @@ class Move(ActionCommand):
             return self.fail('No coordinates found')
 
         self.args['coordinates'] = self.specified_coordinates()
-        #path = [self.args['player_lifeform'].coordinates, self.args['coordinates']]
 
         cost = 1#self.cost_to_move(path)
         if cost == -1: 

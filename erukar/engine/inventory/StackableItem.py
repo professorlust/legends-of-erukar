@@ -29,6 +29,8 @@ class StackableItem(Item):
             self.quantity = difference
             existing_stack.quantity = self.MaximumStackQuantity
 
+    def alias(self):
+        return '{} x{}'.format(super().alias(), self.quantity)
 
     def other_stacks(self, inventory):
         for item in inventory:

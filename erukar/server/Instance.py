@@ -82,7 +82,8 @@ class Instance(Manager):
         self.turn_manager.subscribe(enemy)
         self.players.append(enemy)
 
-    def unsubscribe(self, player):
+    def unsubscribe(self, eid):
+        player = next((x for x in self.players if x.uid == eid), None)
         self.dungeon.actors.remove(player.lifeform())
         self.turn_manager.unsubscribe(player)
         self.players.remove(player)

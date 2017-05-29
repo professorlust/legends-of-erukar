@@ -1,7 +1,6 @@
 from erukar.engine.magic.SpellWord import SpellWord
 from erukar.engine.model.Damage import Damage
 from erukar.engine.inventory.SpellAttack import SpellAttack
-from erukar.engine.formatters.MagicDamageFormatter import MagicDamageFormatter
 import random
 
 class DamageSingleTarget(SpellWord):
@@ -30,6 +29,6 @@ class DamageSingleTarget(SpellWord):
             scales = self.DamageShouldScale
         )]
         result = self.target.process_damage(damages, caster, efficacy)
-        MagicDamageFormatter.process_and_append_damage_result(command, result)
+#        MagicDamageFormatter.process_and_append_damage_result(command, result)
 
         return parameters

@@ -4,6 +4,7 @@ sys.path.append(os.getcwd())
 from erukar import *
 from erukar.engine.model.Observation import Observation
 from erukar.game.modifiers import *
+from erukar.engine.model.Range import Range
 import erukar
 
 dungeon = Dungeon()
@@ -14,7 +15,7 @@ dungeon.description = "An introduction to Legends of Erukar, this dungeon is reg
 woodlands_properties = GenerationProfile.Woodlands()
 
 # Entry Room
-entry = Room(dungeon, coordinates=[(0,0), (1,0), (2,0)])
+entry = Room(dungeon, coordinates=Range.make(0, 2, 0, 0))
 entry.SelfDescription = 'A cold draft wafts through this room. Columns line the northern and southern walls.'
 entry.Glances = [
     Observation(acuity=0,  sense=0,  result='The room in this direction is long and narrow.'),
@@ -32,10 +33,11 @@ bow = Shop.create(Bow, erukar.game.modifiers.material.Oak)
 erukar.game.modifiers.inventory.universal.Quality().apply_to(bow)
 dungeon.add_actor(bow, (0,2))
 
-second_room = Room(dungeon, coordinates=[(x,y) for x in range(3,5) for y in range(-1,2)])
+second_room = Room(dungeon, coordinates=Range.make(3, 5, -1, 2))
+#second_room.set_floor_material(modifiers.Concrete, Range.make(4,4,0,1))
 
 sk = Skeleton()
 dungeon.add_actor(sk, (3, -1))
 
-third_room = Room(dungeon, coordinates=[(5,1)] + [(6,1+x) for x in range(0,5)])
-fourth_room = Room(dungeon, coordinates=[(x,y) for x in range(2,6) for y in range(4,6)])
+third_room = Room(dungeon, coordinates=[(6,1)] + list(Range.make(7, 7, 1, 5)))
+fourth_room = Room(dungeon, coordinates=Range.make(2, 6, 4, 6))

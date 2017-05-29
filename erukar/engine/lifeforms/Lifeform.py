@@ -329,14 +329,11 @@ class Lifeform(RpgEntity):
 
     def on_move(self, new_coordinates):
         '''Called after Move command starts'''
-        room = self.world.get_room_at(new_coordinates)
-        if not room: return
         self.coordinates = new_coordinates
         for eq in self.equipment_types:
             equip = getattr(self, eq)
             if equip is not None:
-                equip.on_move(room)
-        room.add(self)
+                equip.on_move(None)
 
     def get(self, attribute):
         '''Alias for getattr(self, ____)'''

@@ -7,7 +7,7 @@ from erukar.engine.environment.Door import Door
 from erukar.engine.environment.Decoration import Decoration
 from erukar.engine.model.Describable import Describable
 from erukar.engine.model.Observation import Observation
-import erukar, random
+import erukar, random, types
 from enum import Enum
 
 class Room(Containable):
@@ -22,7 +22,10 @@ class Room(Containable):
         super().__init__([])
         self.linearity = 0
         self.dungeon = dungeon
-        self.coordinates = [] if not coordinates else coordinates
+        if isinstance(coordinates, types.GeneratorType):
+            self.coordinates = list(coordinates)
+        else: 
+            self.coordinates = [] if not coordinates else coordinates
         self.dungeon.add_room(self, coordinates)
         self.floor = None
         self.ceiling = None

@@ -1,3 +1,4 @@
+from .Range import Range
 from .TransitionState import TransitionState
 from .Condition import Condition
 from .Containable import Containable
@@ -19,6 +20,7 @@ from .enum import *
 from .results import *
 
 __all__ = [
+    "Range",
     "Condition",
     "Containable",
     "Damage",
