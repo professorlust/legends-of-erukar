@@ -5,11 +5,11 @@ The Player Node is maintained on the
 '''
 
 class PlayerNode(Indexer):
-    Disconnected  =-1  # Default State
-    Idle          = 0  # When the player is in menus
-    PrePlaying    = 1  # When the player is in a tutorial or building character
-    Playing       = 2  # When the player has chosen a character and is playing it
-    RunningScript = 3
+    Disconnected       =-1  # Default State
+    Idle               = 0  # When the player is in menus
+    SelectingCharacter = 1
+    SelectingRegion    = 2
+    Playing            = 3  # When the player has chosen a character and is playing it
 
     def __init__(self, uid, world, character=None):
         super().__init__()
@@ -59,23 +59,3 @@ class PlayerNode(Indexer):
 
     def lifeform(self):
         return self.character
-
-    def run_script(self, script):
-        self.status = PlayerNode.RunningScript
-        self.active_script = script
-
-    def set_script_entry_point(self, entry_point):
-        self.script_entry_point = entry_point
-
-    def exit_script(self):
-        self.status = PlayerNode.Idle
-        self.active_script = ''
-        self.script_entry_point = None
-        self.script_data.clear()
-        if self.script_completion_callback:
-            self.script_completion_callback(self)
-        self.script_completion_callback = None
-
-    def switch_script(self, new_script, payload):
-        self.run_script(new_script)
-        __import__(new_script).run_script(payload)

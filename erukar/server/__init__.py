@@ -1,3 +1,4 @@
+from .Connection import Connection
 from .HubInstance import HubInstance
 from .Instance import Instance
 from .InstanceInfo import InstanceInfo
@@ -8,6 +9,7 @@ from .Shard import Shard
 from .TurnManager import TurnManager
 
 __all__ = [
+    "Connection",
     "HubInstance", 
     "Instance", 
     "InstanceInfo", 

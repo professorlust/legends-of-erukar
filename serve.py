@@ -1,10 +1,16 @@
-from autobahn.asyncio.websocket import WebSocketServerProtocol, \
-    WebSocketServerFactory
-from erukar import *
-import logging
-import erukar
+from erukar.server.Server import *
+from erukar.server.Shard import Shard
 import asyncio, websockets, json, os, sys, datetime
-import numpy as np
+import logging
+from concurrent.futures import ProcessPoolExecutor
+
+from flask import Flask
+from flask import request, jsonify, abort
+from flask_socketio import SocketIO, emit, send
+from erukar import PlayerNode
+
+#log = logging.getLogger('werkzeug')
+#log.setLevel(logging.ERROR)
 
 config_directories = [
     'world/sovereignties',
@@ -17,79 +23,116 @@ config_directories = [
 for cd in config_directories:
     sys.path.append(os.getcwd() + '/config/' + cd)
 
-class ErukarServerFactory(WebSocketServerFactory):
-    PollTime = 0.5
+app = Flask(__name__)
+from flask_cors import CORS, cross_origin
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+socketio = SocketIO(app)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.shard = Shard()
-        self.shard.activate()
-        self.clients = {} # eid: client
-        asyncio.ensure_future(self.poll_responses())
+blacklist = []
 
-    async def register(self, client, eid):
-        print('Registered eid {}'.format(eid))
-        self.shard.subscribe(eid)
-        self.clients[client] = eid
+'''Routes'''
 
-    async def request_authentication(self, client):
-        client.sendMessage(json.dumps({'type': 'authenticationRequest'}).encode('utf8'), False)
+@app.route('/')
+def hello():
+    return 'Hello'
 
-    async def confirm_authentication(self, client, payload):
-        print('Confirmation received')
-        await self.register(client, payload['eid'])
+@app.route('/wiki/<string:article>')
+def wiki(article):
+    return jsonify({ 
+        'title': 'Salericite Ore',
+        'atAGlance': {
+            'title': 'Salericite',
+            'sections': [
+                {'title':'Arcane Properties', 'values': ['Arcane enhancement']},
+                {'title':'Phase', 'values': ['Solid']},
+                {'title':'Melting Point', 'values': ['Unknown']},
+                {'title':'Boiling Point', 'values': ['Unknown']},
+                {'title':'Density', 'values': ['18.3 g / cubic cm']},
+                {'title':'Known Alloys', 'values': ['None']},
+                {'title':'Known Deposits', 'values': ['~~Oridel~~, ~~Iuria~~', '~~Honeptys Flatlands::honeptys-flatlands~~, ~~Nothren~~']},
+                {'title':'Discovered By', 'values': ['Alvedor Zelongo, 13 CA']},
+            ],
+        },
+        'sections': []
+    })
 
-    def unregister(self, client):
-        print('Unregistered {}'.format(self.clients[client]))
-        #self.shard.unsubscribe(self.clients[client])
-        self.clients.pop(client)
+@app.route('/login', methods=['POST'])
+#@cross_origin()
+def login():
+    # Get the data from the post
+    data = request.get_json(force=True)
+    if 'uid' not in data:
+        abort(400)
+    uid = data['uid']
 
-    async def poll_responses(self):
-        while True:
-            for client in self.clients:
-                await self.send_update(client)
-            await asyncio.sleep(ErukarServerFactory.PollTime)
+    con = shard.update_connection(request)
+    playernode, raw_chars = shard.login(uid)
+    if playernode is None:
+        abort(401)
 
-    async def send_update(self, client):
-        eid = self.clients[client]
-        payload = await self.shard.get_outbound_messages(eid)
-        client.sendMessage(payload)
+    con.playernode = playernode
+    characters = [Shard.format_character_for_list(x) for x in raw_chars]
+    return jsonify(message="Successfully registered as {}".format(uid), characters=characters)
 
-class ErukarServerProtocol(WebSocketServerProtocol):
-    async def onConnect(self, request):
-        print('Connection establishing at {}'.format(request.peer))
+@app.route('/character/select', methods=['POST'])
+def select_character():
+    data = request.get_json(force=True)
+    if 'id' not in data:
+        abort(400)
+    cid = data['id']
 
-    async def onOpen(self):
-        print('Connection established -- requesting authentication')
-        await self.factory.request_authentication(self)
+    con = shard.get_client(request)
+    if con is None: 
+        abort(401)
+    
+    _, characters = shard.login(con.uid())
+    con.character = next((x for x in characters if x.id == cid), None)
 
-    async def onMessage(self, payload, isBinary):
-        message = json.loads(payload.decode('utf8')) 
-        if 'type' not in message: return
+    if con.character is not None:
+        print('{} has selected {}!'.format(con.uid(), con.character.name))
+        return 'Successfully selected a character'
 
-        if message['type'] == 'interaction':
-            self.factory.shard.consume_command(message['payload'])
-        if message['type'] == 'authenticationConfirmation':
-            await self.factory.confirm_authentication(self, message)
+    return 'No character was found!'
 
-    def onClose(self, wasClean, code, reason):
-        print("WebSocket connection closed: {0}".format(reason))
-        self.factory.unregister(self)
+
+'''Websocket Endpoints'''
+
+@socketio.on('connect')
+def on_connect():
+    addr = request.environ['REMOTE_ADDR']
+    if addr in blacklist:
+        print('{} was found in the blacklist and was rejected'.format(addr))
+    shard.update_connection(request)
+
+@socketio.on('disconnect')
+def on_disconnect():
+    shard.disconnect(request)
+
+@socketio.on('launch')
+def on_launch(*_):
+    con = shard.get_client(request)
+    if con is None or not hasattr(con, 'character') or con.character is None:
+        return
+    shard.start_playing(con.playernode, con.character)
+    con.tell('launch success' ,'')
+
+@socketio.on('request state')
+def on_request_state():
+    con = shard.get_client(request)
+    if con.playernode is not None and con.playernode.status == PlayerNode.Playing:
+        con.tell('update state', shard.get_state_for(con.uid()))
+
+@socketio.on('send command')
+def on_command_receipt(cmd):
+    shard.consume_command(request, cmd)
+
+'''Helpers'''
 
 if __name__ == '__main__':
-    import asyncio
+    shard = Shard(emit)
+    shard.activate()
 
-    factory = ErukarServerFactory(u"ws://127.0.0.1:9000")
-    factory.protocol = ErukarServerProtocol
-
-    loop = asyncio.get_event_loop()
-    coro = loop.create_server(factory, '0.0.0.0', 9000)
-    server = loop.run_until_complete(coro)
-
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        server.close()
-        loop.close()
+    socketio.run(app, host="0.0.0.0")
+    for con in shard.clients:
+        con.tell('end', {})

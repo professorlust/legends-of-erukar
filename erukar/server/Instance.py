@@ -124,7 +124,7 @@ class Instance(Manager):
     def launch_player(self, uid):
         # Create the base object
         character = Player(self.dungeon)
-        playernode = self.connector.get_player({'uid': uid})
+        playernode, _ = self.connector.get_player({'uid': uid})
         if playernode is None:
             playernode = PlayerNode(uid)
             self.connector.add_player(playernode)

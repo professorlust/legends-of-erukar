@@ -57,8 +57,16 @@ class Connector:
 
     '''Schema Specific CRUD'''
     def get_player(self, filters):
-        data = self.get(Player, filters).first()
-        return None if not data else PlayerNode(data.uid, None)
+        data = self.get(Player, filters)\
+            .options(joinedload(Player.characters))\
+            .first()
+        pn = None if not data else PlayerNode(data.uid, None)
+        characters = [] if not pn else data.characters
+        return pn, characters
+
+    def get_characters(self, playernode):
+        return self.session.query(Character)\
+            .all()
 
     def get_character(self, uid):
         player = self.get(Player, {'uid': uid}).first()

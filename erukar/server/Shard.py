@@ -6,7 +6,8 @@ from erukar.engine.lifeforms.Player import Player
 from erukar.server.Interface import Interface
 from erukar.server.InstanceInfo import InstanceInfo
 from erukar.server.ServerProperties import ServerProperties
-import erukar, threading, json
+from erukar.server.Connection import Connection
+import erukar, threading, json, asyncio
 import numpy as np
 
 class Shard(Manager):
@@ -14,7 +15,7 @@ class Shard(Manager):
     CharacterCreationPath = 'CharacterSelect'
     TutorialPath = 'Tutorial'
 
-    def __init__(self):
+    def __init__(self, emit_fn):
         super().__init__()
         db_pass = ''
         self.connector_factory = ConnectorFactory(db_pass)
@@ -24,7 +25,9 @@ class Shard(Manager):
         self.data = self.connector_factory.create_session()
         self.interface = Interface(self)
         self.instances = []
-        self.connected_players = set()
+        self.clients = set()
+        self.outbox = {}
+        self.emit = emit_fn
 
     def activate(self):
         '''
@@ -41,6 +44,37 @@ class Shard(Manager):
         for info in self.instances:
             self.launch_dungeon_instance(info)
 
+    def get_client(self, request):
+        addr = request.environ['REMOTE_ADDR']
+        return next((c for c in self.clients if c.addr == addr), None)
+
+    def update_connection(self, request):
+        con = self.get_client(request)
+        if not con:
+            con = Connection(request.environ['REMOTE_ADDR'], self.emit)
+            self.clients.add(con)
+
+        # If we have a sid and an http_port, we're finalized
+        if con.is_finalized(): return con
+
+        # Only add the sid if this is a socket request and we don't have a sid already
+        if hasattr(request, 'sid'):
+            if not con.sid:
+                con.sid = request.sid
+            return con
+
+        if not con.http_port:
+            con.http_port = request.environ['REMOTE_PORT']
+        return con
+
+    def disconnect(self, request):
+        con = self.get_client(request)
+        if con is None: return
+        self.clients.remove(con)
+
+    def login(self, uid):
+        return self.data.get_player({'uid': uid})
+
     def unsubscribe(self, eid):
         player = self.get_playernode_from_uid(eid)
         cur_instance = self.player_current_instance(eid)
@@ -48,22 +82,48 @@ class Shard(Manager):
             return cur_instance.instance.unsubscribe(eid)
         super().unsubscribe(eid)
 
-    def subscribe(self, uid):
+    def subscribe(self, player):
         '''Called when a player (with uid) is connecting'''
-        self.run_script(self.SplashPath, uid)
-        super().subscribe(uid)
-        # Check Connector for plaOyer
-        player = self.get_playernode_from_uid(uid)
-        self.connected_players.add(player)
-        character = self.get_character_from_playernode(player)
-        if character:
-            self.start_playing(uid, character)
+        if player not in self.connected_players:
+            self.connected_players.add(player)
+        self.establish_playernode(player)
+        
+    def establish_playernode(self, player):
+        player.status = PlayerNode.SelectingCharacter
+        # fix this
+        _, characters = self.data.get_player({'uid':player.uid})
+        message = json.dumps({
+            'type': 'characterList',
+            'characters': [Shard.format_character_for_list(c) for c in characters]
+        })
+        self.add_to_outbox(player.uid, message)
 
-    def start_playing(self, uid, character):
+    def format_character_for_list(c):
+        return {
+            'id': c.id,
+            'name': c.name,
+            'deceased': c.deceased,
+            'level': c.level,
+            'wealth': c.wealth,
+            'strength': c.strength,
+            'dexterity': c.dexterity,
+            'vitality': c.vitality,
+            'acuity': c.acuity,
+            'sense': c.sense,
+            'resolve': c.resolve
+        }
+
+    def add_to_outbox(self, uid, message):
+        self.emit('outbound', message)
+
+    def start_playing(self, playernode, character):
         '''Callback from character creation or subscription'''
-        self.get_active_playernode(uid).status = PlayerNode.Playing
+        if not character: 
+            return
         info = self.get_instance_for(character, character.instance)
-        self.move_player_to_instance(uid, info)
+        self.move_player_to_instance(playernode.uid, info)
+        playernode.status = PlayerNode.Playing
+        self.add_to_outbox(playernode.uid, json.dumps({'type': 'playing'}))
 
     def move_player_to_instance(self, uid, info):
         if info.instance.dungeon:
@@ -89,58 +149,12 @@ class Shard(Manager):
         return it. If not, run the script @TutorialPath and add the new uid
         to the database.
         '''
-        playernode = self.data.get_player({'uid': uid})
+        playernode, __ = self.data.get_player({'uid': uid})
         if playernode is None:
             # Run a tutorial for the new guy
-            self.run_script(self.TutorialPath, uid)
             playernode = PlayerNode(uid)
             self.data.add_player(playernode)
         return playernode
-
-    def get_character_from_playernode(self, playernode):
-        '''
-        Attempt to get a not deceased character from the database. If it exists,
-        return it. Otherwise, run the player through the script @CharacterCreationPath
-        '''
-        uid = playernode.uid
-        playernode.character = Player(None)
-        playernode.character.uid = uid
-        if not self.data.load_player(uid, playernode.character):
-            playernode.script_completion_callback = self.character_creation_callback
-            self.run_script(self.CharacterCreationPath, uid, playernode)
-            return
-        return playernode.character
-
-    def character_creation_callback(self, playernode):
-        '''
-        Callback from the CharacterCreation script. Adds the character to the database
-        and then starts playing.
-        '''
-        self.data.add_character(playernode.uid, playernode.character) 
-        self.data.update_character(playernode.character)
-        self.start_playing(playernode.uid, playernode.character)
-
-    def run_script(self, script, uid, playernode=None, character=None):
-        '''
-        Execute a script within `./config/scripts`. When finished, each script should
-        call the callback function, though some may get away with not doing so
-        (e.g. Splash)
-        '''
-        if not playernode:
-            playernode = self.get_active_playernode(uid)
-        payload = ScriptPayload(self, uid, playernode, character, '')
-        if playernode:
-            playernode.run_script(script)
-        __import__(script).run_script(payload)
-
-    def continue_script(self, playernode, user_input):
-        '''
-        Execute a script within `./config/scripts`. When finished, each script should
-        call the callback function, though some may get away with not doing so
-        (e.g. Splash)
-        '''
-        payload = ScriptPayload(self, playernode.uid, playernode, playernode.character, user_input)
-        getattr(__import__(playernode.active_script), playernode.script_entry_point)(payload)
 
     def create_random_dungeon(self, for_player, generation_properties=None, previous_identifier=''):
         '''Create a random dungeon instance based on a player's level'''
@@ -194,13 +208,13 @@ class Shard(Manager):
             info = self.get_instance_for(character, properties.identifier)
         self.move_player_to_instance(uid, info)
 
-    async def get_outbound_messages(self, eid):
-        player = self.get_playernode_from_uid(eid)
-        cur_instance = self.player_current_instance(eid)
-        if cur_instance:
-            return cur_instance.instance.get_messages_for(eid).encode('utf8')
+    def get_state_for(self, uid):
+        cur_instance = self.player_current_instance(uid)
+        if cur_instance is not None:
+            return cur_instance.instance.get_messages_for(uid)
 
-    def consume_command(self, data):
-        data_object = json.loads(data)
-        uid = self.get_active_playernode(data_object['uid'])
-        self.interface.receive(uid, data)
+    def consume_command(self, request, cmd):
+        cmd_object = json.loads(cmd)
+        client = self.get_client(request)
+        if client.playernode is not None and client.playernode.status == PlayerNode.Playing:
+            self.interface.receive(client.playernode, cmd_object)

@@ -3,6 +3,7 @@ from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.environment import *
 from erukar.engine.calculators import *
 from erukar.engine.calculators.meta import AStarBase, Queue
+from erukar.engine.model.Range import Range
 import numpy as np
 import math, random
 
@@ -27,7 +28,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
     def generate(self, previous_instance_identifier=''):
         self.dungeon = Dungeon()
-        room = Room(self.dungeon)
+        room = Room(self.dungeon, coordinates=Range.make(0, 2, 0, 0))
         room.walls = [Surface()]
         #self.create_dungeon()
         return self.dungeon

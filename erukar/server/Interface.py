@@ -20,15 +20,14 @@ class Interface:
             for a in obj().aliases:
                 self.aliases[a] = name
 
-    def receive(self, playernode, line):
-        data = json.loads(line)
+    def receive(self, playernode, data):
         target_command = '{0}.{1}'.format(Interface.command_location, data['command'])
         cmd = self.factory.create_one(target_command, None)
         if not cmd:
-            print(target_command)
             return
         cmd.args = data
         cmd.player_info = playernode
+
         instance = self.shard.player_current_instance(playernode.uid)
         if instance is not None:
             instance.append(cmd)
