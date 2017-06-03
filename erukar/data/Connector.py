@@ -55,6 +55,9 @@ class Connector:
     def get(self, schema_type, filters):
         return self.session.query(schema_type).filter_by(**filters)
 
+    def player_exists(self, uid):
+        return self.get(Player, {'uid': uid}).first() is not None
+
     '''Schema Specific CRUD'''
     def get_player(self, filters):
         data = self.get(Player, filters)\
@@ -73,6 +76,7 @@ class Connector:
         if player is None:
             return None
         return self.session.query(Character)\
+                .filter_by(player_id=player.id)\
                 .options(joinedload(Character.equipment), joinedload(Character.inventory))\
                 .filter_by(deceased=False)\
                 .first();

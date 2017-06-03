@@ -49,6 +49,7 @@ class Shard(Manager):
         return next((c for c in self.clients if c.addr == addr), None)
 
     def update_connection(self, request):
+        '''Update a connection with sid or http_port if necessary'''
         con = self.get_client(request)
         if not con:
             con = Connection(request.environ['REMOTE_ADDR'], self.emit)

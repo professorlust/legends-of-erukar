@@ -7,10 +7,7 @@ from concurrent.futures import ProcessPoolExecutor
 from flask import Flask
 from flask import request, jsonify, abort
 from flask_socketio import SocketIO, emit, send
-from erukar import PlayerNode
-
-#log = logging.getLogger('werkzeug')
-#log.setLevel(logging.ERROR)
+from erukar import PlayerNode, Player
 
 config_directories = [
     'world/sovereignties',
@@ -94,6 +91,29 @@ def select_character():
         return 'Successfully selected a character'
 
     return 'No character was found!'
+
+@app.route('/character', methods=['POST'])
+def on_add_character():
+    con = shard.update_connection(request)
+    if con.playernode is not None:
+        shard.data.add_character(con.uid(), Player(None)) 
+        return 'success'
+    abort(400)
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json(force=True)
+    if 'new_uid' not in data: abort(400)
+
+    con = shard.update_connection(request)
+    if shard.data.player_exists(data['new_uid']):
+        return 'UID {} already exists'.format(data['new_uid'])
+
+    con.playernode = PlayerNode(data['new_uid'],None)
+    shard.data.add_player(con.playernode)
+    _, raw_chars = shard.login(con.uid())
+    characters = [Shard.format_character_for_list(x) for x in raw_chars]
+    return jsonify(message="Successfully registered as {}".format(con.uid()), characters=characters)
 
 
 '''Websocket Endpoints'''
