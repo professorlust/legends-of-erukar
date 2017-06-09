@@ -119,8 +119,7 @@ class Shard(Manager):
 
     def start_playing(self, playernode, character):
         '''Callback from character creation or subscription'''
-        if not character: 
-            return
+        if not character: return
         info = self.get_instance_for(character, character.instance)
         self.move_player_to_instance(playernode.uid, info)
         playernode.status = PlayerNode.Playing

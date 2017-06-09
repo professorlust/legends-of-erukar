@@ -1,4 +1,3 @@
-from erukar.server.Server import *
 from erukar.server.Shard import Shard
 import asyncio, websockets, json, os, sys, datetime
 import logging
@@ -22,7 +21,7 @@ for cd in config_directories:
 
 app = Flask(__name__)
 from flask_cors import CORS, cross_origin
-cors = CORS(app)
+CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app)
 
@@ -72,6 +71,24 @@ def login():
     characters = [Shard.format_character_for_list(x) for x in raw_chars]
     return jsonify(message="Successfully registered as {}".format(uid), characters=characters)
 
+@app.route('/validate', methods=['POST'])
+def validation():
+    con = shard.get_client(request)
+    if con is None:
+        abort(401)
+    if con.playernode.status != PlayerNode.CreatingCharacter:
+        abort(403)
+
+    data = request.get_json(force=True)
+    if 'step' not in data:
+        abort(400)
+    
+    if data['step'] == 'bio':
+        print(data)
+        return "success"
+    return jsonify(message="Validation Errors occurred.")
+
+
 @app.route('/character/select', methods=['POST'])
 def select_character():
     data = request.get_json(force=True)
@@ -92,11 +109,11 @@ def select_character():
 
     return 'No character was found!'
 
-@app.route('/character', methods=['POST'])
+@app.route('/character/startcreation', methods=['POST'])
 def on_add_character():
     con = shard.update_connection(request)
     if con.playernode is not None:
-        shard.data.add_character(con.uid(), Player(None)) 
+        con.playernode.status = PlayerNode.CreatingCharacter
         return 'success'
     abort(400)
 

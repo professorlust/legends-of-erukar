@@ -72,6 +72,7 @@ class Connector:
             .all()
 
     def get_character(self, uid):
+        print('getting character')
         player = self.get(Player, {'uid': uid}).first()
         if player is None:
             return None

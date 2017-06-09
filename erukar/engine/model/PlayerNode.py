@@ -8,8 +8,9 @@ class PlayerNode(Indexer):
     Disconnected       =-1  # Default State
     Idle               = 0  # When the player is in menus
     SelectingCharacter = 1
-    SelectingRegion    = 2
-    Playing            = 3  # When the player has chosen a character and is playing it
+    CreatingCharacter  = 2
+    SelectingRegion    = 3
+    Playing            = 4  # When the player has chosen a character and is playing it
 
     def __init__(self, uid, world, character=None):
         super().__init__()
