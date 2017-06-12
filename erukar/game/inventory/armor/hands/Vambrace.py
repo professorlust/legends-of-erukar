@@ -9,5 +9,3 @@ class Vambrace(Armor):
     BasePrice = 60
     BaseWeight = 2.0
 
-    def __init__(self):
-        super().__init__("Vambrace")

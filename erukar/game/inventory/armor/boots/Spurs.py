@@ -9,5 +9,3 @@ class Spurs(Armor):
     BasePrice = 17
     BaseWeight = 1.5
 
-    def __init__(self):
-        super().__init__("Spurs")

@@ -9,5 +9,3 @@ class Plate(Armor):
     BasePrice = 200
     BaseWeight = 9.7
 
-    def __init__(self):
-        super().__init__("Plate")

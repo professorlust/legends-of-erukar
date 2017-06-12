@@ -9,5 +9,3 @@ class Sandals(Armor):
     BaseWeight = 0.5
     BasePrice = 8
 
-    def __init__(self):
-        super().__init__("Sandals")

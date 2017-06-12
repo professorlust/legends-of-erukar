@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 class ConnectorFactory:
     def __init__(self, passwd="thisisnottherealpassword"):
-        self.connection_string = "postgres+pygresql:///loedev"
+        self.connection_string = "postgres+pygresql://postgres:hikari@localhost:5432/loedev"
 
     def establish_connection(self):
         self.engine = sqlalchemy.create_engine(self.connection_string)

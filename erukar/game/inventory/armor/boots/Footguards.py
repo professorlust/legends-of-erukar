@@ -10,6 +10,3 @@ class Footguards(Armor):
     BaseWeight = 1.5
     Probability = 1
 
-    def __init__(self):
-        super().__init__("Footguards")
-

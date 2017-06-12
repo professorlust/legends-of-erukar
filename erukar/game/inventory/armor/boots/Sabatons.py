@@ -9,6 +9,3 @@ class Sabatons(Armor):
     BasePrice = 40
     BaseWeight = 4.0
 
-    def __init__(self):
-        super().__init__("Sabatons")
-

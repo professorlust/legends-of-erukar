@@ -9,5 +9,3 @@ class Greatplate(Armor):
     BasePrice = 400
     InventoryDescription = "Greatplates are the heaviest standard platemail available on the market, providing extreme protection despite being heavy and expensive."
 
-    def __init__(self):
-        super().__init__("Greatplate")

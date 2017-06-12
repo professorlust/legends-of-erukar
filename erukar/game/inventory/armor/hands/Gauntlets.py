@@ -9,5 +9,3 @@ class Gauntlets(Armor):
     BasePrice = 40
     BaseWeight = 4.3
 
-    def __init__(self):
-        super().__init__("Gauntlets")

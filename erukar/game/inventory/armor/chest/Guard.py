@@ -9,5 +9,3 @@ class Guard(Armor):
     BasePrice = 50
     InventoryDescription = "Guard description todo"
 
-    def __init__(self):
-        super().__init__("Guard")

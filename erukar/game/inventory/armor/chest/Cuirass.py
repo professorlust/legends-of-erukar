@@ -9,5 +9,3 @@ class Cuirass(Armor):
     BasePrice = 30
     InventoryDescription = "Cuirass description todo"
 
-    def __init__(self):
-        super().__init__("Cuirass")

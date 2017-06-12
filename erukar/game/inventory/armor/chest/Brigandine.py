@@ -8,5 +8,3 @@ class Brigandine(Armor):
     BasePrice = 40
     InventoryDescription = "Brigandine description todo"
 
-    def __init__(self):
-        super().__init__("Brigandine")

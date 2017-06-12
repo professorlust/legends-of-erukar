@@ -9,5 +9,3 @@ class Raiment(Armor):
     BaseWeight = 0.8
     BasePrice = 15
 
-    def __init__(self):
-        super().__init__("Raiment")

@@ -8,6 +8,3 @@ class Breeches(Armor):
     InventoryDescription = "Breeches todo"
     BasePrice = 30
     BaseWeight = 1.2
-
-    def __init__(self):
-        super().__init__("Breeches")

@@ -9,5 +9,3 @@ class Piece(Armor):
     BaseWeight = 3.2
     InventoryDescription = "A chestpiece is intricately forged or worked by a craftsman."
 
-    def __init__(self):
-        super().__init__("Piece")

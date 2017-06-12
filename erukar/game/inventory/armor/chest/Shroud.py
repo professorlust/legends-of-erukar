@@ -9,5 +9,3 @@ class Shroud(Armor):
     InventoryDescription = "Shroud todo"
     BaseWeight = 0.75
 
-    def __init__(self):
-        super().__init__("Shroud")

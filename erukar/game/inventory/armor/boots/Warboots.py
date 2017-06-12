@@ -9,5 +9,3 @@ class Warboots(Armor):
     InventoryDescription = "Heavily armored footgear traditionally used by heavy knights. Provides a lot of protection at the cost of maneuverability."
     BaseWeight = 5.7
 
-    def __init__(self):
-        super().__init__("Warboots")

@@ -15,5 +15,3 @@ class Hauberk(Armor):
         'piercing': (0.075, 3)
     }
 
-    def __init__(self):
-        super().__init__("Hauberk")

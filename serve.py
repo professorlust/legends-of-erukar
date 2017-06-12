@@ -88,6 +88,19 @@ def validation():
         return "success"
     return jsonify(message="Validation Errors occurred.")
 
+@app.route('/character/templates')
+def get_templates():
+    def format_template(template):
+        return {
+            'name': template.name,
+            'description': template.description,
+            'stats': template.stats,
+            'inventory': [x.describe() for x in template.inventory]
+        }
+
+    templates = [format_template(t) for t in shard.templates]
+    return jsonify(templates)
+
 
 @app.route('/character/select', methods=['POST'])
 def select_character():

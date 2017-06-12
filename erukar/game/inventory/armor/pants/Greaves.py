@@ -9,5 +9,3 @@ class Greaves(Armor):
     BasePrice = 100
     BaseWeight = 4
 
-    def __init__(self):
-        super().__init__("Greaves")

@@ -9,5 +9,3 @@ class Mantle(Armor):
     BasePrice = 30
     InventoryDescription = "Mantles are loose fitting pieces that cover the torso. What they lack in protection they certainly make up in style."
 
-    def __init__(self):
-        super().__init__("Mantle")

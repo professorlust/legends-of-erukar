@@ -9,5 +9,3 @@ class Treads(Armor):
     InventoryDescription = "Treads are specialized boots meant to maintain traction on difficult terrain. They offer a reasonable amount of protection, though perhaps less so than standard boots."
     BasePrice = 15
 
-    def __init__(self):
-        super().__init__("Treads")

@@ -9,5 +9,3 @@ class Legplates(Armor):
     BasePrice = 100
     BaseWeight = 6
 
-    def __init__(self):
-        super().__init__("Legplates")

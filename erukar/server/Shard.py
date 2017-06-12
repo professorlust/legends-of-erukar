@@ -33,6 +33,7 @@ class Shard(Manager):
         '''
         Create all Hub Instances and spin up  
         '''
+        __import__('Templates').configure(self)
         __import__('ServerProperties').configure(self)
         __import__('WorldConfiguration').configure(self)
         __import__('Arcana').configure(self)

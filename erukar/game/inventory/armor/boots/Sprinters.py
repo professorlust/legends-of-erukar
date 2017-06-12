@@ -9,5 +9,3 @@ class Sprinters(Armor):
     BaseWeight = 0.5
     BasePrice = 20
 
-    def __init__(self):
-        super().__init__("Sprinters")

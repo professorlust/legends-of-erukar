@@ -9,5 +9,3 @@ class Tunic(Armor):
     BasePrice = 30
     BaseWeight = 1.0
 
-    def __init__(self):
-        super().__init__("Tunic")
