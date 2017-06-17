@@ -29,8 +29,7 @@ class Interface:
         cmd.player_info = playernode
 
         instance = self.shard.player_current_instance(playernode.uid)
-        if instance is not None:
-            instance.append(cmd)
+        instance.try_execute(playernode, cmd)
 
     def get_messages_for(self, uid):
         instance = self.shard.player_current_instance(uid)

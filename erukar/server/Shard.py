@@ -159,24 +159,17 @@ class Shard(Manager):
 
     def create_random_dungeon(self, for_player, generation_properties=None, previous_identifier=''):
         '''Create a random dungeon instance based on a player's level'''
-        dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {'level': for_player.level, 'generation_properties': generation_properties, 'previous_identifier': previous_identifier})
+        dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {
+            'level': for_player.level,
+            'generation_properties': generation_properties,
+            'previous_identifier': previous_identifier})
         self.launch_dungeon_instance(dungeon_info)
         self.instances.append(dungeon_info)
         return dungeon_info
 
     def launch_dungeon_instance(self, info):
-        '''
-        Launch an instance using an InstanceInfo object.
-        '''
-        args=(self.connector_factory.create_session(),
-              info.action_commands,
-              info.non_action_commands,
-              info.sys_messages,
-              info.responses,
-        )
-        dungeon_thread = threading.Thread(target=info.instance.instance_running,args=args)
-        dungeon_thread.daemon = True
-        dungeon_thread.start()
+        '''Launch an instance using an InstanceInfo object.'''
+        info.launch(self.connector_factory.create_session())
 
     def player_current_instance(self, uid):
         for info in self.instances:

@@ -1,0 +1,8 @@
+{
+  "name": "Legends of Erukar",
+  "description": "...",
+  "image": "heroku/python",
+  "repository": "https://github.com/etkirsch/legends-of-erukar",
+  "keywords": ["python", "flask" ],
+  "addons": [ "heroku-postgresql" ]
+}

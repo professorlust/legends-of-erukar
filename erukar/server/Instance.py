@@ -16,6 +16,13 @@ class Instance(Manager):
     MaximumTurnSkipPenalty = 5 # in turns
     TickRate = 0.2 # in seconds
 
+    NotInitialized = -1
+    Ready = 0
+    Idle = 1
+    Running = 2
+    Frozen = 3
+    Closing = 4
+
     def __init__(self):
         super().__init__()
         self.active_player = None
@@ -23,24 +30,18 @@ class Instance(Manager):
         self.identifier = 'n/a'
         self.dungeon = None
         self.command_contexts = {}
-        self.is_ready = False
+        self.status = Instance.NotInitialized
 
     def instance_running(self, connector, action_commands, non_action_commands, sys_messages, responses):
         '''Entry point for the Initialization of the Instance by the Shard'''
         # Activate and initialize timers
-        self.connector = connector
         self.initialize_instance(action_commands, non_action_commands, sys_messages, responses)
-        self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
-        self.timer.start()
-        self.check_for_player_input()
 
-    def initialize_instance(self, action_commands, non_action_commands, sys_messages, responses):
+    def initialize_instance(self, connector):
         '''Turn on players and generate a dungeon'''
+        self.connector = connector
+        self.status = Instance.Ready
         self.turn_manager = TurnManager()
-        self.action_commands = action_commands
-        self.non_action_commands = non_action_commands
-        self.sys_messages = sys_messages
-        self.responses = responses
         if self.dungeon:
             self.on_start()
 
@@ -48,7 +49,7 @@ class Instance(Manager):
         self.subscribe_enemies()
         for room in self.dungeon.rooms:
             room.on_start()
-        self.is_ready = True
+        self.status = Instance.Running
         self.info.on_instance_ready()
 
     def any_connected_players(self):
@@ -139,6 +140,11 @@ class Instance(Manager):
         playernode.character = character
         self.players.append(playernode)
         return playernode
+
+    def try_execute(self, playernode, cmd):
+        if self.active_player == playernode:
+            print('yes')
+        else: print('no')
 
     def check_for_player_input(self):
         if any(self.non_action_commands):

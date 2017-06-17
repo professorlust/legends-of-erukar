@@ -1,7 +1,6 @@
 from erukar.server.Instance import Instance
 from erukar.server.Interface import Interface
-from multiprocessing import Manager
-import erukar
+import erukar, multiprocessing
 
 class InstanceInfo:
     '''
@@ -11,7 +10,6 @@ class InstanceInfo:
     '''
     def __init__(self, instance_type=Instance, props=None, additional_parameters=None):
         self.setup_instance(instance_type, props, additional_parameters)
-        self.setup_lists()
         self.waiters = []
 
     def setup_instance(self, instance_type, props, additional_parameters):
@@ -22,14 +20,8 @@ class InstanceInfo:
         self.instance.properties = props 
         self.identifier = self.instance.identifier
 
-    def setup_lists(self):
-        self.manager = Manager()
-        self.non_action_commands = self.manager.list([])
-        self.action_commands = self.manager.list([])
-        self.responses = self.manager.dict([])
-        self.sys_messages = self.manager.dict([])
-        self.player_command_contexts = {}
-        self.player_list = self.manager.list([])
+    def launch(self, connector):
+        self.instance.initialize_instance(connector)
 
     def player_join(self, uid):
         if self.instance.is_ready:

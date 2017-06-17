@@ -5,6 +5,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 from flask import Flask
 from flask import request, jsonify, abort
+from socketio import Middleware
 from flask_socketio import SocketIO, emit, send
 from erukar import PlayerNode, Player
 
@@ -27,10 +28,14 @@ socketio = SocketIO(app)
 
 blacklist = []
 
+shard = Shard(emit)
+shard.activate()
+
 '''Routes'''
 
 @app.route('/')
 def hello():
+    print('hello')
     return 'Hello'
 
 @app.route('/wiki/<string:article>')
@@ -58,6 +63,7 @@ def wiki(article):
 def login():
     # Get the data from the post
     data = request.get_json(force=True)
+    print(data)
     if 'uid' not in data:
         abort(400)
     uid = data['uid']
@@ -133,6 +139,7 @@ def on_add_character():
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json(force=True)
+    print(data)
     if 'new_uid' not in data: abort(400)
 
     con = shard.update_connection(request)
@@ -177,12 +184,11 @@ def on_request_state():
 def on_command_receipt(cmd):
     shard.consume_command(request, cmd)
 
-'''Helpers'''
 
-if __name__ == '__main__':
-    shard = Shard(emit)
-    shard.activate()
+if __name__ == "__main__":
+    print('shard activating')
 
     socketio.run(app, host="0.0.0.0")
     for con in shard.clients:
         con.tell('end', {})
+

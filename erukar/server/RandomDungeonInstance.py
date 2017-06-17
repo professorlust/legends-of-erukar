@@ -27,8 +27,8 @@ class RandomDungeonInstance(Instance):
         self.generation_parameters = generation_properties
         self.previous_identifier = previous_identifier
 
-    def initialize_instance(self, action_commands, non_action_commands, sys_messages, responses):
-        super().initialize_instance(action_commands, non_action_commands, sys_messages, responses)
+    def initialize_instance(self, connector):
+        super().initialize_instance(connector)
         d = DungeonGeneratorRedux()
         self.dungeon = d.generate(self.previous_identifier)
         self.decorate()
