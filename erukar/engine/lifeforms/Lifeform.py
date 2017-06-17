@@ -39,6 +39,13 @@ class Lifeform(RpgEntity):
         self.wealth = 0
         self.initialize_effects()
 
+    def build_from_payloads(stats, bio):
+        out = Lifeform(None)
+        for stat in stats:
+            setattr(out, stat, stats[stat])
+        out.name = bio['name']
+        return out
+
     def initialize_effects(self):
         self.skill_points   = 5
         self.skills         = []

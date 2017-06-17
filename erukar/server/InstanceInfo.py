@@ -10,6 +10,7 @@ class InstanceInfo:
     '''
     def __init__(self, instance_type=Instance, props=None, additional_parameters=None):
         self.setup_instance(instance_type, props, additional_parameters)
+        self.player_list = []
         self.waiters = []
 
     def setup_instance(self, instance_type, props, additional_parameters):
@@ -24,11 +25,6 @@ class InstanceInfo:
         self.instance.initialize_instance(connector)
 
     def player_join(self, uid):
-        if self.instance.is_ready:
-            self.do_join(uid)
-        else: self.waiters.append(uid)
-
-    def do_join(self, uid):
         self.player_list.append(uid)
         self.instance.subscribe(uid)
 

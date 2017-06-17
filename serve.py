@@ -7,7 +7,7 @@ from flask import Flask
 from flask import request, jsonify, abort
 from socketio import Middleware
 from flask_socketio import SocketIO, emit, send
-from erukar import PlayerNode, Player
+from erukar import PlayerNode, Player, Lifeform
 
 config_directories = [
     'world/sovereignties',
@@ -136,10 +136,25 @@ def on_add_character():
         return 'success'
     abort(400)
 
+@app.route('/character/endcreation', methods=['POST'])
+def on_finish_character_creation():
+    data = request.get_json(force=True)
+    if 'stats' not in data or 'bio' not in data:
+        abort(400)
+
+    con = shard.get_client(request)
+    if con is None: abort(401)
+
+    res = Lifeform.build_from_payloads(data['stats'], data['bio'])
+    shard.data.add_character(con.playernode.uid, res)
+    _, raw_chars = shard.login(con.playernode.uid)
+
+    characters = [Shard.format_character_for_list(x) for x in raw_chars]
+    return jsonify(message="Successfully created character", characters=characters)
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json(force=True)
-    print(data)
     if 'new_uid' not in data: abort(400)
 
     con = shard.update_connection(request)
@@ -179,6 +194,7 @@ def on_request_state():
     con = shard.get_client(request)
     if con.playernode is not None and con.playernode.status == PlayerNode.Playing:
         con.tell('update state', shard.get_state_for(con.uid()))
+    else: con.tell('specific message', 'Not playing')
 
 @socketio.on('send command')
 def on_command_receipt(cmd):

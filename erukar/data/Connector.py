@@ -262,6 +262,7 @@ class Connector:
 
         supplementary_data = {
             'player_id': schema_id,
+            'name': lifeform_object.name,
             'inventory': list(inventory.values()), 
             'equipment': equipment, 
             'spell_words': words,

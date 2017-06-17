@@ -31,6 +31,7 @@ class Instance(Manager):
         self.dungeon = None
         self.command_contexts = {}
         self.status = Instance.NotInitialized
+        self.responses = {}
 
     def instance_running(self, connector, action_commands, non_action_commands, sys_messages, responses):
         '''Entry point for the Initialization of the Instance by the Shard'''
