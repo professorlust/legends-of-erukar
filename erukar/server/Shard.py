@@ -44,6 +44,7 @@ class Shard(Manager):
         ]
         for info in self.instances:
             self.launch_dungeon_instance(info)
+        print(self.instances)
 
     def get_client(self, request):
         addr = request.environ['REMOTE_ADDR']
