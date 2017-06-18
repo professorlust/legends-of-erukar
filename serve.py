@@ -63,7 +63,6 @@ def wiki(article):
 def login():
     # Get the data from the post
     data = request.get_json(force=True)
-    print(data)
     if 'uid' not in data:
         abort(400)
     uid = data['uid']
@@ -183,14 +182,18 @@ def on_disconnect():
 
 @socketio.on('launch')
 def on_launch(*_):
+    print('launch received')
     con = shard.get_client(request)
     if con is None or not hasattr(con, 'character') or con.character is None:
+        print(con)
+        if con is not None: print(con.character)
         return
     shard.start_playing(con.playernode, con.character)
     con.tell('launch success' ,'')
 
 @socketio.on('request state')
 def on_request_state():
+    print('requesting state')
     con = shard.get_client(request)
     if con.playernode is not None and con.playernode.status == PlayerNode.Playing:
         con.tell('update state', shard.get_state_for(con.uid()))
