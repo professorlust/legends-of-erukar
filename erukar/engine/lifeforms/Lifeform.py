@@ -44,6 +44,7 @@ class Lifeform(RpgEntity):
         for stat in stats:
             setattr(out, stat, stats[stat])
         out.name = bio['name']
+        out.instance = 'TutorialDungeon'
         return out
 
     def initialize_effects(self):
