@@ -31,32 +31,6 @@ blacklist = []
 shard = Shard(emit)
 shard.activate()
 
-'''Routes'''
-
-@app.route('/')
-def hello():
-    print('hello')
-    return 'Hello'
-
-@app.route('/wiki/<string:article>')
-def wiki(article):
-    return jsonify({ 
-        'title': 'Salericite Ore',
-        'atAGlance': {
-            'title': 'Salericite',
-            'sections': [
-                {'title':'Arcane Properties', 'values': ['Arcane enhancement']},
-                {'title':'Phase', 'values': ['Solid']},
-                {'title':'Melting Point', 'values': ['Unknown']},
-                {'title':'Boiling Point', 'values': ['Unknown']},
-                {'title':'Density', 'values': ['18.3 g / cubic cm']},
-                {'title':'Known Alloys', 'values': ['None']},
-                {'title':'Known Deposits', 'values': ['~~Oridel~~, ~~Iuria~~', '~~Honeptys Flatlands::honeptys-flatlands~~, ~~Nothren~~']},
-                {'title':'Discovered By', 'values': ['Alvedor Zelongo, 13 CA']},
-            ],
-        },
-        'sections': []
-    })
 
 @app.route('/login', methods=['POST'])
 #@cross_origin()
