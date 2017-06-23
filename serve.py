@@ -120,7 +120,6 @@ def ws_register(raw_creds):
 
 @socketio.on('launch')
 def on_launch(*_):
-    print('launch received')
     con = shard.get_client(request)
     if con is None or not hasattr(con, 'character') or con.character is None:
         print(con)
@@ -131,7 +130,6 @@ def on_launch(*_):
 
 @socketio.on('request state')
 def on_request_state():
-    print('requesting state')
     con = shard.get_client(request)
     if con.playernode is not None and con.playernode.status == PlayerNode.Playing:
         con.tell('update state', shard.get_state_for(con.uid()))
