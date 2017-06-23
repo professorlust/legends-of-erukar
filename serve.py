@@ -32,23 +32,17 @@ shard = Shard(emit)
 shard.activate()
 
 
-@app.route('/login', methods=['POST'])
-#@cross_origin()
-def login():
-    # Get the data from the post
-    data = request.get_json(force=True)
-    if 'uid' not in data:
-        abort(400)
-    uid = data['uid']
-
-    con = shard.update_connection(request)
-    playernode, raw_chars = shard.login(uid)
-    if playernode is None:
-        abort(401)
-
-    con.playernode = playernode
-    characters = [Shard.format_character_for_list(x) for x in raw_chars]
-    return jsonify(message="Successfully registered as {}".format(uid), characters=characters)
+@app.route('/api/ping')
+def do_ping():
+    return jsonify({
+        'name': shard.properties.Name,
+        'url': shard.properties.Url,
+        'players': shard.active_players(),
+        'maxPlayers': shard.properties.MaxPlayers,
+        'description': shard.properties.Description,
+        'permadeath': shard.properties.PermaDeath,
+        'password': False
+    })
 
 @app.route('/validate', methods=['POST'])
 def validation():
@@ -125,21 +119,6 @@ def on_finish_character_creation():
     characters = [Shard.format_character_for_list(x) for x in raw_chars]
     return jsonify(message="Successfully created character", characters=characters)
 
-@app.route('/register', methods=['POST'])
-def register():
-    data = request.get_json(force=True)
-    if 'new_uid' not in data: abort(400)
-
-    con = shard.update_connection(request)
-    if shard.data.player_exists(data['new_uid']):
-        return 'UID {} already exists'.format(data['new_uid'])
-
-    con.playernode = PlayerNode(data['new_uid'],None)
-    shard.data.add_player(con.playernode)
-    _, raw_chars = shard.login(con.uid())
-    characters = [Shard.format_character_for_list(x) for x in raw_chars]
-    return jsonify(message="Successfully registered as {}".format(con.uid()), characters=characters)
-
 
 '''Websocket Endpoints'''
 
@@ -153,6 +132,35 @@ def on_connect():
 @socketio.on('disconnect')
 def on_disconnect():
     shard.disconnect(request)
+
+@socketio.on('login')
+def ws_login(raw_creds):
+    credentials = json.loads(raw_creds)
+    if 'uid' not in credentials:
+        return 'Malformed request received'
+    uid = credentials['uid']
+
+    con = shard.update_connection(request)
+    playernode, raw_chars = shard.login(uid)
+    if playernode is None:
+        return 'Could not find specified UID'
+
+    con.playernode = playernode
+    return [Shard.format_character_for_list(x) for x in raw_chars]
+
+@socketio.on('register')
+def ws_register(raw_creds):
+    credentials = json.loads(raw_creds)
+    if 'uid' not in credentials: return "Malformed request received"
+
+    con = shard.update_connection(request)
+    if shard.data.player_exists(credentials['uid']):
+        return 'UID {} already exists'.format(credentials['uid'])
+
+    con.playernode = PlayerNode(credentials['uid'],None)
+    shard.data.add_player(con.playernode)
+    _, raw_chars = shard.login(credentials['uid'])
+    return [Shard.format_character_for_list(x) for x in raw_chars]
 
 @socketio.on('launch')
 def on_launch(*_):

@@ -25,7 +25,7 @@ class Lifeform(RpgEntity):
     BaseDualWieldingPenalty = 60
     ArcaneEnergyRegenPercentage = 0.05
 
-    def __init__(self, world, name=""):
+    def __init__(self, world=None, name=""):
         super().__init__()
         self.name       = name
         self.uid        = ""

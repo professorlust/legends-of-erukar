@@ -212,3 +212,6 @@ class Shard(Manager):
         client = self.get_client(request)
         if client.playernode is not None and client.playernode.status == PlayerNode.Playing:
             self.interface.receive(client.playernode, cmd_object)
+
+    def active_players(self):
+        return len([c for c in self.clients if c.playernode is not None])

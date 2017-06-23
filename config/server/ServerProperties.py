@@ -1,4 +1,9 @@
 def configure(shard):
+    shard.properties.Name = 'Alar\'s Realm'
+    shard.properties.Url = 'http://alars-realm.herokuapp.com'
+    shard.properties.MaxPlayers = 10
+    shard.properties.Description = 'A basic LoE server'
+
     shard.properties.PermaDeath = False
 
     shard.properties.StartingWealth = 1000

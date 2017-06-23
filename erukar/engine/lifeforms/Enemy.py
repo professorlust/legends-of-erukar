@@ -10,9 +10,9 @@ class Enemy(Lifeform, Indexer):
     RandomizedWeapons = []
     ElitePointClassificationMinimum = 3.0
 
-    def __init__(self, name="", is_random=True):
+    def __init__(self, world=None, name="", is_random=True):
         Indexer.__init__(self)
-        Lifeform.__init__(self, name)
+        Lifeform.__init__(self, world,name)
 
         # Personality
         self.stat_points = 0
