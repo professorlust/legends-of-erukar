@@ -75,50 +75,6 @@ def get_templates():
     return jsonify(templates)
 
 
-@app.route('/character/select', methods=['POST'])
-def select_character():
-    data = request.get_json(force=True)
-    if 'id' not in data:
-        abort(400)
-    cid = data['id']
-
-    con = shard.get_client(request)
-    if con is None: 
-        abort(401)
-    
-    _, characters = shard.login(con.uid())
-    con.character = next((x for x in characters if x.id == cid), None)
-
-    if con.character is not None:
-        print('{} has selected {}!'.format(con.uid(), con.character.name))
-        return 'Successfully selected a character'
-
-    return 'No character was found!'
-
-@app.route('/character/startcreation', methods=['POST'])
-def on_add_character():
-    con = shard.update_connection(request)
-    if con.playernode is not None:
-        con.playernode.status = PlayerNode.CreatingCharacter
-        return 'success'
-    abort(400)
-
-@app.route('/character/endcreation', methods=['POST'])
-def on_finish_character_creation():
-    data = request.get_json(force=True)
-    if 'stats' not in data or 'bio' not in data:
-        abort(400)
-
-    con = shard.get_client(request)
-    if con is None: abort(401)
-
-    res = Lifeform.build_from_payloads(data['stats'], data['bio'])
-    shard.data.add_character(con.playernode.uid, res)
-    _, raw_chars = shard.login(con.playernode.uid)
-
-    characters = [Shard.format_character_for_list(x) for x in raw_chars]
-    return jsonify(message="Successfully created character", characters=characters)
-
 
 '''Websocket Endpoints'''
 
@@ -180,6 +136,46 @@ def on_request_state():
     if con.playernode is not None and con.playernode.status == PlayerNode.Playing:
         con.tell('update state', shard.get_state_for(con.uid()))
     else: con.tell('specific message', 'Not playing')
+
+@socketio.on('select character')
+def ws_select_character(raw_data):
+    data = json.loads(raw_data)
+    if 'id' not in data: return "Character does not exist"
+    cid = data['id']
+
+    con = shard.get_client(request)
+    if con is None: return "Connection is invalid"
+    
+    _, characters = shard.login(con.uid())
+    con.character = next((x for x in characters if x.id == cid), None)
+
+    if con.character is not None:
+        return 'Successfully selected {}'.format(con.character.name)
+    return 'No character was found!'
+
+@app.route('/character/startcreation', methods=['POST'])
+def on_add_character():
+    con = shard.update_connection(request)
+    if con.playernode is not None:
+        con.playernode.status = PlayerNode.CreatingCharacter
+        return 'success'
+    abort(400)
+
+@app.route('/character/endcreation', methods=['POST'])
+def on_finish_character_creation():
+    data = request.get_json(force=True)
+    if 'stats' not in data or 'bio' not in data:
+        abort(400)
+
+    con = shard.get_client(request)
+    if con is None: abort(401)
+
+    res = Lifeform.build_from_payloads(data['stats'], data['bio'])
+    shard.data.add_character(con.playernode.uid, res)
+    _, raw_chars = shard.login(con.playernode.uid)
+
+    characters = [Shard.format_character_for_list(x) for x in raw_chars]
+    return jsonify(message="Successfully created character", characters=characters)
 
 @socketio.on('send command')
 def on_command_receipt(cmd):
