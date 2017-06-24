@@ -121,14 +121,15 @@ class Shard(Manager):
     def start_playing(self, playernode, character):
         '''Callback from character creation or subscription'''
         if not character: return
+        playernode.character = character
         info = self.get_instance_for(character, character.instance)
-        self.move_player_to_instance(playernode.uid, info)
+        self.move_player_to_instance(playernode, info)
         playernode.status = PlayerNode.Playing
         self.add_to_outbox(playernode.uid, json.dumps({'type': 'playing'}))
 
-    def move_player_to_instance(self, uid, info):
+    def move_player_to_instance(self, node, info):
         if info.instance.dungeon:
-            self.interface.append_result(uid, '\n'.join([
+            self.interface.append_result(node.uid, '\n'.join([
                 '-'*16,
                 'Loading {}'.format(info.instance.dungeon.name),
                 '{}, {}'.format(info.instance.dungeon.region, info.instance.dungeon.sovereignty),
@@ -137,12 +138,12 @@ class Shard(Manager):
                 '\n'
             ]))
         else:
-            self.interface.append_result(uid, '\n'.join([
+            self.interface.append_result(node.uid, '\n'.join([
                 '-'*16,
                 'Randomizing dungeon',
                 '-'*16
             ]))
-        info.player_join(uid)
+        info.player_join(node)
 
     def get_playernode_from_uid(self, uid):
         '''

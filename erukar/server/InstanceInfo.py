@@ -24,9 +24,9 @@ class InstanceInfo:
     def launch(self, connector):
         self.instance.initialize_instance(connector)
 
-    def player_join(self, uid):
-        self.player_list.append(uid)
-        self.instance.subscribe(uid)
+    def player_join(self, node):
+        self.player_list.append(node.uid)
+        self.instance.subscribe(node)
 
     def on_instance_ready(self):
         for waiter in self.waiters:
@@ -44,3 +44,6 @@ class InstanceInfo:
 
     def get_messages_for(self, uid):
         return self.responses.pop(uid, [])
+
+    def try_execute(self, node, cmd):
+        self.instance.try_execute(node, cmd)

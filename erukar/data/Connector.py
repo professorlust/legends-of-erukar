@@ -1,4 +1,4 @@
-from .Schema import *
+from erukar.data.models import *
 from erukar.engine.magic.SpellWordGrasp import SpellWordGrasp
 from erukar.engine.model.PlayerNode import PlayerNode
 from sqlalchemy.orm import joinedload, load_only

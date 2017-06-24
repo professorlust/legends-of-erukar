@@ -1,4 +1,4 @@
-from .Schema import *
+from .models import *
 from .ConnectorFactory import ConnectorFactory
 from .Connector import Connector
 

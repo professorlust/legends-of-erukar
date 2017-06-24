@@ -100,23 +100,22 @@ class Instance(Manager):
         uid = random.choice(possible_uids)
         return self.connector.load_creature(uid)
 
-    def subscribe(self, uid):
-        prejoin = self.any_connected_players()
-        player = self.launch_player(uid)
-        super().subscribe(player)
+    def subscribe(self, node):
+        if not hasattr(node, 'character') or node.character is None:
+            return
+
+        super().subscribe(node.character)
         room = self.dungeon.rooms[0]
-        player.character.subscribe(self)
-        self.dungeon.add_actor(player.lifeform(), (0,0))
+        self.dungeon.add_actor(node.character, (0,0))
         # Run on_equip for all equipped items
-        for equip in player.character.equipment_types:
-            equipped = getattr(player.character, equip)
+        for equip in node.character.equipment_types:
+            equipped = getattr(node.character, equip)
             if equipped is not None:
-                equipped.on_equip(player.character)
-        self.turn_manager.subscribe(player)
-        self.command_contexts[uid] = None
-        if not prejoin:
-            self.get_next_player()
-        self.execute_pre_inspect(player)
+                equipped.on_equip(node.character)
+        self.turn_manager.subscribe(node)
+        self.command_contexts[node.uid] = None
+        self.execute_pre_inspect(node)
+        self.active_player = node
 
     def execute_pre_inspect(self, player):
         player.lifeform().current_action_points += Inspect.ActionPointCost
@@ -159,25 +158,18 @@ class Instance(Manager):
         self.timer = threading.Timer(self.TickRate, self.check_for_player_input)
         self.timer.start()
 
-    def execute_player_turn(self):
-        if isinstance(self.active_player, erukar.engine.model.PlayerNode):
-            player_cmd = self.get_active_player_action()
-            if player_cmd is None:
-                return
-            result = self.execute_command(player_cmd)
+    def try_execute(self, node, cmd):
+        if node.uid == self.active_player.uid:
+            result = self.execute_command(cmd)
             if result is None or (result is not None and not result.success):
                 return
 
-            if self.active_player.lifeform().action_points() == 0 or isinstance(player_cmd, Wait):
+            if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
                 self.get_next_player()
 
         # Go ahead and execute ai turns
         while self.turn_manager.has_players() and not isinstance(self.active_player, erukar.engine.model.PlayerNode):
             self.do_non_player_turn()
-
-        self.timer.cancel()
-        self.timer = threading.Timer(self.MaximumTurnTime, self.skip_player)
-        self.timer.start()
 
     def do_non_player_turn(self):
         if isinstance(self.active_player, str):

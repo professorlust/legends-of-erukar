@@ -122,7 +122,6 @@ def ws_register(raw_creds):
 def on_launch(*_):
     con = shard.get_client(request)
     if con is None or not hasattr(con, 'character') or con.character is None:
-        print(con)
         if con is not None: print(con.character)
         return
     shard.start_playing(con.playernode, con.character)
@@ -145,7 +144,8 @@ def ws_select_character(raw_data):
     if con is None: return "Connection is invalid"
     
     _, characters = shard.login(con.uid())
-    con.character = next((x for x in characters if x.id == cid), None)
+    schema_character = next((x for x in characters if x.id == cid), None)
+    con.character = schema_character.map_to_new_player()
 
     if con.character is not None:
         return 'Successfully selected {}'.format(con.character.name)

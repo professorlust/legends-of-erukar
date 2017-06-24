@@ -1,9 +1,11 @@
-from erukar.data.Schema import *
+from erukar.data.models import *
 from erukar.data.Connector import Connector
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 import os
+
+from erukar.data.SchemaBase import Base
 
 class ConnectorFactory:
     def __init__(self,username="postgres",passwd="nottherealpass"):
@@ -15,7 +17,6 @@ class ConnectorFactory:
 
     def create_metadata(self):
         metadata = sqlalchemy.schema.MetaData(self.engine)
-        print(metadata)
         Base.metadata.create_all(self.engine)
 
     def create_session(self):
