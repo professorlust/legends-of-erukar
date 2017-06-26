@@ -1,11 +1,9 @@
 from erukar.data.models import *
 from erukar.data.Connector import Connector
-from sqlalchemy.orm import sessionmaker
-import sqlalchemy
-from sqlalchemy.ext.declarative import declarative_base
-import os
-
 from erukar.data.SchemaBase import Base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+import sqlalchemy, os
 
 class ConnectorFactory:
     def __init__(self,username="postgres",passwd="nottherealpass"):

@@ -7,21 +7,6 @@ import sqlalchemy, erukar
 
 '''Establish'''
 class Connector:
-    simple_map_lifeform_params = [
-        'name',
-        'max_health',
-        'health',
-        'strength',
-        'dexterity',
-        'vitality',
-        'acuity',
-        'sense',
-        'resolve',
-        'level',
-        'experience',
-        'wealth',
-        'instance'
-    ]
     simple_map_creature_params = [
         'str_ratio',
         'dex_ratio',
@@ -33,7 +18,7 @@ class Connector:
         'uid'
     ]
     simple_map_player_params = [
-        'stat_points',
+    
     ]
 
     def __init__(self, session):

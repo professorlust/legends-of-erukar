@@ -33,3 +33,19 @@ class Lifeform(Base):
     equipment   = relationship("EquippedItem", cascade="all, delete-orphan")
     inventory   = relationship("Item", cascade="all, delete-orphan")
     effects     = relationship("Effect", cascade="all, delete-orphan")
+
+    simple_map_params = [
+        'name',
+        'max_health',
+        'health',
+        'strength',
+        'dexterity',
+        'vitality',
+        'acuity',
+        'sense',
+        'resolve',
+        'level',
+        'experience',
+        'wealth',
+        'instance'
+    ]

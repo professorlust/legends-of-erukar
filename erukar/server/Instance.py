@@ -102,49 +102,29 @@ class Instance(Manager):
 
     def subscribe(self, node):
         if not hasattr(node, 'character') or node.character is None:
+            raise Error("No character")
             return
 
-        super().subscribe(node.character)
-        room = self.dungeon.rooms[0]
+        node.world = self.dungeon
+        node.character.world = self.dungeon
+        super().subscribe(node)
         self.dungeon.add_actor(node.character, (0,0))
+        if self.active_player is None: self.active_player = node
+
         # Run on_equip for all equipped items
         for equip in node.character.equipment_types:
             equipped = getattr(node.character, equip)
             if equipped is not None:
                 equipped.on_equip(node.character)
+
         self.turn_manager.subscribe(node)
         self.command_contexts[node.uid] = None
         self.execute_pre_inspect(node)
-        self.active_player = node
 
     def execute_pre_inspect(self, player):
         player.lifeform().current_action_points += Inspect.ActionPointCost
         ins = player.create_command(Inspect)
-        self.execute_command(ins)
-
-    def launch_player(self, uid):
-        # Create the base object
-        character = Player(self.dungeon)
-        playernode, _ = self.connector.get_player({'uid': uid})
-        if playernode is None:
-            playernode = PlayerNode(uid)
-            self.connector.add_player(playernode)
-        playernode.world = self.dungeon
-        character.uid = uid
-
-        # If this is a new character, mark it for Initialization
-        if not self.connector.load_player(uid, character):
-            self.connector.add_character(uid, character)
-            self.connector.update_character(character)
-
-        playernode.character = character
-        self.players.append(playernode)
-        return playernode
-
-    def try_execute(self, playernode, cmd):
-        if self.active_player == playernode:
-            print('yes')
-        else: print('no')
+        self.try_execute(player, ins)
 
     def check_for_player_input(self):
         if any(self.non_action_commands):
@@ -189,14 +169,12 @@ class Instance(Manager):
     def get_next_player(self):
         if self.active_player is not None and not isinstance(self.active_player, str):
             res = self.active_player.end_turn()
-            #TODO: Replace with Results object later
             if len(res) > 0:
                 self.append_response(self.active_player.uid, res)
 
         self.active_player = self.turn_manager.next()
         if self.active_player is not None and not isinstance(self.active_player, str):
             res = self.active_player.begin_turn()
-            #TODO: Same as above
             if len(res) > 0:
                 self.append_response(self.active_player.uid, res)
 
@@ -223,7 +201,6 @@ class Instance(Manager):
     def execute_command(self, cmd):
         cmd.server_properties = self.properties
         cmd.context = self.command_contexts[cmd.player_info.uid]
-        cmd.player_info = self.active_player
         if cmd.context and not hasattr(cmd.context, 'server_properties'):
             cmd.context.server_properties = self.properties
         cmd.world = self.dungeon
@@ -265,6 +242,7 @@ class Instance(Manager):
         player_node = self.get_player_from_uid(uid)
         if not player_node:
             return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
+
         character = player_node.lifeform()
         d = self.dungeon
 

@@ -5,7 +5,7 @@ class TurnManager(Manager):
     TickIndicator = '5 Second Tick'
     MaximumTurnCount = 100000
     TickCount = 50
-    MinimumOnDeck = 2
+    MinimumOnDeck = 3
 
     def __init__(self):
         super().__init__()
@@ -17,7 +17,8 @@ class TurnManager(Manager):
 
     def subscribe(self, player):
         super().subscribe(player)
-        self.most_recent_active_commands[player] = None
+        if self.active_player is None:
+            self.active_player = player
         self.refresh_deck()
 
     def unsubscribe(self, player):
@@ -39,19 +40,21 @@ class TurnManager(Manager):
             self.active_player = self.on_deck.pop(0)
             if len(self.on_deck) < self.MinimumOnDeck:
                 self.refresh_deck()
-            if isinstance(self.active_player, erukar.engine.lifeforms.Lifeform) and self.active_player.is_incapacitated():
+            if not isinstance(self.active_player, str) and self.active_player.lifeform().is_incapacitated():
                 continue
             return self.active_player
 
     def refresh_deck(self):
-        if len(self.players) < 1: return
+        if len(self.players) < 1: 
+            raise Error("Not enough players")
+            return
         while len(self.on_deck) < TurnManager.MinimumOnDeck:
             self.current_turn_count = (self.current_turn_count + 1) % TurnManager.MaximumTurnCount
             if self.current_turn_count % self.TickCount == 0:
                 self.on_deck.append(TurnManager.TickIndicator)
             for player in self.players:
-                mod = player.turn_modifier()
-                if (self.current_turn_count+1) % player.turn_modifier() == 0:
+                mod = player.lifeform().turn_modifier()
+                if (self.current_turn_count+1) % mod == 0:
                     self.on_deck.append(player)
 
     def has_players(self):
@@ -68,4 +71,4 @@ class TurnManager(Manager):
 
     def to_str(player):
         if not player: return 'N/A'
-        return player if isinstance(player, str) else player.lifeform().alias()
+        return player if isinstance(player, str) else player.lifeform().name

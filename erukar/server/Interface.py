@@ -23,8 +23,7 @@ class Interface:
     def receive(self, playernode, data):
         target_command = '{0}.{1}'.format(Interface.command_location, data['command'])
         cmd = self.factory.create_one(target_command, None)
-        if not cmd:
-            return
+        if not cmd: return
         cmd.args = data
         cmd.player_info = playernode
 
