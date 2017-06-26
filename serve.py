@@ -61,7 +61,7 @@ def validation():
         return "success"
     return jsonify(message="Validation Errors occurred.")
 
-@app.route('/character/templates')
+@app.route('/api/templates')
 def get_templates():
     def format_template(template):
         return {
@@ -74,7 +74,7 @@ def get_templates():
     templates = [format_template(t) for t in shard.templates]
     return jsonify(templates)
 
-@app.route('/regions')
+@app.route('/api/regions')
 def get_regions():
     def format(info):
         region = info.instance.dungeon
