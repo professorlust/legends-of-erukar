@@ -38,10 +38,12 @@ class Shard(Manager):
         __import__('WorldConfiguration').configure(self)
         __import__('Arcana').configure(self)
 
-        self.instances = [
+        self.starting_region_options = [
             InstanceInfo(erukar.server.HubInstance, self.properties.copy(), {'file_path': option})
-            for option in self.StartingOptions
+            for option in self.StartingRegionOptionNames
         ]
+
+        self.instances = self.starting_region_options.copy()
         for info in self.instances:
             self.launch_dungeon_instance(info)
 

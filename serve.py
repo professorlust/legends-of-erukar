@@ -74,6 +74,20 @@ def get_templates():
     templates = [format_template(t) for t in shard.templates]
     return jsonify(templates)
 
+@app.route('/regions')
+def get_regions():
+    def format(info):
+        region = info.instance.dungeon
+        return {
+            'name': region.name,
+            'sovereignty': region.sovereignty,
+            'region': region.region, # yo dawg
+            'description': region.description,
+            'profile': 'Woodlands Dungeon',
+        }
+
+    regions = [format(t) for t in shard.starting_region_options]
+    return jsonify(regions)
 
 
 '''Websocket Endpoints'''

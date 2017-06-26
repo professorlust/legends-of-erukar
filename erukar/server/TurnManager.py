@@ -9,7 +9,6 @@ class TurnManager(Manager):
 
     def __init__(self):
         super().__init__()
-        self.most_recent_active_commands = {}
         self.current_turn_count = 0
         self.previous_player = None
         self.active_player = None
@@ -24,15 +23,6 @@ class TurnManager(Manager):
     def unsubscribe(self, player):
         super().unsubscribe(player)
         self.refresh_deck()
-
-    def received_command(self, player, command):
-        if isinstance(command, erukar.engine.model.ActionCommand):
-            self.most_recent_active_commands[player] = command
-
-    def pop_command(self, player):
-        command = self.most_recent_active_commands[player]
-        self.most_recent_active_commands[player] = None
-        return command
 
     def next(self):
         while len(self.on_deck) > 0:
