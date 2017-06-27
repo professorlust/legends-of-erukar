@@ -47,14 +47,11 @@ def do_ping():
 @app.route('/validate', methods=['POST'])
 def validation():
     con = shard.get_client(request)
-    if con is None:
-        abort(401)
-    if con.playernode.status != PlayerNode.CreatingCharacter:
-        abort(403)
+    if con is None: abort(401)
+    if con.playernode.status != PlayerNode.CreatingCharacter: abort(403)
 
     data = request.get_json(force=True)
-    if 'step' not in data:
-        abort(400)
+    if 'step' not in data: abort(400)
     
     if data['step'] == 'bio':
         print(data)
@@ -68,7 +65,7 @@ def get_templates():
             'name': template.name,
             'description': template.description,
             'stats': template.stats,
-            'inventory': [x.describe() for x in template.inventory]
+            'inventory': [x.alias() for x in template.inventory]
         }
 
     templates = [format_template(t) for t in shard.templates]
