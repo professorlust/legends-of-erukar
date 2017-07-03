@@ -68,11 +68,6 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
                 current = self.dungeon.get_room_at(coord)
                 if not current:
                     current = Room(self.dungeon, coord)
-
-                if previous and previous != current:
-                    direction = Navigator.direction_between(current.coordinates, previous.coordinates)
-                    current.connect(previous, None)
-
                 previous = current
 
     def build_offshoot(self):
@@ -93,9 +88,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
             new_room = Room(self.dungeon, new_coords)
             if not new_room.is_valid:
                 break
-            current.connect(new_room, None)
             current = new_room
-
 
     def build_junction_based_on_linearity(self):
         '''Attempts to build connections (junctions) between two highly linear rooms'''

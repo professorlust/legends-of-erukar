@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, joinedload
 
-from erukar.data.SchemaBase import Base
+from erukar.data.SchemaBase import Base, ErukarBase
+import erukar
 
-class Lifeform(Base):
+class Lifeform(ErukarBase, Base):
     __tablename__ = 'lifeforms'
     __mapper_args_ = { 
         'polymorphic_identity': 'lifeforms',
@@ -34,7 +35,7 @@ class Lifeform(Base):
     inventory   = relationship("Item", cascade="all, delete-orphan")
     effects     = relationship("Effect", cascade="all, delete-orphan")
 
-    simple_map_params = [
+    SimpleMapParams = [
         'name',
         'max_health',
         'health',
@@ -49,3 +50,32 @@ class Lifeform(Base):
         'wealth',
         'instance'
     ]
+
+    def get_schema_query(session, id):
+        return session.query(Lifeform)\
+            .options(\
+                joinedload(Lifeform.skills),\
+                joinedload(Lifeform.equipment),\
+                joinedload(Lifeform.inventory))\
+            .filter_by(id=id)
+
+    def create_new_object(self):
+        new_obj = erukar.engine.lifeforms.Lifeform()
+        self.map_schema_to_object(new_obj)
+        return new_obj
+
+    def map_schema_to_object(self, existing_object):
+        ErukarBase.map_schema_to_object(self, existing_object)
+        self.map_inventory_on_object(existing_object)
+
+    def map_inventory_on_object(self, new_object):
+        for schema_item in self.inventory:
+            # Below here can be added to Item
+            real_item = schema_item.create_new_object()
+            new_object.add_to_inventory(real_item)
+            if schema_item.is_equipped(self.equipment):
+                setattr(new_object, schema_item.equipment_location(self.equipment), real_item)
+
+    def get(session, id):
+        s_model = Lifeform.get_schema_query(session, id).first()
+        return s_model.create_new_object()

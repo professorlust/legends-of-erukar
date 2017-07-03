@@ -8,14 +8,6 @@ import sqlalchemy, erukar
 '''Establish'''
 class Connector:
     simple_map_creature_params = [
-        'str_ratio',
-        'dex_ratio',
-        'vit_ratio',
-        'acu_ratio',
-        'sen_ratio',
-        'res_ratio',
-        'elite_points',
-        'uid'
     ]
     simple_map_player_params = [
     
