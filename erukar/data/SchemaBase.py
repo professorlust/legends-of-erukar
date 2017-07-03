@@ -28,3 +28,11 @@ class ErukarBase:
             raise Exception('Schema Object attempted to map a null object')
         for parameter in self.SimpleMapParams:
             setattr(existing_object, parameter, getattr(self, parameter))
+
+    def create_from_type(item_type, args=None):
+        '''Dynamically create an item from the erukar module'''
+        if not item_type: 
+            raise Exception("Cannot create from null type")
+        prelim_type = item_type.split('.')
+        if not args: args = {}
+        return getattr(__import__(item_type, fromlist=[prelim_type[-1]]), prelim_type[-1])(**args)

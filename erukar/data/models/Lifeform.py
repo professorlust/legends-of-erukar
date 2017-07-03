@@ -64,17 +64,17 @@ class Lifeform(ErukarBase, Base):
         self.map_schema_to_object(new_obj)
         return new_obj
 
-    def map_schema_to_object(self, existing_object):
-        ErukarBase.map_schema_to_object(self, existing_object)
-        self.map_inventory_on_object(existing_object)
+    def map_schema_to_object(self, new_object):
+        ErukarBase.map_schema_to_object(self, new_object)
+        self.map_inventory_on_object(new_object)
 
     def map_inventory_on_object(self, new_object):
         for schema_item in self.inventory:
             # Below here can be added to Item
             real_item = schema_item.create_new_object()
             new_object.add_to_inventory(real_item)
-            if schema_item.is_equipped(self.equipment):
-                setattr(new_object, schema_item.equipment_location(self.equipment), real_item)
+            location = schema_item.equipment_location(self.equipment)
+            if location: setattr(new_object, location, real_item)
 
     def get(session, id):
         s_model = Lifeform.get_schema_query(session, id).first()

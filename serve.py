@@ -108,12 +108,12 @@ def ws_login(raw_creds):
     uid = credentials['uid']
 
     con = shard.update_connection(request)
-    playernode, raw_chars = shard.login(uid)
+    playernode = shard.login(uid)
     if playernode is None:
         return 'Could not find specified UID'
 
     con.playernode = playernode
-    return [Shard.format_character_for_list(x) for x in raw_chars]
+    return [Shard.format_character_for_list(x) for x in playernode.characters]
 
 @socketio.on('register')
 def ws_register(raw_creds):

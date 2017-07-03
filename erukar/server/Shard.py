@@ -22,7 +22,7 @@ class Shard(Manager):
         self.connector_factory.establish_connection()
         self.connector_factory.create_metadata()
         self.properties = ServerProperties()
-        self.data = self.connector_factory.create_session()
+        self.session = self.connector_factory.create_session()
         self.interface = Interface(self)
         self.instances = []
         self.clients = set()
@@ -77,7 +77,7 @@ class Shard(Manager):
         self.clients.remove(con)
 
     def login(self, uid):
-        return self.data.get_player({'uid': uid})
+        return erukar.data.models.Player.get(self.session, uid)
 
     def unsubscribe(self, eid):
         player = self.get_playernode_from_uid(eid)
@@ -95,7 +95,7 @@ class Shard(Manager):
     def establish_playernode(self, player):
         player.status = PlayerNode.SelectingCharacter
         # fix this
-        _, characters = self.data.get_player({'uid':player.uid})
+        characters = erukar.data.models.Character.get_for_player(self.session, player.uid)
         message = json.dumps({
             'type': 'characterList',
             'characters': [Shard.format_character_for_list(c) for c in characters]
@@ -153,11 +153,11 @@ class Shard(Manager):
         return it. If not, run the script @TutorialPath and add the new uid
         to the database.
         '''
-        playernode, __ = self.data.get_player({'uid': uid})
+        playernode = erukar.data.models.get(self.session, uid)
         if playernode is None:
             # Run a tutorial for the new guy
             playernode = PlayerNode(uid)
-            self.data.add_player(playernode)
+            erukar.data.models.add(self.session, playernode)
         return playernode
 
     def create_random_dungeon(self, for_player, generation_properties=None, previous_identifier=''):
@@ -197,7 +197,7 @@ class Shard(Manager):
         return instance
 
     def transfer_instances(self, uid, properties):
-        playernode = self.data.get_player({'uid': uid})
+        playernode = erukar.data.models.Player.get(self.session, uid)
         character = self.get_character_from_playernode(playernode)
         if properties.is_random:
             info = self.create_random_dungeon(character, properties.generation_properties, properties.previous_identifier)

@@ -18,4 +18,4 @@ class ConnectorFactory:
         Base.metadata.create_all(self.engine)
 
     def create_session(self):
-        return Connector(self.Session())
+        return Connector(self.Session()).session
