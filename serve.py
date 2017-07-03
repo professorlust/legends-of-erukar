@@ -32,7 +32,6 @@ blacklist = []
 shard = Shard(emit)
 shard.activate()
 
-
 @app.route('/api/ping')
 def do_ping():
     return jsonify({

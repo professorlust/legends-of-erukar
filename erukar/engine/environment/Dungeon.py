@@ -47,6 +47,10 @@ class Dungeon(RpgEntity):
         for coord in coordinates:
             self.dungeon_map[coord] = new_room
 
+    def all_traversable_coordinates(self):
+        '''Move to player later'''
+        return [x for x in self.dungeon_map]
+
     def get_room_at(self, location):
         if location in self.dungeon_map:
             return self.dungeon_map[location]

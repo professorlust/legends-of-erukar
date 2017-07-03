@@ -365,6 +365,9 @@ class Lifeform(RpgEntity):
         self.current_action_points -= amount - remainder
         self.reserved_action_points -= remainder
 
+    def move_speed(self):
+        return math.floor(3 + self.calculate_effective_stat('dexterity')/8)
+
     def begin_turn(self):
         self.gain_action_points()
         results = [aff.do_begin_of_turn_effect() for aff in self.conditions]

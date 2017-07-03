@@ -1,6 +1,6 @@
 from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.ActionCommand import ActionCommand
-from erukar.engine.calculators.meta.AStarBase import AStarBase
+from erukar.engine.calculators.Pathing import Pathing
 import erukar, math
 
 class Move(ActionCommand):
@@ -21,8 +21,19 @@ class Move(ActionCommand):
         '''
         if len(path) < 2: return -1
 
-        total_move_distance = 5
+        total_move_distance = len(path) - 1
         return math.ceil(total_move_distance / self.args['player_lifeform'].move_speed())
+
+    def get_path_to(self, coordinates):
+        start = self.args['player_lifeform'].coordinates
+        goal = coordinates
+        collection = list(self.world.all_traversable_coordinates())
+        
+        pather = Pathing()
+        path_info, cost = pather.search(collection, start, goal)
+        path = pather.reverse(path_info, start, goal)
+        path.pop(0)
+        return path
 
     def perform(self):
         if 'coordinates' not in self.args or not self.args['coordinates']:
@@ -30,7 +41,8 @@ class Move(ActionCommand):
 
         self.args['coordinates'] = self.specified_coordinates()
 
-        cost = 1#self.cost_to_move(path)
+        path = self.get_path_to(self.args['coordinates'])
+        cost = self.cost_to_move(path)
         if cost == -1: 
             return self.fail('A path could not be found to reach {}'.format(self.args['coordinates']))
         if self.args['player_lifeform'].action_points() < cost:

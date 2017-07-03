@@ -16,6 +16,8 @@ class Item(ErukarBase, Base):
     modifiers       = relationship("Modifier", cascade="all, delete-orphan")
     item_attributes = Column(JSON, nullable=True)
 
+    SimpleMapParams = []
+
     def get_schema_query(session, id):
         return session.query(Item)\
             .options(joinedload(Item.modifiers))\
@@ -29,6 +31,24 @@ class Item(ErukarBase, Base):
     def map_schema_to_object(self, new_object):
         ErukarBase.map_schema_to_object(self, new_object)
         # Do stuff here with modifiers and attributes
+        if self.material_type:
+            self.apply_material(new_object)
+        self.apply_modifiers(new_object)
+        self.apply_attributes(new_object)
+
+    def apply_material(self, new_object):
+        material = ErukarBase.create_from_type(self.material_type)
+        material.apply_to(new_object)
+
+    def apply_modifiers(self, new_object):
+        for modifier_schema in self.modifiers:
+            modifier = modifier_schema.create_new_object()
+            modifier.apply_to(new_object)
+
+    def apply_attributes(self, new_object):
+        if not self.item_attributes: return
+        for attribute_name in self.item_attributes:
+            setattr(new_object, attribute_name, self.item_attributes[attribute_name])
 
     def equipment_location(self, equipment):
         return next((x.equipment_slot for x in equipment if x.item_id == self.id), None)
@@ -36,3 +56,4 @@ class Item(ErukarBase, Base):
     def get(session, id):
         s_model = Lifeform.get_schema_query(session, id).first()
         return s_model.create_new_object()
+
