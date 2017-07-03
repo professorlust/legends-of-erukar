@@ -8,6 +8,7 @@ from flask import request, jsonify, abort
 from socketio import Middleware
 from flask_socketio import SocketIO, emit, send
 from erukar import PlayerNode, Player, Lifeform
+import erukar
 
 config_directories = [
     'world/sovereignties',
@@ -108,12 +109,12 @@ def ws_login(raw_creds):
     uid = credentials['uid']
 
     con = shard.update_connection(request)
-    playernode = shard.login(uid)
-    if playernode is None:
+    player_schema = erukar.data.models.Player.get(shard.session, uid)
+    if player_schema is None:
         return 'Could not find specified UID'
 
-    con.playernode = playernode
-    return [Shard.format_character_for_list(x) for x in playernode.characters]
+    con.playernode = player_schema.create_new_object()
+    return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
 @socketio.on('register')
 def ws_register(raw_creds):
@@ -154,11 +155,10 @@ def ws_select_character(raw_data):
     con = shard.get_client(request)
     if con is None: return "Connection is invalid"
     
-    _, characters = shard.login(con.uid())
-    schema_character = next((x for x in characters if x.id == cid), None)
-    con.character = schema_character.map_to_new_player()
+    character = erukar.data.models.Character.select(shard.session, cid, con.uid())
 
-    if con.character is not None:
+    if character is not None:
+        con.character = character.create_new_object()
         return 'Successfully selected {}'.format(con.character.name)
     return 'No character was found!'
 

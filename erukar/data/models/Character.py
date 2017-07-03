@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from erukar.data.models.Lifeform import Lifeform
 from erukar.engine.lifeforms.Player import Player
+import erukar
 
 class Character(Lifeform):
     __tablename__ = 'characters'
@@ -32,8 +33,13 @@ class Character(Lifeform):
         'name',
     ]
 
-    def map_to_new_player(self):
+    def create_new_object(self):
         p = Player()
-        for param in Character.SimpleMapParams:
-            setattr(p, param, getattr(self, param))
+        self.map_schema_to_object(p)
         return p
+
+    def select(session, cid, uid):
+        node = erukar.data.models.Player.get(session, uid)
+        return session.query(Character)\
+            .filter_by(id=cid, player_id=node.id)\
+            .first()
