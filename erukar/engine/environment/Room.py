@@ -26,7 +26,7 @@ class Room(Containable):
             self.coordinates = list(coordinates)
         else: 
             self.coordinates = [] if not coordinates else coordinates
-        self.dungeon.add_room(self, coordinates)
+        self.dungeon.add_room(self, self.coordinates)
         self.floor = None
         self.ceiling = None
         self.visible_in_room_description = False

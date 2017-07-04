@@ -2,6 +2,8 @@ from erukar.engine.calculators.meta import AStarBase, Queue
 
 class Pathing(AStarBase):
     ManhattanD = 10
+    def __init__(self, collection):
+        self.collection = collection
 
     def heuristic(self, node, goal):
         dx = abs(node[0] - goal[0])
@@ -15,10 +17,10 @@ class Pathing(AStarBase):
             (node[0],   node[1]-1),
             (node[0],   node[1]+1),
         ]
-        return [x for x in possibilities if Pathing.is_valid(x, collection, goal)]
+        return [x for x in possibilities if self.is_valid(x, collection, goal)]
 
-    def is_valid(coordinate, collection, goal):
-        return coordinate not in collection or coordinate == goal
+    def is_valid(self, coordinate, visited, goal):
+        return (coordinate not in visited and coordinate in self.collection)
 
     def cost(self, collection, current, node):
         return 1

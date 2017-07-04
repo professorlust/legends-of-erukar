@@ -20,7 +20,6 @@ class Move(ActionCommand):
         area or there is just no path to it), this should return -1
         '''
         if len(path) < 2: return -1
-
         total_move_distance = len(path) - 1
         return math.ceil(total_move_distance / self.args['player_lifeform'].move_speed())
 
@@ -29,10 +28,10 @@ class Move(ActionCommand):
         goal = coordinates
         collection = list(self.world.all_traversable_coordinates())
         
-        pather = Pathing()
+        pather = Pathing(collection)
         path_info, cost = pather.search(collection, start, goal)
         path = pather.reverse(path_info, start, goal)
-        path.pop(0)
+        if path: path.pop(0)
         return path
 
     def perform(self):
@@ -49,13 +48,12 @@ class Move(ActionCommand):
             return self.fail('You do not have enough Action Points to move that way.')
         self.args['player_lifeform'].consume_action_points(cost)
 
-        return self.do_move([])
+        return self.do_move(path)
 
     def do_move(self, path):
         '''Here we move over each coordinate, allowing others the chance to see us and giving
         ourselves the ability to see things as we go. It's also rather insidious, as it 
         potentially forces us '''
-        for coordinate in path:
-            print(coordinate)
-        self.args['player_lifeform'].on_move(self.args['coordinates'])
+        while len(path) > 0:
+            self.args['player_lifeform'].on_move(path.pop(0))
         return self.succeed()
