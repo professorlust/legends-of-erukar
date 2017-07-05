@@ -52,6 +52,7 @@ class Map(Command):
 
     def get_room_details(self, x, y):
         return {
+            'location': '{} {}'.format(x, y),
             'overlay': self.overlay_for(x,y),
             'layers': self.layers_for(x,y),
             'actions': self.actions_for(x, y)
@@ -65,11 +66,13 @@ class Map(Command):
         return result
 
     def actions_for(self, x, y):
-        return {
-            'Move': 1,
+        actions = {
             'Inspect': 2,
             'Glance': 1,
         }
+        if any(coord == (x, y) for coord in self.open_space):
+            actions['Move'] = 2
+        return actions
 
     def overlay_for(self, x,y):
         return 'no overlay'
