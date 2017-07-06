@@ -3,13 +3,21 @@ from erukar.engine.commands.Command import Command
 from erukar.engine.environment import *
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.model.Direction import Direction
+from erukar.engine.calculators.Distance import Distance
 import math
 
 class Map(Command):
     NeedsArgs = False
 
+    '''
+    Uses:
+        overlay_type
+    '''
+
     def perform(self, *_):
         '''Converts the dungeon_map into a readable map for the user'''
+        if 'overlay_type' not in self.args: self.args['overlay_type'] = 'visual'
+
         self.dimensional_map()
         return self.succeed()
 
@@ -35,6 +43,7 @@ class Map(Command):
             return
 
         self.open_space = self.world.all_traversable_coordinates()
+        self.prepare_zones()
 
         # Now get the min and max range for x and y
         max_x, max_y = map(max, zip(*self.open_space))
@@ -52,7 +61,6 @@ class Map(Command):
 
     def get_room_details(self, x, y):
         return {
-            'location': '{} {}'.format(x, y),
             'overlay': self.overlay_for(x,y),
             'layers': self.layers_for(x,y),
             'actions': self.actions_for(x, y)
@@ -70,9 +78,40 @@ class Map(Command):
             'Inspect': 2,
             'Glance': 1,
         }
-        if any(coord == (x, y) for coord in self.open_space):
+        if any(coord == (x, y) for coord in self.one_ap_movement):
+            actions['Move'] = 1
+        elif any(coord == (x, y) for coord in self.two_ap_movement):
             actions['Move'] = 2
         return actions
 
+    def prepare_zones(self):
+        start = self.args['player_lifeform'].coordinates 
+        move_speed = self.args['player_lifeform'].move_speed()
+        v_fow = self.args['player_lifeform'].visual_fog_of_war()
+
+        self.two_ap_movement = Distance.pathed_traversable(start, self.open_space, (move_speed*2)-1)
+        self.one_ap_movement = Distance.pathed_traversable(start, self.two_ap_movement, move_speed-1)
+        self.visual_fog_of_war = list(Distance.direct_los(start, self.open_space, v_fow))
+
     def overlay_for(self, x,y):
-        return 'no overlay'
+        overlay_method_name = "get_{}_overlay_for".format(self.args['overlay_type'])
+        if hasattr(self, overlay_method_name):
+            overlay = getattr(self, overlay_method_name)(x, y)
+            if overlay: return overlay
+
+        return Map.rgba(0, 0, 0, 0.5)
+
+    def get_movement_overlay_for(self, x,y):
+        if any((x,y) == coord for coord in self.one_ap_movement):
+            return Map.rgba(0, 100, 0, 0.3)
+
+        if any((x,y) == coord for coord in self.two_ap_movement):
+            return Map.rgba(0, 80, 80, 0.2)
+
+    def get_visual_overlay_for(self, x,y):
+        if any((x,y) == coord for coord in self.visual_fog_of_war):
+            return Map.rgba(0, 0, 0, 0)
+
+    def rgba(r,g,b,a):
+        return { 'r': r, 'g': g, 'b': b, 'a': a }
+

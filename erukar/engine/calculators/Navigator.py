@@ -72,3 +72,32 @@ class Navigator:
     def intersects(A,B,C,D):
         '''Credit to Bryce Boe ... found at http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/'''
         return Navigator.ccw(A,C,D) != Navigator.ccw(B,C,D) and Navigator.ccw(A,B,C) != Navigator.ccw(A,B,D)
+
+    def bressenhams(start, finish):
+        '''Impl of Bressenham's Line Formula'''
+        delta_x = abs(finish[0] - start[0])
+        delta_y = abs(finish[1] - start[1])
+        delta_err = abs(delta_y | delta_x)
+        err = delta_err - 0.5
+        x, y = start
+        s_x = -1 if start[0] > finish[0] else 1
+        s_y = -1 if start[1] > finish[1] else 1
+        if delta_x > delta_y:
+            err = delta_x / 2.0
+            while x != finish[0]:
+                yield (x, y)
+                err -= delta_y
+                if err < 0:
+                    y += s_y
+                    err += delta_x
+                x += s_x
+        else: 
+            err = delta_y / 2.0
+            while y != finish[1]:
+                yield (x,y)
+                err -= delta_x
+                if err < 0:
+                    x += s_x
+                    err += delta_y
+                y += s_y
+        yield (x, y)

@@ -368,6 +368,9 @@ class Lifeform(RpgEntity):
     def move_speed(self):
         return math.floor(3 + self.calculate_effective_stat('dexterity')/8)
 
+    def visual_fog_of_war(self):
+        return 2 + self.calculate_effective_stat('acuity')/5
+
     def begin_turn(self):
         self.gain_action_points()
         results = [aff.do_begin_of_turn_effect() for aff in self.conditions]
