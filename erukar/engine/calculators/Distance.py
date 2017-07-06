@@ -55,12 +55,19 @@ class Distance:
                 paths[x] = cur_path_to
                 yield x
 
-
     def direct_los(origin, open_space, max_distance):
-        perimeter = list(set(Distance.points_on_circle_perimeter(max_distance, origin)))
-        for perimeter_coord in perimeter:
-            for coord in Navigator.bressenhams(origin, perimeter_coord):
-                if not any(x == coord for x in open_space): break
+        pre_distance_points = Distance.points_in_circle(max_distance, origin)
+        points = list(sorted(pre_distance_points, key=lambda x: Navigator.distance(origin, x), reverse=True))
+        while points:
+            line = list(Navigator.bressenhams(origin, points[0]))
+            blocker_found = False
+            while line:
+                coord = line.pop(0)
+                if coord in points:
+                    points.remove(coord)
+                if blocker_found: continue
+                if not blocker_found and not any(x == coord for x in open_space): 
+                    blocker_found = True
                 yield coord
 
     def points_in_circle(radius, origin):
@@ -68,10 +75,4 @@ class Distance:
         for x in range(-r, r+1):
             Y = int((r*r - x*x) ** 0.5)
             for y in range(-Y, Y+1):
-                yield(x+origin[0], y+origin[1])
-
-    def points_on_circle_perimeter(radius, origin, num_points=50):
-        x, y = origin
-        step = 2*math.pi / num_points
-        for i in range(0, num_points):
-            yield int(x + radius*math.cos(i * step)), int(y + radius*math.sin(i*step) )
+                yield (x+origin[0], y+origin[1])
