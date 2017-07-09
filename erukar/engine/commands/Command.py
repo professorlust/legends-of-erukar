@@ -60,13 +60,13 @@ class Command:
             return self.args[arg]
         return uuid.UUID(self.args[arg])
 
-    def clean(self, lifeform):
-        if lifeform in self.dirtied_characters:
-            self.dirtied_characters.remove(lifeform)
+    def clean(self, node):
+        if node in self.dirtied_characters:
+            self.dirtied_characters.remove(node)
 
-    def dirty(self, lifeform):
-        if lifeform not in self.dirtied_characters:
-            self.dirtied_characters.append(lifeform)
+    def dirty(self, node):
+        if node not in self.dirtied_characters:
+            self.dirtied_characters.append(node)
 
     def append_result(self, uid, result):
         '''Appends a result for a specific uid'''

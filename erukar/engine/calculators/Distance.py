@@ -56,7 +56,7 @@ class Distance:
                 yield x
 
     def direct_los(origin, open_space, max_distance):
-        pre_distance_points = Distance.points_in_circle(max_distance, origin)
+        pre_distance_points = [x for x in Distance.points_in_circle(max_distance, origin)]
         points = list(sorted(pre_distance_points, key=lambda x: Navigator.distance(origin, x), reverse=True))
         while points:
             line = list(Navigator.bressenhams(origin, points[0]))

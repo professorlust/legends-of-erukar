@@ -36,6 +36,7 @@ class Lifeform(ErukarBase, Base):
     effects     = relationship("Effect", cascade="all, delete-orphan")
 
     SimpleMapParams = [
+        'id',
         'name',
         'max_health',
         'health',

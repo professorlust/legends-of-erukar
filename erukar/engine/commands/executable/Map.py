@@ -4,7 +4,7 @@ from erukar.engine.environment import *
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.model.Direction import Direction
 from erukar.engine.calculators.Distance import Distance
-import math
+import erukar, math
 
 class Map(Command):
     NeedsArgs = False
@@ -75,13 +75,24 @@ class Map(Command):
 
     def actions_for(self, x, y):
         actions = {
-            'Inspect': 2,
-            'Glance': 1,
+            'Inspect': {'cost': 2},
+            'Glance': {'cost': 1},
         }
-        if any(coord == (x, y) for coord in self.one_ap_movement):
-            actions['Move'] = 1
-        elif any(coord == (x, y) for coord in self.two_ap_movement):
-            actions['Move'] = 2
+        if (x,y) in self.one_ap_movement:
+            actions['Move'] = {'cost': 1}
+        elif (x,y) in self.two_ap_movement:
+            actions['Move'] = {'cost': 2}
+
+        creature_at = self.world.creature_at(self.args['player_lifeform'], (x,y))
+        if creature_at and (x,y) in self.visual_fog_of_war and (x,y) in self.weapon_attack_ranges:
+            for weapon in self.weapon_attack_ranges[(x,y)]:
+                actions['Attack with {}'.format(weapon.describe())] = {
+                    'method': 'Attack',
+                    'cost': 1,
+                    'weapon': str(weapon.uuid),
+                    'interaction_target': str(creature_at.uuid)
+                }
+
         return actions
 
     def prepare_zones(self):
@@ -92,6 +103,18 @@ class Map(Command):
         self.two_ap_movement = Distance.pathed_traversable(start, self.open_space, (move_speed*2)-1)
         self.one_ap_movement = Distance.pathed_traversable(start, self.two_ap_movement, move_speed-1)
         self.visual_fog_of_war = list(Distance.direct_los(start, self.open_space, v_fow))
+
+        self.weapon_attack_ranges = {}
+        for weapon_slot in self.args['player_lifeform'].weapon_slots():
+            self.add_weapon_range(weapon_slot, start)
+
+    def add_weapon_range(self, weapon_slot, start):
+        weapon = getattr(self.args['player_lifeform'], weapon_slot)
+        if not isinstance(weapon, erukar.engine.inventory.Weapon): return
+        for coord in Distance.direct_los(start, self.open_space, weapon.MaximumRange):
+            if coord not in self.weapon_attack_ranges:
+                self.weapon_attack_ranges[coord] = []
+            self.weapon_attack_ranges[coord].append(weapon)
 
     def overlay_for(self, x,y):
         overlay_method_name = "get_{}_overlay_for".format(self.args['overlay_type'])

@@ -2,6 +2,13 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+import logging
+SchemaLogger = logging.getLogger('schema')
+SchemaLogger.setLevel(logging.INFO)
+fh = logging.FileHandler('schema.log')
+SchemaLogger.addHandler(fh)
+
+
 class ErukarBase:
     SimpleMapParams = []
 

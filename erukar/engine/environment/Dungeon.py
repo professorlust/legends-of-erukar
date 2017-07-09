@@ -47,6 +47,11 @@ class Dungeon(RpgEntity):
         for coord in coordinates:
             self.dungeon_map[coord] = new_room
 
+    def creature_at(self, caller, coordinate):
+        for x in self.actors:
+            if isinstance(x, erukar.engine.lifeforms.Lifeform) and x is not caller and x.coordinates == coordinate:
+                return x
+
     def all_traversable_coordinates(self):
         '''Move to player later'''
         return [x for x in self.dungeon_map]

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, joinedload
 from sqlalchemy.dialects.postgresql import JSON
 
 from erukar.data.SchemaBase import Base, ErukarBase
@@ -29,6 +29,7 @@ class Item(ErukarBase, Base):
         return new_obj
 
     def map_schema_to_object(self, new_object):
+        new_object.id = self.id
         ErukarBase.map_schema_to_object(self, new_object)
         # Do stuff here with modifiers and attributes
         if self.material_type:
@@ -57,3 +58,16 @@ class Item(ErukarBase, Base):
         s_model = Lifeform.get_schema_query(session, id).first()
         return s_model.create_new_object()
 
+    def create_from_object(session, item):
+        if hasattr(item, 'id'): 
+            schema = Item.get_schema_query(session, item.id).first()
+        else: schema = Item()
+        schema.item_type = item.__module__
+        schema.copy_from_object(item)
+        if item.material:
+            schema.material_type = item.material.__module__
+        for real_mod in item.modifiers:
+            schema_mod = erukar.data.models.Modifier.create_from_object(session, real_mod)
+            schema.modifiers.append(schema_mod)
+        schema.attributes = item.persistable_attributes()
+        return schema

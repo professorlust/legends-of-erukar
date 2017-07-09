@@ -33,14 +33,9 @@ class Instance(Manager):
         self.status = Instance.NotInitialized
         self.responses = {}
 
-    def instance_running(self, connector, action_commands, non_action_commands, sys_messages, responses):
-        '''Entry point for the Initialization of the Instance by the Shard'''
-        # Activate and initialize timers
-        self.initialize_instance(action_commands, non_action_commands, sys_messages, responses)
-
-    def initialize_instance(self, connector):
+    def initialize_instance(self, session):
         '''Turn on players and generate a dungeon'''
-        self.connector = connector
+        self.session = session
         self.status = Instance.Ready
         self.turn_manager = TurnManager()
         if self.dungeon:
@@ -94,7 +89,7 @@ class Instance(Manager):
         self.sys_messages[player.uid] = player.lifeform().transition_properties 
 
     def try_to_get_persistent_enemy(self, enemy):
-        possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.data.find_player(e.uid)]
+        possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.session.find_player(e.uid)]
         if len(possible_uids) <= 0: 
             return
         uid = random.choice(possible_uids)
@@ -208,6 +203,7 @@ class Instance(Manager):
 
         # Check results
         if result is not None:
+            print(result.dirtied_characters)
             # Print Result, replace with outbox later
             if hasattr(result, 'results'):
                 self.append_result_responses(result)
@@ -215,7 +211,9 @@ class Instance(Manager):
             # Save Dirtied Characters in DB 
             if hasattr(result, 'dirtied_characters'):
                 for dirty in result.dirtied_characters:
-                    self.connector.update_character(dirty)
+                    print(type(dirty))
+                    if isinstance(dirty, erukar.engine.lifeforms.Player):
+                        erukar.data.models.Character.update(dirty, self.session)
 
             # Set context for player
             self.command_contexts[cmd.player_info.uid] = result

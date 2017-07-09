@@ -1,6 +1,8 @@
 from erukar.server.Shard import Shard
 import asyncio, websockets, json, os, sys, datetime
 import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 from concurrent.futures import ProcessPoolExecutor
 
 from flask import Flask

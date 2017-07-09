@@ -407,3 +407,6 @@ class Lifeform(RpgEntity):
         # Check for Base Mitigations
         if damage_type in self.BaseDamageMitigations:
             yield self.BaseDamageMitigations[damage_type]
+
+    def weapon_slots(self):
+        return ['left', 'right']
