@@ -5,12 +5,18 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 from concurrent.futures import ProcessPoolExecutor
 
+ServerLogger = logging.getLogger('server')
+ServerLogger.setLevel(logging.INFO)
+fh = logging.FileHandler('server.log')
+ServerLogger.addHandler(fh)
+
 from flask import Flask
 from flask import request, jsonify, abort
 from socketio import Middleware
 from flask_socketio import SocketIO, emit, send
 from erukar import PlayerNode, Player, Lifeform
 import erukar
+
 
 config_directories = [
     'world/sovereignties',
@@ -119,17 +125,18 @@ def ws_login(raw_creds):
 
 @socketio.on('register')
 def ws_register(raw_creds):
+    ServerLogger.info('registering {}'.format(raw_creds))
     credentials = json.loads(raw_creds)
     if 'uid' not in credentials: return "Malformed request received"
 
     con = shard.update_connection(request)
-    if shard.data.player_exists(credentials['uid']):
+    if erukar.data.models.Player.get(shard.session, credentials['uid']):
         return 'UID {} already exists'.format(credentials['uid'])
 
     con.playernode = PlayerNode(credentials['uid'],None)
-    shard.data.add_player(con.playernode)
-    _, raw_chars = shard.login(credentials['uid'])
-    return [Shard.format_character_for_list(x) for x in raw_chars]
+    con.playernode.name = 'Evan'
+    player_schema = erukar.data.models.Player.add(shard.session, con.playernode)
+    return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
 @socketio.on('launch')
 def on_launch(*_):
@@ -163,32 +170,32 @@ def ws_select_character(raw_data):
         return 'Successfully selected {}'.format(con.character.name)
     return 'No character was found!'
 
-@app.route('/character/startcreation', methods=['POST'])
-def on_add_character():
+@socketio.on('add new character')
+def on_add_character(*_):
     con = shard.update_connection(request)
     if con.playernode is not None:
         con.playernode.status = PlayerNode.CreatingCharacter
         return 'success'
-    abort(400)
+    return 'Cannot add character -- Not logged in'
 
-@app.route('/character/endcreation', methods=['POST'])
-def on_finish_character_creation():
-    data = request.get_json(force=True)
+@socketio.on('finalize new character')
+def on_finish_character_creation(raw_data):
+    data = json.loads(raw_data)
+    ServerLogger.info(type(data))
     if 'stats' not in data or 'bio' not in data:
-        abort(400)
+        return 'invalid payload'
 
     con = shard.get_client(request)
-    if con is None: abort(401)
+    if con is None: return 'Client is not logged in'
 
-    res = Lifeform.build_from_payloads(data['stats'], data['bio'])
-    shard.data.add_character(con.playernode.uid, res)
-    _, raw_chars = shard.login(con.playernode.uid)
-
-    characters = [Shard.format_character_for_list(x) for x in raw_chars]
-    return jsonify(message="Successfully created character", characters=characters)
+    built = Lifeform.build_from_payloads(data['stats'], data['bio'])
+    player_schema = erukar.data.models.Player.get(shard.session, con.playernode.uid)
+    schema = erukar.data.models.Character.create_from_object(shard.session, built, player_schema)
+    schema.add_or_update(shard.session)
 
 @socketio.on('send command')
 def on_command_receipt(cmd):
+    ServerLogger.info(cmd)
     shard.consume_command(request, cmd)
 
 

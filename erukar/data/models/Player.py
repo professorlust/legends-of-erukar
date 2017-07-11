@@ -26,6 +26,7 @@ class Player(ErukarBase, Base):
         schema = Player()
         schema.copy_from_object(playernode) 
         schema.add_or_update(session)
+        return schema
 
     def create_new_object(self):
         new_object = erukar.engine.model.PlayerNode(self.uid, None)
