@@ -67,17 +67,35 @@ class Character(Lifeform):
 
         # Map all items in the inventory
         for item in player.inventory:
-            schema_item = erukar.data.models.Item.create_from_object(session, item)
-            schema_map[item] = schema_item
-            self.inventory.append(schema_item)
+            existing = next((x for x in self.inventory if getattr(item, 'id', -1) == x.id), None)
+            if not existing:
+                SchemaLogger.info('Did not find existing item')
+                existing = erukar.data.models.Item.create_from_object(session, item)
+                item.id = existing.id
+                self.inventory.append(existing)
+            else:
+                SchemaLogger.info('Found existing item matching id {}'.format(item.id))
+            schema_map[item] = existing
 
         for slot in player.equipment_types:
+            slot_schema  = next((x for x in self.equipment if x.equipment_slot == slot ), None)
+
+            # See if there's a loaded equipment_slot... otherwise make one
             equipped_item = getattr(player, slot, None)
-            if not equipped_item: continue
-            schema_item = schema_map[equipped_item] 
-            schema_equipment = erukar.data.models.EquippedItem.create_from(session, player, slot, schema_item)
-            SchemaLogger.info('Appending {}'.format(schema_equipment))
-            self.equipment.append(schema_equipment)
+
+            # If it doesn't exist, get rid of it
+            if not equipped_item: 
+                if slot_schema in self.equipment:
+                    self.equipment.remove(slot_schema)
+                continue
+
+            schema_item = schema_map[equipped_item]
+
+            if not slot_schema:
+                slot_schema = erukar.data.models.EquippedItem.create_from(session, player, slot, schema_item)
+
+            slot_schema.item = schema_item
+            self.equipment.append(slot_schema)
 
     def copy_from_object(self, session, player):
         super().copy_from_object(player)
