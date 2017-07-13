@@ -74,16 +74,18 @@ class Shard(Manager):
     def disconnect(self, request):
         con = self.get_client(request)
         if con is None: return
+
+        character = getattr(con.playernode, 'character', None)
+        if character:
+            self.unsubscribe(con.uid(), character)
         self.clients.remove(con)
 
     def login(self, uid):
         return erukar.data.models.Player.get(self.session, uid)
 
-    def unsubscribe(self, eid):
-        player = self.get_playernode_from_uid(eid)
-        cur_instance = self.player_current_instance(eid)
-        if cur_instance:
-            return cur_instance.instance.unsubscribe(eid)
+    def unsubscribe(self, eid, character):
+        info = self.player_current_instance(eid)
+        if info: info.instance.unsubscribe(eid)
         super().unsubscribe(eid)
 
     def subscribe(self, player):
@@ -191,7 +193,7 @@ class Shard(Manager):
 
     def get_instance_for(self, character, instance_identifier):
         '''Tries to find an active instance for whatever the character has marked'''
-        instance = None #next((x for x in self.instances if x.identifier == instance_identifier), None)
+        instance = next((x for x in self.instances if x.identifier == instance_identifier), None)
         if instance is None:
             return self.create_random_dungeon(character)
         return instance

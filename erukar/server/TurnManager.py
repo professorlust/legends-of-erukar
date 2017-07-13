@@ -9,6 +9,9 @@ class TurnManager(Manager):
 
     def __init__(self):
         super().__init__()
+        self.reset()
+
+    def reset(self):
         self.current_turn_count = 0
         self.previous_player = None
         self.active_player = None
@@ -36,7 +39,7 @@ class TurnManager(Manager):
 
     def refresh_deck(self):
         if len(self.players) < 1: 
-            raise Error("Not enough players")
+            self.reset()
             return
         while len(self.on_deck) < TurnManager.MinimumOnDeck:
             self.current_turn_count = (self.current_turn_count + 1) % TurnManager.MaximumTurnCount

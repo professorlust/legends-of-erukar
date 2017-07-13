@@ -80,7 +80,8 @@ class Dungeon(RpgEntity):
         actor.coordinates = coordinates
 
     def remove_actor(self, actor):
-        self.actors.remove(actor)
+        if actor in self.actors:
+            self.actors.remove(actor)
 
     def actors_in_range(self, start, distance):
         for actor in self.actors:

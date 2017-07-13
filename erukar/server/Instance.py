@@ -9,7 +9,13 @@ from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.executable.Inventory import Inventory
 from erukar.engine.commands.executable.Stats import Stats
 from erukar.engine.commands.executable.Wait import Wait
-import erukar, threading, random, datetime, json
+import erukar, threading, random, datetime, json, uuid
+
+import logging
+InstanceLogger = logging.getLogger('instance')
+InstanceLogger.setLevel(logging.INFO)
+fh = logging.FileHandler('instance.log')
+InstanceLogger.addHandler(fh)
 
 class Instance(Manager):
     MaximumTurnTime = 30.0 # In seconds
@@ -25,10 +31,13 @@ class Instance(Manager):
 
     def __init__(self):
         super().__init__()
-        self.active_player = None
         self.properties = None
-        self.identifier = 'n/a'
+        self.identifier = str(uuid.uuid4())
         self.dungeon = None
+        self.reset()
+
+    def reset(self):
+        self.active_player = None
         self.command_contexts = {}
         self.status = Instance.NotInitialized
         self.responses = {}
@@ -81,12 +90,11 @@ class Instance(Manager):
 
     def unsubscribe(self, eid):
         player = next((x for x in self.players if x.uid == eid), None)
-        self.dungeon.actors.remove(player.lifeform())
+        if not player: return
+        self.dungeon.remove_actor(player.lifeform())
         self.turn_manager.unsubscribe(player)
         self.players.remove(player)
         super().unsubscribe(player)
-        player.lifeform().transition_properties.previous_identifier = self.identifier
-        self.sys_messages[player.uid] = player.lifeform().transition_properties 
 
     def try_to_get_persistent_enemy(self, enemy):
         possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.session.find_player(e.uid)]
@@ -96,9 +104,9 @@ class Instance(Manager):
         return self.connector.load_creature(uid)
 
     def subscribe(self, node):
+        InstanceLogger.info(self.identifier)
         if not hasattr(node, 'character') or node.character is None:
-            raise Error("No character")
-            return
+            raise Exception("No character")
 
         node.world = self.dungeon
         node.character.world = self.dungeon
@@ -112,6 +120,8 @@ class Instance(Manager):
             if equipped is not None:
                 equipped.on_equip(node.character)
 
+        node.character.instance = self.identifier
+        erukar.data.models.Character.update(node.character, self.session)
         self.turn_manager.subscribe(node)
         self.command_contexts[node.uid] = None
         self.execute_pre_inspect(node)
@@ -203,7 +213,6 @@ class Instance(Manager):
 
         # Check results
         if result is not None:
-            print(result.dirtied_characters)
             # Print Result, replace with outbox later
             if hasattr(result, 'results'):
                 self.append_result_responses(result)
@@ -239,6 +248,7 @@ class Instance(Manager):
     def get_messages_for(self, uid):
         player_node = self.get_player_from_uid(uid)
         if not player_node:
+            InstanceLogger.info([x.uid for x in self.players])
             return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
 
         character = player_node.lifeform()

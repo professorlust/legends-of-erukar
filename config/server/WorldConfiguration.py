@@ -2,7 +2,7 @@
 # Then after that you will specify connections (roads or boatpaths)
 def configure(shard):
     shard.StartingRegionOptionNames = [
-        'TutorialDungeon',
+#        'TutorialDungeon',
         "Altael",
         "BarlenDocks",
         "BarlenTownCenter"

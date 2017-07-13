@@ -21,6 +21,9 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     MinimumOffshootLength   = 2
     MaximumOffshootLength   = 5
 
+    MaxHeight = 15
+    MaxWidth = 15
+
     def __init__(self, size=24):
         self.vertices = []
         self.connections = {}
@@ -98,14 +101,14 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         at_risk = [x for x in self.dungeon.rooms if x.linearity > self.MinimumLinearityForRisk]
         
         #determine start randomly
-        distribution = [self.linearity_weight(st) for st in self.rooms]
-        start = self.rooms[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
+        distribution = [self.linearity_weight(st) for st in self.vertices]
+        start = self.vertices[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
 
         # determine end randomly
-        distribution = [self.linearity_weight(dest) * self.distance_weight(start, dest) for dest in self.rooms if dest != start]
-        dest = self.rooms[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
+        distribution = [self.linearity_weight(dest) * self.distance_weight(start, dest) for dest in self.vertices if dest != start]
+        dest = self.vertices[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
 
-        cf, ec = self.search(self.rooms, start, dest)
+        cf, ec = self.search(self.vertices, start, dest)
         path = self.reverse(cf, start, dest)
         self.add_room_path(path, start)
 
