@@ -5,7 +5,7 @@ from erukar.engine.calculators import *
 from erukar.engine.calculators.meta import AStarBase, Queue
 from erukar.engine.model.Range import Range
 import numpy as np
-import math, random
+import math, random, erukar
 
 class DungeonGeneratorRedux(FactoryBase, AStarBase):
     Small       = 8
@@ -32,6 +32,16 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     def generate(self, previous_instance_identifier=''):
         self.dungeon = Dungeon()
         self.create_dungeon()
+        e = erukar.game.enemies.undead.Skeleton()
+        self.dungeon.add_actor(e, random.choice([x for x in self.vertices]))
+        wand = erukar.game.inventory.weapons.standard.Wand(modifiers=[\
+            erukar.game.modifiers.Iurwood, \
+            erukar.game.modifiers.Quality, \
+            erukar.game.modifiers.Size, \
+            erukar.game.modifiers.EnhancedWeapon\
+        ])
+        self.dungeon.add_actor(wand, random.choice([x for x in self.vertices]))
+
         return self.dungeon
 
     def create_dungeon(self):

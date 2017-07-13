@@ -4,6 +4,7 @@ def configure(shard):
     shard.properties.MaxPlayers = 10
     shard.properties.Description = 'A basic LoE server'
 
+    shard.properties.AdminDetails = 'Legends of Erukar Official (admin@loe.dev)'
     shard.properties.PermaDeath = False
 
     shard.properties.StartingWealth = 1000

@@ -131,18 +131,6 @@ class Instance(Manager):
         ins = player.create_command(Inspect)
         self.try_execute(player, ins)
 
-    def check_for_player_input(self):
-        if any(self.non_action_commands):
-            cmd = self.non_action_commands.pop()
-            self.execute_command(cmd)
-
-        if self.any_connected_players():
-            self.execute_player_turn()
-
-        self.timer.cancel()
-        self.timer = threading.Timer(self.TickRate, self.check_for_player_input)
-        self.timer.start()
-
     def try_execute(self, node, cmd):
         if node.uid == self.active_player.uid:
             result = self.execute_command(cmd)
@@ -187,21 +175,6 @@ class Instance(Manager):
         self.dungeon.tick()
         for player in self.players:
             player.lifeform().tick()
-
-    def get_active_player_action(self):
-        for command in self.action_commands:
-            if command.player_info.uid == self.active_player.uid:
-                while len(self.action_commands) > 0:
-                    self.action_commands.pop()
-                return command
-
-    def skip_player(self):
-        self.append_response(self.active_player.uid, 'You were skipped!')
-        for i in range(self.MaximumTurnSkipPenalty):
-            next_player = self.turn_manager.next()
-            if next_player is not self.active_player:
-               break
-        self.active_player = next_player
 
     def execute_command(self, cmd):
         cmd.server_properties = self.properties

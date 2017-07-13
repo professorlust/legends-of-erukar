@@ -49,7 +49,23 @@ def do_ping():
         'maxPlayers': shard.properties.MaxPlayers,
         'description': shard.properties.Description,
         'permadeath': shard.properties.PermaDeath,
-        'password': False
+    })
+
+@app.route('/api/details')
+def get_details():
+    active_players = [{
+        'name': c.playernode.name,
+        'character': getattr(c.playernode.character, 'name', ''),
+        'level': getattr(c.playernode.character, 'level', '')
+    } for c in shard.clients if c.playernode]
+    return jsonify({
+        'name': shard.properties.Name,
+        'url': shard.properties.Url,
+        'players': active_players,
+        'maxPlayers': shard.properties.MaxPlayers,
+        'adminDetails': shard.properties.AdminDetails,
+        'motd': shard.properties.Description,
+        'permadeath': 'Enabled' if shard.properties.PermaDeath else 'Disabled',
     })
 
 @app.route('/validate', methods=['POST'])

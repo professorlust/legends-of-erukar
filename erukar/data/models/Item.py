@@ -62,6 +62,9 @@ class Item(ErukarBase, Base):
         if hasattr(item, 'id'): 
             schema = Item.get_schema_query(session, item.id).first()
         else: schema = Item()
+        if not schema:
+            SchemaLogger.info('schema not loaded for item id {}'.format(getattr(item, 'id', -1)))
+            raise Exception('schema not loaded for item id {}'.format(getattr(item, 'id', -1)))
         schema.item_type = item.__module__
         schema.copy_from_object(item)
         if item.material:
