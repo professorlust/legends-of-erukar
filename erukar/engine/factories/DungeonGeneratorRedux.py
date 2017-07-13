@@ -22,38 +22,37 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     MaximumOffshootLength   = 5
 
     def __init__(self, size=24):
-        self.rooms = []
+        self.vertices = []
         self.connections = {}
         self.size = size
 
     def generate(self, previous_instance_identifier=''):
         self.dungeon = Dungeon()
-        room = Room(self.dungeon, coordinates=Range.make(0, 2, 0, 0))
-        room.walls = [Surface()]
-        #self.create_dungeon()
+        self.create_dungeon()
         return self.dungeon
 
     def create_dungeon(self):
-        self.create_rooms() 
-        for room in self.rooms:
-            self.randomly_connect(room)
+        self.create_rooms() #
+        for vertex in self.vertices:
+            self.connect_to_random_vertex(vertex) #
 
         self.create_rooms_along_lines()
-        for _ in range(self.NumberOfLinearityPasses):
-            self.build_junction_based_on_linearity()
-        for _ in range(self.NumberOfOffshoots):
-            self.build_offshoot()
-        self.fill_walls()
+#       for _ in range(self.NumberOfLinearityPasses):
+#           self.build_junction_based_on_linearity()
+#       for _ in range(self.NumberOfOffshoots):
+#           self.build_offshoot()
+#       self.fill_walls()
 
     def create_rooms_along_lines(self):
         '''Use the connections from the random connection process to generate A* paths and then connect'''
         visited_connections = []
-        for origin in self.rooms:
+        for origin in self.vertices:
             if not origin in self.connections: continue
             for destination in iter(self.connections[origin]):
-                if [origin, destination] in visited_connections:
-                    continue
-                cf, ec = self.search(self.rooms, origin, destination)
+                # Don't Re-Add a connection
+                if [origin, destination] in visited_connections: continue
+                # A* search for the path
+                cf, ec = self.search(self.vertices, origin, destination)
                 path = self.reverse(cf, origin, destination)
                 self.add_room_path(path, origin)
                 visited_connections.append([origin, destination])
@@ -61,14 +60,17 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
     def add_room_path(self, path, origin):
         '''Use an A* Path to add a bunch of rooms from one objective to the other'''
-        previous = None
-        for coord in path:
-            if coord not in self.dungeon.rooms:
-                self.rooms.append(coord)
-                current = self.dungeon.get_room_at(coord)
-                if not current:
-                    current = Room(self.dungeon, coord)
-                previous = current
+        actual_coords = [x for x in path if x not in self.dungeon.rooms]
+        new_room = Room(self.dungeon, actual_coords)
+        for coord in actual_coords: self.vertices.append(coord)
+#       previous = None
+#       for coord in path:
+#           if coord not in self.dungeon.rooms:
+#               self.rooms.append(coord)
+#               current = self.dungeon.get_room_at(coord)
+#               if not current:
+#                   current = Room(self.dungeon, coord)
+#               previous = current
 
     def build_offshoot(self):
         '''Build random off-shoots which go nowhere, but overall decrease linearity'''
@@ -160,13 +162,13 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         '''Should be pretty straightforward'''
         num_rooms = int(np.random.beta(8, 4) * self.size)
         for i in range(num_rooms):
-            new_coord = self.get_unique_coordinate()
-            self.rooms.append(new_coord)
+            new_coord = self.get_new_unique_vertex()
+            self.vertices.append(new_coord)
 
-    def get_unique_coordinate(self):
+    def get_new_unique_vertex(self):
         coord = (self.random_coordinate(), self.random_coordinate())
-        if coord in self.rooms:
-            coord = self.get_unique_coordinate()
+        if coord in self.vertices:
+            coord = self.get_new_unique_vertex()
         return coord
 
     def random_coordinate(self):
@@ -197,38 +199,37 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         room = self.dungeon.get_room_at(coords)
         return 0 if not room else math.pow(room.linearity, 2)
 
-    def randomly_connect(self, for_room):
+    def connect_to_random_vertex(self, origin):
         '''Connect a room a random number of times to random rooms'''
-        connections_remaining = 4 - self.number_of_connections(for_room)
+        connections_remaining = 4 - self.number_of_connections(origin)
         number_of_times_to_connect = int(random.random() * (connections_remaining-1))+1
         for i in range(number_of_times_to_connect):
-            self.do_connection(for_room)
+            self.do_connection(origin)
 
-    def do_connection(self, for_room):
+    def do_connection(self, origin):
         '''Randomly determines which room that the passed-in room should connect to, then does it'''
-        distribution = [self.connection_weight(dest) * self.distance_weight(for_room, dest) * self.collision_weight(for_room, dest) for dest in self.rooms]
+        distribution = [self.connection_weight(v) * self.distance_weight(origin, v) * self.collision_weight(origin, v) for v in self.vertices]
         # Normalize
-        if sum(distribution) == 0:
-            return
+        if sum(distribution) == 0: return
         distribution = [a / sum(distribution) for a in distribution]
         bins, values = Random.create_random_distribution(list(range(len(distribution))), distribution)
         result = Random.get_from_custom_distribution(random.random(), bins, values)
         # Actually add the room connections
-        self.add_connection(for_room, self.rooms[result])
-        self.add_connection(self.rooms[result], for_room)
+        self.add_connection(origin, self.vertices[result])
+        self.add_connection(self.vertices[result], origin)
 
-    def add_connection(self, for_room, dest):
+    def add_connection(self, origin, dest):
         '''Add a connection to the set tied to the passed-in room'''
-        if for_room not in self.connections:
-            self.connections[for_room] = {dest}
+        if origin not in self.connections:
+            self.connections[origin] = {dest}
         else:
-            self.connections[for_room].add(dest)
+            self.connections[origin].add(dest)
 
-    def number_of_connections(self, for_room):
+    def number_of_connections(self, for_vertex):
         '''Returns the number of connected rooms to the passed-in room'''
-        if for_room not in self.connections:
+        if for_vertex not in self.connections:
             return 0
-        return len(self.connections[for_room])
+        return len(self.connections[for_vertex])
 
     def fill_walls(self):
         '''Fill in the abyss with walls (ugly, need to optimize)'''
@@ -249,7 +250,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
             (node[0],   node[1]-1),
             (node[0],   node[1]+1),
         ]
-        p = [x for x in possibilities if (x not in self.rooms or x == goal) and -10 < x[0] < 10 and -10 < x[1] < 10]
+        p = [x for x in possibilities if (x not in self.vertices or x == goal) and -10 < x[0] < 10 and -10 < x[1] < 10]
         return p
 
     def cost(self, collection, current, node):

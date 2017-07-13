@@ -193,6 +193,12 @@ def on_finish_character_creation(raw_data):
     schema = erukar.data.models.Character.create_from_object(shard.session, built, player_schema)
     schema.add_or_update(shard.session)
 
+    character = erukar.data.models.Character.select(shard.session, schema.id, con.playernode.uid)
+    if character is not None:
+        con.character = character.create_new_object()
+        return 'Successfully selected {}'.format(con.character.name)
+    return 'No character was found!'
+
 @socketio.on('send command')
 def on_command_receipt(cmd):
     ServerLogger.info(cmd)

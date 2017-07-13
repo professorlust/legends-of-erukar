@@ -177,7 +177,7 @@ class Shard(Manager):
     def player_current_instance(self, uid):
         for info in self.instances:
             if uid in list(self.uids_in_instance(info)):
-                return info
+               return info
 
     def uids_in_instance(self, info):
         for uid in info.player_list:
@@ -191,7 +191,7 @@ class Shard(Manager):
 
     def get_instance_for(self, character, instance_identifier):
         '''Tries to find an active instance for whatever the character has marked'''
-        instance = next((x for x in self.instances if x.identifier == instance_identifier), None)
+        instance = None #next((x for x in self.instances if x.identifier == instance_identifier), None)
         if instance is None:
             return self.create_random_dungeon(character)
         return instance
