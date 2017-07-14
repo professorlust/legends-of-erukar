@@ -70,17 +70,18 @@ def get_details():
 
 @app.route('/validate', methods=['POST'])
 def validation():
-    con = shard.get_client(request)
-    if con is None: abort(401)
-    if con.playernode.status != PlayerNode.CreatingCharacter: abort(403)
+    return jsonify('ok')
+#   con = shard.get_client(request)
+#   if con is None: abort(401)
+#   if con.playernode.status != PlayerNode.CreatingCharacter: abort(403)
 
-    data = request.get_json(force=True)
-    if 'step' not in data: abort(400)
-    
-    if data['step'] == 'bio':
-        print(data)
-        return "success"
-    return jsonify(message="Validation Errors occurred.")
+#   data = request.get_json(force=True)
+#   if 'step' not in data: abort(400)
+#   
+#   if data['step'] == 'bio':
+#       print(data)
+#       return "success"
+#   return jsonify(message="Validation Errors occurred.")
 
 @app.route('/api/templates')
 def get_templates():
