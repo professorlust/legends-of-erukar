@@ -1,4 +1,4 @@
-from .Cuadrodemon import Cuadrodemon
+from .Kaedrovrakk import Kaedrovrakk
 from .MalformedDemon import MalformedDemon
 
-__all__ = ["Cuadrodemon", "MalformedDemon"]
+__all__ = ["Kaedrovrakk", "MalformedDemon"]

@@ -159,7 +159,7 @@ def ws_register(raw_creds):
 def on_launch(*_):
     con = shard.get_client(request)
     if con is None or not hasattr(con, 'character') or con.character is None:
-        if con is not None: print(con.character)
+        if con is not None: print('Connection has no character')
         return
     shard.start_playing(con.playernode, con.character)
     con.tell('launch success' ,'')

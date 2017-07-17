@@ -40,6 +40,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
             erukar.game.modifiers.Size, \
             erukar.game.modifiers.EnhancedWeapon\
         ])
+        self.dungeon.spawn_coordinates = self.vertices
         self.dungeon.add_actor(wand, random.choice([x for x in self.vertices]))
 
         return self.dungeon

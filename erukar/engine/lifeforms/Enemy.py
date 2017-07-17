@@ -10,7 +10,7 @@ class Enemy(Lifeform, Indexer):
     RandomizedWeapons = []
     ElitePointClassificationMinimum = 3.0
 
-    def __init__(self, world=None, name="", is_random=True):
+    def __init__(self, name="", world=None, is_random=True):
         Indexer.__init__(self)
         Lifeform.__init__(self, world,name)
 
@@ -26,6 +26,8 @@ class Enemy(Lifeform, Indexer):
         self.commander = None   # Used in conjuration or with Elites
         self.faction   = None   # Reserved
         self.spells    = []     # Enemies GENERALLY use pre-defined Spells instead of Spell words, though not necessarily 
+
+        self.ai = None
 
         # Flavor
         self.history = []
@@ -69,9 +71,7 @@ class Enemy(Lifeform, Indexer):
         stat_ratios = [stat[:3]+'_ratio' for stat in self.AttributeTypes]
 
     def alias(self):
-        if self.is_elite():
-            return self.name
-        return super().alias()
+        return self.name
 
     def is_elite(self):
         return self.elite_points >= Enemy.ElitePointClassificationMinimum and not self.is_transient

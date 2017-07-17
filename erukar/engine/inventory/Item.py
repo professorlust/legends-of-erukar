@@ -62,6 +62,9 @@ class Item(Describable):
             for modifier in modifiers:
                 modifier().apply_to(self)
 
+    def equipment_slots(self, lifeform):
+        return self.EquipmentLocations
+
     def rarity(self):
         full_mod_list = self.modifiers + [self.material]
         if not any([x for x in full_mod_list if x]):

@@ -61,7 +61,7 @@ class Inventory(Command):
             'id': str(item.uuid),
             'alias': item.alias(),
             'desirabilityRating': item.rarity().name,
-            'slots': item.EquipmentLocations,
+            'slots': item.equipment_slots(self.args['player_lifeform']),
             'details': list(Inventory.generate_list_of_details(item)) 
         }
 

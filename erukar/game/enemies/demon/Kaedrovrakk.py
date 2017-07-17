@@ -3,11 +3,11 @@ from erukar.game.inventory.weapons.standard.Halberd import Halberd
 from erukar.game.modifiers.material import Abyssium
 import erukar
 
-class Cuadrodemon(Enemy):
+class Kaedrovrakk(Enemy):
     Probability = 0.025
 
     def __init__(self):
-        super().__init__("Cuadrodemon")
+        super().__init__("Kaedrovrakk")
 
         self.str_ratio = 0.1556
         self.dex_ratio = 0.1333

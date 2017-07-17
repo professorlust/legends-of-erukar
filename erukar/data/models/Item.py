@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, joinedload
 from sqlalchemy.dialects.postgresql import JSON
 
-from erukar.data.SchemaBase import Base, ErukarBase
+from erukar.data.SchemaBase import Base, ErukarBase, SchemaLogger
 import erukar
 
 class Item(ErukarBase, Base):

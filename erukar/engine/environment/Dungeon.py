@@ -15,6 +15,7 @@ class Dungeon(RpgEntity):
         self.rooms = []
         self.active_auras = set()
         self.actors = set()
+        self.spawn_coordinates = []
 
     def get_object_by_uuid(self, uuid):
         if uuid == self.uuid: return self

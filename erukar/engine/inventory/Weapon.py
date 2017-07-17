@@ -37,6 +37,9 @@ class Weapon(Item):
             scales=True
         )]
 
+    def equipment_slots(self, lifeform):
+        return lifeform.weapon_slots()
+
     def on_calculate_attack(self, attack_cmd):
         '''Needs implementation''' 
         pass

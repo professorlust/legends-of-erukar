@@ -111,7 +111,7 @@ class Instance(Manager):
         node.world = self.dungeon
         node.character.world = self.dungeon
         super().subscribe(node)
-        self.dungeon.add_actor(node.character, (0,0))
+        self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
         if self.active_player is None: self.active_player = node
 
         # Run on_equip for all equipped items
@@ -193,7 +193,6 @@ class Instance(Manager):
             # Save Dirtied Characters in DB 
             if hasattr(result, 'dirtied_characters'):
                 for dirty in result.dirtied_characters:
-                    print(type(dirty))
                     if isinstance(dirty, erukar.engine.lifeforms.Player):
                         erukar.data.models.Character.update(dirty, self.session)
 
