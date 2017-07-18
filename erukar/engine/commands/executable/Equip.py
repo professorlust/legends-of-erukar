@@ -9,6 +9,7 @@ class Equip(ActionCommand):
     CannotEquip = "'{}' was found but cannot be equipped"
     MismatchedSlot = "Cannot equip {} at slot {}"
     NotEnoughPoints = 'Not enough action points to equip {} to {}'
+    RebuildZonesOnSuccess = True
 
     '''
     Requires:

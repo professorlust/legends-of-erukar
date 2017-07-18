@@ -1,4 +1,5 @@
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
+from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.environment import *
 from erukar.engine.calculators import *
@@ -24,26 +25,26 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     MaxHeight = 15
     MaxWidth = 15
 
-    def __init__(self, size=24):
+    def __init__(self, generation_properties, size=24):
+        self.generation_properties = generation_properties
         self.vertices = []
         self.connections = {}
         self.size = size
 
     def generate(self, previous_instance_identifier=''):
-        self.dungeon = Dungeon()
+        self.world = Dungeon()
         self.create_dungeon()
         e = erukar.game.enemies.undead.Skeleton()
-        self.dungeon.add_actor(e, random.choice([x for x in self.vertices]))
-        wand = erukar.game.inventory.weapons.standard.Wand(modifiers=[\
-            erukar.game.modifiers.Iurwood, \
-            erukar.game.modifiers.Quality, \
-            erukar.game.modifiers.Size, \
-            erukar.game.modifiers.EnhancedWeapon\
-        ])
-        self.dungeon.spawn_coordinates = self.vertices
-        self.dungeon.add_actor(wand, random.choice([x for x in self.vertices]))
+        self.world.add_actor(e, random.choice([x for x in self.vertices]))
+        md = ModuleDecorator('erukar.game.modifiers.room.contents.items', self.generation_properties)
+        for i in range(6):
+            new_inv = md.create_one()
+            loc = random.choice(self.vertices)
+            new_inv.apply_to(self.world, loc)
 
-        return self.dungeon
+        self.world.spawn_coordinates = self.vertices
+
+        return self.world
 
     def create_dungeon(self):
         self.create_rooms() #
@@ -74,34 +75,34 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
     def add_room_path(self, path, origin):
         '''Use an A* Path to add a bunch of rooms from one objective to the other'''
-        actual_coords = [x for x in path if x not in self.dungeon.rooms]
-        new_room = Room(self.dungeon, actual_coords)
+        actual_coords = [x for x in path if x not in self.world.rooms]
+        new_room = Room(self.world, actual_coords)
         for coord in actual_coords: self.vertices.append(coord)
 #       previous = None
 #       for coord in path:
-#           if coord not in self.dungeon.rooms:
+#           if coord not in self.world.rooms:
 #               self.rooms.append(coord)
-#               current = self.dungeon.get_room_at(coord)
+#               current = self.world.get_room_at(coord)
 #               if not current:
-#                   current = Room(self.dungeon, coord)
+#                   current = Room(self.world, coord)
 #               previous = current
 
     def build_offshoot(self):
         '''Build random off-shoots which go nowhere, but overall decrease linearity'''
         self.determine_linearity()
-        at_risk = [x for x in self.dungeon.rooms if x.linearity > self.MinimumLinearityForRisk]
+        at_risk = [x for x in self.world.rooms if x.linearity > self.MinimumLinearityForRisk]
         
         #determine start randomly
         distribution = [self.linearity_weight(st) for st in self.rooms]
         coords = self.rooms[DungeonGeneratorRedux.get_from_unnormalized_distribution(distribution)]
-        current = self.dungeon.get_room_at(coords)
+        current = self.world.get_room_at(coords)
 
         for added in range(int(random.random() * (self.MaximumOffshootLength-self.MinimumOffshootLength) + self.MinimumOffshootLength)): 
             available_rooms = list(current.wall_directions())
             if len(available_rooms) == 0: return
             direction = random.choice(available_rooms)
             new_coords = CoordinateTranslator.translate(current.coordinates, direction)
-            new_room = Room(self.dungeon, new_coords)
+            new_room = Room(self.world, new_coords)
             if not new_room.is_valid:
                 break
             current = new_room
@@ -109,7 +110,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     def build_junction_based_on_linearity(self):
         '''Attempts to build connections (junctions) between two highly linear rooms'''
         self.determine_linearity()
-        at_risk = [x for x in self.dungeon.rooms if x.linearity > self.MinimumLinearityForRisk]
+        at_risk = [x for x in self.world.rooms if x.linearity > self.MinimumLinearityForRisk]
         
         #determine start randomly
         distribution = [self.linearity_weight(st) for st in self.vertices]
@@ -131,8 +132,8 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     def determine_linearity(self):
         '''Do a single pass over the entire dungeon, calculating linearity scores'''
         calculation_queue = Queue()
-        branch_points = {x for x in self.dungeon.rooms if len(list(x.adjacent_rooms())) > 2}
-        branch_points.add(self.dungeon.rooms[0])
+        branch_points = {x for x in self.world.rooms if len(list(x.adjacent_rooms())) > 2}
+        branch_points.add(self.world.rooms[0])
         starts_evaluated = set()
         
         for bp in iter(branch_points):
@@ -210,7 +211,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
     def linearity_weight(self, coords):
         '''Used to greatly sway linearity adjustments'''
-        room = self.dungeon.get_room_at(coords)
+        room = self.world.get_room_at(coords)
         return 0 if not room else math.pow(room.linearity, 2)
 
     def connect_to_random_vertex(self, origin):
@@ -247,7 +248,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
 
     def fill_walls(self):
         '''Fill in the abyss with walls (ugly, need to optimize)'''
-        for room in self.dungeon.rooms:
+        for room in self.world.rooms:
             for direction in room.wall_directions():
                 room.connections[direction] = Passage(wall=Surface())
 

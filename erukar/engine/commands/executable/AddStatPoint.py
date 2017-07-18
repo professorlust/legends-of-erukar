@@ -11,6 +11,8 @@ class AddStatPoint(Command):
         'resolve'
     ]
 
+    RebuildZonesOnSuccess = True
+
     def perform(self):
         if 'stat' not in self.args: raise Exception('Malformed message received by Add Stat Point')
         if self.args['stat'].lower() not in AddStatPoint.ValidStats:

@@ -24,12 +24,12 @@ class RandomDungeonInstance(Instance):
         self.level_variance = level_variance
         if generation_properties is None:
             generation_properties = GenerationProfile.random()
-        self.generation_parameters = generation_properties
+        self.generation_properties = generation_properties
         self.previous_identifier = previous_identifier
 
     def initialize_instance(self, connector):
         super().initialize_instance(connector)
-        d = DungeonGeneratorRedux()
+        d = DungeonGeneratorRedux(self.generation_properties)
         self.dungeon = d.generate(self.previous_identifier)
         self.decorate()
         self.on_start()
@@ -43,6 +43,6 @@ class RandomDungeonInstance(Instance):
 
     def decorators(self):
         for sm in RandomDungeonInstance.SubModules:
-            md = sm[0](RandomDungeonInstance.BaseModule.format(sm[1]), self.generation_parameters)
+            md = sm[0](RandomDungeonInstance.BaseModule.format(sm[1]), self.generation_properties)
             yield md
 

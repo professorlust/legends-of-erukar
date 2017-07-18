@@ -1,4 +1,4 @@
-from erukar.engine.calculators import Navigator
+from erukar.engine.calculators.Navigator import Navigator
 import math
 
 class Distance:

@@ -2,6 +2,12 @@ from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.model.PlayerNode import PlayerNode
 import sys, inspect, erukar, threading, json
 
+import logging
+logger = logging.getLogger('debug')
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler('debug.log')
+logger.addHandler(fh)
+
 class Interface:
     command_location = 'erukar.engine.commands.executable'
     command_does_not_exist = 'The command \'{0}\' was not found.'
@@ -21,13 +27,16 @@ class Interface:
                 self.aliases[a] = name
 
     def receive(self, playernode, data):
+        logger.info('data received')
         target_command = '{0}.{1}'.format(Interface.command_location, data['command'])
+        logger.info('received a {}'.format(target_command))
         cmd = self.factory.create_one(target_command, None)
         if not cmd: return
         cmd.args = data
         cmd.player_info = playernode
 
         instance = self.shard.player_current_instance(playernode.uid)
+        logger.info('Sending to instance')
         instance.try_execute(playernode, cmd)
 
     def get_messages_for(self, uid):

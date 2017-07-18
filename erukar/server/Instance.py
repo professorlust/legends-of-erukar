@@ -12,9 +12,9 @@ from erukar.engine.commands.executable.Wait import Wait
 import erukar, threading, random, datetime, json, uuid
 
 import logging
-InstanceLogger = logging.getLogger('instance')
+InstanceLogger = logging.getLogger('debug')
 InstanceLogger.setLevel(logging.INFO)
-fh = logging.FileHandler('instance.log')
+fh = logging.FileHandler('debug.log')
 InstanceLogger.addHandler(fh)
 
 class Instance(Manager):
@@ -125,6 +125,7 @@ class Instance(Manager):
         self.turn_manager.subscribe(node)
         self.command_contexts[node.uid] = None
         self.execute_pre_inspect(node)
+        node.character.build_zones(self.dungeon)
 
     def execute_pre_inspect(self, player):
         player.lifeform().current_action_points += Inspect.ActionPointCost
@@ -136,6 +137,9 @@ class Instance(Manager):
             result = self.execute_command(cmd)
             if result is None or (result is not None and not result.success):
                 return
+
+            if cmd.RebuildZonesOnSuccess:
+                self.active_player.lifeform().flag_for_rebuild()
 
             if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
                 self.get_next_player()

@@ -9,6 +9,7 @@ class Drop(ActionCommand):
 
     # Base. This is added to the Unequip cost if the item is equipped
     ActionPointCost = 1
+    RebuildZonesOnSuccess = True
 
     '''
     Requires:
@@ -25,10 +26,10 @@ class Drop(ActionCommand):
             
         self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
         self.args['player_lifeform'].inventory.remove(self.args['interaction_target'])
-        room = self.world.get_room_at(self.args['player_lifeform'].coordinates)
-        room.add(self.args['interaction_target'])
+
+        self.world.add_actor(self.args['interaction_target'], self.args['player_lifeform'].coordinates)
         
-        drop_result = self.args['interaction_target'].on_drop(self.args['player_lifeform'].room, self.args['player_lifeform'])
+        drop_result = self.args['interaction_target'].on_drop(self.args['player_lifeform'], self.args['player_lifeform'])
         if drop_result: self.append_result(self.player_info.uid, drop_result)
 
         self.append_result(self.player_info.uid, Drop.Successful.format(self.args['interaction_target'].describe()))

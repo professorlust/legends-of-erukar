@@ -7,6 +7,7 @@ class Move(ActionCommand):
     move_through_closed_door = 'You cannot move this way because a door prevents you from doing so'
     move_successful = 'You have successfully moved {0}.'
     enemy_movement = '{} has moved {}.'
+    RebuildZonesOnSuccess = True
 
     '''
     Requires:

@@ -60,20 +60,21 @@ class Character(Lifeform):
             schema = Character()
             schema.player = erukar.data.models.Player.get(session, uid)
 
-        schema.copy_from_object(session, player.lifeform())
+        orphans = schema.copy_from_object(session, player.lifeform())
         schema.add_or_update(session)
 
     def copy_inventory(self, session, player):
         schema_map = {}
+        orphans = {}
 
         # Map all items in the inventory
         for item in player.inventory:
             existing = next((x for x in self.inventory if getattr(item, 'id', -1) == x.id), None)
             if not existing:
-                SchemaLogger.info('Did not find existing item')
                 existing = erukar.data.models.Item.create_from_object(session, item)
-                item.id = existing.id
+                existing.add_or_update(session)
                 self.inventory.append(existing)
+                item.id = existing.id
             else:
                 SchemaLogger.info('Found existing item matching id {}'.format(item.id))
             schema_map[item] = existing

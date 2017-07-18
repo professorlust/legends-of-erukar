@@ -43,11 +43,6 @@ class Weapon(Item):
     def on_calculate_attack(self, attack_cmd):
         '''Needs implementation''' 
         pass
-#       if self.RequiresAmmo and attack_state.ammunition:
-#           # This should mutate an AttackParameters object 
-#           attack_state.ammunition.on_calculate_attack(attack_state)
-#           attack_state.ammunition.consume()
-#       super().on_attack(attack_state.attacker)
 
     def on_calculate_attack_roll(self, base_attack_roll, attacker, target):
         return base_attack_roll
@@ -62,14 +57,6 @@ class Weapon(Item):
     def rolled_damage(self, damage, attacker):
         '''used to get processed result for a single damage type'''
         return int(np.random.uniform(*damage.scaled_values(attacker))), damage.name
-
-#   def on_calculate_attack_roll(self, raw, target):
-#       result = raw
-#       if self.material:
-#           result = self.material.on_calculate_attack_roll(result, target)
-#       for modifier in self.modifiers:
-#           result = modifier.on_calculate_attack_roll(result, target) 
-#       return result
 
     def on_process_damage(self, attack_state, command):
         for modifier in self.modifiers:
@@ -98,3 +85,6 @@ class Weapon(Item):
             min_d = damage.damage[0]
             max_d = damage.damage[1]
         return '{:>11} {} to {} {} Damage'.format('•', int(min_d), int(max_d), damage.name.capitalize())
+
+    def attack_range(self, lifeform):
+        return self.MaximumRange

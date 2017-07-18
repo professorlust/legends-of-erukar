@@ -6,6 +6,7 @@ class Use(ActionCommand):
 
     aliases = ['use']
     TrackedParameters = ['item', 'target']
+    RebuildZonesOnSuccess = True
 
     def execute(self):
         failure = self.check_for_arguments()

@@ -2,8 +2,14 @@ from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.conditions.Dead import Dead
 from erukar.engine.conditions.Dying import Dying
 from erukar.engine.model.Observation import Observation
-from erukar.engine.environment.Corpse import Corpse
+from erukar.engine.model.Zones import Zones
 import erukar, math, random
+
+import logging
+logger = logging.getLogger('debug')
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler('debug.log')
+logger.addHandler(fh)
 
 class Lifeform(RpgEntity):
     equipment_types = [
@@ -36,6 +42,7 @@ class Lifeform(RpgEntity):
         self.instance = ''
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
+        self.zones = Zones()
         self.wealth = 0
         self.initialize_effects()
 
@@ -252,7 +259,7 @@ class Lifeform(RpgEntity):
         '''Figures out the penalty for wielding a weapon in the character's offhand'''
         dual_wielding = self.get_skill('erukar.game.skills.offensive.DualWielding')
         reduction = 0 if not dual_wielding else dual_wielding.current_penalty_reduction()
-        print(reduction)
+        logger.info(reduction)
         return (Lifeform.BaseDualWieldingPenalty - reduction) / 100.0
 
     def evasion(self):
@@ -326,11 +333,14 @@ class Lifeform(RpgEntity):
 
     def take_damage(self, damage_amount, instigator=None):
         '''Take damage and return amount of XP to award instigator'''
+        logger.info(damage_amount)
         if self.has_condition(erukar.engine.conditions.Dying):
+            logger.info('dead')
             self.kill(killer=instigator)
             return
         self.health = max(0, self.health - damage_amount)
         if self.health == 0:
+            logger.info('dying')
             self.conditions.append(Dying(self, None))
 
     def kill(self, killer):
@@ -412,3 +422,9 @@ class Lifeform(RpgEntity):
 
     def weapon_slots(self):
         return ['left', 'right']
+
+    def build_zones(self, world):
+        self.zones.rebuild_if_desynced(self, world)
+
+    def flag_for_rebuild(self):
+        self.zones.desynced = True

@@ -5,6 +5,7 @@ from erukar.engine.commands.ActionCommand import ActionCommand
 
 class Unequip(ActionCommand):
     NotFound = "No equipped item was found"
+    RebuildZonesOnSuccess = True
 
     '''
     Requires:

@@ -6,7 +6,7 @@ import erukar, random
 class Armor(RoomModifier):
     Probability = 1.0
 
-    def apply_to(self, room):
+    def apply_to(self, world, location):
         randomizer = ModuleDecorator('erukar.game.inventory.armor', None)
         armor = randomizer.create_one()
 
@@ -14,4 +14,4 @@ class Armor(RoomModifier):
         material.create_one().apply_to(armor)
         
         erukar.game.modifiers.universal.Quality().apply_to(armor)
-        room.add(armor)
+        world.add_actor(armor, location)

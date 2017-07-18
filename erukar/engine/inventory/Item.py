@@ -180,3 +180,6 @@ class Item(Describable):
             return self.alias()
         # show price
         return '({} R)'.format(self.alias(), int(self.price()))
+
+    def attack_range(self, lifeform):
+        return 0

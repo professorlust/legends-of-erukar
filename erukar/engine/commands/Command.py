@@ -7,6 +7,7 @@ class Command:
     SearchTargetMustBeIndexed = False
     LimitToLocal = False
     NeedsArgs = True
+    RebuildZonesOnSuccess = False
 
     def __init__(self):
         '''These parameters are assigned after instantiation'''

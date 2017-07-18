@@ -5,11 +5,6 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 from concurrent.futures import ProcessPoolExecutor
 
-ServerLogger = logging.getLogger('server')
-ServerLogger.setLevel(logging.INFO)
-fh = logging.FileHandler('server.log')
-ServerLogger.addHandler(fh)
-
 from flask import Flask
 from flask import request, jsonify, abort
 from socketio import Middleware
@@ -142,7 +137,6 @@ def ws_login(raw_creds):
 
 @socketio.on('register')
 def ws_register(raw_creds):
-    ServerLogger.info('registering {}'.format(raw_creds))
     credentials = json.loads(raw_creds)
     if 'uid' not in credentials: return "Malformed request received"
 
@@ -198,7 +192,6 @@ def on_add_character(*_):
 @socketio.on('finalize new character')
 def on_finish_character_creation(raw_data):
     data = json.loads(raw_data)
-    ServerLogger.info(type(data))
     if 'stats' not in data or 'bio' not in data:
         return 'invalid payload'
 
@@ -218,14 +211,4 @@ def on_finish_character_creation(raw_data):
 
 @socketio.on('send command')
 def on_command_receipt(cmd):
-    ServerLogger.info(cmd)
     shard.consume_command(request, cmd)
-
-
-if __name__ == "__main__":
-    print('shard activating')
-
-    socketio.run(app, host="0.0.0.0")
-    for con in shard.clients:
-        con.tell('end', {})
-

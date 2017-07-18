@@ -10,6 +10,12 @@ from erukar.server.Connection import Connection
 import erukar, threading, json, asyncio
 import numpy as np
 
+import logging
+logger = logging.getLogger('debug')
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler('debug.log')
+logger.addHandler(fh)
+
 class Shard(Manager):
     SplashPath = 'Splash'
     CharacterCreationPath = 'CharacterSelect'
@@ -213,9 +219,11 @@ class Shard(Manager):
             return cur_instance.instance.get_messages_for(uid)
 
     def consume_command(self, request, cmd):
+        logger.info('requesting a consume')
         cmd_object = json.loads(cmd)
         client = self.get_client(request)
         if client.playernode is not None and client.playernode.status == PlayerNode.Playing:
+            logger.info('received a request')
             self.interface.receive(client.playernode, cmd_object)
 
     def active_players(self):

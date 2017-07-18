@@ -6,7 +6,7 @@ from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Damage import Damage
 from erukar.engine.inventory.Weapon import Weapon
 from erukar.engine.calculators.Navigator import Navigator
-from erukar.engine.conditions.Dead import Dead
+from erukar.engine.conditions import *
 import erukar, random, math
 
 class Attack(ActionCommand):
@@ -15,6 +15,8 @@ class Attack(ActionCommand):
     unsuccessful = "{subject}'s attack of {roll} misses {target}."
     UnableToAttackInDirection = "You are unable to perform a directional attack."
     UnableToAttackInRoom = "You are unable to perform an attack."
+    
+    RebuildZonesOnSuccess = True
 
     '''
     Requires:
@@ -91,11 +93,16 @@ class Attack(ActionCommand):
         self.append_result(self.player_info.uid, 'You have dealt {} damage!'.format(', '.join('{} {}'.format(*x) for x in final_damages)))
 
     def check_for_killed_enemy(self):
+        if self.args['interaction_target'].has_condition(Dying):
+            self.append_result(self.player_info.uid, '{} is dying!'.format(self.args['interaction_target'].alias()))
+            return
         if self.args['interaction_target'].has_condition(Dead):
             self.world.remove_actor(self.args['interaction_target'])
-            self.world.add_actor(Corpse(self.args['interaction_target']), self.args['interaction_target'].coordinates)
+            corpse = self.args['interaction_target']
+            self.world.add_actor(corpse, self.args['interaction_target'].coordinates)
             xp = self.args['interaction_target'].calculate_xp_worth()
             self.args['player_lifeform'].award_xp(xp, self)
+            self.append_result(self.player_info.uid, '{} has been slain!'.format(self.args['interaction_target'].alias()))
 
     def weapon_exists(self):
         '''Is the weapon real and valid?'''

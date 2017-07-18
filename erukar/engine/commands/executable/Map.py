@@ -43,7 +43,7 @@ class Map(Command):
             return
 
         self.open_space = self.world.all_traversable_coordinates()
-        self.prepare_zones()
+        self.args['player_lifeform'].build_zones(self.world)
 
         # Now get the min and max range for x and y
         max_x, max_y = map(max, zip(*self.open_space))
@@ -73,48 +73,40 @@ class Map(Command):
         result.append(self.world.moving_parts_at((x,y)))
         return result
 
-    def actions_for(self, x, y):
-        actions = {
-            'Inspect': {'cost': 2},
-            'Glance': {'cost': 1},
+    def action(command, description="", cost=1, target='', weapon=''):
+        return {
+            'command': command,
+            'cost': cost,
+            'description': command if not description else description,
+            'interaction_target': target,
+            'weapon': weapon
         }
-        if (x,y) in self.one_ap_movement:
-            actions['Move'] = {'cost': 1}
-        elif (x,y) in self.two_ap_movement:
-            actions['Move'] = {'cost': 2}
+
+    def attack_action(weapon, creature):
+        return Map.action('Attack', description='Attack with {}'.format(weapon.alias()), weapon=str(weapon.uuid), target=str(creature.uuid))
+
+    def actions_for(self, x, y):
+        actions = [
+            Map.action('Inspect', cost=2),
+            Map.action('Glance'),
+        ]
+
+        move = self.move_action(x,y)
+        if move: actions.append(move)
 
         creature_at = self.world.creature_at(self.args['player_lifeform'], (x,y))
-        if creature_at and (x,y) in self.visual_fog_of_war and (x,y) in self.weapon_attack_ranges:
-            for weapon in self.weapon_attack_ranges[(x,y)]:
-                actions['Attack with {}'.format(weapon.describe())] = {
-                    'method': 'Attack',
-                    'cost': 1,
-                    'weapon': str(weapon.uuid),
-                    'interaction_target': str(creature_at.uuid)
-                }
-
+        zone = self.args['player_lifeform'].zones
+        if creature_at and (x,y) in zone.fog_of_war and (x,y) in zone.weapon_ranges:
+            for weapon in zone.weapon_ranges[(x,y)]:
+                actions.append(Map.attack_action(weapon, creature_at))
         return actions
 
-    def prepare_zones(self):
-        start = self.args['player_lifeform'].coordinates 
-        move_speed = self.args['player_lifeform'].move_speed()
-        v_fow = self.args['player_lifeform'].visual_fog_of_war()
+    def move_action(self, x,y):
+        move_sets = self.args['player_lifeform'].zones.movement
+        applicable_move_costs = [cost for cost in move_sets if (x,y) in move_sets[cost]]
+        if not applicable_move_costs: return None
 
-        self.two_ap_movement = Distance.pathed_traversable(start, self.open_space, (move_speed*2)-1)
-        self.one_ap_movement = Distance.pathed_traversable(start, self.two_ap_movement, move_speed-1)
-        self.visual_fog_of_war = list(Distance.direct_los(start, self.open_space, v_fow))
-
-        self.weapon_attack_ranges = {}
-        for weapon_slot in self.args['player_lifeform'].weapon_slots():
-            self.add_weapon_range(weapon_slot, start)
-
-    def add_weapon_range(self, weapon_slot, start):
-        weapon = getattr(self.args['player_lifeform'], weapon_slot)
-        if not isinstance(weapon, erukar.engine.inventory.Weapon): return
-        for coord in Distance.direct_los(start, self.open_space, weapon.MaximumRange):
-            if coord not in self.weapon_attack_ranges:
-                self.weapon_attack_ranges[coord] = []
-            self.weapon_attack_ranges[coord].append(weapon)
+        return Map.action('Move', cost=min(applicable_move_costs))
 
     def overlay_for(self, x,y):
         overlay_method_name = "get_{}_overlay_for".format(self.args['overlay_type'])
@@ -125,14 +117,14 @@ class Map(Command):
         return Map.rgba(0, 0, 0, 0.5)
 
     def get_movement_overlay_for(self, x,y):
-        if any((x,y) == coord for coord in self.one_ap_movement):
+        if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[1]):
             return Map.rgba(0, 100, 0, 0.3)
 
-        if any((x,y) == coord for coord in self.two_ap_movement):
+        if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[2]):
             return Map.rgba(0, 80, 80, 0.2)
 
     def get_visual_overlay_for(self, x,y):
-        if any((x,y) == coord for coord in self.visual_fog_of_war):
+        if any((x,y) == coord for coord in self.args['player_lifeform'].zones.fog_of_war):
             return Map.rgba(0, 0, 0, 0)
 
     def rgba(r,g,b,a):
