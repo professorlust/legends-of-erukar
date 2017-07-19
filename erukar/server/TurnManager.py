@@ -22,10 +22,11 @@ class TurnManager(Manager):
 
     def subscribe(self, player):
         super().subscribe(player)
-        logger.info('TurnManager -- Subscribe called for {}'.format(player))
-        if self.active_player is None:
+        logger.info('TurnManager -- Subscribe called for {} ({})'.format(player, player.lifeform().turn_modifier()))
+        if self.active_player is None or (isinstance(player, erukar.engine.model.PlayerNode) and isinstance(self.active_player, erukar.engine.lifeforms.Enemy)):
             self.active_player = player
         self.refresh_deck()
+        logger.info('TurnManager -- New Deck is {}'.format(self.on_deck))
 
     def unsubscribe(self, player):
         super().unsubscribe(player)

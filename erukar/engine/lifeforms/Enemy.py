@@ -1,3 +1,4 @@
+from erukar.ai.BaseAI import BaseAI
 from erukar.engine.lifeforms.Lifeform import Lifeform
 from erukar.engine.model.Indexer import Indexer
 from erukar.engine.model.Describable import Describable
@@ -27,7 +28,7 @@ class Enemy(Lifeform, Indexer):
         self.faction   = None   # Reserved
         self.spells    = []     # Enemies GENERALLY use pre-defined Spells instead of Spell words, though not necessarily 
 
-        self.ai = None
+        self.ai_module = BaseAI
 
         # Flavor
         self.history = []
@@ -76,16 +77,8 @@ class Enemy(Lifeform, Indexer):
     def is_elite(self):
         return self.elite_points >= Enemy.ElitePointClassificationMinimum and not self.is_transient
 
-    def perform_turn(self):
-        # Check to see if we should attack
-        targets = list(self.viable_attack_targets(self.current_room))
-        if len(targets) > 0:
-            return self.do_attack(targets)
-        
-        if self.commander is not None:
-            return self.help_or_follow_commander(self)
-
-        return self.maybe_move_somewhere()
+    def perform_turn(self, instance):
+        self.ai_module.perform_turn(self, instance)
 
     def help_or_follow_commander(self):
         print('following ' + self.commander.alias())

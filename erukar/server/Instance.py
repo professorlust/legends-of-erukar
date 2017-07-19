@@ -49,6 +49,7 @@ class Instance(Manager):
             self.on_start()
 
     def on_start(self):
+        logger.info('Starting instance')
         self.subscribe_enemies()
         for room in self.dungeon.rooms:
             room.on_start()
@@ -60,10 +61,9 @@ class Instance(Manager):
         return any([isinstance(x, PlayerNode) for x in self.players])
 
     def subscribe_enemies(self):
-        for room in self.dungeon.rooms:
-            for item in room.contents:
-                self.handle_enemy_persistence(room, item)
-            room.contents = [c for c in room.contents if not (isinstance(type(c), erukar.engine.lifeforms.Enemy) and c.requesting_persisted)]
+        for x in self.dungeon.actors:
+            if isinstance(x, erukar.engine.lifeforms.Enemy):
+                self.subscribe_enemy(x)
 
     def handle_enemy_persistence(self, room, enemy):
         '''Get persisted enemies where available'''
@@ -80,11 +80,43 @@ class Instance(Manager):
 
         self.subscribe_enemy(enemy)
 
+    def subscribe(self, node):
+        '''Subscribe a player'''
+        if not hasattr(node, 'character') or node.character is None:
+            raise Exception("No character")
+
+        node.world = self.dungeon
+        self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
+        if self.active_player is None: self.active_player = node
+
+        erukar.data.models.Character.update(node.character, self.session)
+        node.character.uid = node.uid
+        self.subscribe_being(node.lifeform())
+        self.execute_pre_inspect(node)
+        self.turn_manager.subscribe(node)
+        super().subscribe(node)
+
     def subscribe_enemy(self, enemy):
         enemy.subscribe(self)
-        self.command_contexts[enemy.uid] = None
         self.turn_manager.subscribe(enemy)
-        self.players.append(enemy)
+        self.subscribe_being(enemy)
+        super().subscribe(enemy)
+
+    def subscribe_being(self, being):
+        logger.info('Instance -- {} has subscribed'.format(being))
+        self.command_contexts[being.uid] = None
+        self.players.append(being)
+        self.characters.append(being)
+        being.world = self.dungeon
+
+        # Run on_equip for all equipped items
+        for equip in being.equipment_types:
+            equipped = getattr(being, equip)
+            if equipped is not None:
+                equipped.on_equip(being)
+
+        being.instance = self.identifier
+        being.build_zones(self.dungeon)
 
     def unsubscribe(self, node):
         player = next((x for x in self.players if node is x), None)
@@ -108,37 +140,15 @@ class Instance(Manager):
         uid = random.choice(possible_uids)
         return self.connector.load_creature(uid)
 
-    def subscribe(self, node):
-        if not hasattr(node, 'character') or node.character is None:
-            raise Exception("No character")
-
-        logger.info('Instance -- {} has subscribed'.format(node))
-        node.world = self.dungeon
-        node.character.world = self.dungeon
-        self.characters.append(node.lifeform())
-        super().subscribe(node)
-        self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
-        if self.active_player is None: self.active_player = node
-
-        # Run on_equip for all equipped items
-        for equip in node.character.equipment_types:
-            equipped = getattr(node.character, equip)
-            if equipped is not None:
-                equipped.on_equip(node.character)
-
-        node.character.instance = self.identifier
-        erukar.data.models.Character.update(node.character, self.session)
-        self.turn_manager.subscribe(node)
-        self.command_contexts[node.uid] = None
-        self.execute_pre_inspect(node)
-        node.character.build_zones(self.dungeon)
-
     def execute_pre_inspect(self, player):
         player.lifeform().current_action_points += Inspect.ActionPointCost
         ins = player.create_command(Inspect)
         self.try_execute(player, ins)
 
     def try_execute(self, node, cmd):
+        if not self.any_connected_players():
+            return
+
         if node.uid == self.active_player.uid:
             result = self.execute_command(cmd)
             if result is None or (result is not None and not result.success):
@@ -150,24 +160,13 @@ class Instance(Manager):
             if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
                 self.get_next_player()
 
-        # Go ahead and execute ai turns
-        while self.turn_manager.has_players() and not isinstance(self.active_player, erukar.engine.model.PlayerNode):
-            self.do_non_player_turn()
-
     def do_non_player_turn(self):
-        if isinstance(self.active_player, str):
-            self.tick()
-    
+        logger.info('doing nonplayer turn')
         if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
             if not self.active_player.is_incapacitated():
-                self.execute_ai_turn()
+                self.active_player.perform_turn(self)
 
         self.get_next_player()
-
-    def execute_ai_turn(self):
-        cmd = self.active_player.perform_turn()
-        if cmd is not None:
-            result = self.execute_command(cmd)
 
     def get_next_player(self):
         if self.active_player is not None and not isinstance(self.active_player, str):
@@ -176,15 +175,23 @@ class Instance(Manager):
                 self.append_response(self.active_player.uid, res)
 
         self.active_player = self.turn_manager.next()
+        logger.info('Instance -- Next player is {}'.format(self.active_player))
         if self.active_player is not None and not isinstance(self.active_player, str):
             res = self.active_player.begin_turn()
             if len(res) > 0:
                 self.append_response(self.active_player.uid, res)
 
+        if isinstance(self.active_player, str):
+            self.tick()
+
+        if isinstance(self.active_player, erukar.engine.lifeforms.Enemy):
+            self.do_non_player_turn()
+
     def tick(self):
         self.dungeon.tick()
         for player in self.players:
             player.lifeform().tick()
+        self.get_next_player()
 
     def execute_command(self, cmd):
         cmd.server_properties = self.properties
@@ -209,13 +216,7 @@ class Instance(Manager):
             # Set context for player
             self.command_contexts[cmd.player_info.uid] = result
 
-        self.check_for_transitions(result)
         return result
-
-    def check_for_transitions(self, result):
-        for player in self.players:
-            if hasattr(player.lifeform(), 'transition_properties') and player.lifeform().transition_properties is not None:
-                self.unsubscribe(player)
 
     def append_result_responses(self, result):
         for uid in result.results:

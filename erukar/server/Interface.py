@@ -24,16 +24,13 @@ class Interface:
                 self.aliases[a] = name
 
     def receive(self, playernode, data):
-        logger.info('data received')
         target_command = '{0}.{1}'.format(Interface.command_location, data['command'])
-        logger.info('received a {}'.format(target_command))
         cmd = self.factory.create_one(target_command, None)
         if not cmd: return
         cmd.args = data
         cmd.player_info = playernode
 
-        instance = self.shard.player_current_instance(playernode.uid)
-        logger.info('Sending to instance')
+        instance = self.shard.player_current_instance(playernode.lifeform())
         instance.try_execute(playernode, cmd)
 
     def get_messages_for(self, uid):

@@ -101,6 +101,7 @@ class Shard(Manager):
 
     def unsubscribe(self, node):
         logger.info('Shard -- Unsubscribing {}'.format(node))
+        if not node or not node.character: return
         info = self.player_current_instance(node.character)
         logger.info('Shard -- Found info {} for {}'.format(info, node))
         if info:
