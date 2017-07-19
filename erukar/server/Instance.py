@@ -166,8 +166,6 @@ class Instance(Manager):
             if not self.active_player.is_incapacitated():
                 self.active_player.perform_turn(self)
 
-        self.get_next_player()
-
     def get_next_player(self):
         if self.active_player is not None and not isinstance(self.active_player, str):
             res = self.active_player.end_turn()
