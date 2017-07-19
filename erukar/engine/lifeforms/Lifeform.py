@@ -381,7 +381,7 @@ class Lifeform(RpgEntity):
         return math.floor(3 + self.calculate_effective_stat('dexterity')/8)
 
     def visual_fog_of_war(self):
-        return 2 + self.calculate_effective_stat('acuity')/5
+        return 3.5 + self.calculate_effective_stat('acuity')/8
 
     def begin_turn(self):
         self.gain_action_points()

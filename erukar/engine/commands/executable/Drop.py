@@ -32,5 +32,7 @@ class Drop(ActionCommand):
         drop_result = self.args['interaction_target'].on_drop(self.args['player_lifeform'], self.args['player_lifeform'])
         if drop_result: self.append_result(self.player_info.uid, drop_result)
 
+        self.dirty(self.args['player_lifeform'])
+
         self.append_result(self.player_info.uid, Drop.Successful.format(self.args['interaction_target'].describe()))
         return self.succeed()

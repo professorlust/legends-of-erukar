@@ -54,9 +54,7 @@ class Character(Lifeform):
 
     def update(player, session):
         schema = Character.get_schema_query(session, player.id, pid=player.player_id).first()
-        SchemaLogger.info(schema)
         if not schema:
-            SchemaLogger.info('asdf')
             schema = Character()
             schema.player = erukar.data.models.Player.get(session, uid)
 
@@ -75,9 +73,13 @@ class Character(Lifeform):
                 existing.add_or_update(session)
                 self.inventory.append(existing)
                 item.id = existing.id
-            else:
-                SchemaLogger.info('Found existing item matching id {}'.format(item.id))
             schema_map[item] = existing
+
+        # Remove items which are in schema but not in schema_map
+        dropped = [x for x in self.inventory if x not in schema_map.values()]
+        for item in dropped:
+            self.inventory.remove(item)
+
 
         for slot in player.equipment_types:
             slot_schema  = next((x for x in self.equipment if x.equipment_slot == slot ), None)
@@ -112,7 +114,6 @@ class Character(Lifeform):
         else: schema.player = node_schema
 
         if not schema.id:
-            SchemaLogger.info('adding!')
             schema.add_or_update(session)
             player.id = schema.id
 
