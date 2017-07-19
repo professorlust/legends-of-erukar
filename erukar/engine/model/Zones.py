@@ -24,7 +24,7 @@ class Zones:
         start_time = time.time()
         self.clear()
         self.build(lifeform, available_space)
-        logger.info('Clear and rebuild for {} took {:.3f} s to execute'.format(lifeform.name, time.time() - start_time))
+        logger.info('Zones -- Clear and rebuild for {} took {:.3f} s to execute'.format(lifeform.name, time.time() - start_time))
 
     def build(self, lifeform, available_space):
         self.add_all_movements(lifeform.coordinates, lifeform, available_space)
@@ -36,7 +36,6 @@ class Zones:
         previous_set = available_space
         for cost in reversed(range(1, lifeform.action_points()+1)):
             self.add_movement(start, lifeform, previous_set, cost)
-            logger.info('Movement set for cost {} is {} long'.format(cost, len(self.movement[cost])))
             previous_set = self.movement[cost]
 
     def add_movement(self, start, lifeform, available_space, cost):

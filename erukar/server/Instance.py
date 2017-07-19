@@ -86,14 +86,20 @@ class Instance(Manager):
         self.turn_manager.subscribe(enemy)
         self.players.append(enemy)
 
-    def unsubscribe(self, eid):
-        player = next((x for x in self.players if x.uid == eid), None)
-        if not player: return
+    def unsubscribe(self, node):
+        player = next((x for x in self.players if node is x), None)
+        if not player: 
+            logger.info('Instance -- No player could be found matching {}'.format(node))
+            return
         self.dungeon.remove_actor(player.lifeform())
         self.turn_manager.unsubscribe(player)
         self.players.remove(player)
         self.characters.remove(player.lifeform())
         super().unsubscribe(player)
+        self.handle_reduced_player_count()
+
+    def handle_reduced_player_count(self):
+        logger.info('Instance -- Reducing player count')
 
     def try_to_get_persistent_enemy(self, enemy):
         possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.session.find_player(e.uid)]

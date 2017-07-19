@@ -3,6 +3,9 @@ from erukar.engine.factories import *
 from erukar.engine.model.GenerationProfile import GenerationProfile
 import erukar
 
+import logging
+logger = logging.getLogger('debug')
+
 class RandomDungeonInstance(Instance):
     BaseModule = "erukar.game.modifiers.room.{0}"
     SubModules = []
@@ -46,3 +49,7 @@ class RandomDungeonInstance(Instance):
             md = sm[0](RandomDungeonInstance.BaseModule.format(sm[1]), self.generation_properties)
             yield md
 
+    def handle_reduced_player_count(self):
+        logger.info('RandomDungeonInstance -- Reducing player count')
+        if len(self.characters) == 0:
+            self.status = Instance.Closing

@@ -5,6 +5,7 @@ from erukar.engine.model import *
 from erukar.engine.lifeforms.Player import Player
 from erukar.server.Interface import Interface
 from erukar.server.InstanceInfo import InstanceInfo
+from erukar.server.Instance import Instance
 from erukar.server.ServerProperties import ServerProperties
 from erukar.server.Connection import Connection
 import erukar, threading, json, asyncio
@@ -50,7 +51,7 @@ class Shard(Manager):
         ]
 
         self.instances = self.starting_region_options.copy()
-        logger.info('Initial instance count: {}'.format(len(self.instances)))
+        logger.info('Shard -- Initial instance count: {}'.format(len(self.instances)))
         for info in self.instances:
             self.launch_dungeon_instance(info)
 
@@ -61,6 +62,7 @@ class Shard(Manager):
     def update_connection(self, request):
         '''Update a connection with sid or http_port if necessary'''
         con = self.get_client(request)
+        logger.info('Shard -- updating connection for {} with {}'.format(request, con))
         if not con:
             con = Connection(request.environ['REMOTE_ADDR'], self.emit)
             self.clients.add(con)
@@ -80,20 +82,31 @@ class Shard(Manager):
 
     def disconnect(self, request):
         con = self.get_client(request)
+        logger.info('Shard -- Disconnect called for {}'.format(con))
         if con is None: return
 
-        character = getattr(con.playernode, 'character', None)
-        if character:
-            self.unsubscribe(con.uid(), character)
+        self.unsubscribe(con.playernode)
+        self.clean_closing_instances()
         self.clients.remove(con)
+
+    def clean_closing_instances(self):
+        logger.info('Shard -- Attempting clean')
+        closing = [x for x in self.instances if x.instance.status == Instance.Closing]
+        for instance in closing: 
+            logger.info('Shard -- Closing {} instance'.format(instance.identifier))
+            self.instances.remove(instance)
 
     def login(self, uid):
         return erukar.data.models.Player.get(self.session, uid)
 
-    def unsubscribe(self, eid, character):
-        info = self.player_current_instance(eid)
-        if info: info.instance.unsubscribe(eid)
-        super().unsubscribe(eid)
+    def unsubscribe(self, node):
+        logger.info('Shard -- Unsubscribing {}'.format(node))
+        info = self.player_current_instance(node.character)
+        logger.info('Shard -- Found info {} for {}'.format(info, node))
+        if info:
+            logger.info('Shard -- Unsubscribing {} from {}'.format(node, info.instance.identifier))
+            info.instance.unsubscribe(node)
+        super().unsubscribe(node.uid)
 
     def subscribe(self, player):
         '''Called when a player (with uid) is connecting'''
@@ -181,7 +194,7 @@ class Shard(Manager):
 
     def launch_dungeon_instance(self, info):
         '''Launch an instance using an InstanceInfo object.'''
-        logger.info('Launching a new instance. Currently at {} instances.'.format(len(self.instances)))
+        logger.info('Shard -- Launching a new instance. Currently at {} instances.'.format(len(self.instances)))
         info.launch(self.connector_factory.create_session())
 
     def player_current_instance(self, character):
@@ -212,10 +225,7 @@ class Shard(Manager):
         self.move_player_to_instance(uid, info)
 
     def get_state_for(self, node):
-        if not node.character:
-            logger.info('No character for {}'.format(node.uid))
-            return
-        logger.info(node.character)
+        if not node.character: return
         cur_instance = self.player_current_instance(node.character)
         if cur_instance is not None:
             return cur_instance.instance.get_messages_for(node)
