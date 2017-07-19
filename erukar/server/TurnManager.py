@@ -1,6 +1,9 @@
 import erukar
 from erukar.engine.model.Manager import Manager
 
+import logging
+logger = logging.getLogger('debug')
+
 class TurnManager(Manager):
     TickIndicator = '5 Second Tick'
     MaximumTurnCount = 100000
@@ -19,6 +22,7 @@ class TurnManager(Manager):
 
     def subscribe(self, player):
         super().subscribe(player)
+        logger.info('TurnManager -- Subscribe called for {}'.format(player))
         if self.active_player is None:
             self.active_player = player
         self.refresh_deck()
@@ -38,6 +42,7 @@ class TurnManager(Manager):
             return self.active_player
 
     def refresh_deck(self):
+        logger.info('TurnManager -- Refresh Called. Number of players is {}'.format(len(self.players)))
         if len(self.players) < 1: 
             self.reset()
             return

@@ -50,6 +50,7 @@ class Shard(Manager):
         ]
 
         self.instances = self.starting_region_options.copy()
+        logger.info('Initial instance count: {}'.format(len(self.instances)))
         for info in self.instances:
             self.launch_dungeon_instance(info)
 
@@ -180,16 +181,13 @@ class Shard(Manager):
 
     def launch_dungeon_instance(self, info):
         '''Launch an instance using an InstanceInfo object.'''
+        logger.info('Launching a new instance. Currently at {} instances.'.format(len(self.instances)))
         info.launch(self.connector_factory.create_session())
 
-    def player_current_instance(self, uid):
+    def player_current_instance(self, character):
         for info in self.instances:
-            if uid in list(self.uids_in_instance(info)):
+            if character in info.instance.characters:
                return info
-
-    def uids_in_instance(self, info):
-        for uid in info.player_list:
-            yield uid
 
     def is_playing(self, uid):
         return self.get_active_playernode(uid).status == PlayerNode.Playing
@@ -213,17 +211,19 @@ class Shard(Manager):
             info = self.get_instance_for(character, properties.identifier)
         self.move_player_to_instance(uid, info)
 
-    def get_state_for(self, uid):
-        cur_instance = self.player_current_instance(uid)
+    def get_state_for(self, node):
+        if not node.character:
+            logger.info('No character for {}'.format(node.uid))
+            return
+        logger.info(node.character)
+        cur_instance = self.player_current_instance(node.character)
         if cur_instance is not None:
-            return cur_instance.instance.get_messages_for(uid)
+            return cur_instance.instance.get_messages_for(node)
 
     def consume_command(self, request, cmd):
-        logger.info('requesting a consume')
         cmd_object = json.loads(cmd)
         client = self.get_client(request)
         if client.playernode is not None and client.playernode.status == PlayerNode.Playing:
-            logger.info('received a request')
             self.interface.receive(client.playernode, cmd_object)
 
     def active_players(self):

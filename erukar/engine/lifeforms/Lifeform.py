@@ -7,9 +7,6 @@ import erukar, math, random
 
 import logging
 logger = logging.getLogger('debug')
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler('debug.log')
-logger.addHandler(fh)
 
 class Lifeform(RpgEntity):
     equipment_types = [

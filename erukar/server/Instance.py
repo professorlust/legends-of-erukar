@@ -12,10 +12,7 @@ from erukar.engine.commands.executable.Wait import Wait
 import erukar, threading, random, datetime, json, uuid
 
 import logging
-InstanceLogger = logging.getLogger('debug')
-InstanceLogger.setLevel(logging.INFO)
-fh = logging.FileHandler('debug.log')
-InstanceLogger.addHandler(fh)
+logger = logging.getLogger('debug')
 
 class Instance(Manager):
     MaximumTurnTime = 30.0 # In seconds
@@ -41,6 +38,7 @@ class Instance(Manager):
         self.command_contexts = {}
         self.status = Instance.NotInitialized
         self.responses = {}
+        self.characters = []
 
     def initialize_instance(self, session):
         '''Turn on players and generate a dungeon'''
@@ -94,6 +92,7 @@ class Instance(Manager):
         self.dungeon.remove_actor(player.lifeform())
         self.turn_manager.unsubscribe(player)
         self.players.remove(player)
+        self.characters.remove(player.lifeform())
         super().unsubscribe(player)
 
     def try_to_get_persistent_enemy(self, enemy):
@@ -104,12 +103,13 @@ class Instance(Manager):
         return self.connector.load_creature(uid)
 
     def subscribe(self, node):
-        InstanceLogger.info(self.identifier)
         if not hasattr(node, 'character') or node.character is None:
             raise Exception("No character")
 
+        logger.info('Instance -- {} has subscribed'.format(node))
         node.world = self.dungeon
         node.character.world = self.dungeon
+        self.characters.append(node.lifeform())
         super().subscribe(node)
         self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
         if self.active_player is None: self.active_player = node
@@ -221,31 +221,29 @@ class Instance(Manager):
             return
         self.responses[uid] = self.responses[uid] + [response]
 
-    def get_messages_for(self, uid):
-        player_node = self.get_player_from_uid(uid)
-        if not player_node:
-            InstanceLogger.info([x.uid for x in self.players])
+    def get_messages_for(self, node):
+        if not node:
             return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
 
-        character = player_node.lifeform()
+        character = node.lifeform()
         d = self.dungeon
 
-        inv_cmd = player_node.create_command(Inventory)
+        inv_cmd = node.create_command(Inventory)
         result = inv_cmd.execute()
-        inv_res = result.result_for(player_node.uid)[0]
+        inv_res = result.result_for(node.uid)[0]
 
-        stat_cmd = player_node.create_command(Stats)
-        stat_res = stat_cmd.execute().result_for(player_node.uid)
+        stat_cmd = node.create_command(Stats)
+        stat_res = stat_cmd.execute().result_for(node.uid)
 
-        map_cmd = player_node.create_command(Map)
-        map_res = map_cmd.execute().result_for(player_node.uid)
+        map_cmd = node.create_command(Map)
+        map_res = map_cmd.execute().result_for(node.uid)
 
-        li_cmd = player_node.create_command(LocalIndex)
-        li_res = li_cmd.execute().result_for(player_node.uid)
+        li_cmd = node.create_command(LocalIndex)
+        li_res = li_cmd.execute().result_for(node.uid)
 
         log = []
-        if uid in self.responses and len(self.responses[uid]) > 0:
-            responses =  self.responses.pop(uid, [])
+        if node.uid in self.responses and len(self.responses[node.uid]) > 0:
+            responses =  self.responses.pop(node.uid, [])
             for line in responses:
                 log.append({'text':line, 'when': str(datetime.datetime.now())})
 

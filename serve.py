@@ -162,7 +162,7 @@ def on_launch(*_):
 def on_request_state():
     con = shard.get_client(request)
     if con.playernode is not None and con.playernode.status == PlayerNode.Playing:
-        con.tell('update state', shard.get_state_for(con.uid()))
+        con.tell('update state', shard.get_state_for(con.playernode))
     else: con.tell('specific message', 'Not playing')
 
 @socketio.on('select character')

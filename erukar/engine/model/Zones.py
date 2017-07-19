@@ -4,9 +4,6 @@ import erukar, math
 
 import logging, time
 logger = logging.getLogger('debug')
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler('debug.log')
-logger.addHandler(fh)
 
 class Zones:
     def __init__(self):

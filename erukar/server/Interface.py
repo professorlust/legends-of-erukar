@@ -4,9 +4,6 @@ import sys, inspect, erukar, threading, json
 
 import logging
 logger = logging.getLogger('debug')
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler('debug.log')
-logger.addHandler(fh)
 
 class Interface:
     command_location = 'erukar.engine.commands.executable'
