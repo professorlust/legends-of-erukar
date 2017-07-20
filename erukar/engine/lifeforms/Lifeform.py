@@ -261,7 +261,7 @@ class Lifeform(RpgEntity):
 
     def evasion(self):
         if self.is_incapacitated():
-            return RpgEntity.base_evasion / 2
+            return RpgEntity.base_evasion / 4
 
         ac_mod = self.get('dexterity')
         total_ac = RpgEntity.base_evasion

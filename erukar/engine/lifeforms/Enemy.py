@@ -77,6 +77,10 @@ class Enemy(Lifeform, Indexer):
     def is_elite(self):
         return self.elite_points >= Enemy.ElitePointClassificationMinimum and not self.is_transient
 
+    def stop_execution(self):
+        self.current_action_points = 0
+        self.reserved_action_points = 0
+
     def perform_turn(self, instance):
         self.ai_module.perform_turn(self, instance)
 

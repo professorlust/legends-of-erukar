@@ -202,6 +202,11 @@ class Shard(Manager):
         for info in self.instances:
             if character in info.instance.characters:
                return info
+    
+    def instance_where_player_was_slain(self, node):
+        for info in self.instances:
+            if node in info.instance.slain_characters:
+                return info
 
     def is_playing(self, uid):
         return self.get_active_playernode(uid).status == PlayerNode.Playing
@@ -230,6 +235,12 @@ class Shard(Manager):
         cur_instance = self.player_current_instance(node.character)
         if cur_instance is not None:
             return cur_instance.instance.get_messages_for(node)
+        slain_at = self.instance_where_player_was_slain(node)
+        if slain_at:
+            messages = slain_at.instance.get_messages_for(node)
+            slain_at.instance.slain_characters.remove(node)
+            self.clean_closing_instances()
+            return messages
 
     def consume_command(self, request, cmd):
         cmd_object = json.loads(cmd)

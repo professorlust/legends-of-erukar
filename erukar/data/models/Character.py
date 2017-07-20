@@ -83,16 +83,13 @@ class Character(Lifeform):
 
         for slot in player.equipment_types:
             slot_schema  = next((x for x in self.equipment if x.equipment_slot == slot ), None)
-
             # See if there's a loaded equipment_slot... otherwise make one
             equipped_item = getattr(player, slot, None)
-
             # If it doesn't exist, get rid of it
             if not equipped_item: 
                 if slot_schema in self.equipment:
                     self.equipment.remove(slot_schema)
                 continue
-
             schema_item = schema_map[equipped_item]
 
             if not slot_schema:
@@ -104,6 +101,7 @@ class Character(Lifeform):
     def copy_from_object(self, session, player):
         super().copy_from_object(player)
         self.copy_inventory(session, player)
+        self.deceased = player.has_condition(erukar.engine.conditions.Dead)
 
     def create_from_object(session, player, node_schema=None):
         schema = Character()

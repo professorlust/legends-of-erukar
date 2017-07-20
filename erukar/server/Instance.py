@@ -9,6 +9,7 @@ from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.executable.Inventory import Inventory
 from erukar.engine.commands.executable.Stats import Stats
 from erukar.engine.commands.executable.Wait import Wait
+from erukar.engine.conditions.Dead import Dead
 import erukar, threading, random, datetime, json, uuid
 
 import logging
@@ -39,6 +40,7 @@ class Instance(Manager):
         self.status = Instance.NotInitialized
         self.responses = {}
         self.characters = []
+        self.slain_characters = []
 
     def initialize_instance(self, session):
         '''Turn on players and generate a dungeon'''
@@ -93,6 +95,7 @@ class Instance(Manager):
         node.character.uid = node.uid
         self.subscribe_being(node.lifeform())
         self.execute_pre_inspect(node)
+        node.lifeform().build_zones(self.dungeon)
         self.turn_manager.subscribe(node)
         super().subscribe(node)
 
@@ -101,11 +104,11 @@ class Instance(Manager):
         self.turn_manager.subscribe(enemy)
         self.subscribe_being(enemy)
         super().subscribe(enemy)
+        enemy.build_zones(self.dungeon)
 
     def subscribe_being(self, being):
         logger.info('Instance -- {} has subscribed'.format(being))
         self.command_contexts[being.uid] = None
-        self.players.append(being)
         self.characters.append(being)
         being.world = self.dungeon
 
@@ -116,18 +119,17 @@ class Instance(Manager):
                 equipped.on_equip(being)
 
         being.instance = self.identifier
-        being.build_zones(self.dungeon)
 
     def unsubscribe(self, node):
-        player = next((x for x in self.players if node is x), None)
-        if not player: 
+        if node not in self.players:
             logger.info('Instance -- No player could be found matching {}'.format(node))
             return
-        self.dungeon.remove_actor(player.lifeform())
-        self.turn_manager.unsubscribe(player)
-        self.players.remove(player)
-        self.characters.remove(player.lifeform())
-        super().unsubscribe(player)
+        logger.info('Instance -- Removing {}'.format(node))
+        self.dungeon.remove_actor(node.lifeform())
+        self.turn_manager.unsubscribe(node)
+        self.players.remove(node)
+        self.characters.remove(node.lifeform())
+        super().unsubscribe(node)
         self.handle_reduced_player_count()
 
     def handle_reduced_player_count(self):
@@ -147,6 +149,8 @@ class Instance(Manager):
 
     def try_execute(self, node, cmd):
         if not self.any_connected_players():
+            if isinstance(self.active_player, erukar.engine.lifeforms.Enemy):
+                self.active_player.stop_execution()
             return
 
         if node.uid == self.active_player.uid:
@@ -157,8 +161,17 @@ class Instance(Manager):
             if cmd.RebuildZonesOnSuccess:
                 self.active_player.lifeform().flag_for_rebuild()
 
+            self.clean_dead_characters()
+
             if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
                 self.get_next_player()
+
+    def clean_dead_characters(self):
+        dead_characters = [x for x in self.characters if x.has_condition(Dead)]
+        for char in dead_characters:
+            node = next((x for x in self.players if x.lifeform() is char), None)
+            self.unsubscribe(node)
+            self.slain_characters.append(node)
 
     def do_non_player_turn(self):
         logger.info('doing nonplayer turn')
@@ -230,6 +243,15 @@ class Instance(Manager):
         if not node:
             return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
 
+        log = []
+        if node.uid in self.responses and len(self.responses[node.uid]) > 0:
+            responses =  self.responses.pop(node.uid, [])
+            for line in responses:
+                log.append({'text':line, 'when': str(datetime.datetime.now())})
+
+        if node in self.slain_characters:
+            return json.dumps({'log': log})
+
         character = node.lifeform()
         d = self.dungeon
 
@@ -245,12 +267,6 @@ class Instance(Manager):
 
         li_cmd = node.create_command(LocalIndex)
         li_res = li_cmd.execute().result_for(node.uid)
-
-        log = []
-        if node.uid in self.responses and len(self.responses[node.uid]) > 0:
-            responses =  self.responses.pop(node.uid, [])
-            for line in responses:
-                log.append({'text':line, 'when': str(datetime.datetime.now())})
 
         return json.dumps({
             'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],

@@ -89,8 +89,12 @@ class Attack(ActionCommand):
         return final_damages 
 
     def do_damage_application(self, final_damages):
+        damage_str = ', '.join('{} {}'.format(*x) for x in final_damages)
+        attacker_str = self.args['player_lifeform'].alias()
+        defender_str = self.args['interaction_target'].alias()
         self.args['interaction_target'].apply_damage(self.args['player_lifeform'], self.args['weapon'], final_damages)
-        self.append_result(self.player_info.uid, 'You have dealt {} damage!'.format(', '.join('{} {}'.format(*x) for x in final_damages)))
+        self.append_result(self.player_info.uid, 'You have dealt {} damage to {}!'.format(damage_str, defender_str))
+        self.append_result(self.args['interaction_target'].uid, '{} has dealt {} damage to you!'.format(attacker_str, damage_str))
 
     def check_for_killed_enemy(self):
         if self.args['interaction_target'].has_condition(Dying):
@@ -103,6 +107,7 @@ class Attack(ActionCommand):
             xp = self.args['interaction_target'].calculate_xp_worth()
             self.args['player_lifeform'].award_xp(xp, self)
             self.append_result(self.player_info.uid, '{} has been slain!'.format(self.args['interaction_target'].alias()))
+            self.append_result(self.args['interaction_target'].uid, 'You have been slain by {}...'.format(self.args['player_lifeform'].alias()))
 
     def weapon_exists(self):
         '''Is the weapon real and valid?'''

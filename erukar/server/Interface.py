@@ -31,7 +31,7 @@ class Interface:
         cmd.player_info = playernode
 
         instance = self.shard.player_current_instance(playernode.lifeform())
-        instance.try_execute(playernode, cmd)
+        if instance: instance.try_execute(playernode, cmd)
 
     def get_messages_for(self, uid):
         instance = self.shard.player_current_instance(uid)
