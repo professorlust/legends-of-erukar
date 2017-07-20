@@ -42,8 +42,8 @@ class Map(Command):
             self.append_result(self.player_info.uid, results)
             return
 
-        self.open_space = self.world.all_traversable_coordinates()
         self.args['player_lifeform'].build_zones(self.world)
+        self.open_space = self.args['player_lifeform'].zones.all_seen
 
         # Now get the min and max range for x and y
         max_x, max_y = map(max, zip(*self.open_space))
@@ -67,10 +67,12 @@ class Map(Command):
         }
 
     def layers_for(self, x, y):
-        result = ['cement']
-        if (x,y) not in self.open_space:
-            result.append('wood wall')
-        result.append(self.world.moving_parts_at((x,y)))
+        result = ['black']
+        if (x,y) in self.open_space:
+            if (x,y) in self.world.all_traversable_coordinates():
+                result.append(self.world.get_floor_type((x,y)))
+            else: result.append(self.world.get_wall_type((x,y)))
+            result.append(self.world.moving_parts_at((x,y)))
         return result
 
     def action(command, description="", cost=1, target='', weapon=''):

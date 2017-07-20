@@ -42,15 +42,26 @@ class Dungeon(RpgEntity):
             if aura.affects_tile(room_at):
                 yield aura
 
+    def get_floor_type(self, loc):
+        return 'cement'
+
+    def get_wall_type(self, loc):
+        return 'wood wall'
+
     def add_room(self, new_room, coordinates):
         '''Adds a safeguard to prevent duplication'''
         self.rooms.append(new_room)
         for coord in coordinates:
             self.dungeon_map[coord] = new_room
 
-    def creature_at(self, caller, coordinate):
+    def actors_at(self, caller, coordinate):
         for x in self.actors:
-            if isinstance(x, erukar.engine.lifeforms.Lifeform) and x is not caller and x.coordinates == coordinate:
+            if x is not caller and x.coordinates == coordinate:
+                yield x
+
+    def creature_at(self, caller, coordinate):
+        for x in self.actors_at(caller, coordinate):
+            if isinstance(x, erukar.engine.lifeforms.Lifeform):
                 return x
 
     def all_traversable_coordinates(self):

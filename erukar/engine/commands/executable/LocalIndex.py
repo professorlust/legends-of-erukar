@@ -7,13 +7,13 @@ class LocalIndex(Command):
 
     def perform(self):
         coords = self.args['player_lifeform'].coordinates
-        room = self.world.get_room_at(coords)
         contents = [self.format_item(x) for x in self.all_targets() if x is not self.args['player_lifeform'] and hasattr(x, 'uuid')]
         self.append_result(self.player_info.uid, contents)
         return self.succeed()
 
     def all_targets(self):
-        return self.world.actors_in_range(self.args['player_lifeform'].coordinates, 3)
+        for loc in self.args['player_lifeform'].zones.fog_of_war:
+            yield from self.world.actors_at(self.args['player_lifeform'], loc)
 
     def format_item(self, item):
         results = {

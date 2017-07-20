@@ -8,6 +8,7 @@ logger = logging.getLogger('debug')
 class Zones:
     def __init__(self):
         self.desynced = True
+        self.all_seen = set()
         self.clear()
 
     def clear(self):
@@ -42,7 +43,9 @@ class Zones:
         self.movement[cost] = Distance.pathed_traversable(start, available_space, (lifeform.move_speed()*cost)-1)
 
     def compute_fog_of_war(self, lifeform, available_space):
-        self.fog_of_war = list(Distance.direct_los(lifeform.coordinates, available_space, lifeform.visual_fog_of_war()))
+        for seen in Distance.direct_los(lifeform.coordinates, available_space, lifeform.visual_fog_of_war()):
+            self.fog_of_war.append(seen)
+            self.all_seen.add(seen)
 
     def add_all_weapons(self, lifeform):
         for weapon_slot in lifeform.weapon_slots():
