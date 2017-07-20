@@ -1,6 +1,9 @@
 from erukar.engine.calculators.Navigator import Navigator
 import math
 
+import logging
+logger = logging.getLogger('debug')
+
 class Distance:
     def direct_traversable(origin, traversable_collection, max_distance):
         visited = []
@@ -55,18 +58,25 @@ class Distance:
                 paths[x] = cur_path_to
                 yield x
 
-    def direct_los(origin, open_space, max_distance):
-        pre_distance_points = [x for x in Distance.points_in_circle(max_distance, origin)]
+    def direct_los(origin, open_space, max_distance, centered_on=None, radius_around=None):
+        if not centered_on: centered_on = origin
+        if not radius_around: radius_around = max_distance
+
+        logger.info('Distance -- origin = {}'.format(origin))
+        logger.info('Distance -- maximum distance = {}'.format(max_distance))
+        logger.info('Distance -- centered_on = {}'.format(centered_on))
+        logger.info('Distance -- radius_around = {}'.format(radius_around))
+
+        pre_distance_points = [x for x in Distance.points_in_circle(radius_around, centered_on)]
         points = list(sorted(pre_distance_points, key=lambda x: Navigator.distance(origin, x), reverse=True))
         while points:
             line = list(Navigator.bressenhams(origin, points[0]))
             blocker_found = False
             while line:
                 coord = line.pop(0)
-                if coord in points:
-                    points.remove(coord)
+                if coord in points: points.remove(coord)
                 if blocker_found: continue
-                if not blocker_found and not any(x == coord for x in open_space): 
+                if not any(x == coord for x in open_space) or Navigator.distance(coord, origin) > max_distance: 
                     blocker_found = True
                 yield coord
 

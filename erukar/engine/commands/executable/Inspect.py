@@ -1,6 +1,10 @@
 from erukar.engine.commands.ActionCommand import ActionCommand
 from erukar.engine.model.Containable import Containable
 import random, math, erukar
+from erukar.nlg.Environment import Environment
+
+import logging
+logger = logging.getLogger('debug')
 
 class Inspect(ActionCommand):
     NoTarget = 'Unable to locate interaction_target'
@@ -18,21 +22,14 @@ class Inspect(ActionCommand):
 
     def perform(self):
         if 'interaction_target' not in self.args or not self.args['interaction_target']:
-            coords = self.specified_coordinates()
-            room = self.world.get_room_at(coords)
-            self.args['interaction_target'] = room
+            self.args['interaction_target'] = self.specified_coordinates()
 
         if self.args['player_lifeform'].action_points() < self.ActionPointCost:
             return self.fail(Inspect.NotEnoughAP)
         self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
 
-        # Index in the player's active indexing tree
-        acu, sen = self.args['player_lifeform'].lifeform().get_detection_pair()
-        self.index(acu, sen)
-
-#       inspect_result = self.args['interaction_target'].on_inspect(self.args['player_lifeform'], acu, sen)
-#       self.append_result(self.player_info.uid, inspect_result)
-        self.visible_actors(acu, sen)
+        room_description = Environment.describe_area(self.args['player_lifeform'], self.world, self.args['interaction_target'])
+        self.append_result(self.player_info.uid, room_description)
         return self.succeed()
 
     def index(self, acu, sen):
@@ -40,8 +37,3 @@ class Inspect(ActionCommand):
         if isinstance(self.args['interaction_target'], erukar.engine.environment.Room):
             for item in self.args['interaction_target'].detected_contents(acu, sen):
                 self.player_info.index_item(item, self.args['interaction_target'])
-
-    def visible_actors(self, acu, sen):
-        view_distance = 3
-        for actor in self.world.actors_in_range(self.args['player_lifeform'].coordinates, view_distance):
-            self.append_result(self.player_info.uid, actor.on_inspect(self.args['player_lifeform'], acu, sen))
