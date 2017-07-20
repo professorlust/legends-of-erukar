@@ -80,3 +80,17 @@ class Lifeform(ErukarBase, Base):
     def get(session, id):
         s_model = Lifeform.get_schema_query(session, id).first()
         return s_model.create_new_object()
+
+    def apply_template(self, template_json):
+        if 'inventory' not in template_json: return
+        for item in template_json['inventory']:
+            schema = erukar.data.models.Item()
+            schema.item_type = item['type']
+            if 'material' in item:
+                schema.material_type = item['material']
+            self.inventory.append(schema)
+            if 'slot' in item:
+                slot_schema = erukar.data.models.EquippedItem()
+                slot_schema.item = schema
+                slot_schema.equipment_slot = item['slot']
+                self.equipment.append(slot_schema)

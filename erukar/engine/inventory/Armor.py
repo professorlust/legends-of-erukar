@@ -11,8 +11,9 @@ class Armor(Item):
         'piercing': (0.1, 4)
     }
 
-    def __init__(self, name="Armor",modifiers=None):
-        super().__init__("armor", name, modifiers=modifiers)
+    def __init__(self, name="",modifiers=None):
+        super().__init__("armor", name if name else self.BaseName, modifiers=modifiers)
+
 
     def on_inventory(self):
         '''Basic inventory description; includes information about possible equipment locations and durability'''

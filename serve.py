@@ -12,6 +12,7 @@ from flask_socketio import SocketIO, emit, send
 from erukar import PlayerNode, Player, Lifeform
 import erukar
 
+logger = logging.getLogger('debug')
 
 config_directories = [
     'world/sovereignties',
@@ -85,11 +86,23 @@ def get_templates():
             'name': template.name,
             'description': template.description,
             'stats': template.stats,
-            'inventory': [x.alias() for x in template.inventory]
+            'inventory': [format_item_for_template(x, template) for x in template.inventory]
         }
 
     templates = [format_template(t) for t in shard.templates]
     return jsonify(templates)
+
+def format_item_for_template(item, template):
+    formatted = {
+        'name': item.alias(),
+        'type': item.__module__
+    }
+    if item.material: 
+        formatted['material'] = item.material.__module__
+    equipment_slot = next((slot for slot in template.equipment_types if item == getattr(template, slot, None)), None)
+    if equipment_slot:
+        formatted['slot'] = equipment_slot
+    return formatted
 
 @app.route('/api/regions')
 def get_regions():
@@ -201,6 +214,8 @@ def on_finish_character_creation(raw_data):
     built = Lifeform.build_from_payloads(data['stats'], data['bio'])
     player_schema = erukar.data.models.Player.get(shard.session, con.playernode.uid)
     schema = erukar.data.models.Character.create_from_object(shard.session, built, player_schema)
+    if 'template' in data:
+        schema.apply_template(data['template'])
     schema.add_or_update(shard.session)
 
     character = erukar.data.models.Character.select(shard.session, schema.id, con.playernode.uid)
