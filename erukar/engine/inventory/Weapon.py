@@ -65,6 +65,9 @@ class Weapon(Item):
     def on_inventory(self):
         return '{} ({}%)'.format(self.format(), int(100*self.durability_coefficient))
 
+    def failing_requirements(self, wielder):
+        return []
+
     def on_inventory_inspect(self, lifeform):
         scale = self.efficacy_for(lifeform)
         mod = lifeform.get(self.DamageModifier)

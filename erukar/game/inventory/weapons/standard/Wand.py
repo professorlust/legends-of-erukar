@@ -19,7 +19,16 @@ class Wand(Weapon):
     Distribution = np.random.gamma
     DistributionProperties = (2, 0.3)
 
+    EnergyCost = 5
+
     BaseStatInfluences = {
         'acuity':  {'requirement': 8, 'scaling_factor': 3, 'cutoff': 200},
         'dexterity': {'requirement': 0, 'scaling_factor': 1.5, 'cutoff': 200},
     }
+
+    def failing_requirements(self, wielder):
+        if wielder.arcane_energy < self.EnergyCost:
+            return ['Not enough Arcane Energy to use {} -- need {}, have {}'.format(self.alias(), self.EnergyCost, wielder.arcane_energy)]
+
+    def on_calculate_attack(self, cmd):
+        cmd.args['player_lifeform'].arcane_energy -= self.EnergyCost

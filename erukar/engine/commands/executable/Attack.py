@@ -44,6 +44,9 @@ class Attack(ActionCommand):
 
         if not self.weapon_exists():
             return self.fail('Cannot Attack -- Weapon is invalid')
+        failed_requirements = self.args['weapon'].failing_requirements(self.args['player_lifeform'])
+        if failed_requirements:
+            return self.fail('. '.join(failed_requirements))
         if not self.has_ammo_if_needed():
             return self.fail('The appropriate ammo for this weapon is not equipped!')
         if not self.is_in_valid_range():
