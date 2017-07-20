@@ -2,11 +2,21 @@ from erukar.engine.commands.Command import Command
 from erukar.engine.lifeforms import Lifeform
 
 class Skills(Command):
-    aliases = ['skills', 'my skills']
+    NeedsArgs = False
 
-    def execute(self, *_):
-        target = self.find_player().lifeform()
-        descriptions = '\n\n'.join([c.on_skills() for c in target.skills])
-
-        self.append_result(self.sender_uid, '\n'.join(['Skills', '='*16, descriptions]))
+    def perform(self):
+        available = []
+        acquired = [{
+            'name': skill.Name,
+            'level': skill.level,
+            'nextLevel': skill.next_level_description(),
+            'maxLevel': 8,
+            'description': skill.current_level_description()}
+            for skill in self.args['player_lifeform'].skills
+        ]
+        full_list = {
+            'available': available,
+            'acquired': acquired
+        }
+        self.append_result(self.player_info.uid, full_list)
         return self.succeed()

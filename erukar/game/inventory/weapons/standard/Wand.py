@@ -11,15 +11,17 @@ class Wand(Weapon):
     BaseWeight = 1.0
 
     # Damage
-    DamageRange = [2, 6]
+    DamageRange = [1, 4]
     DamageType = 'force'
     DamageModifier = "acuity"
+    DamageScalar = 2.4
+    ScalingRequirement = 6
+    EnergyCost = 5
 
     # Distribution
     Distribution = np.random.gamma
     DistributionProperties = (2, 0.3)
 
-    EnergyCost = 5
 
     BaseStatInfluences = {
         'acuity':  {'requirement': 8, 'scaling_factor': 3, 'cutoff': 200},

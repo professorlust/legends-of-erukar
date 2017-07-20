@@ -8,6 +8,7 @@ from erukar.engine.commands.executable.Map import Map
 from erukar.engine.commands.executable.Inspect import Inspect
 from erukar.engine.commands.executable.Inventory import Inventory
 from erukar.engine.commands.executable.Stats import Stats
+from erukar.engine.commands.executable.Skills import Skills
 from erukar.engine.commands.executable.Wait import Wait
 from erukar.engine.conditions.Dead import Dead
 import erukar, threading, random, datetime, json, uuid
@@ -100,7 +101,6 @@ class Instance(Manager):
         super().subscribe(node)
 
     def subscribe_enemy(self, enemy):
-        enemy.subscribe(self)
         self.turn_manager.subscribe(enemy)
         self.subscribe_being(enemy)
         super().subscribe(enemy)
@@ -108,6 +108,7 @@ class Instance(Manager):
 
     def subscribe_being(self, being):
         logger.info('Instance -- {} has subscribed'.format(being))
+        being.subscribe(self)
         self.command_contexts[being.uid] = None
         self.characters.append(being)
         being.world = self.dungeon
@@ -262,6 +263,9 @@ class Instance(Manager):
         stat_cmd = node.create_command(Stats)
         stat_res = stat_cmd.execute().result_for(node.uid)
 
+        skill_cmd = node.create_command(Skills)
+        skill_res = skill_cmd.execute().result_for(node.uid)
+
         map_cmd = node.create_command(Map)
         map_res = map_cmd.execute().result_for(node.uid)
 
@@ -272,6 +276,7 @@ class Instance(Manager):
             'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],
             'statPoints': character.stat_points,
             'skillPoints': character.skill_points,
+            'skills': skill_res[0],
             'actionPoints': { 'current': character.current_action_points, 'reserved': character.reserved_action_points },
             'inventory': inv_res['inventory'],
             'equipment': inv_res['equipment'],

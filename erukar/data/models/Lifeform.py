@@ -68,6 +68,7 @@ class Lifeform(ErukarBase, Base):
     def map_schema_to_object(self, new_object):
         ErukarBase.map_schema_to_object(self, new_object)
         self.map_inventory_on_object(new_object)
+        self.map_skills_on_object(new_object)
 
     def map_inventory_on_object(self, new_object):
         for schema_item in self.inventory:
@@ -77,11 +78,21 @@ class Lifeform(ErukarBase, Base):
             location = schema_item.equipment_location(self.equipment)
             if location: setattr(new_object, location, real_item)
 
+    def map_skills_on_object(self, new_object):
+        for schema_item in self.skills:
+            real_skill = schema_item.create_new_object()
+            new_object.skills.append(real_skill)
+
     def get(session, id):
         s_model = Lifeform.get_schema_query(session, id).first()
         return s_model.create_new_object()
 
+    # Will need to rework this to prevent vulnerabilities from client-side
     def apply_template(self, template_json):
+        self.apply_template_inventory(template_json)
+        self.apply_template_skills(template_json)
+
+    def apply_template_inventory(self, template_json):
         if 'inventory' not in template_json: return
         for item in template_json['inventory']:
             schema = erukar.data.models.Item()
@@ -94,3 +105,11 @@ class Lifeform(ErukarBase, Base):
                 slot_schema.item = schema
                 slot_schema.equipment_slot = item['slot']
                 self.equipment.append(slot_schema)
+
+    def apply_template_skills(self, template_json):
+        if 'skills' not in template_json: return
+        for skill in template_json['skills']:
+            schema = erukar.data.models.Skill()
+            schema.skill_type = skill['type']
+            schema.level = skill['level']
+            self.skills.append(schema)

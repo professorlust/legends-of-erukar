@@ -14,15 +14,16 @@ class Damage:
         'demonic',
     ]
 
-    def __init__(self, name, damage_range, mod, dist_and_params, scales=False):
-        self.scales = scales
-        self.name = name
-        self.damage = damage_range
-        self.modifier = mod
-        self.distribution, self.dist_params = dist_and_params
+    def __init__(self):
+        self.scales = False
+        self.name = 'default damage name -- use DamageBuilder'
+        self.damage = [0, 0]
+        self.modifier = ''
+        self.distribution = []
+        self.dist_params = []
         self.requirement = 8
         self.max_scale = 100
-        self.scalar = 2.5
+        self.scalar = 1
 
     def roll(self, attacker):
         # Get a random value from the distribution passed in 

@@ -1,5 +1,5 @@
 from .Item import Item
-from erukar.engine.model.Damage import Damage
+from erukar.engine.model.DamageBuilder import DamageBuilder
 import erukar
 import numpy as np
 
@@ -14,6 +14,8 @@ class Weapon(Item):
     DamageRange = [1, 2]
     DamageType = "ambiguous"
     DamageModifier = ""
+    DamageScalar = 2.0
+    ScalingRequirement = 8
 
     Distribution = np.random.uniform
     DistributionProperties = (0, 1)
@@ -29,13 +31,18 @@ class Weapon(Item):
         super().__init__(self.BaseName,modifiers=modifiers)
         self.name = self.BaseName
         self.item_type = "weapon"
-        self.damages = [Damage(
-            self.DamageType, 
-            list(self.DamageRange), 
-            self.DamageModifier,
-            (self.Distribution, self.DistributionProperties), 
-            scales=True
-        )]
+        self.damages = [
+            DamageBuilder()\
+                .with_type(self.DamageType)\
+                .with_range(self.DamageRange)\
+                .with_modifier(self.DamageModifier)\
+                .with_distribution(self.Distribution)\
+                .with_properties(self.DistributionProperties)\
+                .with_scalar(self.DamageScalar)\
+                .with_requirement(self.ScalingRequirement)\
+                .does_scale()\
+                .build()
+        ]
 
     def equipment_slots(self, lifeform):
         return lifeform.weapon_slots()

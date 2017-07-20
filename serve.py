@@ -86,7 +86,8 @@ def get_templates():
             'name': template.name,
             'description': template.description,
             'stats': template.stats,
-            'inventory': [format_item_for_template(x, template) for x in template.inventory]
+            'inventory': [format_item_for_template(x, template) for x in template.inventory],
+            'skills': [format_skill_for_template(x, template) for x in template.skills]
         }
 
     templates = [format_template(t) for t in shard.templates]
@@ -103,6 +104,15 @@ def format_item_for_template(item, template):
     if equipment_slot:
         formatted['slot'] = equipment_slot
     return formatted
+
+def format_skill_for_template(skill, template):
+    return {
+        'name': skill.Name,
+        'type': skill.__module__,
+        'level': skill.level,
+        'description': skill.current_level_description()
+    }
+
 
 @app.route('/api/regions')
 def get_regions():

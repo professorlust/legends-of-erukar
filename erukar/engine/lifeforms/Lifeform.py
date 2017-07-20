@@ -76,6 +76,7 @@ class Lifeform(RpgEntity):
     def subscribe(self, instance):
         self.instance = instance.identifier
         self.arcane_energy = self.maximum_arcane_energy()
+        logger.info('Lifeform -- Energy set to {} out of a possible {} for {}'.format(self.arcane_energy, self.maximum_arcane_energy(), self.name))
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''
