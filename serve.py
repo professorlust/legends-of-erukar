@@ -62,6 +62,7 @@ def get_details():
         'adminDetails': shard.properties.AdminDetails,
         'motd': shard.properties.Description,
         'permadeath': 'Enabled' if shard.properties.PermaDeath else 'Disabled',
+        'version': shard.ErukarVersion,
     })
 
 @app.route('/validate', methods=['POST'])

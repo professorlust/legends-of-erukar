@@ -88,10 +88,12 @@ class Map(Command):
         return Map.action('Attack', description='Attack with {}'.format(weapon.alias()), weapon=str(weapon.uuid), target=str(creature.uuid))
 
     def actions_for(self, x, y):
-        actions = [
-            Map.action('Inspect', cost=2),
-            Map.action('Glance'),
-        ]
+        actions = []
+
+        if self.args['player_lifeform'].action_points() >= 2:
+            actions.append(Map.action('Inspect', cost=2))
+
+        actions.append(Map.action('Glance'))
 
         move = self.move_action(x,y)
         if move: actions.append(move)

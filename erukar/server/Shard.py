@@ -18,9 +18,7 @@ fh = logging.FileHandler('debug.log')
 logger.addHandler(fh)
 
 class Shard(Manager):
-    SplashPath = 'Splash'
-    CharacterCreationPath = 'CharacterSelect'
-    TutorialPath = 'Tutorial'
+    ErukarVersion = '0.0.1'
 
     def __init__(self, emit_fn):
         super().__init__()
