@@ -13,7 +13,6 @@ class BasicInteraction(ActionCommand):
         ===========================
         open             | on_open        
         close            | on_close
-        glance           | on_glance        
         '''
         interaction_method = 'on_' + self.args['interactionType']
         if not self.args['interaction_target']: return self.fail(BasicInteraction.NoTarget)

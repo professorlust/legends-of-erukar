@@ -12,6 +12,7 @@ class ActionCommand(Command):
     CausedDeath = "\n{target} has been slain by {subject}!"
     AttackSuccessful = "{subject}'s attack hits {target}, dealing {damage} damage."
     DefaultWeapon = 'unarmed attack'
+    RebuildZonesOnSuccess = True
 
     def inflict_damage(self, enemy, weapon, efficacy=1.0):
         '''apply a set of damages'''

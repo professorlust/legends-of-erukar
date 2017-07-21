@@ -6,6 +6,7 @@ from .Converse import Converse
 from .Drop import Drop
 from .Equip import Equip
 from .Give import Give
+from .Glance import Glance
 from .Inspect import Inspect
 from .Inventory import Inventory
 from .Levelup import Levelup
@@ -30,6 +31,7 @@ __all__ = [
     "Drop", 
     "Equip", 
     "Give", 
+    "Glance", 
     "Inspect", 
     "Inventory", 
     "Levelup", 

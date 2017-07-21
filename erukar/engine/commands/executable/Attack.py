@@ -16,8 +16,6 @@ class Attack(ActionCommand):
     UnableToAttackInDirection = "You are unable to perform a directional attack."
     UnableToAttackInRoom = "You are unable to perform an attack."
     
-    RebuildZonesOnSuccess = True
-
     '''
     Requires:
         interaction_target
