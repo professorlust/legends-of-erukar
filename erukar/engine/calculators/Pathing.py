@@ -1,3 +1,4 @@
+from erukar.engine.calculators.Neighbors import Neighbors
 from erukar.engine.calculators.meta import AStarBase, Queue
 
 class Pathing(AStarBase):
@@ -11,13 +12,7 @@ class Pathing(AStarBase):
         return self.ManhattanD * (dx+dy)
         
     def neighbors(self, collection, node, goal):
-        possibilities = [
-            (node[0]-1, node[1]),
-            (node[0]+1, node[1]),
-            (node[0],   node[1]-1),
-            (node[0],   node[1]+1),
-        ]
-        return [x for x in possibilities if self.is_valid(x, collection, goal)]
+        return [x for x in Neighbors.cross_pattern(node) if self.is_valid(x, collection, goal)]
 
     def is_valid(self, coordinate, visited, goal):
         return (coordinate not in visited and coordinate in self.collection)

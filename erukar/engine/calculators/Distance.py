@@ -1,4 +1,5 @@
 from erukar.engine.calculators.Navigator import Navigator
+from erukar.engine.calculators.Neighbors import Neighbors
 import math
 
 import logging
@@ -12,18 +13,14 @@ class Distance:
         while len(pending) > 0:
             examining = pending.pop(0)
             visited.append(examining)
-            pending += Distance.nearby_direct_traversable(examining, origin, traversable_collection, max_distance, visited)
+            pending += list(Distance.nearby_direct_traversable(examining, origin, traversable_collection, max_distance, visited))
 
         return visited
 
     def nearby_direct_traversable(coord, origin, collection, distance, visited):
-        possibilities = [
-            (coord[0]-1, coord[1]),
-            (coord[0]+1, coord[1]),
-            (coord[0],   coord[1]-1),
-            (coord[0],   coord[1]+1),
-        ]
-        return [x for x in possibilities if Distance.is_direct_traversable_viable(x, origin, collection, distance, visited)]
+        for nbr in Neighbors.cross_pattern(coord):
+            if Distance.is_direct_traversable_viable(x, origin, collection, distance, visited):
+                yield nbr
 
     def is_direct_traversable_viable(coordinate, origin, collection, distance, visited):
         return any(coordinate == x for x in collection) \
@@ -42,12 +39,7 @@ class Distance:
         return list(paths.keys())
 
     def nearby_pathed_traversable(coord, paths, collection, max_path):
-        possibilities = [
-            (coord[0]-1, coord[1]),
-            (coord[0]+1, coord[1]),
-            (coord[0],   coord[1]-1),
-            (coord[0],   coord[1]+1),
-        ]
+        possibilities = Neighbors.cross_pattern(coord)
         path_to = paths[coord]
         if len(path_to) > max_path: return []
 
@@ -61,11 +53,6 @@ class Distance:
     def direct_los(origin, open_space, max_distance, centered_on=None, radius_around=None):
         if not centered_on: centered_on = origin
         if not radius_around: radius_around = max_distance
-
-        logger.info('Distance -- origin = {}'.format(origin))
-        logger.info('Distance -- maximum distance = {}'.format(max_distance))
-        logger.info('Distance -- centered_on = {}'.format(centered_on))
-        logger.info('Distance -- radius_around = {}'.format(radius_around))
 
         pre_distance_points = [x for x in Distance.points_in_circle(radius_around, centered_on)]
         points = list(sorted(pre_distance_points, key=lambda x: Navigator.distance(origin, x), reverse=True))

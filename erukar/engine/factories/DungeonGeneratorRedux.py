@@ -1,6 +1,7 @@
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 from erukar.engine.factories.FactoryBase import FactoryBase
+from erukar.engine.calculators.Neighbors import Neighbors
 from erukar.engine.environment import *
 from erukar.engine.calculators import *
 from erukar.engine.calculators.meta import AStarBase, Queue
@@ -259,12 +260,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         return self.ManhattanD * (dx+dy)
 
     def neighbors(self, collection, node, goal):
-        possibilities = [
-            (node[0]-1, node[1]),
-            (node[0]+1, node[1]),
-            (node[0],   node[1]-1),
-            (node[0],   node[1]+1),
-        ]
+        possibilities = Neighbors.cross_pattern(node)
         p = [x for x in possibilities if (x not in self.vertices or x == goal) and -10 < x[0] < 10 and -10 < x[1] < 10]
         return p
 
