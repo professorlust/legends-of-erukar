@@ -179,6 +179,7 @@ def on_launch(*_):
     if con is None or not hasattr(con, 'character') or con.character is None:
         if con is not None: print('Connection has no character')
         return
+    con.playernode.update_socket(con)
     shard.start_playing(con.playernode, con.character)
     con.tell('launch success' ,'')
 

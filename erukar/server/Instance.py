@@ -52,7 +52,6 @@ class Instance(Manager):
             self.on_start()
 
     def on_start(self):
-        logger.info('Starting instance')
         self.subscribe_enemies()
         for room in self.dungeon.rooms:
             room.on_start()
@@ -99,6 +98,7 @@ class Instance(Manager):
         node.lifeform().build_zones(self.dungeon)
         self.turn_manager.subscribe(node)
         super().subscribe(node)
+        self.send_update_to(node)
 
     def subscribe_enemy(self, enemy):
         self.turn_manager.subscribe(enemy)
@@ -107,7 +107,6 @@ class Instance(Manager):
         enemy.build_zones(self.dungeon)
 
     def subscribe_being(self, being):
-        logger.info('Instance -- {} has subscribed'.format(being))
         being.subscribe(self)
         self.command_contexts[being.uid] = None
         self.characters.append(being)
@@ -167,15 +166,27 @@ class Instance(Manager):
             if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
                 self.get_next_player()
 
+            # Tell characters
+            to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
+            for node in to_tell:
+                self.send_update_to(node)
+
+
     def clean_dead_characters(self):
         dead_characters = [x for x in self.characters if x.has_condition(Dead)]
         for char in dead_characters:
             node = next((x for x in self.players if x.lifeform() is char), None)
+            self.send_update_to(node) 
+            
             self.unsubscribe(node)
             self.slain_characters.append(node)
 
+    def send_update_to(self, node):
+        if not isinstance(node, PlayerNode): return
+        msgs = self.get_messages_for(node)
+        node.tell('update state', msgs)
+
     def do_non_player_turn(self):
-        logger.info('doing nonplayer turn')
         if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
             if not self.active_player.is_incapacitated():
                 self.active_player.perform_turn(self)
@@ -187,7 +198,6 @@ class Instance(Manager):
                 self.append_response(self.active_player.uid, res)
 
         self.active_player = self.turn_manager.next()
-        logger.info('Instance -- Next player is {}'.format(self.active_player))
         if self.active_player is not None and not isinstance(self.active_player, str):
             res = self.active_player.begin_turn()
             if len(res) > 0:
@@ -224,6 +234,7 @@ class Instance(Manager):
                 for dirty in result.dirtied_characters:
                     if isinstance(dirty, erukar.engine.lifeforms.Player):
                         erukar.data.models.Character.update(dirty, self.session)
+
 
             # Set context for player
             self.command_contexts[cmd.player_info.uid] = result

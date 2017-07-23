@@ -1,5 +1,8 @@
 from erukar.engine.model.Indexer import Indexer
 
+import logging
+logger = logging.getLogger('debug')
+
 '''
 The Player Node is maintained on the 
 '''
@@ -19,6 +22,8 @@ class PlayerNode(Indexer):
         self.character = character
         self.dungeon_map = {}
         self.world = world
+        self.emit = None
+        self.sid = None
 
         self.active_script = ''
         self.script_entry_point = None
@@ -60,3 +65,12 @@ class PlayerNode(Indexer):
 
     def lifeform(self):
         return self.character
+
+    def tell(self, msg_type, msg):
+        if self.emit and self.sid:
+            self.emit(msg_type, msg, room=self.sid)
+        else: logger.info('Could not send. {} and {}'.format(self.emit, self.sid))
+
+    def update_socket(self, connection):
+        self.emit = connection.emit
+        self.sid = connection.sid

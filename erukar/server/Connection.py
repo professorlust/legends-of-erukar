@@ -8,6 +8,8 @@ class Connection:
 
     def add_playernode(self, pn):
         self.playernode = pn
+        self.playernode.emit = self.emit
+        self.playernode.sid = self.sid
         self.uid = pn.uid
 
     def is_origin(self, request):
