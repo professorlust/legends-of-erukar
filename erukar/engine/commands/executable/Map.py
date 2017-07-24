@@ -4,6 +4,7 @@ from erukar.engine.environment import *
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.model.Direction import Direction
 from erukar.engine.calculators.Distance import Distance
+from erukar.engine.factories.TileGenerator import TileGenerator
 import erukar, math
 
 class Map(Command):
@@ -118,19 +119,15 @@ class Map(Command):
             overlay = getattr(self, overlay_method_name)(x, y)
             if overlay: return overlay
 
-        return Map.rgba(0, 0, 0, 0.5)
+        return TileGenerator.rgba(0, 0, 0, 0.5)
 
     def get_movement_overlay_for(self, x,y):
         if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[1]):
-            return Map.rgba(0, 100, 0, 0.3)
+            return TileGenerator.rgba(0, 100, 0, 0.3)
 
         if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[2]):
-            return Map.rgba(0, 80, 80, 0.2)
+            return TileGenerator.rgba(0, 80, 80, 0.2)
 
     def get_visual_overlay_for(self, x,y):
         if any((x,y) == coord for coord in self.args['player_lifeform'].zones.fog_of_war):
-            return Map.rgba(0, 0, 0, 0)
-
-    def rgba(r,g,b,a):
-        return { 'r': r, 'g': g, 'b': b, 'a': a }
-
+            return TileGenerator.rgba(0, 0, 0, 0)

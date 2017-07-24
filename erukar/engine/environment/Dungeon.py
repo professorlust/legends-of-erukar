@@ -1,6 +1,7 @@
-import erukar
 from erukar.engine.model.RpgEntity import RpgEntity
 from erukar.engine.calculators.Navigator import Navigator
+from erukar.engine.factories.TileGenerator import TileGenerator
+import erukar
 
 class Dungeon(RpgEntity):
     minimum_rooms = 3
@@ -11,11 +12,17 @@ class Dungeon(RpgEntity):
         self.description = ""
         self.region = ''
         self.sovereignty = ''
+        self.tiles = []
         self.dungeon_map = {}
         self.rooms = []
         self.active_auras = set()
         self.actors = set()
         self.spawn_coordinates = []
+
+    def on_start(self):
+        super().on_start()
+        tg = TileGenerator(8, 8)
+        self.tile_set = {tile: tg.build(tile) for tile in self.tiles}
 
     def get_object_by_uuid(self, uuid):
         if uuid == self.uuid: return self
@@ -43,10 +50,10 @@ class Dungeon(RpgEntity):
                 yield aura
 
     def get_floor_type(self, loc):
-        return 'cement'
+        return 'floor'
 
     def get_wall_type(self, loc):
-        return 'wood wall'
+        return 'wall'
 
     def add_room(self, new_room, coordinates):
         '''Adds a safeguard to prevent duplication'''

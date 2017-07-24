@@ -5,6 +5,7 @@ from .ModuleDecorator import ModuleDecorator
 from .MultipleModuleDecorator import MultipleModuleDecorator
 from .ProbablisticGenerator import ProbablisticGenerator
 from .RandomizedEntityFactory import RandomizedEntityFactory
+from .TileGenerator import TileGenerator
 
 __all__ = [
     "DungeonGeneratorRedux", 
@@ -13,5 +14,6 @@ __all__ = [
     "ModuleDecorator", 
     "MultipleModuleDecorator", 
     "ProbablisticGenerator", 
-    "RandomizedEntityFactory"
+    "RandomizedEntityFactory", 
+    "TileGenerator"
 ]

@@ -1,8 +1,6 @@
-from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.factories.ModuleDecorator import ModuleDecorator
 from erukar.engine.factories.FactoryBase import FactoryBase
 from erukar.engine.calculators.Neighbors import Neighbors
-from erukar.engine.environment import *
 from erukar.engine.calculators import *
 from erukar.engine.calculators.meta import AStarBase, Queue
 from erukar.engine.model.Range import Range
@@ -33,7 +31,6 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         self.size = size
 
     def generate(self, previous_instance_identifier=''):
-        self.world = Dungeon()
         self.create_dungeon()
         e = erukar.game.enemies.undead.Skeleton()
         self.world.add_actor(e, random.choice([x for x in self.vertices]))
@@ -48,11 +45,13 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         return self.world
 
     def create_dungeon(self):
+        self.world = erukar.engine.environment.Dungeon()
         self.create_rooms() #
         for vertex in self.vertices:
             self.connect_to_random_vertex(vertex) #
 
         self.create_rooms_along_lines()
+        self.world.tiles = ['wall', 'floor']
 #       for _ in range(self.NumberOfLinearityPasses):
 #           self.build_junction_based_on_linearity()
 #       for _ in range(self.NumberOfOffshoots):
@@ -77,7 +76,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     def add_room_path(self, path, origin):
         '''Use an A* Path to add a bunch of rooms from one objective to the other'''
         actual_coords = [x for x in path if x not in self.world.rooms]
-        new_room = Room(self.world, actual_coords)
+        new_room = erukar.engine.environment.Room(self.world, actual_coords)
         for coord in actual_coords: self.vertices.append(coord)
 #       previous = None
 #       for coord in path:

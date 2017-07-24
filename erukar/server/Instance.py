@@ -52,6 +52,7 @@ class Instance(Manager):
             self.on_start()
 
     def on_start(self):
+        self.dungeon.on_start()
         self.subscribe_enemies()
         for room in self.dungeon.rooms:
             room.on_start()
@@ -99,6 +100,7 @@ class Instance(Manager):
         self.turn_manager.subscribe(node)
         super().subscribe(node)
         self.send_update_to(node)
+        self.give_tile_set(node)
 
     def subscribe_enemy(self, enemy):
         self.turn_manager.subscribe(enemy)
@@ -185,6 +187,9 @@ class Instance(Manager):
         if not isinstance(node, PlayerNode): return
         msgs = self.get_messages_for(node)
         node.tell('update state', msgs)
+
+    def give_tile_set(self, node):
+        node.tell('update tile set', json.dumps(self.dungeon.tile_set))
 
     def do_non_player_turn(self):
         if issubclass(type(self.active_player), erukar.engine.lifeforms.Enemy):
