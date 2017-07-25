@@ -15,6 +15,7 @@ from .RpgEntity import RpgEntity
 from .ScriptPayload import ScriptPayload
 from .Shop import Shop
 from .Stance import Stance
+from .GenerationParameter import GenerationParameter
 
 from .enum import *
 from .results import *
@@ -37,4 +38,5 @@ __all__ = [
     "Shop",
     "Stance",
     "TransitionState",
+    "GenerationParameter"
 ]

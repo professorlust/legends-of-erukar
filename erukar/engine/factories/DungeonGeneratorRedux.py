@@ -55,11 +55,11 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         self.add_walls()
 
         for loc in self.world.walls.keys():
-            material = random.choice([erukar.StoneWall, erukar.StoneWall, erukar.StoneWall, erukar.Brick, erukar.WoodWall])()
+            material = random.choice([erukar.StoneWall, erukar.StoneWall, erukar.Brick])()
             self.world.walls[loc].material = material
             self.world.tiles[loc] = material
         for loc in self.world.all_traversable_coordinates():
-            material = random.choice([erukar.WoodFloor, erukar.Grass, erukar.Grass, erukar.Grass, erukar.StoneFloor, erukar.Tiles])()
+            material = random.choice([erukar.Snow, erukar.Snow, erukar.StoneFloor])()
             self.world.tiles[loc] = material
 
     def add_walls(self):
