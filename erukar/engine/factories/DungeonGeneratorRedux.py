@@ -51,12 +51,24 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
             self.connect_to_random_vertex(vertex) #
 
         self.create_rooms_along_lines()
-        self.world.tiles = ['wall', 'floor']
-#       for _ in range(self.NumberOfLinearityPasses):
-#           self.build_junction_based_on_linearity()
-#       for _ in range(self.NumberOfOffshoots):
-#           self.build_offshoot()
-#       self.fill_walls()
+
+        self.add_walls()
+
+        for loc in self.world.walls.keys():
+            material = random.choice([erukar.StoneWall, erukar.StoneWall, erukar.StoneWall, erukar.Brick, erukar.WoodWall])()
+            self.world.walls[loc].material = material
+            self.world.tiles[loc] = material
+        for loc in self.world.all_traversable_coordinates():
+            material = random.choice([erukar.WoodFloor, erukar.Grass, erukar.Grass, erukar.Grass, erukar.StoneFloor, erukar.Tiles])()
+            self.world.tiles[loc] = material
+
+    def add_walls(self):
+        xo, yo = map(min, zip(*self.world.dungeon_map))
+        xf, yf = map(max, zip(*self.world.dungeon_map))
+        for y in range(yo-1, yf+2):
+            for x in range(xo-1, xf+2):
+                if (x,y) not in self.world.dungeon_map:
+                    self.world.walls[(x, y)] = erukar.Wall()
 
     def create_rooms_along_lines(self):
         '''Use the connections from the random connection process to generate A* paths and then connect'''

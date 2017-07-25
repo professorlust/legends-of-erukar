@@ -15,6 +15,8 @@ from .Surface import Surface
 from .Lock import Lock
 from .TieredLock import TieredLock
 from .EnchantedLock import EnchantedLock
+from .Wall import Wall
+from .Floor import Floor
 
 __all__ = [
     "Aura",
@@ -33,4 +35,7 @@ __all__ = [
     "Passage",
     "Room",
     "Trap",
-    "Surface"]
+    "Surface",
+    "Floor",
+    "Wall"
+]

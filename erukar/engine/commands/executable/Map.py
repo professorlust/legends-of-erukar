@@ -4,7 +4,7 @@ from erukar.engine.environment import *
 from erukar.engine.model.CoordinateTranslator import CoordinateTranslator
 from erukar.engine.model.Direction import Direction
 from erukar.engine.calculators.Distance import Distance
-from erukar.engine.factories.TileGenerator import TileGenerator
+from erukar.engine.model.Tile import Tile
 import erukar, math
 
 class Map(Command):
@@ -73,6 +73,7 @@ class Map(Command):
             if (x,y) in self.world.all_traversable_coordinates():
                 result.append(self.world.get_floor_type((x,y)))
             else: result.append(self.world.get_wall_type((x,y)))
+            result += self.world.get_wall_overlay((x,y))
             result.append(self.world.moving_parts_at((x,y)))
         return result
 
@@ -119,15 +120,15 @@ class Map(Command):
             overlay = getattr(self, overlay_method_name)(x, y)
             if overlay: return overlay
 
-        return TileGenerator.rgba(0, 0, 0, 0.5)
+        return Tile.rgba(0, 0, 0, 0.5)
 
     def get_movement_overlay_for(self, x,y):
         if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[1]):
-            return TileGenerator.rgba(0, 100, 0, 0.3)
+            return Tile.rgba(0, 100, 0, 0.2)
 
         if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[2]):
-            return TileGenerator.rgba(0, 80, 80, 0.2)
+            return Tile.rgba(0, 80, 80, 0.2)
 
     def get_visual_overlay_for(self, x,y):
         if any((x,y) == coord for coord in self.args['player_lifeform'].zones.fog_of_war):
-            return TileGenerator.rgba(0, 0, 0, 0)
+            return Tile.rgba(0, 0, 0, 0)

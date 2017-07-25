@@ -1,4 +1,4 @@
-import random
+from erukar.engine.model.Tile import Tile
 
 class TileGenerator:
     def __init__(self, width, breadth):
@@ -9,21 +9,6 @@ class TileGenerator:
         return list(self.build_generator(tile))
 
     def build_generator(self, tile):
-        for pixel in range(self.width*self.breadth):
-            if tile == 'wall':
-                yield TileGenerator.rgba(*TileGenerator.random_wall())
-            else:
-                yield TileGenerator.rgba(*TileGenerator.random_floor())
-
-    def rgba(r,g,b,a):
-        return { 'r': r, 'g': g, 'b': b, 'a': a }
-
-    def random_wall():
-        random_gray = random.uniform(100, 150)
-        return [int(random_gray) for x in range(3)] + [1]
-
-    def random_floor():
-        random_red = int(random.uniform(20, 40))
-        random_green = int(random.uniform(100, 150))
-        random_blue = int(random.uniform(40, 80))
-        return [random_red,random_green,random_blue] + [1]
+        for y in range(self.breadth):
+            for x in range(self.width):
+                yield Tile.rgba(*tile.generate((x,y), (self.width, self.breadth)))

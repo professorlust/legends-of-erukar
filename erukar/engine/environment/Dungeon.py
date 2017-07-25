@@ -12,17 +12,18 @@ class Dungeon(RpgEntity):
         self.description = ""
         self.region = ''
         self.sovereignty = ''
-        self.tiles = []
+        self.tiles = {}
         self.dungeon_map = {}
         self.rooms = []
         self.active_auras = set()
         self.actors = set()
         self.spawn_coordinates = []
+        self.walls = {}
 
     def on_start(self):
         super().on_start()
         tg = TileGenerator(8, 8)
-        self.tile_set = {tile: tg.build(tile) for tile in self.tiles}
+        self.tile_set = {str(tile.uuid): tg.build(tile) for tile in set(self.tiles.values())}
 
     def get_object_by_uuid(self, uuid):
         if uuid == self.uuid: return self
@@ -50,10 +51,27 @@ class Dungeon(RpgEntity):
                 yield aura
 
     def get_floor_type(self, loc):
-        return 'floor'
+        return str(self.tiles[loc].uuid)
 
     def get_wall_type(self, loc):
-        return 'wall'
+        return str(self.tiles[loc].uuid)
+
+    def get_wall_overlay(self, loc):
+        overlays = []
+        if loc not in self.dungeon_map: return overlays
+        # Check to the Left
+        if (loc[0]-1, loc[1]) in self.walls:
+            overlays.append('wall left')
+        # Check to the Right
+        if (loc[0]+1, loc[1]) in self.walls:
+            overlays.append('wall right')
+        # Check Above
+        if (loc[0], loc[1]-1) in self.walls:
+            overlays.append('wall top')
+        # Check Below
+        if (loc[0], loc[1]+1) in self.walls:
+            overlays.append('wall bottom')
+        return overlays
 
     def add_room(self, new_room, coordinates):
         '''Adds a safeguard to prevent duplication'''
