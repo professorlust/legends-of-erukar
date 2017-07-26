@@ -1,4 +1,5 @@
 from .floor.Dirt import Dirt
+from .floor.FrozenGrass import FrozenGrass
 from .floor.Grass import Grass
 from .floor.Sand import Sand
 from .floor.Snow import Snow
@@ -13,6 +14,7 @@ from .wall.WoodWall import WoodWall
 __all__ = [
     "Brick",
     "Dirt",
+    "FrozenGrass",
     "Grass",
     "Sand",
     "Snow",

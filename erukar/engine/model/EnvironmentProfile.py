@@ -5,7 +5,7 @@ class EnvironmentProfile:
         return EnvironmentProfile(
             plant_growth =  0.8,
             moisture     =  0.4,
-            temperature  =  0.2,
+            temperature  =  0.4,
             altitude     =  0.1,
             sanctity     =  0.0,
             fabrication  = -0.4,
@@ -20,7 +20,8 @@ class EnvironmentProfile:
             altitude     =  0.0,
             sanctity     =  0.0,
             fabrication  = -1.0,
-            shelter      = -1.0
+            shelter      = -1.0,
+            barrenness   =  1.0
         )
 
     def Tundra():
@@ -31,29 +32,31 @@ class EnvironmentProfile:
             altitude     = -0.3,
             sanctity     =  0.0,
             fabrication  = -1.0,
-            shelter      = -1.0
+            shelter      = -1.0,
+            barrenness   =  0.6
         )
 
     def SnowyWoodlands():
         return EnvironmentProfile(
             plant_growth =  0.6,
             moisture     =  0.7,
-            temperature  = -0.5,
+            temperature  = -0.8,
             altitude     = -0.3,
             sanctity     =  0.0,
             fabrication  = -0.8,
-            shelter      = -1.0
+            shelter      = -1.0,
+            barrenness   = -0.7
         )
 
     def Snowy():
         return EnvironmentProfile(
             plant_growth = -0.5,
             moisture     =  0.7,
-            temperature  = -0.5,
+            temperature  = -0.8,
             altitude     = -0.3,
             sanctity     =  0.0,
             fabrication  = -1.0,
-            shelter      = -0.5
+            shelter      = -0.5,
         )
 
     def CityOutdoors():
@@ -85,6 +88,7 @@ class EnvironmentProfile:
         self.altitude     = 0.0 # -1.0 is the deepest mine, 1.0 is the top of a mountain
         self.moisture     = 0.0 # -1.0 has never seen water, 1.0 is an ocean
         self.plant_growth = 0.0 # -1.0 is incapable of growth, 1.0 is a dense jungle
+        self.barrenness   = 0.0
         self.sanctity     = 0.0 # Do Demons (-1.0) walk this area, do Gods (1.0)? If neither, 0.0 is probably the best choice
         self.temperature  = 0.0 # How warm is the environment? 0.3 is room temperature.
 

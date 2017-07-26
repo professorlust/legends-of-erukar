@@ -6,8 +6,8 @@ import random, math
 class Tiles(Tile):
     generation_parameters = GenerationProfile(
         temperature = GenerationParameter(0.2),
-        fabrication = GenerationParameter(1.0, strength=1.5),
-        shelter     = GenerationParameter(1.0, strength=5),
+        fabrication = GenerationParameter(1.0, dropoff=1.5),
+        shelter     = GenerationParameter(1.0, dropoff=5),
         opulence    = GenerationParameter(0.8)
     )
 

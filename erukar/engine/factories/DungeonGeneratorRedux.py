@@ -29,7 +29,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         self.vertices = []
         self.connections = {}
         self.size = size
-        self.potential_floor_tiles = [erukar.Dirt(), erukar.Sand(), erukar.Snow(), erukar.StoneFloor(), erukar.Grass(), erukar.Tiles()]
+        self.potential_floor_tiles = [erukar.Dirt(), erukar.Sand(), erukar.Snow(), erukar.StoneFloor(), erukar.Grass(), erukar.FrozenGrass(), erukar.Tiles()]
         self.potential_wall_tiles = [erukar.StoneWall()]
 
     def generate(self, previous_instance_identifier=''):

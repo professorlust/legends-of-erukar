@@ -5,8 +5,8 @@ import random
 
 class StoneFloor(Tile):
     generation_parameters = GenerationProfile(
-        fabrication = GenerationParameter(0.5, strength=1.5),
-        shelter     = GenerationParameter(0.3, strength=1.2),
+        fabrication = GenerationParameter(0.5, dropoff=1.5),
+        shelter     = GenerationParameter(0.3, dropoff=1.2),
         opulence    = GenerationParameter(0.0)
     )
 

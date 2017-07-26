@@ -5,10 +5,10 @@ import random, operator, functools
 
 class Snow(Tile):
     generation_parameters = GenerationProfile(
-        moisture = GenerationParameter(0.7, strength=1.2),
-        temperature = GenerationParameter(-0.5, strength = 2),
+        moisture = GenerationParameter(0.7, dropoff=3, strength=2),
+        temperature = GenerationParameter(-0.8, dropoff=3, strength=2),
         fabrication = GenerationParameter(-0.5),
-        shelter     = GenerationParameter(-1.0, strength=4.0)
+        shelter     = GenerationParameter(-1.0, dropoff=4.0)
     )
 
     def generate(self, *_):
