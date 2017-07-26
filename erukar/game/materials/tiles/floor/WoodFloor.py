@@ -1,7 +1,16 @@
+from erukar.engine.model.GenerationProfile import GenerationProfile
+from erukar.engine.model.GenerationParameter import GenerationParameter
 from erukar.engine.model.Tile import Tile
 import random, math
 
 class WoodFloor(Tile):
+    generation_parameters = GenerationProfile(
+        temperature = GenerationParameter(0.1),
+        fabrication = GenerationParameter(0.5, strength=1.5),
+        shelter     = GenerationParameter(0.3, strength=1.2),
+        opulence    = GenerationParameter(-0.3)
+    )
+    
     def generate(self, loc, total_dimensions):
         if loc[0] % 3:
             random_red = int(random.uniform(100, 130))

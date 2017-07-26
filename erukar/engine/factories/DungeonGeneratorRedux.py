@@ -24,17 +24,19 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
     MaxHeight = 15
     MaxWidth = 15
 
-    def __init__(self, generation_properties, size=24):
-        self.generation_properties = generation_properties
+    def __init__(self, environment, size=24):
+        self.environment_profile = environment
         self.vertices = []
         self.connections = {}
         self.size = size
+        self.potential_floor_tiles = [erukar.Dirt(), erukar.Sand(), erukar.Snow(), erukar.StoneFloor(), erukar.Grass(), erukar.Tiles()]
+        self.potential_wall_tiles = [erukar.StoneWall()]
 
     def generate(self, previous_instance_identifier=''):
         self.create_dungeon()
         e = erukar.game.enemies.undead.Skeleton()
         self.world.add_actor(e, random.choice([x for x in self.vertices]))
-        md = ModuleDecorator('erukar.game.modifiers.room.contents.items', self.generation_properties)
+        md = ModuleDecorator('erukar.game.modifiers.room.contents.items', self.environment_profile)
         for i in range(6):
             new_inv = md.create_one()
             loc = random.choice(self.vertices)
@@ -43,6 +45,11 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         self.world.spawn_coordinates = self.vertices
 
         return self.world
+
+    def get_floor_tile(self):
+        weights = [tile.generation_parameters.stochasticity_weight(self.environment_profile) for tile in self.potential_floor_tiles]
+        bins, values = erukar.Random.create_random_distribution(self.potential_floor_tiles, weights, 0)
+        return erukar.Random.get_from_custom_distribution(random.random(), bins, values)
 
     def create_dungeon(self):
         self.world = erukar.engine.environment.Dungeon()
@@ -55,11 +62,11 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         self.add_walls()
 
         for loc in self.world.walls.keys():
-            material = random.choice([erukar.StoneWall, erukar.StoneWall, erukar.Brick])()
+            material = self.potential_wall_tiles[0]
             self.world.walls[loc].material = material
             self.world.tiles[loc] = material
         for loc in self.world.all_traversable_coordinates():
-            material = random.choice([erukar.Snow, erukar.Snow, erukar.StoneFloor])()
+            material = self.get_floor_tile()
             self.world.tiles[loc] = material
 
     def add_walls(self):

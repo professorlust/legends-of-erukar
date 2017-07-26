@@ -4,9 +4,11 @@ from erukar.engine.model.GenerationParameter import GenerationParameter
 import random, operator, functools
 
 class Snow(Tile):
-    generation_param = GenerationProfile(
-        moisture = GenerationParameter(0.7),
-        temperature = GenerationParameter(-0.5),
+    generation_parameters = GenerationProfile(
+        moisture = GenerationParameter(0.7, strength=1.2),
+        temperature = GenerationParameter(-0.5, strength = 2),
+        fabrication = GenerationParameter(-0.5),
+        shelter     = GenerationParameter(-1.0, strength=4.0)
     )
 
     def generate(self, *_):

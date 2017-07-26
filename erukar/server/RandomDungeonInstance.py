@@ -1,6 +1,6 @@
 from erukar.server.Instance import Instance
 from erukar.engine.factories import *
-from erukar.engine.model.GenerationProfile import GenerationProfile
+from erukar.engine.model.EnvironmentProfile import EnvironmentProfile
 import erukar
 
 import logging
@@ -21,18 +21,18 @@ class RandomDungeonInstance(Instance):
 #       (ModuleDecorator, "structure.passages"),
 #       (ModuleDecorator, "phenomena")]
 
-    def __init__(self, level=-1, level_variance=0.2, generation_properties=None, previous_identifier=''):
+    def __init__(self, level=-1, level_variance=0.2, environment_profile=None, previous_identifier=''):
         super().__init__()
         self.level = level if level > 0 else int(random.uniform(1, 50))
         self.level_variance = level_variance
-        if generation_properties is None:
-            generation_properties = GenerationProfile.random()
-        self.generation_properties = generation_properties
+        if environment_profile is None:
+            environment_profile = EnvironmentProfile.SnowyWoodlands()
+        self.environment_profile = environment_profile
         self.previous_identifier = previous_identifier
 
     def initialize_instance(self, connector):
         super().initialize_instance(connector)
-        d = DungeonGeneratorRedux(self.generation_properties)
+        d = DungeonGeneratorRedux(self.environment_profile)
         self.dungeon = d.generate(self.previous_identifier)
         self.decorate()
         self.on_start()
@@ -46,10 +46,9 @@ class RandomDungeonInstance(Instance):
 
     def decorators(self):
         for sm in RandomDungeonInstance.SubModules:
-            md = sm[0](RandomDungeonInstance.BaseModule.format(sm[1]), self.generation_properties)
+            md = sm[0](RandomDungeonInstance.BaseModule.format(sm[1]), self.environment_profile)
             yield md
 
     def handle_reduced_player_count(self):
-        logger.info('RandomDungeonInstance -- Reducing player count')
         if len(self.characters) == 0:
             self.status = Instance.Closing

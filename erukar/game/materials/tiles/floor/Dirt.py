@@ -7,9 +7,10 @@ class Dirt(Tile):
     generation_parameters = GenerationProfile(
         moisture = GenerationParameter(-0.2),
         temperature = GenerationParameter(0.0),
-        plant_growth = GenerationParameter(0.0),
+        plant_growth = GenerationParameter(-0.8, strength=2.0),
         altitude = GenerationParameter(-0.1),
-        fabrication = GenerationParameter(-0.8, strength=5.0)
+        fabrication = GenerationParameter(-0.8, strength=5.0),
+        shelter     = GenerationParameter(-0.8, strength=2.0)
     )
 
     def generate(self, *_):

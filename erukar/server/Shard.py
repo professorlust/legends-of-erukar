@@ -181,11 +181,11 @@ class Shard(Manager):
             erukar.data.models.add(self.session, playernode)
         return playernode
 
-    def create_random_dungeon(self, for_player, generation_properties=None, previous_identifier=''):
+    def create_random_dungeon(self, for_player, environment_profile=None, previous_identifier=''):
         '''Create a random dungeon instance based on a player's level'''
         dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {
             'level': for_player.level,
-            'generation_properties': generation_properties,
+            'environment_profile': environment_profile,
             'previous_identifier': previous_identifier})
         self.launch_dungeon_instance(dungeon_info)
         self.instances.append(dungeon_info)
