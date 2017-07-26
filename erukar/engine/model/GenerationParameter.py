@@ -1,9 +1,10 @@
-import math
+import scipy.stats
+import math, functools, operator
 
-class GenerationParameter:
-    def __init__(self, a, b):
-        self.a = a
-        self.b = b
+class GenerationParameter():
+    def __init__(self, correlation=0.0, strength=1.0):
+        self.correlation = correlation
+        self.strength = strength
 
-    def probability(self, value):
-        return max(0, math.sin((self.a - value) * math.pi / self.b))
+    def variable_correlation(self, value):
+        return -1 * (value-self.correlation - 1/self.strength) * (value-self.correlation + 1/self.strength)

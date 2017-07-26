@@ -3,6 +3,7 @@ from .TransitionState import TransitionState
 from .Condition import Condition
 from .Containable import Containable
 from .Damage import Damage
+from .EnvironmentProfile import EnvironmentProfile
 from .GenerationProfile import GenerationProfile
 from .Direction import Direction
 from .Describable import Describable
@@ -28,6 +29,7 @@ __all__ = [
     "Describable",
     "Direction",
     "GenerationProfile",
+    "EnvironmentProfile",
     "Indexer",
     "Interactible",
     "Manager",
