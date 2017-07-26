@@ -1,4 +1,3 @@
-import scipy.stats
 import math, functools, operator
 
 class GenerationParameter():
