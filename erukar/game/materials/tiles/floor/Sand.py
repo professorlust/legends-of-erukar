@@ -5,9 +5,10 @@ import random
 
 class Sand(Tile):
     generation_parameters = GenerationProfile(
-        moisture = GenerationParameter(-0.5),
+        ambient_water = GenerationParameter(-0.2),
+        precipitation = GenerationParameter(-0.7),
         temperature = GenerationParameter(0.7),
-        plant_growth = GenerationParameter(-1.0, dropoff=2.5),
+        fertility = GenerationParameter(-1.0, dropoff=2.5),
         fabrication = GenerationParameter(-0.8, dropoff=2.0),
         shelter     = GenerationParameter(-1.0, dropoff=4.0),
         barrenness = GenerationParameter(0.5),
