@@ -11,4 +11,4 @@ class GenerationProfile():
             getattr(self, parameter).variable_correlation(getattr(profile, parameter, -math.inf))\
             for parameter in profile.__dict__.keys() if hasattr(self, parameter)
         ]
-        return sum(weights) / len(weights)
+        return sum(weights) / len([getattr(self, parameter).strength for parameter in profile.__dict__.keys() if hasattr(self, parameter)])
