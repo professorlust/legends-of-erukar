@@ -16,4 +16,3 @@ class StoneBricks(Tile):
         else: 
             random_gray = int(random.uniform(130, 150))
         return [random_gray,random_gray,random_gray] + [1]
-
