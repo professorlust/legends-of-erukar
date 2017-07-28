@@ -3,13 +3,14 @@ from erukar.engine.model.GenerationParameter import GenerationParameter
 from erukar.engine.model.Tile import Tile
 import random
 
-class StoneWall(Tile):
+class Cobblestone(Tile):
     generation_parameters = GenerationProfile(
-        fabrication = GenerationParameter(0.5, dropoff=1.5),
-        shelter     = GenerationParameter(0.3, dropoff=1.2),
-        opulence    = GenerationParameter(0.0)
+        fabrication = GenerationParameter(0.8),
+        shelter     = GenerationParameter(0.3),
+        opulence    = GenerationParameter(0.3)
     )
 
     def generate(self, *_):
-        random_gray = random.uniform(130, 180)
+        random_gray = random.uniform(20, 130)
         return [int(random_gray) for x in range(3)] + [1]
+

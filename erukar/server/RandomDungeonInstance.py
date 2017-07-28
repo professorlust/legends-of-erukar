@@ -26,7 +26,7 @@ class RandomDungeonInstance(Instance):
         self.level = level if level > 0 else int(random.uniform(1, 50))
         self.level_variance = level_variance
         if environment_profile is None:
-            environment_profile = EnvironmentProfile.SnowyWoodlands()
+            environment_profile = EnvironmentProfile.CityOutdoors()
         self.environment_profile = environment_profile
         self.previous_identifier = previous_identifier
 

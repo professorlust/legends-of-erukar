@@ -29,8 +29,8 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         self.vertices = []
         self.connections = {}
         self.size = size
-        self.potential_floor_tiles = [erukar.Dirt(), erukar.Sand(), erukar.Snow(), erukar.StoneFloor(), erukar.Grass(), erukar.FrozenGrass(), erukar.Tiles()]
-        self.potential_wall_tiles = [erukar.StoneWall()]
+        self.potential_floor_tiles = [erukar.Cobblestone(), erukar.Dirt(), erukar.Sand(), erukar.Snow(), erukar.StoneFloor(), erukar.Grass(), erukar.FrozenGrass(), erukar.Tiles()]
+        self.potential_wall_tiles = [erukar.StoneWall(), erukar.StoneBricks()]
 
     def generate(self, previous_instance_identifier=''):
         self.create_dungeon()
@@ -47,8 +47,14 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         return self.world
 
     def get_floor_tile(self):
-        weights = [tile.generation_parameters.stochasticity_weight(self.environment_profile) for tile in self.potential_floor_tiles]
-        bins, values = erukar.Random.create_random_distribution(self.potential_floor_tiles, weights, 0)
+        return self.get_tile(self.potential_floor_tiles)
+
+    def get_wall_tile(self):
+        return self.get_tile(self.potential_wall_tiles)
+
+    def get_tile(self, collection):
+        weights = [tile.generation_parameters.stochasticity_weight(self.environment_profile) for tile in collection]
+        bins, values = erukar.Random.create_random_distribution(collection, weights, 0)
         return erukar.Random.get_from_custom_distribution(random.random(), bins, values)
 
     def create_dungeon(self):
@@ -62,7 +68,7 @@ class DungeonGeneratorRedux(FactoryBase, AStarBase):
         self.add_walls()
 
         for loc in self.world.walls.keys():
-            material = self.potential_wall_tiles[0]
+            material = self.get_wall_tile()
             self.world.walls[loc].material = material
             self.world.tiles[loc] = material
         for loc in self.world.all_traversable_coordinates():

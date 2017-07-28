@@ -67,7 +67,7 @@ class EnvironmentProfile:
         return EnvironmentProfile(
             fertility     = -0.2,
             precipitation = -0.1,
-            ambient_water =  0.0,
+            ambient_water =  0.3,
             temperature   =  0.4,
             altitude      =  0.3,
             sanctity      =  0.3,
