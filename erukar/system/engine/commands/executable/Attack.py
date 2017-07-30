@@ -1,6 +1,6 @@
 from ..ActionCommand import ActionCommand
 from ..CommandResult import CommandResult
-from erukar.system.engine import Corpse, Door, Lifeform, Damage, Weapon, SearchScope
+from erukar.system.engine import Corpse, Door, Lifeform, Damage, Weapon, SearchScope, Dying, Dead
 from erukar.ext.math import Navigator
 import random, math
 

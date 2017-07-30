@@ -32,3 +32,10 @@ class ArcaneGift(Skill):
         if level < 20:
             return 10 * (level+10)
         return 5 * (level+40)
+
+    def apply_to(self, skilled):
+        skilled.maximum_arcane_energy = self.maximum_arcane_energy
+
+    def maximum_arcane_energy(self):
+        return ArcaneGift.energy_at_level(self.level)
+

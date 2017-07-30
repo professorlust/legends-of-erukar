@@ -72,6 +72,9 @@ class Lifeform(ErukarActor):
 
     def subscribe(self, instance):
         self.instance = instance.identifier
+        for skill in self.skills:
+            if hasattr(skill, 'apply_to'):
+                skill.apply_to(self)
         self.arcane_energy = self.maximum_arcane_energy()
         logger.info('Lifeform -- Energy set to {} out of a possible {} for {}'.format(self.arcane_energy, self.maximum_arcane_energy(), self.name))
 
