@@ -1,6 +1,5 @@
-from erukar.data import *
-from erukar.engine import *
-from erukar.game import *
-from erukar.server import *
+from .ext import *
+from .system import *
+from .content import *
 
 __path__ = 'erukar'

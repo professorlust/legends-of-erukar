@@ -1,4 +1,4 @@
-from erukar.server.Shard import Shard
+from erukar.system import Shard, PlayerNode, Player, Lifeform
 import asyncio, websockets, json, os, sys, datetime
 import logging
 log = logging.getLogger('werkzeug')
@@ -9,7 +9,6 @@ from flask import Flask
 from flask import request, jsonify, abort
 from socketio import Middleware
 from flask_socketio import SocketIO, emit, send
-from erukar import PlayerNode, Player, Lifeform
 import erukar
 
 logger = logging.getLogger('debug')
@@ -152,7 +151,7 @@ def ws_login(raw_creds):
     uid = credentials['uid']
 
     con = shard.update_connection(request)
-    player_schema = erukar.data.models.Player.get(shard.session, uid)
+    player_schema = erukar.data.model.Player.get(shard.session, uid)
     if player_schema is None:
         return 'Could not find specified UID'
 
@@ -165,12 +164,12 @@ def ws_register(raw_creds):
     if 'uid' not in credentials: return "Malformed request received"
 
     con = shard.update_connection(request)
-    if erukar.data.models.Player.get(shard.session, credentials['uid']):
+    if erukar.data.model.Player.get(shard.session, credentials['uid']):
         return 'UID {} already exists'.format(credentials['uid'])
 
     con.playernode = PlayerNode(credentials['uid'],None)
     con.playernode.name = 'Evan'
-    player_schema = erukar.data.models.Player.add(shard.session, con.playernode)
+    player_schema = erukar.data.model.Player.add(shard.session, con.playernode)
     return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
 @socketio.on('launch')
@@ -199,7 +198,7 @@ def ws_select_character(raw_data):
     con = shard.get_client(request)
     if con is None: return "Connection is invalid"
     
-    character = erukar.data.models.Character.select(shard.session, cid, con.uid())
+    character = erukar.data.model.Character.select(shard.session, cid, con.uid())
 
     if character is not None:
         con.character = character.create_new_object()
@@ -224,13 +223,13 @@ def on_finish_character_creation(raw_data):
     if con is None: return 'Client is not logged in'
 
     built = Lifeform.build_from_payloads(data['stats'], data['bio'])
-    player_schema = erukar.data.models.Player.get(shard.session, con.playernode.uid)
-    schema = erukar.data.models.Character.create_from_object(shard.session, built, player_schema)
+    player_schema = erukar.data.model.Player.get(shard.session, con.playernode.uid)
+    schema = erukar.data.model.Character.create_from_object(shard.session, built, player_schema)
     if 'template' in data:
         schema.apply_template(data['template'])
     schema.add_or_update(shard.session)
 
-    character = erukar.data.models.Character.select(shard.session, schema.id, con.playernode.uid)
+    character = erukar.data.model.Character.select(shard.session, schema.id, con.playernode.uid)
     if character is not None:
         con.character = character.create_new_object()
         return 'Successfully selected {}'.format(con.character.name)

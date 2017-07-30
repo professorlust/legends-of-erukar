@@ -1,6 +1,6 @@
-from erukar.server.ScriptHelpers import *
-from erukar.engine.magic.SpellWordGrasp import SpellWordGrasp
-from erukar import *
+from erukar.system.engine import Lifeform
+from erukar.content.inventory import *
+from erukar.content.modifiers.material import *
 import erukar
 
 def configure(shard):
@@ -24,9 +24,9 @@ def make_barbarian():
     barbarian.stats['resolve']   = 4
     
     barbarian.inventory = [
-        Axe(modifiers=[erukar.game.modifiers.material.Iron]),
-        Mace(modifiers=[erukar.game.modifiers.material.Iurwood]),
-        Breeches(modifiers=[erukar.game.modifiers.material.Leather]),
+        Axe(modifiers=[Iron]),
+        Mace(modifiers=[Iurwood]),
+        Breeches(modifiers=[Leather]),
         Candle(),
     ]
 
@@ -35,12 +35,10 @@ def make_barbarian():
     barbarian.legs  = barbarian.inventory[2]
 
     barbarian.spell_words = [
-        SpellWordGrasp('InflictCondition', 1, 1),
-        SpellWordGrasp('Enraged', 1, 1)
     ]
     barbarian.skills = [
-        erukar.game.skills.Bloodlust(),
-        erukar.game.skills.Rage(),
+        erukar.content.skills.Bloodlust(),
+        erukar.content.skills.Rage(),
     ]
 
     barbarian.description = 'Barbarians are hardy melee fighters capable of dealing lots of damage in bursts. Their raw strength allows them great amounts of damage with heavy, blunted weapons such as Maces and Staves.\nEach barbarian has access to a skill called "Rage" which temporarily grants bonuses to attack damage/health equal to the barbarian\'s resolve score and a 33% increase to physical damage mitigation.'
@@ -59,16 +57,13 @@ def make_cleric():
     cleric.stats['resolve']   = 2
     
     cleric.inventory = [
-        Mace(modifiers=[erukar.game.modifiers.material.Iron]),
-        Piece(modifiers=[erukar.game.modifiers.material.Chainmail]),
-        Leggings(modifiers=[erukar.game.modifiers.material.Chainmail]),
-        Treads(modifiers=[erukar.game.modifiers.material.Leather]),
+        Mace(modifiers=[Iron]),
+        Piece(modifiers=[Chainmail]),
+        Leggings(modifiers=[Chainmail]),
+        Treads(modifiers=[Leather]),
         Potion(5),
     ]
     cleric.spell_words = [
-        SpellWordGrasp('Consecrate', 1, 1),
-        SpellWordGrasp('HealEffect', 1, 1),
-        SpellWordGrasp('Persistent', 1, 1),
     ]
 
     cleric.left  = cleric.inventory[0]
@@ -91,12 +86,12 @@ def make_fighter():
     fighter.stats['resolve']   = 1
     
     fighter.inventory = [
-        Sword(modifiers=[erukar.game.modifiers.material.Iron]),
-        HeaterShield(modifiers=[erukar.game.modifiers.material.Oak]),
-        Piece(modifiers=[erukar.game.modifiers.material.Chainmail]),
-        Leggings(modifiers=[erukar.game.modifiers.material.Chainmail]),
-        Treads(modifiers=[erukar.game.modifiers.material.Leather]),
-        Spear(modifiers=[erukar.game.modifiers.material.Iron]),
+        Sword(modifiers=[Iron]),
+        HeaterShield(modifiers=[Oak]),
+        Piece(modifiers=[Chainmail]),
+        Leggings(modifiers=[Chainmail]),
+        Treads(modifiers=[Leather]),
+        Spear(modifiers=[Iron]),
     ]
     fighter.right = fighter.inventory[0]
     fighter.left  = fighter.inventory[1]
@@ -119,25 +114,18 @@ def make_mage():
     mage.stats['resolve']   = 2
     
     mage.inventory = [
-        Wand(modifiers=[erukar.game.modifiers.material.Oak]),
+        Wand(modifiers=[Oak]),
         Candle(),
-        Robes(modifiers=[erukar.game.modifiers.material.Cotton]),
-        Sandals(modifiers=[erukar.game.modifiers.material.Leather]),
-        Breeches(modifiers=[erukar.game.modifiers.material.Cotton]),
+        Robes(modifiers=[Cotton]),
+        Sandals(modifiers=[Leather]),
+        Breeches(modifiers=[Cotton]),
         Potion(5)
     ]
     mage.spell_words = [
-        SpellWordGrasp('Fire', 1, 1),
-        SpellWordGrasp('Ice', 1, 1),
-        SpellWordGrasp('Electricity', 1, 1),
-        SpellWordGrasp('Barrier', 1, 1),
-        SpellWordGrasp('Bolt', 1, 1),
-        SpellWordGrasp('DamageSingleTarget', 1, 1),
-        SpellWordGrasp('DamageOverTime', 1, 1),
     ]
     mage.skills = [
-        erukar.engine.base.skills.ArcaneGift(),
-        erukar.game.skills.ArcaneTraining(),
+        erukar.content.skills.ArcaneGift(),
+        erukar.content.skills.ArcaneTraining(),
     ]
     mage.right = mage.inventory[0]
     mage.left  = mage.inventory[1]
@@ -160,11 +148,11 @@ def make_ranger():
     ranger.stats['resolve']   = 1
     
     ranger.inventory = [
-        Bow(modifiers=[erukar.game.modifiers.material.Oak]),
-        Boots(modifiers=[erukar.game.modifiers.material.Leather]),
-        Vest(modifiers=[erukar.game.modifiers.material.Leather]),
-        Breeches(modifiers=[erukar.game.modifiers.material.Leather]),
-        Arrow(modifiers=[erukar.game.modifiers.material.Oak]),
+        Bow(modifiers=[Oak]),
+        Boots(modifiers=[Leather]),
+        Vest(modifiers=[Leather]),
+        Breeches(modifiers=[Leather]),
+        Arrow(modifiers=[Oak]),
         Potion(5) # This should be replaced with ammo
     ]
     ranger.right = ranger.inventory[0]
