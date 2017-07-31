@@ -72,14 +72,7 @@ class Item(Describable):
         return Rarity(max_rarity)
 
     def efficacy_for(self, lifeform):
-        total_scalar = 1.0
-        total_offset = 0
-        for stat in self.stat_influences:
-            value = lifeform.calculate_effective_stat(stat)
-            scalar, offset = Curves.item_stat_efficacy(value, **self.stat_influences[stat])
-            total_scalar *= scalar
-            total_offset += offset
-        return total_scalar, total_offset
+        return 1.0, 0
 
     def describe(self):
         return self.name

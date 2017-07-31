@@ -374,7 +374,7 @@ class Lifeform(ErukarActor):
         return math.floor(3 + self.calculate_effective_stat('dexterity')/8)
 
     def visual_fog_of_war(self):
-        return 3.5 + self.calculate_effective_stat('acuity')/8
+        return 4.0
 
     def begin_turn(self):
         self.gain_action_points()
@@ -421,3 +421,8 @@ class Lifeform(ErukarActor):
 
     def flag_for_rebuild(self):
         self.zones.desynced = True
+
+    def offset_scale(self, weapon):
+        method_name = 'offset_scale_for_{}'.format(type(weapon).__name__.lower()) 
+        actual_method = getattr(self, method_name, None)
+        return 0 if not actual_method else  actual_method()

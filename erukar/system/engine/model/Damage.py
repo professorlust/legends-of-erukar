@@ -33,14 +33,25 @@ class Damage:
             return int(raw) + getattr(attacker, self.modifier)
         return int(raw)
 
-    def scaled_values(self, for_player):
-        return self.scale(for_player, self.damage[0]), self.scale(for_player, self.damage[1])
+    def scaled_values(self, for_player, weapon=None):
+        '''Returns a tuple of low to high range of damage'''
+        return tuple(self.scale(for_player, damage, weapon) for damage in self.damage)
 
-    def scale(self, for_player, value):
+    def scale(self, for_player, value, weapon):
+        '''Performs a scalar adjustment on a value'''
         if not self.scales: return value
+        # If we don't meet requirements, just ignore this
         stat = getattr(for_player, self.modifier)
         if stat < self.requirement: return 1
-        return int((1+min(self.max_scale, (stat - self.requirement))) * self.scalar + value)
+        # Get the adjusted value
+        adj_max_scale = self.max_scale + for_player.offset_scale(weapon)
+        adj_scale = self.adjusted_scalar(for_player, weapon)
+        actual_scale = (1 + min(adj_max_scale, (stat - self.requirement))) * adj_scale
+        return int(actual_scale) + value
+
+    def adjusted_scalar(self, for_player, weapon):
+        if not self.scales: return value
+        return self.scalar + for_player.offset_scale(weapon)
 
     @staticmethod
     def actual_damage_values(instigator, enemy, weapon, damages):

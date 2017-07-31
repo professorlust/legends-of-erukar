@@ -93,6 +93,9 @@ def make_fighter():
         Treads(modifiers=[Leather]),
         Spear(modifiers=[Iron]),
     ]
+    fighter.skills = [
+        erukar.content.skills.SwordTraining(),
+    ]
     fighter.right = fighter.inventory[0]
     fighter.left  = fighter.inventory[1]
     fighter.chest = fighter.inventory[2]
@@ -154,6 +157,10 @@ def make_ranger():
         Breeches(modifiers=[Leather]),
         Arrow(modifiers=[Oak]),
         Potion(5) # This should be replaced with ammo
+    ]
+
+    ranger.skills = [
+        erukar.content.skills.ImprovedSight()
     ]
     ranger.right = ranger.inventory[0]
     ranger.feet  = ranger.inventory[1]

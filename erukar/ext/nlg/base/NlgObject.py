@@ -1,4 +1,5 @@
-from erukar.ext.nlg import Qualities, BaseNLG
+from ..BaseNLG import BaseNLG
+from ..enum import Qualities
 
 class NlgObject:
     def __init__(self, alias, count=1, qualities=None):

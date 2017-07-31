@@ -58,12 +58,11 @@ class Weapon(Item):
         return isinstance(ammo, getattr(erukar.content.inventory.ammunition, self.AmmoType))
 
     def roll(self, attacker):
-        scalar, offset = self.efficacy_for(attacker)
         return [self.rolled_damage(d, attacker) for d in self.damages]
 
     def rolled_damage(self, damage, attacker):
         '''used to get processed result for a single damage type'''
-        return int(np.random.uniform(*damage.scaled_values(attacker))), damage.name
+        return int(np.random.uniform(*damage.scaled_values(attacker, weapon=self))), damage.name
 
     def on_process_damage(self, attack_state, command):
         for modifier in self.modifiers:

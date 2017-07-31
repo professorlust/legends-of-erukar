@@ -87,11 +87,12 @@ class Inventory(Command):
 
     def weapon_details(self, item):
         for damage in item.damages:
-            yield {
+            details = {
                 'name': damage.name.capitalize(),
-                'range': '{} to {}'.format(*damage.scaled_values(self.args['player_lifeform'])),
-                'scaling': '{} x{:.2f} [{},{}]'.format(damage.modifier[:3].upper(), damage.scalar, damage.requirement, damage.max_scale)
+                'range': '{} to {}'.format(*damage.scaled_values(self.args['player_lifeform'], item)),
+                'scaling': '{} x{:.2f} [{},{}]'.format(damage.modifier[:3].upper(), damage.adjusted_scalar(self.args['player_lifeform'], item), damage.requirement, damage.max_scale)
             }
+            yield details
 
     def armor_details(item):
         for mit in item.DamageMitigations:
