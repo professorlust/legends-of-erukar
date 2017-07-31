@@ -5,9 +5,9 @@ engines:
       languages:
         - python
     exclude_paths:
-      - "erukar/game/" 
+      - "erukar/content/" 
+      - "erukar/system/data/"
       - "config/" 
-      - "erukar/data/"
   fixme:
     enabled: true
   radon:
