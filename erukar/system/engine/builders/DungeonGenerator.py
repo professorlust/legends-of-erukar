@@ -39,6 +39,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
             erukar.content.Tiles()
         ]
         self.potential_wall_tiles = [
+            erukar.content.Pine(),
             erukar.content.StoneWall(),
             erukar.content.StoneBricks(),
             erukar.content.SandStoneBricks()

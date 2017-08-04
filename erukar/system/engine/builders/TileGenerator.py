@@ -6,12 +6,7 @@ class TileGenerator:
         self.breadth = breadth
 
     def build(self, tile):
-        return list(self.build_generator(tile))
-
-    def build_generator(self, tile):
-        for y in range(self.breadth):
-            for x in range(self.width):
-                yield Tile.rgba(*tile.generate((x,y), (self.width, self.breadth)))
+        return list(tile.build_generator((self.width, self.breadth)))
 
     def build_actor(self, actor):
         return list(actor.generate_tile((self.width, self.breadth)))

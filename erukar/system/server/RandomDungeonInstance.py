@@ -2,16 +2,13 @@ from .Instance import Instance
 from erukar.system.engine import EnvironmentProfile, DungeonGenerator
 import erukar
 
-import logging
-logger = logging.getLogger('debug')
-
 class RandomDungeonInstance(Instance):
     def __init__(self, level=-1, level_variance=0.2, environment_profile=None, previous_identifier=''):
         super().__init__()
         self.level = level if level > 0 else int(random.uniform(1, 50))
         self.level_variance = level_variance
         if environment_profile is None:
-            environment_profile = EnvironmentProfile.CityIndoors()
+            environment_profile = EnvironmentProfile.SnowyWoodlands()
         self.environment_profile = environment_profile
         self.previous_identifier = previous_identifier
 
