@@ -25,12 +25,5 @@ class Skeleton(Undead):
         self.sen_ratio  = 0.0
         self.res_ratio  = 0.3
         self.define_level(1)
-
-    def randomize_equipment(self):
-        s = Sword()
-        b = Buckler()
-        Steel().apply_to(s)
-        Oak().apply_to(b)
-        self.inventory = [s, b]
-        self.left = s
-        self.right = b
+        self.left = Buckler(modifiers=[Oak])
+        self.right = Sword(modifiers=[Steel])

@@ -3,6 +3,8 @@ from erukar.system.engine.environment import *
 from erukar.ext.math import Distance
 from ..Command import Command
 import math
+import logging
+logger = logging.getLogger('debug')
 
 class Map(Command):
     NeedsArgs = False
@@ -33,7 +35,11 @@ class Map(Command):
             'minY': 0,
             'height': 1,
             'width': 1,
-            'rooms': [] # 
+            'pixel': {
+                'density': self.world.pixel_density,
+                'numberOnASide': self.world.pixels_per_side
+            },
+            'rooms': []
         }
 
         if not self.world:
@@ -72,6 +78,7 @@ class Map(Command):
             else: result.append(self.world.get_wall_type((x,y)))
             result += self.world.get_wall_overlay((x,y))
             result.append(self.world.moving_parts_at((x,y)))
+            logger.info(result)
         return result
 
     def action(command, description="", cost=1, target='', weapon=''):

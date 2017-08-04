@@ -9,6 +9,7 @@ from .floor.Tiles import Tiles
 from .floor.WoodFloor import WoodFloor
 
 from .wall.Brick import Brick
+from .wall.SandStoneBricks import SandStoneBricks
 from .wall.StoneBricks import StoneBricks
 from .wall.StoneWall import StoneWall
 from .wall.WoodWall import WoodWall
@@ -21,6 +22,7 @@ __all__ = [
     "Grass",
     "Sand",
     "Snow",
+    "SandStoneBricks",
     "StoneBricks",
     "StoneFloor",
     "StoneWall",

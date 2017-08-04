@@ -5,12 +5,7 @@ from .Drop import Drop
 from .Equip import Equip
 from .Glance import Glance
 from .Inspect import Inspect
-from .Inventory import Inventory
-from .LocalIndex import LocalIndex
-from .Map import Map
 from .Move import Move
-from .Skills import Skills
-from .Stats import Stats
 from .Take import Take
 from .Unequip import Unequip
 from .Use import Use
@@ -24,12 +19,7 @@ __all__ = [
     "Equip", 
     "Glance", 
     "Inspect", 
-    "Inventory", 
-    "LocalIndex", 
-    "Map", 
     "Move", 
-    "Skills", 
-    "Stats", 
     "Take", 
     "Unequip", 
     "Use", 

@@ -40,14 +40,14 @@ class DungeonGenerator(FactoryBase, AStarBase):
         ]
         self.potential_wall_tiles = [
             erukar.content.StoneWall(),
-            erukar.content.StoneBricks()
+            erukar.content.StoneBricks(),
+            erukar.content.SandStoneBricks()
         ]
 
     def generate(self, previous_instance_identifier=''):
         self.create_dungeon()
         e = erukar.content.enemies.undead.Skeleton()
         self.world.add_actor(e, random.choice([x for x in self.vertices]))
-
         self.world.spawn_coordinates = self.vertices
 
         return self.world
@@ -79,7 +79,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
         for loc in self.world.all_traversable_coordinates():
             material = self.get_floor_tile()
             self.world.tiles[loc] = material
-        self.world.generate_tiles(TileGenerator(8, 8))
+        self.world.generate_tiles(TileGenerator(self.world.pixels_per_side, self.world.pixels_per_side))
 
     def add_walls(self):
         xo, yo = map(min, zip(*self.world.dungeon_map))

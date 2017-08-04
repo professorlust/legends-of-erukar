@@ -18,8 +18,6 @@ class EnvironmentProfile:
             ambient_water = -1.0,
             precipitation = -1.0,
             temperature   =  0.8,
-            altitude      =  0.0,
-            sanctity      =  0.0,
             fabrication   = -1.0,
             shelter       = -1.0,
             barrenness    =  1.0

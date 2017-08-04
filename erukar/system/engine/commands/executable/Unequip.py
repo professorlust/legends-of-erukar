@@ -1,6 +1,6 @@
 from erukar.system.engine import Lifeform, SearchScope
 from ..ActionCommand import ActionCommand
-from .Inventory import Inventory
+from ..auto.Inventory import Inventory
 
 class Unequip(ActionCommand):
     NotFound = "No equipped item was found"

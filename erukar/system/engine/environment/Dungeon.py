@@ -1,6 +1,9 @@
 from erukar.system.engine import ErukarActor, Lifeform, Item, Player, Enemy
 from erukar.ext.math import Navigator
 
+import logging
+logger = logging.getLogger('debug')
+
 class Dungeon(ErukarActor):
     minimum_rooms = 3
 
@@ -18,11 +21,16 @@ class Dungeon(ErukarActor):
         self.actors = set()
         self.spawn_coordinates = []
         self.walls = {}
+        self.pixel_density = 3
+        self.pixels_per_side = 12
+        self.tile_generator = None
 
     def on_start(self):
         super().on_start()
 
     def generate_tiles(self, tg):
+        # Walls
+        self.tile_generator = tg
         self.tile_set = {str(tile.uuid): tg.build(tile) for tile in set(self.tiles.values())}
 
     def get_object_by_uuid(self, uuid):
@@ -115,6 +123,9 @@ class Dungeon(ErukarActor):
     def add_actor(self, actor, coordinates):
         self.actors.add(actor)
         actor.coordinates = coordinates
+        if self.tile_generator:
+            self.tile_set[str(actor.uuid)] = self.tile_generator.build_actor(actor)
+            logger.info(self.tile_set[str(actor.uuid)])
 
     def remove_actor(self, actor):
         if actor in self.actors:
@@ -128,10 +139,5 @@ class Dungeon(ErukarActor):
     def moving_parts_at(self, coordinates):
         for actor in self.actors:
             if actor.coordinates != coordinates: continue
-            if issubclass(type(actor), Item):
-                return 'item'
-            if issubclass(type(actor), Player):
-                return 'player'
-            if issubclass(type(actor), Enemy):
-                return 'enemy'
+            return str(actor.uuid)
         return ''

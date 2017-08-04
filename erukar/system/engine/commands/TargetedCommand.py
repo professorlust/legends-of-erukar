@@ -1,0 +1,2 @@
+class TargetedCommand:
+    pass
