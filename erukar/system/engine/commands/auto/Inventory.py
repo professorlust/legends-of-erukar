@@ -90,7 +90,13 @@ class Inventory(Command):
             details = {
                 'name': damage.name.capitalize(),
                 'range': '{} to {}'.format(*damage.scaled_values(self.args['player_lifeform'], item)),
-                'scaling': '{} x{:.2f} [{},{}]'.format(damage.modifier[:3].upper(), damage.adjusted_scalar(self.args['player_lifeform'], item), damage.requirement, damage.max_scale)
+                'scaling': {
+                    'attribute': damage.modifier[:3].upper(),
+                    'scalar': damage.adjusted_scalar(self.args['player_lifeform'], item),
+                    'requirement': damage.requirement,
+                    'max': damage.max_scale,
+                    'value': max(-99, getattr(self.args['player_lifeform'], damage.modifier.lower(), 0) - damage.requirement) * damage.adjusted_scalar(self.args['player_lifeform'], item)
+                }
             }
             yield details
 

@@ -14,7 +14,7 @@ class Pine(Tile):
     def build_generator(self, dimensions):
         h, w = dimensions
         radius = int(w/2)-1
-        circles = [list(Distance.points_in_circle(radius, (int(h/x),int(w/x)))) for x in [2,3,4]]
+        circles = [list(Distance.points_in_circle(radius, (int(h/x)-(x-2),int(w/x)))) for x in [2,3,4]]
         for x in range(h):
             for y in range(w):
                 scalar = sum((x,y) in circle for circle in circles)

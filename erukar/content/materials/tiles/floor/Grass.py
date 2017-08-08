@@ -3,7 +3,7 @@ import random
 
 class Grass(Tile):
     generation_parameters = GenerationProfile(
-        ambient_water = GenerationParameter(0.5, strength=2),
+        ambient_water = GenerationParameter(0.5),
         precipitation = GenerationParameter(0.1),
         temperature = GenerationParameter(0.6),
         fertility = GenerationParameter(1.0, dropoff=1.5, strength=2),
