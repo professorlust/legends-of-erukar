@@ -148,7 +148,7 @@ class Instance(Manager):
 
         if node.uid == self.active_player.uid:
             result = self.execute_command(cmd)
-            if result is None or (result is not None and not result.success):
+            if result is None or not result.success:
                 return
 
             if cmd.RebuildZonesOnSuccess:
@@ -201,6 +201,11 @@ class Instance(Manager):
 
         if isinstance(self.active_player, str):
             self.tick()
+
+        # Update players
+        for player in self.players:
+            if isinstance(player, PlayerNode):
+                self.send_update_to(player)
 
         if isinstance(self.active_player, Enemy):
             self.do_non_player_turn()

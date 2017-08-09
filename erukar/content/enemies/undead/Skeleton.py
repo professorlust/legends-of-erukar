@@ -27,3 +27,4 @@ class Skeleton(Undead):
         self.define_level(1)
         self.left = Buckler(modifiers=[Oak])
         self.right = Sword(modifiers=[Steel])
+        self.inventory = [self.left, self.right]

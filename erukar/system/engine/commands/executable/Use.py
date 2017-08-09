@@ -1,51 +1,44 @@
+from erukar.system.engine import SearchScope
 from ..ActionCommand import ActionCommand
 
 class Use(ActionCommand):
-    unlock = "{} successfully unlocked the {}!"
-
-    aliases = ['use']
-    TrackedParameters = ['item', 'target']
+    ActionPointCost = 1
     RebuildZonesOnSuccess = True
 
-    def execute(self):
-        failure = self.check_for_arguments()
-        if failure: return failure
+    '''
+    Requires:
+        subject
 
-        result, successful = self.item.on_use(self, self.target)
-        if successful:
-            # Not every item has a success-or-fail result
-            if result:
-                self.append_result(self.sender_uid, result)
-            self.dirty(self.lifeform)
-            self.dirty(self.target)
-            return self.succeed()
+    Optional:
+        target
+    '''
 
-        return self.fail(result)
+    def __init__(self):
+        super().__init__()
+        self.search_scope = SearchScope.Inventory
 
-    def check_for_arguments(self):
-        # Copy all of the tracked Params into this command
-        payload = self.user_specified_payload
-        self.payloads = None
+    def perform(self):
+        if self.invalid('subject'): return self.fail(Drop.NoTarget)
+        if self.args['player_lifeform'].action_points() < self.ActionPointCost:
+            return self.fail(Drop.NotEnoughAP)
+            
+        self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
+        self.validate_target()
+        return self.do_use()
 
-        self.player = self.find_player()
-        self.lifeform = self.player.lifeform()
-        self.room = self.lifeform.current_room
+    def validate_target(self):
+        if self.invalid('target'):
+            self.args['target'] = self.args['player_lifeform']
 
-        if self.context and self.context.requires_disambiguation and payload.isdigit():
-            self.context.resolve_disambiguation(self.context.indexed_items[int(payload)-1])
+    def do_use(self):
+        result = self.args['subject'].on_use(self.args['target'])
+        if not result: return self.could_not_use()
+        
+        self.dirty(self.args['player_lifeform'])
+        self.dirty(self.args['target'])
+        self.append_result(self.player_info.uid, result)
+        return self.succeed()
 
-        if self.context and hasattr(self.context.context, 'payloads') and self.context.context.payloads:
-            self.payloads = getattr(self.context.context, 'payloads')
-
-        if not self.payloads:
-            if ' on ' in payload:
-                self.payloads = payload.split(' on ', 1)
-            else:
-                self.payloads = (payload, self.sender_uid)
-
-        fail = self.resolve_item(self.payloads[0])
-        if fail: return fail
-
-        fail = self.resolve_target(self.payloads[1])
-        if fail: return fail
-
+    def could_not_use(self):
+        self.append_result(self.player_info.uid, 'Could not use {}'.format(self.args['subject'].alias()))
+        return self.succeed()

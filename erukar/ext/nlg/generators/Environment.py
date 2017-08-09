@@ -1,6 +1,4 @@
-from erukar.ext.nlg import Qualities, NlgObject, RegularVerb
-from .BaseNLG import BaseNLG
-from .Sentence import Sentence
+from erukar.ext.nlg import Qualities, NlgObject, RegularVerb, BaseNLG, Sentence
 
 class Environment(BaseNLG):
     SentenceStructures = [

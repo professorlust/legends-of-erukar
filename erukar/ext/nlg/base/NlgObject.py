@@ -1,4 +1,4 @@
-from ..BaseNLG import BaseNLG
+from .BaseNLG import BaseNLG
 from ..enum import Qualities
 
 class NlgObject:

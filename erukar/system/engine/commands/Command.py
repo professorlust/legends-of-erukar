@@ -48,6 +48,9 @@ class Command:
     def object_index_is_valid(self, obj):
         return not self.SearchTargetMustBeIndexed or self.args['player_lifeform'].item_is_indexed(obj)
 
+    def invalid(self, arg_name):
+        return arg_name not in self.args or not self.args[arg_name]
+
     def execute(self):
         self.process_args()
         return self.perform()

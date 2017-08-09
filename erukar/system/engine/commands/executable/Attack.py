@@ -36,7 +36,7 @@ class Attack(ActionCommand):
         self.args['player_lifeform'].consume_action_points(cost)
 
         if not self.weapon_exists():
-            return self.fail('Cannot Attack -- Weapon is invalid')
+            return self.fail('Cannot Attack -- Weapon {} is invalid'.format(self.args['weapon']))
         failed_requirements = self.args['weapon'].failing_requirements(self.args['player_lifeform'])
         if failed_requirements:
             return self.fail('. '.join(failed_requirements))

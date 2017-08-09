@@ -1,4 +1,6 @@
-from erukar.ext.nlg import Tense, BaseNLG, SentenceStructure
+from ..enum.Tense import Tense
+from .SentenceStructure import SentenceStructure
+from .BaseNLG import BaseNLG
 
 class Sentence:
     def __init__(self, verb=None):

@@ -14,6 +14,7 @@ class BaseAI:
         return cmd
 
     def perform_turn(caller, instance):
+        logger.info([(x.uuid, x) for x in caller.inventory])
         for _ in range(BaseAI.MaxCalls):
             new_command = BaseAI.get_desired_command(caller, instance)
 
@@ -22,11 +23,14 @@ class BaseAI:
             if isinstance(new_command, erukar.system.engine.commands.executable.Wait) or caller.action_points() <= 0:
                 logger.info('BaseAI -- Exiting')
                 break
+        if caller.action_points() > 0:
+            wait = BaseAI.create_command(caller, instance.dungeon, erukar.engine.commands.executable.Wait)
+            instance.try_execute(caller, wait)
 
     def get_desired_command(caller, instance):
         target, weapons = BaseAI.check_for_enemies_in_range(caller, instance.dungeon)
         if target:
-            weapon = random.choice(weapons)
+            weapon = caller.right
             return BaseAI.create_attack(caller, instance.dungeon, target, weapon)
 
         target, location = BaseAI.check_for_enemies_to_move_to(caller, instance.dungeon)
