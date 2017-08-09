@@ -181,6 +181,7 @@ class Instance(Manager):
 
     def give_tile_set(self, node):
         node.tell('update tile set', json.dumps(self.dungeon.tile_set))
+        node.tile_set_version = self.dungeon.tile_set_version
 
     def do_non_player_turn(self):
         if issubclass(type(self.active_player), Enemy):
@@ -201,12 +202,10 @@ class Instance(Manager):
 
         if isinstance(self.active_player, str):
             self.tick()
+        else:
+            self.active_player.lifeform().flag_for_rebuild()
 
         # Update players
-        for player in self.players:
-            if isinstance(player, PlayerNode):
-                self.send_update_to(player)
-
         if isinstance(self.active_player, Enemy):
             self.do_non_player_turn()
 
@@ -255,6 +254,9 @@ class Instance(Manager):
     def get_messages_for(self, node):
         if not node:
             return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
+
+        if self.dungeon.tile_set_version > node.tile_set_version:
+            self.give_tile_set(node)
 
         log = []
         if node.uid in self.responses and len(self.responses[node.uid]) > 0:

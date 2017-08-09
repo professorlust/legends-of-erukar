@@ -1,8 +1,19 @@
+from erukar.ext.math.Distance import Distance
 import uuid
 
 class ErukarObject:
     def __init__(self):
         self.uuid = uuid.uuid4()
+
+    def generate_tile(self, dimensions):
+        h, w = dimensions
+        radius = int(w/2)-1
+        circle = list(Distance.points_in_circle(radius, (int(h/2),int(w/2))))
+        for y in range(h):
+            for x in range(w):
+                if (x,y) in circle:
+                    yield {'r':0,'g':0,'b':200,'a':1}
+                else: yield {'r':0,'g':0,'b':0,'a':0}
 
     def get_object_by_uuid(self, uuid):
         if uuid == self.uuid: 

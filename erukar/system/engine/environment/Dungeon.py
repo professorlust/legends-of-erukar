@@ -13,14 +13,17 @@ class Dungeon(ErukarActor):
         self.description = ""
         self.region = ''
         self.sovereignty = ''
-        self.tiles = {}
-        self.tile_set = {}
         self.dungeon_map = {}
         self.rooms = []
         self.active_auras = set()
         self.actors = set()
         self.spawn_coordinates = []
         self.walls = {}
+
+        # Tiles
+        self.tile_set_version = 0
+        self.tiles = {}
+        self.tile_set = {}
         self.pixel_density = 3
         self.pixels_per_side = 12
         self.tile_generator = None
@@ -28,10 +31,14 @@ class Dungeon(ErukarActor):
     def on_start(self):
         super().on_start()
 
+    def add_tile(self, uuid, tile):
+        self.tile_set[uuid] = self.tile_generator.build(tile)
+        self.tile_set_version += 1
+
     def generate_tiles(self, tg):
-        # Walls
         self.tile_generator = tg
         self.tile_set = {str(tile.uuid): tg.build(tile) for tile in set(self.tiles.values())}
+        self.tile_set_version = 1
 
     def get_object_by_uuid(self, uuid):
         if uuid == self.uuid: return self

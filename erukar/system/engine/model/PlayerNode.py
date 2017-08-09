@@ -21,11 +21,7 @@ class PlayerNode(Indexer):
         self.world = world
         self.emit = None
         self.sid = None
-
-        self.active_script = ''
-        self.script_entry_point = None
-        self.script_data = {}
-        self.script_completion_callback = None
+        self.tile_set_version = 0
 
     def create_command(self, cmd_type):
         cmd = cmd_type()
