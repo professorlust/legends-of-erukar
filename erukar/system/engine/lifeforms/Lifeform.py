@@ -78,6 +78,13 @@ class Lifeform(ErukarActor):
         self.arcane_energy = self.maximum_arcane_energy()
         logger.info('Lifeform -- Energy set to {} out of a possible {} for {}'.format(self.arcane_energy, self.maximum_arcane_energy(), self.name))
 
+    def add_skill(self, skill):
+        self.skill_points  -= 1
+        self.skills.append(skill)
+        if hasattr(skill, 'apply_to'):
+            skill.apply_to(self)
+
+
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''
         results = []

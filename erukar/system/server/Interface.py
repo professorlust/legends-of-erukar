@@ -10,7 +10,6 @@ class Interface:
 
     def __init__(self, shard):
         self.shard = shard
-        self.factory = FactoryBase()
         self.create_alias_list()
         self.messages = {}
 
@@ -24,7 +23,7 @@ class Interface:
 
     def receive(self, playernode, data):
         target_command = '{0}.{1}'.format(Interface.command_location, data['command'])
-        cmd = self.factory.create_one(target_command, None)
+        cmd = FactoryBase.create_one(target_command)
         if not cmd: 
             logger.info('{} not found'.format(target_command))
             return
@@ -59,5 +58,5 @@ class Interface:
         if command not in self.aliases:
             return
         aliased = self.aliases[command]
-        res = self.factory.create_one(target_command, generation_parameters)
+        res = FactoryBase.create_one(target_command, generation_parameters)
         return res

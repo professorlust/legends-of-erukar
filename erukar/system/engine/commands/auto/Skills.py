@@ -1,3 +1,4 @@
+import erukar
 from erukar.system.engine import Lifeform
 from ..Command import Command
 
@@ -5,18 +6,26 @@ class Skills(Command):
     NeedsArgs = False
 
     def perform(self):
-        available = []
-        acquired = [{
-            'name': skill.Name,
-            'level': skill.level,
-            'nextLevel': skill.next_level_description(),
-            'maxLevel': 8,
-            'description': skill.current_level_description()}
-            for skill in self.args['player_lifeform'].skills
-        ]
+        available = [Skills.format(skill) for skill in self.possible_skills()]
+        acquired = [Skills.format(skill) for skill in self.args['player_lifeform'].skills]
         full_list = {
             'available': available,
             'acquired': acquired
         }
         self.append_result(self.player_info.uid, full_list)
         return self.succeed()
+
+    def format(skill):
+        return {
+            'name': skill.Name,
+            'level': skill.level,
+            'maxLevel': 8,
+            'description': skill.current_level_description(),
+            'type': skill.__module__
+        }
+
+    def possible_skills(self):
+        return [
+            erukar.content.skills.ArcaneGift()
+        ]
+
