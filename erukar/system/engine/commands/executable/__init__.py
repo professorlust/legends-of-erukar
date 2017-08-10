@@ -1,3 +1,5 @@
+from .AddSkill import AddSkill
+from .AddSkillPoint import AddSkillPoint
 from .AddStatPoint import AddStatPoint
 from .Attack import Attack
 from .BasicInteraction import BasicInteraction
@@ -12,16 +14,18 @@ from .Use import Use
 from .Wait import Wait
 
 __all__ = [
-    "AddStatPoint", 
-    "Attack", 
-    "BasicInteraction", 
-    "Drop", 
-    "Equip", 
-    "Glance", 
-    "Inspect", 
-    "Move", 
-    "Take", 
-    "Unequip", 
-    "Use", 
-    "Wait"
+"AddSkill", 
+"AddSkillPoint", 
+"AddStatPoint", 
+"Attack", 
+"BasicInteraction", 
+"Drop", 
+"Equip", 
+"Glance", 
+"Inspect", 
+"Move", 
+"Take", 
+"Unequip", 
+"Use", 
+"Wait"
 ]

@@ -4,5 +4,5 @@ from .conditions import *
 from .inventory import *
 from .lifeforms import *
 from .environment import *
-from .commands import *
 from .builders import *
+from .commands import *

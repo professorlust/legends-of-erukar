@@ -8,6 +8,8 @@ from .auto.LocalIndex import LocalIndex
 from .auto.Map import Map
 from .auto.Skills import Skills
 from .auto.Stats import Stats
+from .executable.AddSkill import AddSkill
+from .executable.AddSkillPoint import AddSkillPoint
 from .executable.AddStatPoint import AddStatPoint
 from .executable.Attack import Attack
 from .executable.BasicInteraction import BasicInteraction
@@ -27,6 +29,8 @@ __all__ = [
     "TargetedCommand",
     "CommandResult",
     "AddStatPoint", 
+    "AddSkillPoint", 
+    "AddSkill", 
     "Attack", 
     "BasicInteraction", 
     "Drop", 
