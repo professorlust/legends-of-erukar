@@ -168,7 +168,7 @@ def ws_register(raw_creds):
         return 'UID {} already exists'.format(credentials['uid'])
 
     con.playernode = PlayerNode(credentials['uid'],None)
-    con.playernode.name = 'Evan'
+    con.playernode.name = credentials['uid']
     player_schema = erukar.data.model.Player.add(shard.session, con.playernode)
     return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
