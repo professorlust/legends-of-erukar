@@ -22,6 +22,7 @@ class Character(Lifeform):
     SimpleMapParams = [
         'name',
         'stat_points',
+        'skill_points',
         'max_health',
         'health',
         'strength',
