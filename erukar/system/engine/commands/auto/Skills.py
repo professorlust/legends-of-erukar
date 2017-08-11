@@ -26,7 +26,7 @@ class Skills(Command):
 
     def unacquired_skills(self):
         for skill in Skills.all_possible():
-            if not any(isinstance(skill, acquired) for acquired in self.args['player_lifeform'].skills):
+            if not any(isinstance(acquired, skill) for acquired in self.args['player_lifeform'].skills):
                 yield skill()
 
     def all_possible():
