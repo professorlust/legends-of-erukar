@@ -31,6 +31,11 @@ class Skills(Command):
 
     def all_possible():
         return [
-            erukar.content.skills.ArcaneGift
+            erukar.content.skills.ArcaneGift,
+            erukar.content.skills.ArcaneTraining,
+            erukar.content.skills.Bloodlust,
+            erukar.content.skills.Rage,
+            erukar.content.skills.ImprovedSight,
+            erukar.content.skills.SwordTraining
         ]
 

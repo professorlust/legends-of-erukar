@@ -63,6 +63,17 @@ class Character(Lifeform):
         orphans = schema.copy_from_object(session, player.lifeform())
         schema.add_or_update(session)
 
+    def copy_skills(self, session, player):
+        for skill in player.skills:
+            existing = next((x for x in self.skills if getattr(skill, 'id', -1) == x.id), None) 
+            if existing:
+                existing.copy_from_object(session, skill)
+                continue
+            existing = erukar.system.data.Skill.create_from_object(session, skill)
+            existing.add_or_update(session)
+            skill.id = existing.id
+            self.skills.append(existing)
+
     def copy_inventory(self, session, player):
         schema_map = {}
         orphans = {}
@@ -81,7 +92,6 @@ class Character(Lifeform):
         dropped = [x for x in self.inventory if x not in schema_map.values()]
         for item in dropped:
             self.inventory.remove(item)
-
 
         for slot in player.equipment_types:
             slot_schema  = next((x for x in self.equipment if x.equipment_slot == slot ), None)
@@ -103,6 +113,7 @@ class Character(Lifeform):
     def copy_from_object(self, session, player):
         super().copy_from_object(player)
         self.copy_inventory(session, player)
+        self.copy_skills(session, player)
         self.deceased = player.has_condition(erukar.system.engine.Dead)
 
     def create_from_object(session, player, node_schema=None):

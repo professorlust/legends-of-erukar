@@ -23,7 +23,18 @@ class Skill(ErukarBaseModel, Base):
     def create_new_object(self):
         new_obj = ErukarBaseModel.create_from_type(self.skill_type)
         self.map_schema_to_object(new_obj)
+        new_obj.id = self.id
         return new_obj
+
+    def create_from_object(session, skill):
+        schema = Skill()
+        schema.copy_from_object(session, skill)
+        return schema
+
+    def copy_from_object(self, session, skill):
+        super().copy_from_object(skill)
+        self.level = skill.level
+        self.skill_type = skill.__module__
 
     def map_schema_to_object(self, new_obj):
         new_obj.id = self.id
