@@ -21,6 +21,7 @@ class Skills(Command):
             'level': skill.level,
             'maxLevel': 8,
             'description': skill.current_level_description(),
+            'nextLevelDescription': skill.next_level_description(),
             'type': skill.__module__
         }
 
