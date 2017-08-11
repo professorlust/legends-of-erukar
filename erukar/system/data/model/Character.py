@@ -16,6 +16,7 @@ class Character(Lifeform):
 
     id          = Column(Integer, ForeignKey('lifeforms.id'), primary_key=True)
     stat_points = Column(Integer, default=15)
+    skill_points = Column(Integer, default=2)
     player_id   = Column(Integer, ForeignKey('players.id'), nullable=False)
     player      = relationship("Player", foreign_keys=[player_id])
     
