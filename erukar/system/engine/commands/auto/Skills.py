@@ -6,7 +6,7 @@ class Skills(Command):
     NeedsArgs = False
 
     def perform(self):
-        available = [Skills.format(skill) for skill in self.possible_skills()]
+        available = [Skills.format(skill) for skill in self.unacquired_skills()]
         acquired = [Skills.format(skill) for skill in self.args['player_lifeform'].skills]
         full_list = {
             'available': available,
@@ -24,8 +24,13 @@ class Skills(Command):
             'type': skill.__module__
         }
 
-    def possible_skills(self):
+    def unacquired_skills(self):
+        for skill in Skills.all_possible():
+            if not any(isinstance(skill, acquired) for acquired in self.args['player_lifeform'].skills):
+                yield skill()
+
+    def all_possible():
         return [
-            erukar.content.skills.ArcaneGift()
+            erukar.content.skills.ArcaneGift
         ]
 
