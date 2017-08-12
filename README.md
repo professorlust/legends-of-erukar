@@ -3,12 +3,6 @@
 
 Legends of Erukar is a Multi-User Dungeon (MUD)/Roguelike Hybrid set in the world of Ékalis. LoE is intended to support small communities of gamers through universal deployment -- A static React webapp, a curated master server list, a wiki, and the ability for any user to fork this repository and make his world his own.
 
-## Future Directions
-1. Fix Inventory/Drop interaction
-2. Add rudimentary AI
-3. Rework Inspect/Glance commands
-4. Add Authentication via Auth0
-5. Fix Instance Process workers
 
 ## Links
 * [Legends of Erukar Core](https://github.com/etkirsch/legends-of-erukar)

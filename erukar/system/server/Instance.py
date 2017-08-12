@@ -148,16 +148,16 @@ class Instance(Manager):
 
         if node.uid == self.active_player.uid:
             result = self.execute_command(cmd)
-            if result is None or not result.success:
-                return
+            if result is None: return
 
-            if cmd.RebuildZonesOnSuccess:
-                self.active_player.lifeform().flag_for_rebuild()
+            if result.success:
+                if cmd.RebuildZonesOnSuccess:
+                    self.active_player.lifeform().flag_for_rebuild()
 
-            self.clean_dead_characters()
+                self.clean_dead_characters()
 
-            if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
-                self.get_next_player()
+                if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
+                    self.get_next_player()
 
             # Tell characters
             to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
