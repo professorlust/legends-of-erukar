@@ -10,6 +10,7 @@ from .ErukarObject import ErukarObject
 from .GenerationParameter import GenerationParameter
 from .GenerationProfile import GenerationProfile
 from .Indexer import Indexer
+from .Interaction import Interaction
 from .Manager import Manager
 from .Modifier import Modifier
 from .Observation import Observation
@@ -33,6 +34,7 @@ __all__ = [
     "GenerationParameter", 
     "GenerationProfile", 
     "Indexer", 
+    "Interaction", 
     "Manager", 
     "Modifier", 
     "Observation", 

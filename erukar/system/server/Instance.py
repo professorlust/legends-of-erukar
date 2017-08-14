@@ -33,6 +33,7 @@ class Instance(Manager):
         self.responses = {}
         self.characters = []
         self.slain_characters = []
+        self.active_interactions = []
 
     def initialize_instance(self, session):
         '''Turn on players and generate a dungeon'''
@@ -146,6 +147,9 @@ class Instance(Manager):
                 self.active_player.stop_execution()
             return
 
+        if isinstance(cmd, TargetedCommand):
+            return self.try_execute_targeted_command(node, cmd)
+        
         if node.uid == self.active_player.uid:
             result = self.execute_command(cmd)
             if result is None: return
@@ -164,6 +168,13 @@ class Instance(Manager):
             for node in to_tell:
                 self.send_update_to(node)
 
+    def try_execute_targeted_command(self, node, cmd):
+        cmd.interactions = self.active_interactions
+        self.execute_command(cmd)
+
+        to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
+        for node in to_tell:
+            self.send_update_to(node)
 
     def clean_dead_characters(self):
         dead_characters = [x for x in self.characters if x.has_condition(Dead)]
@@ -234,7 +245,6 @@ class Instance(Manager):
                 for dirty in result.dirtied_characters:
                     if isinstance(dirty, Player):
                         erukar.data.Character.update(dirty, self.session)
-
 
             # Set context for player
             self.command_contexts[cmd.player_info.uid] = result

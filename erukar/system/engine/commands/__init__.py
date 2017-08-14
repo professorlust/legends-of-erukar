@@ -8,6 +8,7 @@ from .auto.LocalIndex import LocalIndex
 from .auto.Map import Map
 from .auto.Skills import Skills
 from .auto.Stats import Stats
+
 from .executable.AddSkill import AddSkill
 from .executable.AddSkillPoint import AddSkillPoint
 from .executable.AddStatPoint import AddStatPoint
@@ -22,6 +23,11 @@ from .executable.Take import Take
 from .executable.Unequip import Unequip
 from .executable.Use import Use
 from .executable.Wait import Wait
+
+from .targetable.Exit import Exit
+from .targetable.Start import Start
+
+from .executable.Interact import Interact
 
 __all__ = [
     "ActionCommand",
@@ -46,5 +52,8 @@ __all__ = [
     "Take", 
     "Unequip", 
     "Use", 
-    "Wait"
+    "Wait",
+    "Exit",
+    "Start",
+    "Interact"
 ]

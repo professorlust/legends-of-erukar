@@ -1,5 +1,5 @@
-from erukar.system.engine import Indexer
 from .Lifeform import Lifeform
+from erukar.system.engine import Indexer
 from erukar.ext.math.Distance import Distance
 
 class Player(Lifeform, Indexer):
