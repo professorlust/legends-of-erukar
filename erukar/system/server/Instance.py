@@ -262,23 +262,38 @@ class Instance(Manager):
         self.responses[uid] = self.responses[uid] + [response]
 
     def get_messages_for(self, node):
-        if not node:
-            return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
+        if not node: return Instance.waiting_to_join()
+        self.send_tile_set_if_necessary(node)
 
-        if self.dungeon.tile_set_version > node.tile_set_version:
-            self.give_tile_set(node)
+        log = list(self.convert_responses_to_log(node))
+        if node in self.slain_characters:
+            return json.dumps({'log': log})
+        return self.send_full_state(node, log)
 
-        log = []
+    def waiting_to_join():
+        return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
+
+    def convert_responses_to_log(self, node):
         if node.uid in self.responses and len(self.responses[node.uid]) > 0:
             responses =  self.responses.pop(node.uid, [])
             for line in responses:
-                log.append({'text':line, 'when': str(datetime.datetime.now())})
+                yield {'text':line, 'when': str(datetime.datetime.now())}
 
-        if node in self.slain_characters:
-            return json.dumps({'log': log})
+    def send_tile_set_if_necessary(self, node):
+        if self.dungeon.tile_set_version > node.tile_set_version:
+            self.give_tile_set(node)
 
+    def get_interaction_results(self, node):
+        interaction_state = {}
+        for interaction in self.active_interactions:
+            if node not in interaction.involved: continue
+            result = interaction.get_result_for(node)
+            interaction_state[interaction.uuid] = result
+        return interaction_state
+
+    def send_full_state(self, node, log):
+        '''The full state of this node in this instance is returned as a json object'''
         character = node.lifeform()
-        d = self.dungeon
 
         inv_cmd = node.create_command(Inventory)
         result = inv_cmd.execute()
@@ -296,6 +311,8 @@ class Instance(Manager):
         li_cmd = node.create_command(LocalIndex)
         li_res = li_cmd.execute().result_for(node.uid)
 
+        interaction_results = self.get_interaction_results(node)
+
         return json.dumps({
             'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],
             'statPoints': character.stat_points,
@@ -307,5 +324,6 @@ class Instance(Manager):
             'vitals': stat_res[0],
             'map': map_res[0],
             'localList': li_res[0],
-            'log': log
+            'log': log,
+            'interactions': interaction_results
         })
