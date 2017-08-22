@@ -7,13 +7,13 @@ class Interact(ActionCommand):
 
     '''
     requires:
-        target
+        interaction_target
     '''
 
     def perform(self):
-        if self.invalid('target'): return self.fail('No target was found')
+        if self.invalid('interaction_target'): return self.fail('No target was found')
 
-        if isinstance(self.args['target'], Npc):
+        if isinstance(self.args['interaction_target'], Npc):
             return self.exec_start_interaction()
 
         return self.fail('No target was valid.')

@@ -170,7 +170,11 @@ class Instance(Manager):
 
     def try_execute_targeted_command(self, node, cmd):
         cmd.interactions = self.active_interactions
-        self.execute_command(cmd)
+        result = self.execute_command(cmd)
+        self.append_response(node.uid, str(getattr(result, 'interaction', None)))
+        if hasattr(result, 'interaction'):
+            self.interactions.append(result.interaction)
+            self.append_response(node.uid, 'Interaction now registered in Instance')
 
         to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
         for node in to_tell:
@@ -285,8 +289,11 @@ class Instance(Manager):
 
     def get_interaction_results(self, node):
         interaction_state = {}
+        logger.info(self.active_interactions)
         for interaction in self.active_interactions:
-            if node not in interaction.involved: continue
+            if node not in interaction.involved: 
+                logger.info('{} not found in {}\'s involved: {}'.format(node, interaction, interaction.involved))
+                continue
             result = interaction.get_result_for(node)
             interaction_state[str(interaction.uuid)] = result
         return interaction_state

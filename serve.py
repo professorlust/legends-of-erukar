@@ -236,5 +236,5 @@ def on_finish_character_creation(raw_data):
     return 'No character was found!'
 
 @socketio.on('send command')
-def on_command_receipt(cmd):
+def on_command_receipt(cmd, *_):
     shard.consume_command(request, cmd)

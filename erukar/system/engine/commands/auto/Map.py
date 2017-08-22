@@ -91,7 +91,7 @@ class Map(Command):
     def attack_action(weapon, creature):
         return Map.action('Attack', description='Attack with {}'.format(weapon.alias()), weapon=str(weapon.uuid), target=str(creature.uuid))
 
-    def interact_action(weapon, creature):
+    def interact_action(creature):
         return Map.action('Interact', description='Interact with {}'.format(creature.alias()), target=str(creature.uuid))
 
     def actions_for(self, x, y):

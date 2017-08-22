@@ -3,7 +3,7 @@ from erukar.ext.math.Distance import Distance
 
 class Npc(Lifeform):
     def __init__(self, templates=[]):
-        super().__init__()
+        super().__init__(None, "Npc")
         self.qualities = []
         for template in templates:
             template.apply(self)
@@ -18,3 +18,7 @@ class Npc(Lifeform):
                     yield {'r':0,'g':0,'b':255,'a':1}
                 else: yield {'r':0,'g':0,'b':0,'a':0}
 
+    def get_state(self):
+        return {
+            'things': 'asdf'
+        }
