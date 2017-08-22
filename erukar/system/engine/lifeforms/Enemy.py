@@ -43,6 +43,9 @@ class Enemy(Lifeform, Indexer):
         chars = string.ascii_uppercase + string.digits
         self.uid = ''.join(random.choice(chars) for x in range(128))
 
+    def is_hostile_to(self, lifeform):
+        return isinstance(lifeform, Player)
+
     def define_level(self, level):
         self.level = level
         if self.should_randomize:

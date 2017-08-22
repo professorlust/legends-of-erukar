@@ -70,6 +70,9 @@ class Lifeform(ErukarActor):
         self.max_health     = self.base_health
         self.level          = 1
 
+    def is_hostile_to(self, lifeform):
+        return False
+
     def subscribe(self, instance):
         self.instance = instance.identifier
         for skill in self.skills:

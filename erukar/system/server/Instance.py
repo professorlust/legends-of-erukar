@@ -288,7 +288,7 @@ class Instance(Manager):
         for interaction in self.active_interactions:
             if node not in interaction.involved: continue
             result = interaction.get_result_for(node)
-            interaction_state[interaction.uuid] = result
+            interaction_state[str(interaction.uuid)] = result
         return interaction_state
 
     def send_full_state(self, node, log):

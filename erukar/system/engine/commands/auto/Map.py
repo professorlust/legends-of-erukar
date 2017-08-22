@@ -91,6 +91,9 @@ class Map(Command):
     def attack_action(weapon, creature):
         return Map.action('Attack', description='Attack with {}'.format(weapon.alias()), weapon=str(weapon.uuid), target=str(creature.uuid))
 
+    def interact_action(weapon, creature):
+        return Map.action('Interact', description='Interact with {}'.format(creature.alias()), target=str(creature.uuid))
+
     def actions_for(self, x, y):
         actions = []
 
@@ -104,8 +107,11 @@ class Map(Command):
 
         creature_at = self.world.creature_at(self.args['player_lifeform'], (x,y))
         zone = self.args['player_lifeform'].zones
-        if creature_at and (x,y) in zone.fog_of_war and (x,y) in zone.weapon_ranges:
-            for weapon in zone.weapon_ranges[(x,y)]:
+        if creature_at and (x,y) in zone.fog_of_war:
+            if not creature_at.is_hostile_to(self.args['player_lifeform']):
+                actions.append(Map.interact_action(creature_at))
+                return actions
+            for weapon in zone.weapon_ranges.get((x,y), []):
                 actions.append(Map.attack_action(weapon, creature_at))
         return actions
 

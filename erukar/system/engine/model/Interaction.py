@@ -10,6 +10,7 @@ class Interaction(ErukarObject):
         self.leaving = []
         self.main_npc = None
         self.ended = False
+        self.results = {}
 
     def mark_for_exit(self, participant):
         try: self.involved.remove(participant)
@@ -23,4 +24,9 @@ class Interaction(ErukarObject):
 
     def clean(self):
         self.leaving = []
-        self.ended = not any(self.involved)
+        self.ended = not (self.ended or any(self.involved))
+
+    def get_result_for(self, node):
+        results = self.main_npc.get_state()
+        results['log'] = self.results.pop(node, [])
+        return results
