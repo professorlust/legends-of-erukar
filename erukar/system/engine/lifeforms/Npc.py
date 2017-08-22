@@ -1,4 +1,5 @@
 from .Lifeform import Lifeform
+from erukar.ext.math.Distance import Distance
 
 class Npc(Lifeform):
     def __init__(self, templates=[]):
