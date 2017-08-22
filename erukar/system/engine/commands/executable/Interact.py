@@ -26,4 +26,5 @@ class Interact(ActionCommand):
         new_cmd.args = self.args.copy()
         new_cmd.player_info = self.player_info
         new_cmd.world = self.world
+        new_cmd.interactions = self.interactions
         return new_cmd

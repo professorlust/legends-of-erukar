@@ -142,6 +142,7 @@ class Instance(Manager):
         self.try_execute(player, ins)
 
     def try_execute(self, node, cmd):
+        cmd.interactions = self.active_interactions
         if not self.any_connected_players():
             if isinstance(self.active_player, Enemy):
                 self.active_player.stop_execution()
@@ -155,6 +156,10 @@ class Instance(Manager):
             if result is None: return
 
             if result.success:
+                if hasattr(result, 'interaction'):
+                    self.active_interactions.append(result.interaction)
+                    self.send_interaction_results(node)
+
                 if cmd.RebuildZonesOnSuccess:
                     self.active_player.lifeform().flag_for_rebuild()
 
@@ -169,16 +174,12 @@ class Instance(Manager):
                 self.send_update_to(node)
 
     def try_execute_targeted_command(self, node, cmd):
-        cmd.interactions = self.active_interactions
-        result = self.execute_command(cmd)
-        self.append_response(node.uid, str(getattr(result, 'interaction', None)))
-        if hasattr(result, 'interaction'):
-            self.interactions.append(result.interaction)
-            self.append_response(node.uid, 'Interaction now registered in Instance')
+        self.execute_command(cmd)
+        self.send_interaction_results(node)
 
-        to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
-        for node in to_tell:
-            self.send_update_to(node)
+    def send_interaction_results(self, node):
+        msgs = self.get_interaction_results(node)
+        node.tell('update interaction', msgs)
 
     def clean_dead_characters(self):
         dead_characters = [x for x in self.characters if x.has_condition(Dead)]
