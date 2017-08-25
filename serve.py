@@ -238,3 +238,7 @@ def on_finish_character_creation(raw_data):
 @socketio.on('send command')
 def on_command_receipt(cmd, *_):
     shard.consume_command(request, cmd)
+
+@socketio.on('send interaction')
+def on_interaction_command_receipt(cmd, *_):
+    shard.consume_command(request, cmd)

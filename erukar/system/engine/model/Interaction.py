@@ -14,8 +14,11 @@ class Interaction(ErukarObject):
 
     def mark_for_exit(self, participant):
         try: self.involved.remove(participant)
-        except ValueError: return
+        except ValueError: 
+            self.results[participant] = ['You are not in this interaction']
+            return
         self.leaving.append(participant)
+        self.results[participant] = ['You have left this interaction']
 
     def player_participants(self):
         for party in self.involved:

@@ -10,15 +10,20 @@ class Npc(Lifeform):
 
     def generate_tile(self, dimensions):
         h, w = dimensions
-        radius = int(w/2)-1
+        radius = int(w/3)-1
         circle = list(Distance.points_in_circle(radius, (int(h/2),int(w/2))))
+        inner_circle = list(Distance.points_in_circle(int(w/4)-1, (int(h/2),int(w/2))))
         for y in range(h):
             for x in range(w):
                 if (x,y) in circle:
-                    yield {'r':0,'g':0,'b':255,'a':1}
+                    if (x,y) not in inner_circle:
+                        yield {'r':0,'g':0,'b':0,'a':1}
+                    else: 
+                        yield {'r':0,'g':0,'b':255,'a':1}
                 else: yield {'r':0,'g':0,'b':0,'a':0}
+
 
     def get_state(self):
         return {
-            'things': 'asdf'
+            'type': 'Shop'
         }

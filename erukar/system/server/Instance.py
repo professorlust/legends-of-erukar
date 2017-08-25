@@ -164,6 +164,7 @@ class Instance(Manager):
                     self.active_player.lifeform().flag_for_rebuild()
 
                 self.clean_dead_characters()
+                self.clean_interactions()
 
                 if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
                     self.get_next_player()
@@ -180,6 +181,13 @@ class Instance(Manager):
     def send_interaction_results(self, node):
         msgs = self.get_interaction_results(node)
         node.tell('update interaction', msgs)
+
+    def clean_interactions(self):
+        for interaction in self.active_interactions: 
+            for leaving in interaction.leaving:
+                self.send_interaction_results(leaving)
+            interaction.clean()
+        self.active_interactions = [x for x in self.active_interactions if not x.ended]
 
     def clean_dead_characters(self):
         dead_characters = [x for x in self.characters if x.has_condition(Dead)]
@@ -290,10 +298,8 @@ class Instance(Manager):
 
     def get_interaction_results(self, node):
         interaction_state = {}
-        logger.info(self.active_interactions)
         for interaction in self.active_interactions:
             if node not in interaction.involved: 
-                logger.info('{} not found in {}\'s involved: {}'.format(node, interaction, interaction.involved))
                 continue
             result = interaction.get_result_for(node)
             interaction_state[str(interaction.uuid)] = result
