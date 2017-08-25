@@ -24,6 +24,6 @@ class Npc(Lifeform):
 
 
     def get_state(self):
-        return {
-            'type': 'Shop'
-        }
+        if self.templates:
+            return self.templates[0].get_state()
+        return {}
