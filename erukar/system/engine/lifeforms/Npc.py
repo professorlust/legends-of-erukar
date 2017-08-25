@@ -5,6 +5,7 @@ class Npc(Lifeform):
     def __init__(self, templates=[]):
         super().__init__(None, "Npc")
         self.qualities = []
+        self.templates = []
         for template in templates:
             template.apply(self)
 
