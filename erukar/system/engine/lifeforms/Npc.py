@@ -26,5 +26,5 @@ class Npc(Lifeform):
 
     def get_state(self):
         if self.templates:
-            return self.templates[0].get_state()
+            return self.templates[0].get_state(self)
         return {}
