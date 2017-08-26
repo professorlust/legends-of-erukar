@@ -13,6 +13,7 @@ class Shopkeeper(NpcTemplate):
         return {
             'type': 'Shop',
             'title': '{}\'s Shop'.format(npc.alias()),
+            'wealth': npc.wealth,
             'inventory': [self.format_item(x) for x in self.inventory]
         }
 

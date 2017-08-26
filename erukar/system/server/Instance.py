@@ -328,6 +328,7 @@ class Instance(Manager):
         interaction_results = self.get_interaction_results(node)
 
         return json.dumps({
+            'wealth': character.wealth,
             'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],
             'statPoints': character.stat_points,
             'skillPoints': character.skill_points,
