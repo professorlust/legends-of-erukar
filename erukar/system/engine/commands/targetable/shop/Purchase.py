@@ -8,4 +8,5 @@ class Purchase(TargetedCommand):
     '''
 
     def perform(self):
-        pass
+        self.append_result(self.player_info.uid, 'Buying!')
+        return self.succeed()
