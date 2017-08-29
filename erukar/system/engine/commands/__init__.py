@@ -26,6 +26,8 @@ from .executable.Wait import Wait
 
 from .targetable.Exit import Exit
 from .targetable.Start import Start
+from .targetable.shop.Purchase import Purchase
+from .targetable.shop.Sell import Sell
 
 from .executable.Interact import Interact
 
@@ -55,5 +57,7 @@ __all__ = [
     "Wait",
     "Exit",
     "Start",
+    "Purchase",
+    "Sell",
     "Interact"
 ]

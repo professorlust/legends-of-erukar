@@ -1,5 +1,5 @@
 from erukar.system.engine import Interaction
-from ..TargetedCommand import TargetedCommand
+from ...TargetedCommand import TargetedCommand
 
 class Purchase(TargetedCommand):
     '''
