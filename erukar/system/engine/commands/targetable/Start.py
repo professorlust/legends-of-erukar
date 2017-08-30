@@ -4,7 +4,7 @@ from ..TargetedCommand import TargetedCommand
 class Start(TargetedCommand):
     '''
     requires:
-        target
+        interaction_target
     '''
 
     def perform(self):
