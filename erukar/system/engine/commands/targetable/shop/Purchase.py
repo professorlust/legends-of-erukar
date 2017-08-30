@@ -1,4 +1,4 @@
-from erukar.system.engine import Interaction, Item
+from erukar.system.engine import Interaction, Item, SearchScope
 from ...TargetedCommand import TargetedCommand
 
 class Purchase(TargetedCommand):
@@ -7,6 +7,9 @@ class Purchase(TargetedCommand):
         interaction
         target
     '''
+    def __init__(self):
+        super().__init__()
+        self.search_scope = SearchScope.Inventory
 
     def perform(self):
         failure = self.check_for_failure_on_interaction()

@@ -4,17 +4,13 @@ from erukar.content.inventory import *
 class Shopkeeper(NpcTemplate):
     def __init__(self):
         super().__init__()
-        self.inventory = [
-            Sword(),
-            Potion(5)
-        ]
 
     def get_state(self, npc): 
         return {
             'type': 'Shop',
             'title': '{}\'s Shop'.format(npc.alias()),
             'wealth': npc.wealth,
-            'inventory': [self.format_item(x) for x in self.inventory]
+            'inventory': [self.format_item(x) for x in npc.inventory]
         }
 
     def format_item(self, item):
