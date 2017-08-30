@@ -25,6 +25,8 @@ class Sell(TargetedCommand):
         price = self.args['target'].price()
         self.args['player_lifeform'].wealth += price
         self.args['player_lifeform'].inventory.remove(self.args['target'])
+        del self.args['target'].id
+
         equipment_slot = self.get_equip_slot()
         if equipment_slot:
             setattr(self.args['player_lifeform'], equipment_slot, None)

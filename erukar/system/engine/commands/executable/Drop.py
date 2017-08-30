@@ -26,6 +26,7 @@ class Drop(ActionCommand):
             
         self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
         self.args['player_lifeform'].inventory.remove(self.args['subject'])
+        del self.args['subject'].id
 
         equipment_slot = self.get_equip_slot()
         if equipment_slot:
