@@ -1,3 +1,4 @@
+from erukar.system.engine import Interaction
 from .Command import Command
 from .CommandResult import CommandResult
 
