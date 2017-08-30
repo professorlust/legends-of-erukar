@@ -181,6 +181,7 @@ class Instance(Manager):
     def send_interaction_results(self, node):
         msgs = self.get_interaction_results(node)
         node.tell('update interaction', msgs)
+        self.send_update_to(node)
 
     def clean_interactions(self):
         for interaction in self.active_interactions: 

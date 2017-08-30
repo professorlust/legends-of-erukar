@@ -1,6 +1,6 @@
 from erukar.system.engine import SearchScope
 from ..ActionCommand import ActionCommand
-from .Unequip import Unequip
+from ..auto.Inventory import Inventory
 
 class Drop(ActionCommand):
     NoTarget = 'subject not found'
@@ -27,6 +27,10 @@ class Drop(ActionCommand):
         self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
         self.args['player_lifeform'].inventory.remove(self.args['subject'])
 
+        equipment_slot = self.get_equip_slot()
+        if equipment_slot:
+            setattr(self.args['player_lifeform'], equipment_slot, None)
+
         self.world.add_actor(self.args['subject'], self.args['player_lifeform'].coordinates)
         
         drop_result = self.args['subject'].on_drop(self.args['player_lifeform'], self.args['player_lifeform'])
@@ -36,3 +40,12 @@ class Drop(ActionCommand):
 
         self.append_result(self.player_info.uid, Drop.Successful.format(self.args['subject'].describe()))
         return self.succeed()
+
+    def get_equip_slot(self):
+        for slot in Inventory.InventorySlots:
+            item = getattr(self.args['player_lifeform'], slot)
+            
+            if not item or not hasattr(item, 'uuid'): continue
+            if item.uuid == self.args['subject'].uuid:
+                return slot
+        return ''
