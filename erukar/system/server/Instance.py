@@ -158,7 +158,6 @@ class Instance(Manager):
             if result.success:
                 if hasattr(result, 'interaction'):
                     self.active_interactions.append(result.interaction)
-                    self.send_interaction_results(node)
 
                 if cmd.RebuildZonesOnSuccess:
                     self.active_player.lifeform().flag_for_rebuild()
@@ -177,11 +176,6 @@ class Instance(Manager):
     def try_execute_targeted_command(self, node, cmd):
         self.execute_command(cmd)
         self.send_interaction_results(node)
-
-    def send_interaction_results(self, node):
-        msgs = self.get_interaction_results(node)
-        node.tell('update interaction', msgs)
-        self.send_update_to(node)
 
     def clean_interactions(self):
         for interaction in self.active_interactions: 
