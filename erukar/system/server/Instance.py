@@ -174,8 +174,14 @@ class Instance(Manager):
                 self.send_update_to(node)
 
     def try_execute_targeted_command(self, node, cmd):
-        self.execute_command(cmd)
-        self.send_interaction_results(node)
+        result = self.execute_command(cmd)
+        if result is None: return
+
+        if result.success:
+            if hasattr(result, 'interaction'):
+                self.active_interactions.append(result.interaction)
+            self.clean_interactions()
+        self.send_update_to(node)
 
     def clean_interactions(self):
         for interaction in self.active_interactions: 
