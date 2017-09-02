@@ -18,7 +18,7 @@ class Purchase(TargetedCommand):
         if 'target' not in self.args or not isinstance(self.args['target'], Item):
             return self.fail('Target is invalid')
 
-        if self.args['player_lifeform'].wealth > self.args['target'].price():
+        if self.args['player_lifeform'].wealth >= self.args['target'].price():
             return self.do_purchase()
 
         return self.fail('You do not have enough money to buy {}'.format(self.args['target'].alias()))

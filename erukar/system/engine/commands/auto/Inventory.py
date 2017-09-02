@@ -60,6 +60,7 @@ class Inventory(Command):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
+            'price': item.price(),
             'isUsable': item.IsUsable,
             'desirabilityRating': item.rarity().name,
             'slots': item.equipment_slots(self.args['player_lifeform']),
