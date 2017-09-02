@@ -14,10 +14,10 @@ class Potion(StackableItem):
         self.effect = None
 
     def alias(self):
-        return 'Potion'
+        return 'Potion x{}'.format(self.quantity)
 
     def price(self):
-        return self.BasePrice * self.effect.PotionPriceMultiplier
+        return 10 * self.quantity
 
     def on_use(self, observer):
         observer.health = min(observer.max_health, observer.health + 10)
