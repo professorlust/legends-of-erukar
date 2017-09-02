@@ -30,6 +30,6 @@ class Interaction(ErukarObject):
         self.ended = not (self.ended or any(self.involved))
 
     def get_result_for(self, node):
-        results = self.main_npc.get_state()
+        results = self.main_npc.get_state(node.lifeform())
         results['log'] = self.results.pop(node, [])
         return results

@@ -24,7 +24,7 @@ class Npc(Lifeform):
                 else: yield {'r':0,'g':0,'b':0,'a':0}
 
 
-    def get_state(self):
+    def get_state(self, for_player):
         if self.templates:
-            return self.templates[0].get_state(self)
+            return self.templates[0].get_state(self, for_player)
         return {}
