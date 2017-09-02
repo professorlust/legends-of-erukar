@@ -186,7 +186,7 @@ class Instance(Manager):
     def clean_interactions(self):
         for interaction in self.active_interactions: 
             for leaving in interaction.leaving:
-                self.send_interaction_results(leaving)
+                self.send_update_to(leaving)
             interaction.clean()
         self.active_interactions = [x for x in self.active_interactions if not x.ended]
 

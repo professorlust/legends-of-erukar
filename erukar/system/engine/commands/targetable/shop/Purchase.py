@@ -28,7 +28,11 @@ class Purchase(TargetedCommand):
         self.args['interaction'].main_npc.wealth += price
         self.args['interaction'].main_npc.inventory.remove(self.args['target'])
         self.args['player_lifeform'].wealth -= price
-        self.args['player_lifeform'].inventory.append(self.args['target'])
         self.dirty(self.args['player_lifeform'])
         self.append_result(self.player_info.uid, 'You have bought {} from {} for {} riphons.'.format(self.args['target'].alias(), self.args['interaction'].main_npc.alias(), price))
-        return self.succeed()
+        return self.move_to_inventory()
+
+    def move_to_inventory(self):
+        self.args['player_lifeform'].inventory.append(self.args['target'])
+        result = self.args['target'].on_take(self.args['player_lifeform'])
+        return result if result else self.succeed()
