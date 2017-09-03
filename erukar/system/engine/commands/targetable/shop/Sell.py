@@ -16,6 +16,9 @@ class Sell(TargetedCommand):
         if 'target' not in self.args or not isinstance(self.args['target'], Item):
             return self.fail('Target is invalid')
 
+        if self.args['target'] not in self.args['player_lifeform'].inventory:
+            return self.fail('Item does not belong to you!')
+
         if self.args['interaction'].main_npc.wealth >= self.args['target'].price():
             return self.do_sell()
 
