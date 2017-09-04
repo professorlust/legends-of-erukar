@@ -6,6 +6,8 @@ from .Item import Item
 from .Lifeform import Lifeform
 from .Modifier import Modifier
 from .Player import Player
+from .Region import Region
+from .Sector import Sector
 from .Skill import Skill
 from .SpellWord import SpellWord
 
@@ -18,6 +20,8 @@ __all__ = [
     "Lifeform", 
     "Modifier", 
     "Player", 
+    "Region",
+    "Sector",
     "Skill", 
     "SpellWord"
 ]
