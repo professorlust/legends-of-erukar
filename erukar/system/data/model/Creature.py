@@ -23,7 +23,6 @@ class Creature(Lifeform):
     template    = Column(String)
     modifiers   = Column(ARRAY(String))
     history     = Column(ARRAY(String))
-    region      = Column(String)
 
     SimpleMapParams = [
         'name',
@@ -46,7 +45,6 @@ class Creature(Lifeform):
         'elite_points',
         'uid',
         'template',
-        'region'
     ]
 
     def get(session, uid):

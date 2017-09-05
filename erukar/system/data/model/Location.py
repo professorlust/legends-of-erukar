@@ -1,25 +1,30 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, joinedload
+from sqlalchemy.dialects.postgresql import JSON
 
 from ..ErukarBaseModel import ErukarBaseModel, Base
 
-class Region(ErukarBaseModel, Base):
-    __tablename__ = 'regions'
+class Location(ErukarBaseModel, Base):
+    __tablename__ = 'locations'
 
     id = Column(Integer, primary_key=True)
     uid = Column(String, nullable=False)
     name = Column(String)
-    sectors = relationship("Sector", cascade="all, delete-orphan") 
+
+    environment_profile = Column(JSON)
+    resource_profile = Column(JSON)
+
+    sector_id = Column(Integer, ForeignKey('sectors.id'))
+    sector = relationship("Sector", foreign_keys=[sector_id])
 
     SimpleMapParams = ['name', 'uid']
 
     def get_schema_query(session, uid):
-        return session.query(Region)\
-            .options(joinedload(Region.sectors))\
+        return session.query(Location)\
             .filter_by(uid=uid)
 
     def create_new_object(self):
-        new_obj = erukar.system.engine.Region()
+        new_obj = erukar.system.engine.Location()
         self.map_data_to_object(new_obj)
         return new_obj
 
@@ -27,12 +32,9 @@ class Region(ErukarBaseModel, Base):
         new_object.id = self.id
         ErukarBaseModel.map_schema_to_object(self, new_object)
 
-    def create_from_object(session, region):
+    def create_from_object(session, location):
         data = Region.get_schema_query(session, region.uid).first()
-        if not data: data = Region()
+        if not data: data = Location()
 
-        data.copy_from_object(region)
-        for sector in region.sectors:
-            sector_data = Sector.create_from_object(session, sector)
-            if sector_data: data.sectors.append(sector_data)
+        data.copy_from_object(location)
         return data

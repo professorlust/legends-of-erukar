@@ -25,6 +25,7 @@ class Sector(ErukarBaseModel, Base):
     resource_profile = Column(JSON)
     region_id = Column(Integer, ForeignKey('regions.id'))
     region = relationship("Region", foreign_keys=[region_id])
+    locations = relationship("Location", cascade="all, delete-orphan") 
 
     SimpleMapParams = ['name', 'uid', 'x', 'alpha', 'beta']
 
@@ -49,5 +50,7 @@ class Sector(ErukarBaseModel, Base):
         if not data: data = Sector()
 
         data.copy_from_object(sector)
+        for location in sector.locations:
+            location_data = Location.create_from_object(session, location)
+            if location_data: data.locations.append(location_data)
         return data
-

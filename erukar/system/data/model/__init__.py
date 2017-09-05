@@ -4,6 +4,7 @@ from .Effect import Effect
 from .EquippedItem import EquippedItem
 from .Item import Item
 from .Lifeform import Lifeform
+from .Location import Location
 from .Modifier import Modifier
 from .Player import Player
 from .Region import Region
@@ -18,6 +19,7 @@ __all__ = [
     "EquippedItem", 
     "Item", 
     "Lifeform", 
+    "Location",
     "Modifier", 
     "Player", 
     "Region",

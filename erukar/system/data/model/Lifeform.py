@@ -17,6 +17,8 @@ class Lifeform(ErukarBaseModel, Base):
     max_health  = Column(Integer, default=4)
     name        = Column(String,  default="unnamed")
     instance    = Column(String)
+    region      = Column(String)
+    sector      = Column(String)
     health      = Column(Integer, default=4)
     strength    = Column(Integer, default=0)
     dexterity   = Column(Integer, default=0)
@@ -49,7 +51,9 @@ class Lifeform(ErukarBaseModel, Base):
         'level',
         'experience',
         'wealth',
-        'instance'
+        'instance',
+        'region',
+        'sector'
     ]
 
     def get_schema_query(session, id):

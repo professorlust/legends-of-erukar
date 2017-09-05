@@ -46,6 +46,8 @@ class Lifeform(ErukarActor):
             setattr(out, stat, stats[stat])
         out.name = bio['name']
         out.instance = 'TutorialDungeon'
+        out.region = ''
+        out.sector = ''
         return out
 
     def initialize_effects(self):
@@ -75,6 +77,8 @@ class Lifeform(ErukarActor):
 
     def subscribe(self, instance):
         self.instance = instance.identifier
+        self.region = instance.region
+        self.sector = instance.sector
         for skill in self.skills:
             if hasattr(skill, 'apply_to'):
                 skill.apply_to(self)
