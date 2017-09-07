@@ -13,3 +13,6 @@ class TransitionPiece(ErukarActor):
                 if 3 < y < (h-3) and 3 < x < (w-3):
                     yield {'r': 180, 'g': 180, 'b':0, 'a': 1}
                 else: yield {'r':0,'g':0,'b':0,'a':0}
+
+    def alias(self, *_):
+        return 'a TRANSITIONING PIECE'
