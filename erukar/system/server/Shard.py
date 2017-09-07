@@ -251,7 +251,7 @@ class Shard(Manager):
                 self.do_transfer(request)
 
     def do_transfer(self, request):
-        info = self.get_instance_for(character, character.instance)
+        info = self.get_instance_for(playernode.character, 'asdfasdfasdf')
         self.move_player_to_instance(playernode, info)
         playernode.status = PlayerNode.Playing
 
