@@ -23,6 +23,7 @@ def acceptable_bounds():
 def create_barlen_outskirts(region):
     sector = create_sector_template(region) 
     sector.name = 'Barlen Town Outskirts'
+    sector.environment_profile = EnvironmentProfile.CityOutdoors()
     sector.set_coordinates((0, 0, 0))
     return sector
 
@@ -34,5 +35,5 @@ def create_razorwoods_camp(region):
 
 def create_sector_template(region=None):
     sector = Sector(region)
-    sector.environment_profile = EnvironmentProfile.Woodlands()
+    sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
     return sector
