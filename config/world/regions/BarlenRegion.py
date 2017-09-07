@@ -5,10 +5,10 @@ def create():
     barlen = Region()
     barlen.name = "Greater Barlen Region"
     barlen.description = "A fertile area, known best for its vast barley and wheat fields. The seat of this region is a large town known as Barlen whose economy consists mostly on agriculture taxes and exports of the barley harvest."
-    barlen.sectors = [
+    barlen.sectors = set([
         create_barlen_outskirts(barlen),
         create_razorwoods_camp(barlen)
-    ]
+    ])
     barlen.sector_limits = list(acceptable_bounds())
     barlen.sector_template = create_sector_template()
 
