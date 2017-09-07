@@ -116,6 +116,7 @@ class Character(Lifeform):
         super().copy_from_object(player)
         self.copy_inventory(session, player)
         self.copy_skills(session, player)
+        self.location = '{},{},{}'.format(player.x, player.alpha, player.beta)
         self.deceased = player.has_condition(erukar.system.engine.Dead)
 
     def create_from_object(session, player, node_schema=None):
@@ -138,6 +139,7 @@ class Character(Lifeform):
         self.map_schema_to_object(p)
         p.id = self.id
         p.player_id = self.player_id
+        self.map_location_to_object(p)
         return p
 
     def select(session, cid, uid):

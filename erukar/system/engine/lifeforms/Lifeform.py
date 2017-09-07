@@ -34,6 +34,7 @@ class Lifeform(ErukarActor):
         self.coordinates = (0,0)
         self.world = world
         self.instance = ''
+        self.set_location(0,0,0)
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.zones = Zones()
@@ -46,8 +47,6 @@ class Lifeform(ErukarActor):
             setattr(out, stat, stats[stat])
         out.name = bio['name']
         out.instance = 'TutorialDungeon'
-        out.region = ''
-        out.sector = ''
         return out
 
     def initialize_effects(self):
@@ -77,8 +76,7 @@ class Lifeform(ErukarActor):
 
     def subscribe(self, instance):
         self.instance = instance.identifier
-        self.region = instance.region
-        self.sector = instance.sector
+        self.set_location(instance.sector.location())
         for skill in self.skills:
             if hasattr(skill, 'apply_to'):
                 skill.apply_to(self)
@@ -91,6 +89,11 @@ class Lifeform(ErukarActor):
         if hasattr(skill, 'apply_to'):
             skill.apply_to(self)
 
+    def set_location(self, new_loc):
+        self.x, self.alpha, self.beta = new_loc
+
+    def location(self):
+        return (self.x, self.alpha, self.beta)
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''

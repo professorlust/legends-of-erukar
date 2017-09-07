@@ -31,6 +31,8 @@ class Lifeform(ErukarBaseModel, Base):
     level       = Column(Integer, default=1)
     experience  = Column(Integer, default=0)
 
+    sector      = Column(String, default='0,0,0')
+
     skills      = relationship("Skill", cascade="all, delete-orphan") 
     spell_words = relationship("SpellWord", cascade="all, delete-orphan")
     equipment   = relationship("EquippedItem", cascade="all, delete-orphan")
@@ -73,6 +75,9 @@ class Lifeform(ErukarBaseModel, Base):
         ErukarBaseModel.map_schema_to_object(self, new_object)
         self.map_inventory_on_object(new_object)
         self.map_skills_on_object(new_object)
+
+    def map_location_to_object(self, new_object):
+        new_object.set_location(tuple(int(i) for i in self.sector.split(',')))
 
     def map_inventory_on_object(self, new_object):
         for schema_item in self.inventory:

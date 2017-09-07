@@ -4,11 +4,14 @@ from .Sector import Sector
 class Region(ErukarObject):
     def __init__(self):
         self.name = 'Basic Region'
-        self.sectors = [Sector()]
+        self.description = ''
+        self.sectors = []
+        self.sector_template = None
+        self.sector_limits = []
 
-'''
-Uses a hexagonal grid to track a user's progression in the region
+    def sector_at(self, x, alpha, beta):
+        if (x,alpha,beta) not in self.sector_limits: return None
+        return next((sector for sector in self.sectors if sector.location() == (x, alpha, beta)), self.new_sector(x, alpha, beta))
 
-A region has N sectors, each of which is represented by a dungeon. In some cases, a
-sector may have multiple dungeons (multilevel or intra-city).
-'''
+    def new_sector(self, x, alpha, beta):
+        return 'New Sector at {}/{}/{}'.format(x, alpha, beta)

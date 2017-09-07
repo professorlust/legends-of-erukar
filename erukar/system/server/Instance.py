@@ -343,5 +343,6 @@ class Instance(Manager):
             'map': map_res[0],
             'localList': li_res[0],
             'log': log,
+            'location': character.location(),
             'interactions': interaction_results
         })
