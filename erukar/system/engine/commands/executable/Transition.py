@@ -14,5 +14,5 @@ class Transition(ActionCommand):
         if not isinstance(self.args['interaction_target'], TransitionPiece):
             return self.fail('Transition target is not a TransitionPiece')
 
-        self.args['player_info'].mark_for_transition(self.args['interaction_target'].destination)
+        self.player_info.mark_for_transition(self.args['interaction_target'].destination)
         return self.succeed()
