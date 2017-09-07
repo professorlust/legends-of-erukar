@@ -248,11 +248,11 @@ class Shard(Manager):
         if client.playernode is not None and client.playernode.status == PlayerNode.Playing:
             self.interface.receive(client.playernode, cmd_object)
             if client.playernode.status == PlayerNode.Transitioning:
-                self.do_transfer(request)
+                self.do_transfer(client.playernode)
 
-    def do_transfer(self, request):
-        info = self.get_instance_for(request.playernode.character, 'asdfasdfasdf')
-        self.move_player_to_instance(request.playernode, info)
+    def do_transfer(self, playernode):
+        info = self.get_instance_for(playernode.character, 'asdfasdfasdf')
+        self.move_player_to_instance(playernode, info)
         playernode.status = PlayerNode.Playing
 
     def active_players(self):
