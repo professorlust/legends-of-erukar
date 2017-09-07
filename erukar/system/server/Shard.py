@@ -39,7 +39,7 @@ class Shard(Manager):
         __import__('WorldConfiguration').configure(self)
         __import__('Arcana').configure(self)
 
-        self.regions = __import__('BarlenRegion').create()
+        self.regions = [__import__('BarlenRegion').create()]
         self.starting_region_options = [
             InstanceInfo(erukar.server.HubInstance, self.properties.copy(), {'file_path': option})
             for option in self.StartingRegionOptionNames
