@@ -23,13 +23,13 @@ def acceptable_bounds():
 def create_barlen_outskirts(region):
     sector = create_sector_template(region) 
     sector.name = 'Barlen Town Outskirts'
-    sector.set_coordinates(0, 0, 0)
+    sector.set_coordinates((0, 0, 0))
     return sector
 
 def create_razorwoods_camp(region):
     sector = create_sector_template(region) 
     sector.name = 'Ferelden Razorwoods Camp'
-    sector.set_coordinates(2, 2, 2)
+    sector.set_coordinates((2, 2, 2))
     return sector
 
 def create_sector_template(region=None):
