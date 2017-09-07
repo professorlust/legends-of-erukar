@@ -9,6 +9,7 @@ from .Lock import Lock
 from .Room import Room
 from .Surface import Surface
 from .TieredLock import TieredLock
+from .TransitionPiece import TransitionPiece
 from .Wall import Wall
 
 __all__ = [
@@ -23,5 +24,6 @@ __all__ = [
     "Room", 
     "Surface", 
     "TieredLock", 
+    "TransitionPiece", 
     "Wall"
 ]

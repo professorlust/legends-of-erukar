@@ -82,6 +82,7 @@ class Instance(Manager):
             raise Exception("No character")
 
         node.world = self.dungeon
+        node.overland_coordinates = self.dungeon.location.coordinates()
         self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
         if self.active_player is None: self.active_player = node
 
@@ -117,9 +118,7 @@ class Instance(Manager):
 
     def unsubscribe(self, node):
         if node not in self.players:
-            logger.info('Instance -- No player could be found matching {}'.format(node))
             return
-        logger.info('Instance -- Removing {}'.format(node))
         self.dungeon.remove_actor(node.lifeform())
         self.turn_manager.unsubscribe(node)
         self.players.remove(node)
@@ -173,6 +172,10 @@ class Instance(Manager):
             to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
             for node in to_tell:
                 self.send_update_to(node)
+
+            to_trans = [x for x in to_tell if x.status == PlayerNode.Transitioning]
+            for node in to_trans:
+                self.unsubscribe(node)
 
     def try_execute_targeted_command(self, node, cmd):
         result = self.execute_command(cmd)

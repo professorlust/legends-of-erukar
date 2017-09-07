@@ -1,4 +1,4 @@
-from erukar.system.engine import Range, Dungeon, Wall, Room
+from erukar.system.engine import Range, Dungeon, Wall, Room, TransitionPiece
 from .FactoryBase import FactoryBase
 from .ModuleDecorator import ModuleDecorator
 from .TileGenerator import TileGenerator
@@ -62,6 +62,11 @@ class DungeonGenerator(FactoryBase, AStarBase):
         self.world.add_actor(npc, random.choice([x for x in self.vertices]))
 
         self.world.spawn_coordinates = self.vertices
+
+        for coord in self.location.adjacent_sectors():
+            transition_piece  = TransitionPiece(self.location.coordinates(), coord)
+            self.world.add_actor(transition_piece, random.choice(self.vertices))
+
         return self.world
 
     def get_floor_tile(self):

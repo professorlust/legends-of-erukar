@@ -11,6 +11,7 @@ class PlayerNode(Indexer):
     CreatingCharacter  = 2
     SelectingRegion    = 3
     Playing            = 4  # When the player has chosen a character and is playing it
+    Transitioning      = 5  # Switch to another Sector
 
     def __init__(self, uid, world, character=None):
         super().__init__()
@@ -66,3 +67,7 @@ class PlayerNode(Indexer):
     def update_socket(self, connection):
         self.emit = connection.emit
         self.sid = connection.sid
+
+    def mark_for_transition(self, new_coords):
+        self.status = PlayerNode.Transitioning
+        self.character.set_overland_coordinates(new_coords)

@@ -94,6 +94,9 @@ class Map(Command):
     def interact_action(creature):
         return Map.action('Interact', description='Interact with {}'.format(creature.alias()), target=str(creature.uuid))
 
+    def transition_action(transition):
+        return Map.action('Transition', description='Travel to {}'.format(transition.destination), target=str(transition.uuid))
+
     def actions_for(self, x, y):
         actions = []
 
@@ -104,6 +107,10 @@ class Map(Command):
 
         move = self.move_action(x,y)
         if move: actions.append(move)
+
+        transitions = [p for p in self.world.actors_at(self.args['player_lifeform'], (x,y)) if isinstance(p, TransitionPiece)]
+        for t in transitions:
+            actions.append(Map.transition_action(t))
 
         creature_at = self.world.creature_at(self.args['player_lifeform'], (x,y))
         zone = self.args['player_lifeform'].zones

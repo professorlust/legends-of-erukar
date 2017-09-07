@@ -20,6 +20,7 @@ from .executable.Glance import Glance
 from .executable.Inspect import Inspect
 from .executable.Move import Move
 from .executable.Take import Take
+from .executable.Transition import Transition
 from .executable.Unequip import Unequip
 from .executable.Use import Use
 from .executable.Wait import Wait
@@ -52,6 +53,7 @@ __all__ = [
     "Skills", 
     "Stats", 
     "Take", 
+    "Transition",
     "Unequip", 
     "Use", 
     "Wait",

@@ -8,3 +8,6 @@ class Location:
 
     def adjacent_sectors(self):
         return self.sector.adjacent()
+
+    def coordinates(self):
+        return self.sector.coordinates()

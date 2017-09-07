@@ -29,4 +29,3 @@ class Player(Lifeform, Indexer):
                     else:
                         yield {'r':0,'g':255,'b':0,'a':1}
                 else: yield {'r':0,'g':0,'b':0,'a':0}
-
