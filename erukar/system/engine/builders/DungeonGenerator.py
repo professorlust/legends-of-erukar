@@ -23,8 +23,8 @@ class DungeonGenerator(FactoryBase, AStarBase):
     MaxHeight = 15
     MaxWidth = 15
 
-    def __init__(self, environment, size=24):
-        self.environment_profile = environment
+    def __init__(self, location, size=24):
+        self.environment_profile = location.environment_profile
         self.vertices = []
         self.connections = {}
         self.size = size

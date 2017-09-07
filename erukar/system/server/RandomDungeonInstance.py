@@ -9,7 +9,7 @@ class RandomDungeonInstance(Instance):
 
     def initialize_instance(self, connector):
         super().initialize_instance(connector)
-        d = DungeonGenerator(location)
+        d = DungeonGenerator(self.location)
         self.dungeon = d.generate()
         self.on_start()
 
