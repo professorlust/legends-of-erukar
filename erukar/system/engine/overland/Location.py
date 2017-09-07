@@ -1,3 +1,5 @@
+from erukar.system.engine import EnvironmentProfile
+
 class Location:
     def __init__(self, sector=None):
         self.sector = sector
