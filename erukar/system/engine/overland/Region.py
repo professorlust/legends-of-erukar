@@ -1,5 +1,4 @@
 from erukar.system.engine import EnvironmentProfile, ErukarObject
-from .Sector import Sector
 
 class Region(ErukarObject):
     def __init__(self):
