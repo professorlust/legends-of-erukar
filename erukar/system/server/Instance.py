@@ -23,8 +23,7 @@ class Instance(Manager):
         super().__init__()
         self.properties = None
         self.identifier = str(uuid.uuid4())
-        self.region = str(uuid.uuid4())
-        self.sector = str(uuid.uuid4())
+        self.location = Location() 
         self.dungeon = None
         self.reset()
 

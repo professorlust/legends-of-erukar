@@ -6,6 +6,7 @@ class Sector(ErukarObject):
         self.environment_profile = EnvironmentProfile()
         self.name = 'Base Sector'
         self.region = region
+        self.locations = []
 
     def location(self):
         return (self.x, self.alpha, self.beta)
