@@ -32,6 +32,7 @@ class Sector(ErukarObject):
         if len(self.locations) > 1:
             return list(self.locations)[0]
         new_loc = Location(self)
+        new_loc.name = self.name
         new_loc.environment_profile = self.environment_profile
         self.locations.add(new_loc)
         return new_loc

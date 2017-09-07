@@ -24,6 +24,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
     MaxWidth = 15
 
     def __init__(self, location, size=24):
+        self.location = location
         self.environment_profile = location.environment_profile
         self.vertices = []
         self.connections = {}
@@ -47,6 +48,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
 
     def generate(self, previous_instance_identifier=''):
         self.create_dungeon()
+        self.world.overland_location = self.location
         e = erukar.content.enemies.undead.Skeleton()
         self.world.add_actor(e, random.choice([x for x in self.vertices]))
 
