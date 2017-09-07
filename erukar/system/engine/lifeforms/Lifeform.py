@@ -34,7 +34,7 @@ class Lifeform(ErukarActor):
         self.coordinates = (0,0)
         self.world = world
         self.instance = ''
-        self.set_location(0,0,0)
+        self.set_location((0,0,0))
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.zones = Zones()
