@@ -181,7 +181,7 @@ class Shard(Manager):
     def create_random_dungeon(self, player):
         '''Create a random dungeon instance based on a player's level'''
         dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {
-            self.location_for(player)
+            'location': self.location_for(player)
         })
         self.launch_dungeon_instance(dungeon_info)
         self.instances.append(dungeon_info)
