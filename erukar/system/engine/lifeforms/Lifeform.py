@@ -89,7 +89,7 @@ class Lifeform(ErukarActor):
         if hasattr(skill, 'apply_to'):
             skill.apply_to(self)
 
-    def set_overland_coordiantes(self, new_loc):
+    def set_overland_coordinates(self, new_loc):
         self.overland_x, self.overland_alpha, self.overland_beta = new_loc
 
     def overland_coordinates(self):
