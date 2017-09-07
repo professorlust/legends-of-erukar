@@ -1,11 +1,12 @@
 from erukar.system.engine import EnvironmentProfile, ErukarObject
+from .Region import Region
 
 class Sector(ErukarObject):
     def __init__(self, region=None):
         self.set_location(0,0,0)
         self.environment_profile = EnvironmentProfile()
         self.name = 'Base Sector'
-        self.region = region
+        self.region = region if region else Region()
         self.locations = []
 
     def location(self):
