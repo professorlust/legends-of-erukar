@@ -175,6 +175,7 @@ class Instance(Manager):
 
             to_trans = [x for x in to_tell if x.status == PlayerNode.Transitioning]
             for node in to_trans:
+                node.tell('nuke state', json.dumps('{}'))
                 self.unsubscribe(node)
 
     def try_execute_targeted_command(self, node, cmd):

@@ -252,7 +252,6 @@ class Shard(Manager):
 
     def do_transfer(self, client):
         playernode = client.playernode
-        client.tell('nuke state', '')
         info = self.get_instance_for(playernode.character, 'asdfasdfasdf')
         self.move_player_to_instance(playernode, info)
         playernode.status = PlayerNode.Playing
