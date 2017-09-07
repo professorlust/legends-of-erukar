@@ -29,7 +29,7 @@ class Sector(ErukarBaseModel, Base):
 
     SimpleMapParams = ['name', 'uid', 'x', 'alpha', 'beta']
 
-    def location(self):
+    def coordinates(self):
         return (self.x, self.alpha, self.beta)
 
     def get_schema_query(session, uid):

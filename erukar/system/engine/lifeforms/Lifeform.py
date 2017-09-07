@@ -34,7 +34,7 @@ class Lifeform(ErukarActor):
         self.coordinates = (0,0)
         self.world = world
         self.instance = ''
-        self.set_location((0,0,0))
+        self.set_overland_coordinates((0,0,0))
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.zones = Zones()
@@ -89,11 +89,11 @@ class Lifeform(ErukarActor):
         if hasattr(skill, 'apply_to'):
             skill.apply_to(self)
 
-    def set_location(self, new_loc):
-        self.x, self.alpha, self.beta = new_loc
+    def set_overland_coordiantes(self, new_loc):
+        self.overland_x, self.overland_alpha, self.overland_beta = new_loc
 
-    def location(self):
-        return (self.x, self.alpha, self.beta)
+    def overland_coordinates(self):
+        return (self.overland_x, self.overland_alpha, self.overland_beta)
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''

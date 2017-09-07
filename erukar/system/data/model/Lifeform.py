@@ -77,7 +77,7 @@ class Lifeform(ErukarBaseModel, Base):
         self.map_skills_on_object(new_object)
 
     def map_location_to_object(self, new_object):
-        new_object.set_location(tuple(int(i) for i in self.sector.split(',')))
+        new_object.set_overland_coordinates(tuple(int(i) for i in self.sector.split(',')))
 
     def map_inventory_on_object(self, new_object):
         for schema_item in self.inventory:
