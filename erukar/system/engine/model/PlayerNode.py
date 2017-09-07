@@ -18,10 +18,13 @@ class PlayerNode(Indexer):
         self.status = PlayerNode.Disconnected
         self.uid = uid
         self.character = character
-        self.dungeon_map = {}
         self.world = world
         self.emit = None
         self.sid = None
+        self.clear()
+
+    def clear(self):
+        self.dungeon_map = {}
         self.tile_set_version = 0
 
     def create_command(self, cmd_type):
