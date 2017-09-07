@@ -2,6 +2,7 @@ from erukar.system.engine import ErukarActor
 
 class TransitionPiece(ErukarActor):
     def __init__(self, origin, destination):
+        super().__init__()
         self.origin = origin
         self.destination = destination
 
