@@ -26,6 +26,9 @@ class PlayerNode(Indexer):
     def clear(self):
         self.dungeon_map = {}
         self.tile_set_version = 0
+        if self.character:
+            self.character.zones.clear()
+            self.character.zones.all_seen = set()
 
     def create_command(self, cmd_type):
         cmd = cmd_type()
