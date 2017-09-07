@@ -1,4 +1,4 @@
-from erukar.system.engine import Manager, Player, PlayerNode, Dead, Enemy
+from erukar.system.engine import Manager, Player, PlayerNode, Dead, Enemy, Location
 from erukar.system.engine.commands import LocalIndex, Map, Inspect, Inventory, Stats, Skills, Wait, TargetedCommand
 from erukar.system.data import Connector
 from .TurnManager import TurnManager
