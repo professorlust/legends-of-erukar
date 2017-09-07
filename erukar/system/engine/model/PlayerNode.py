@@ -29,6 +29,7 @@ class PlayerNode(Indexer):
         if self.character:
             self.character.zones.clear()
             self.character.zones.all_seen = set()
+            self.desynced = True
 
     def create_command(self, cmd_type):
         cmd = cmd_type()
