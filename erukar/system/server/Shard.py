@@ -256,6 +256,7 @@ class Shard(Manager):
         info = self.get_instance_for(playernode.character, 'asdfasdfasdf')
         self.move_player_to_instance(playernode, info)
         playernode.status = PlayerNode.Playing
+        self.add_to_outbox(playernode.uid, json.dumps({'type': 'playing'}))
 
     def active_players(self):
         return len([c for c in self.clients if c.playernode is not None])
