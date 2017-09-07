@@ -1,16 +1,23 @@
 from erukar.system.engine import EnvironmentProfile, ErukarObject
+from .Sector import Sector
 
 class Region(ErukarObject):
     def __init__(self):
         self.name = 'Basic Region'
         self.description = ''
-        self.sectors = []
+        self.sectors = set()
         self.sector_template = None
         self.sector_limits = []
 
-    def sector_at(self, x, alpha, beta):
-        if (x,alpha,beta) not in self.sector_limits: return None
-        return next((sector for sector in self.sectors if sector.location() == (x, alpha, beta)), self.new_sector(x, alpha, beta))
+    def sector_at(self, coords):
+        if coords not in self.sector_limits: return None
+        new_sector = next((sector for sector in self.sectors if sector.coordinates() == coords), None)
+        if not new_sector:
+            new_sector = self.new_sector(coords)
+            self.sectors.add(new_sector)
+        return new_sector
 
-    def new_sector(self, x, alpha, beta):
-        return 'New Sector at {}/{}/{}'.format(x, alpha, beta)
+    def new_sector(self, coords):
+        s = Sector(self)
+        s.set_coordinates(coords)
+        return s

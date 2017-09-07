@@ -1,8 +1,10 @@
 from erukar.system.engine import EnvironmentProfile
-from .Sector import Sector
 
 class Location:
     def __init__(self, sector=None):
-        self.sector = sector if sector else Sector()
+        self.sector = sector
         self.environment_profile = EnvironmentProfile()
-        self.name = 'Base Sector'
+        self.name = 'Base Location'
+
+    def adjacent_sectors(self):
+        return self.sector.adjacent()

@@ -39,6 +39,7 @@ class Shard(Manager):
         __import__('WorldConfiguration').configure(self)
         __import__('Arcana').configure(self)
 
+        self.regions = __import__('BarlenRegion').create()
         self.starting_region_options = [
             InstanceInfo(erukar.server.HubInstance, self.properties.copy(), {'file_path': option})
             for option in self.StartingRegionOptionNames
@@ -177,12 +178,11 @@ class Shard(Manager):
             erukar.data.models.add(self.session, playernode)
         return playernode
 
-    def create_random_dungeon(self, for_player, environment_profile=None, previous_identifier=''):
+    def create_random_dungeon(self, player):
         '''Create a random dungeon instance based on a player's level'''
         dungeon_info = InstanceInfo(erukar.server.RandomDungeonInstance, self.properties.copy(), {
-            'level': for_player.level,
-            'environment_profile': environment_profile,
-            'previous_identifier': previous_identifier})
+            self.location_for(player)
+        })
         self.launch_dungeon_instance(dungeon_info)
         self.instances.append(dungeon_info)
         return dungeon_info
@@ -207,6 +207,12 @@ class Shard(Manager):
 
     def get_active_playernode(self, uid):
         return next((x for x in self.connected_players if x.uid == uid), None)
+
+    def location_for(self, player):
+        coords = player.overland_coordinates()
+        for region in self.regions:
+            if coords in region.sector_limits:
+                return region.sector_at(coords).location()
 
     def get_instance_for(self, character, instance_identifier):
         '''Tries to find an active instance for whatever the character has marked'''

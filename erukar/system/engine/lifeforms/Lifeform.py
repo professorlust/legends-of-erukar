@@ -76,7 +76,7 @@ class Lifeform(ErukarActor):
 
     def subscribe(self, instance):
         self.instance = instance.identifier
-        self.set_location(instance.location.sector.location())
+        self.set_location(instance.location.sector.coordinates())
         for skill in self.skills:
             if hasattr(skill, 'apply_to'):
                 skill.apply_to(self)
