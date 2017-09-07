@@ -225,7 +225,7 @@ class Shard(Manager):
         playernode = erukar.data.models.Player.get(self.session, uid)
         character = self.get_character_from_playernode(playernode)
         if properties.is_random:
-            info = self.create_random_dungeon(character, properties.generation_properties, properties.previous_identifier)
+            info = self.create_random_dungeon(character)
         else:
             info = self.get_instance_for(character, properties.identifier)
         self.move_player_to_instance(uid, info)
@@ -248,7 +248,12 @@ class Shard(Manager):
         if client.playernode is not None and client.playernode.status == PlayerNode.Playing:
             self.interface.receive(client.playernode, cmd_object)
             if client.playernode.status == PlayerNode.Transitioning:
-                client.tell('alert', 'You are transfering')
+                self.do_transfer(request)
+
+    def do_transfer(self, request):
+        info = self.get_instance_for(character, character.instance)
+        self.move_player_to_instance(playernode, info)
+        playernode.status = PlayerNode.Playing
 
     def active_players(self):
         return len([c for c in self.clients if c.playernode is not None])
