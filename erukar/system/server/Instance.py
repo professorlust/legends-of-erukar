@@ -82,6 +82,8 @@ class Instance(Manager):
             raise Exception("No character")
 
         node.world = self.dungeon
+        if not node.world:
+            raise Exception('wtf')
         node.overland_coordinates = self.dungeon.overland_location.coordinates()
         self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
         if self.active_player is None: self.active_player = node
@@ -93,8 +95,8 @@ class Instance(Manager):
         node.lifeform().build_zones(self.dungeon)
         self.turn_manager.subscribe(node)
         super().subscribe(node)
-        self.send_update_to(node)
         self.give_tile_set(node)
+        self.send_update_to(node)
 
     def subscribe_enemy(self, enemy):
         self.turn_manager.subscribe(enemy)
