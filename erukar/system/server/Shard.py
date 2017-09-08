@@ -1,4 +1,4 @@
-from erukar.system import Connector, Player, Manager, PlayerNode
+from erukar.system import Connector, Player, Manager, PlayerNode, Zones
 from .Interface import Interface
 from .InstanceInfo import InstanceInfo
 from .Instance import Instance
@@ -253,6 +253,7 @@ class Shard(Manager):
     def do_transfer(self, client):
         playernode = client.playernode
         playernode.clear()
+        playernode.character.zones = Zones()
         info = self.get_instance_for(playernode.character, 'asdfasdfasdf')
         self.move_player_to_instance(playernode, info)
         playernode.status = PlayerNode.Playing
