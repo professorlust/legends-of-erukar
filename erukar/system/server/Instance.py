@@ -348,6 +348,6 @@ class Instance(Manager):
             'map': map_res[0],
             'localList': li_res[0],
             'log': log,
-            'location': self.dungeon.overland_location.name,
+            'location': self.dungeon.overland_location.alias(),
             'interactions': interaction_results
         })

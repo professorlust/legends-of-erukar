@@ -5,9 +5,12 @@ class Sector(ErukarObject):
     def __init__(self, region=None):
         self.set_coordinates((0,0,0))
         self.environment_profile = EnvironmentProfile()
-        self.name = 'Base Sector'
         self.region = region
         self.locations = set()
+        self.name = 'Random Sector'
+
+    def alias(self):
+        return '{} ({})'.format(self.name, self.coordinates())
 
     def coordinates(self):
         return (self.x, self.alpha, self.beta)

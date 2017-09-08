@@ -19,5 +19,6 @@ class Region(ErukarObject):
 
     def new_sector(self, coords):
         s = Sector(self)
+        s.environment_profile = self.sector_template.environment_profile
         s.set_coordinates(coords)
         return s

@@ -11,3 +11,6 @@ class Location:
 
     def coordinates(self):
         return self.sector.coordinates()
+
+    def alias(self):
+        return '{} -- {}'.format(self.name, self.sector.alias())
