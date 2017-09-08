@@ -21,9 +21,19 @@ class Sector(ErukarObject):
     def adjacent(self):
         sectors = self.region.sector_limits
         if len(sectors) < 2: return
-        for sector in sectors:
-            if self.distance_to(sector) == 1 and self.coordinates() != sector:
-                yield sector
+        for neighbor in self.neighbors():
+            if neighbor in sectors:
+                yield neighbor
+
+    def neighbors(self):
+        return [
+            (self.x, self.alpha+1, self.beta-1),
+            (self.x, self.alpha-1, self.beta+1),
+            (self.x+1, self.alpha, self.beta-1),
+            (self.x-1, self.alpha, self.beta+1),
+            (self.x+1, self.alpha-1, self.beta),
+            (self.x-1, self.alpha+1, self.beta),
+        ]
 
     def distance_to(self, sector):
         return all(dist <= 1 for dist in [
