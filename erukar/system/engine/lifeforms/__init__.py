@@ -5,4 +5,4 @@ from .Player import Player
 from .Zones import Zones
 from .npc.NpcTemplate import NpcTemplate
 
-__all__ = ["Lifeform", "Enemy", "Player", "Npc","NpcTemplate"]
+__all__ = ["Lifeform", "Enemy", "Player", "Npc","NpcTemplate", "Zones"]
