@@ -9,16 +9,22 @@ def create():
         create_barlen_outskirts(barlen),
         create_razorwoods_camp(barlen)
     ])
-    barlen.sector_limits = list(acceptable_bounds())
+    barlen.sector_limits = acceptable_bounds()
     barlen.sector_template = create_sector_template()
 
     return barlen
 
 def acceptable_bounds():
-    for x in range(-1, 3):
-        for alpha in range(-1, 3):
-            for beta in range(-1, 3):
-                yield (x, alpha, beta)
+    return [
+        (0,0,0),
+        (-1,0,1),
+        (1,1,0),
+        (0,1,1),
+        (-1,1,2),
+        (0,2,2),
+        (1,2,1),
+        (1,3,2)
+    ]
 
 def create_barlen_outskirts(region):
     sector = create_sector_template(region) 
@@ -30,10 +36,11 @@ def create_barlen_outskirts(region):
 def create_razorwoods_camp(region):
     sector = create_sector_template(region) 
     sector.name = 'Ferelden Razorwoods Camp'
-    sector.set_coordinates((2, 2, 2))
+    sector.set_coordinates((1, 3, 2))
+    sector.environment_profile = EnvironmentProfile.Woodlands()
     return sector
 
 def create_sector_template(region=None):
     sector = Sector(region)
-    sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
+    sector.environment_profile = EnvironmentProfile.AridDesert()
     return sector
