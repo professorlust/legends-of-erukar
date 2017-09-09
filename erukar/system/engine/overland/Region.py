@@ -22,3 +22,6 @@ class Region(ErukarObject):
         s.environment_profile = self.sector_template.environment_profile
         s.set_coordinates(coords)
         return s
+
+    def alias(self):
+        return self.name

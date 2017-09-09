@@ -10,7 +10,7 @@ class Sector(ErukarObject):
         self.name = 'Random Sector'
 
     def alias(self):
-        return '{} ({})'.format(self.name, self.coordinates())
+        return '{} {}'.format(self.name, self.coordinates())
 
     def coordinates(self):
         return (self.x, self.alpha, self.beta)
