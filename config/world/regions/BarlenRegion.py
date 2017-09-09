@@ -17,13 +17,15 @@ def create():
 def acceptable_bounds():
     return [
         (0,0,0),
-        (-1,0,1),
-        (1,1,0),
-        (0,1,1),
-        (-1,1,2),
-        (0,2,2),
-        (1,2,1),
-        (1,3,2)
+        (2,-2,0),
+        (2,-3,1),
+        (1,-1,0),
+        (1,-2,1),
+        (1,-3,2),
+        (0,-1,1),
+        (0,-2,2),
+        (0,-3,3),
+        (-1,0,1)
     ]
 
 def create_barlen_outskirts(region):
@@ -36,7 +38,7 @@ def create_barlen_outskirts(region):
 def create_razorwoods_camp(region):
     sector = create_sector_template(region) 
     sector.name = 'Ferelden Razorwoods Camp'
-    sector.set_coordinates((1, 3, 2))
+    sector.set_coordinates((0, -3, 3))
     sector.environment_profile = EnvironmentProfile.Woodlands()
     return sector
 

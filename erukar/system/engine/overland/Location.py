@@ -16,4 +16,4 @@ class Location:
     def alias(self):
         if self.is_named:
             return '{} -- {}'.format(self.name, self.sector.alias())
-        return '{},{}'.format(self.sector.alias(), self.sector.region.alias())
+        return '{}, {}'.format(self.sector.alias(), self.sector.region.alias())
