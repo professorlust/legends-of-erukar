@@ -28,15 +28,17 @@ class Sector(ErukarObject):
 
     def neighbors(self):
         return [
-            (self.x, self.alpha+1, self.beta-1),
-            (self.x, self.alpha-1, self.beta+1),
-            (self.x+1, self.alpha, self.beta-1),
-            (self.x-1, self.alpha, self.beta+1),
+            (self.x,   self.alpha+1, self.beta-1),
+            (self.x,   self.alpha-1, self.beta+1),
+            (self.x+1, self.alpha,   self.beta-1),
+            (self.x-1, self.alpha,   self.beta+1),
             (self.x+1, self.alpha-1, self.beta),
             (self.x-1, self.alpha+1, self.beta),
         ]
 
     def distance_to(self, sector):
+        '''The sum of all coordinates adds up to zero. By taking the absolute
+        value and summing them, you get twice the total distance between two coords.'''
         return int(sum([abs(x) for x in tuple(map(operator.sub, self.coordinates(), sector))])/2)
 
     def location(self):

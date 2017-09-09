@@ -82,8 +82,6 @@ class Instance(Manager):
             raise Exception("No character")
 
         node.world = self.dungeon
-        if not node.world:
-            raise Exception('wtf')
         node.overland_coordinates = self.dungeon.overland_location.coordinates()
         self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
         if self.active_player is None: self.active_player = node
