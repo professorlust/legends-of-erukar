@@ -39,7 +39,7 @@ def create_razorwoods_camp(region):
     sector = create_sector_template(region) 
     sector.name = 'Ferelden Razorwoods Camp'
     sector.set_coordinates((0, -3, 3))
-    sector.environment_profile = EnvironmentProfile.Woodlands()
+    sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
     return sector
 
 def create_sector_template(region=None):
