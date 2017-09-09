@@ -1,5 +1,6 @@
 from erukar.system.engine import EnvironmentProfile, ErukarObject
 from .Location import Location
+import operator
 
 class Sector(ErukarObject):
     def __init__(self, region=None):
@@ -36,10 +37,7 @@ class Sector(ErukarObject):
         ]
 
     def distance_to(self, sector):
-        return all(dist <= 1 for dist in [
-            abs(self.x - sector[0]),
-            abs(self.alpha - sector[1]),
-            abs(self.beta - sector[2])])
+        return int(sum([abs(x) for x in tuple(map(operator.sub, self.coordinates(), sector))])/2)
 
     def location(self):
         if len(self.locations) > 1:
