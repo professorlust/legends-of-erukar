@@ -40,11 +40,13 @@ def create_razorwoods_camp(region):
     sector.name = 'Ferelden Razorwoods Camp'
     sector.set_coordinates((0, -3, 3))
     sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
+
     camp = Location(sector)
     camp.is_named = True
     camp.name = 'Ferelden Razorwoods Camp'
     camp.dungeon_file_name = 'RazorwoodsCamp'
     sector.locations.add(camp)
+
     return sector
 
 def create_sector_template(region=None):

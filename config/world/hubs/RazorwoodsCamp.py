@@ -18,6 +18,29 @@ north_area = Room(dungeon, coordinates=[
     (2,8), (3,8)
 ])
 
+south_area = Room(dungeon, coordinates=[
+    (1,9), (2,9), (3,9), (4,9),
+    (1,10), (2,10), (3,10), (4,10), (5,10), (6,10),
+    (2,11), (3,11), (4,11), (5,11),
+    (4,12), (5,12), (6,12)
+])
+
+northeast_area = Room(dungeon, coordinates=[
+    (9,3), (10,3),
+    (7,4), (8,4), (9,4), (10,4), (11,4),
+    (7,5), (8,5), (9,5), (10,5),
+    (7,6), (8,6), (9,6),
+    (7,7), (8,7), (9,7), (10,7), (11,7),
+])
+
+southeast_area = Room(dungeon, coordinates=[
+    (9,8), (10,8), (11,8),
+    (7,9), (8,9), (9,9), (10,9), (11,9),
+    (7,10), (8,10), (9,10), (10,10), (11,10), (12,10),
+    (9,11), (10,11), (11,11),
+    (10,12), (11,12),
+    (10,12)
+])
 
 '''Add Walls'''
 pine_tex =  erukar.content.Pine()
@@ -37,6 +60,7 @@ for loc in dungeon.all_traversable_coordinates():
     dungeon.tiles[loc] = grass_tex
 
 dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per_side))
+
 
 dungeon.spawn_coordinates = [(4,0)]
 
