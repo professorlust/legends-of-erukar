@@ -18,17 +18,6 @@ north_area = Room(dungeon, coordinates=[
     (2,8), (3,8)
 ])
 
-npc = Npc(templates=[erukar.content.Shopkeeper()])
-npc.inventory = [
-    erukar.content.Halberd(modifiers=[erukar.content.Steel]),
-    erukar.content.Burgonet(modifiers=[erukar.content.Leather]),
-    erukar.content.Potion()
-]
-npc.wealth = 100
-dungeon.add_actor(npc, (1,4))
-
-transition_piece  = TransitionPiece((0,-3,3), (1, -3, 2))
-dungeon.add_actor(transition_piece, (4,0))
 
 '''Add Walls'''
 pine_tex =  erukar.content.Pine()
@@ -50,3 +39,15 @@ for loc in dungeon.all_traversable_coordinates():
 dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per_side))
 
 dungeon.spawn_coordinates = [(4,0)]
+
+npc = Npc(templates=[erukar.content.Shopkeeper()])
+npc.inventory = [
+    erukar.content.Halberd(modifiers=[erukar.content.Steel]),
+    erukar.content.Burgonet(modifiers=[erukar.content.Leather]),
+    erukar.content.Potion()
+]
+npc.wealth = 100
+dungeon.add_actor(npc, (1,4))
+
+transition_piece  = TransitionPiece((0,-3,3), (1, -3, 2))
+dungeon.add_actor(transition_piece, (4,0))
