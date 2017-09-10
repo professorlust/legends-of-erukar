@@ -42,7 +42,7 @@ class Sector(ErukarObject):
         return int(sum([abs(x) for x in tuple(map(operator.sub, self.coordinates(), sector))])/2)
 
     def location(self):
-        if len(self.locations) > 1:
+        if len(self.locations) > 0:
             return list(self.locations)[0]
         new_loc = Location(self)
         new_loc.name = self.name
