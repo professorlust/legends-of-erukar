@@ -21,8 +21,7 @@ class Location:
 
     def get_dungeon(self):
         if self.dungeon_file_name:
-            try: return __import__(self.hub_definition_file_path).dungeon
-            except: pass
+            return __import__(self.dungeon_file_name).dungeon
         return self.random_dungeon() 
 
     def random_dungeon(self):
