@@ -1,4 +1,4 @@
-from erukar.system.engine import EnvironmentProfile
+from erukar.system.engine import EnvironmentProfile, DungeonGenerator
 
 class Location:
     def __init__(self, sector=None):

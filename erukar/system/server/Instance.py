@@ -148,7 +148,7 @@ class Instance(Manager):
             self.send_update_to(node)
 
     def handle_all_transitions(self):
-        to_trans = [x for x in to_tell if x.status == PlayerNode.Transitioning]
+        to_trans = [x for x in self.players if isinstance(x,PlayerNode) if x.status == PlayerNode.Transitioning]
         for node in to_trans:
             node.tell('nuke state', json.dumps('{}'))
             self.unsubscribe(node)
@@ -174,7 +174,7 @@ class Instance(Manager):
         '''When conditions allow an executable to be run, execute it 
         and run the standard update workflow'''
         result = self.execute_command(cmd)
-        if result is None or result.success: return
+        if result is None or not result.success: return
 
         if hasattr(result, 'interaction'):
             self.active_interactions.append(result.interaction)

@@ -40,13 +40,8 @@ class Shard(Manager):
         __import__('Arcana').configure(self)
 
         self.regions = [__import__('BarlenRegion').create()]
-        self.starting_region_options = [
-            InstanceInfo(erukar.server.HubInstance, self.properties.copy(), {'file_path': option})
-            for option in self.StartingRegionOptionNames
-        ]
 
-        self.instances = self.starting_region_options.copy()
-        logger.info('Shard -- Initial instance count: {}'.format(len(self.instances)))
+        self.instances = []
         for info in self.instances:
             self.launch_dungeon_instance(info)
 

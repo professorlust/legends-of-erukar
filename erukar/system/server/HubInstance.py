@@ -1,11 +1,6 @@
 from .Instance import Instance
 
 class HubInstance(Instance):
-    def __init__(self, file_path):
-        self.hub_definition_file_path = file_path
-        super().__init__()
-        self.identifier = file_path
-
     def try_execute(self, node, cmd):
         cmd.interactions = self.active_interactions
         if not self.any_connected_players():
