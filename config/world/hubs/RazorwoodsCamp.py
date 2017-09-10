@@ -42,6 +42,11 @@ southeast_area = Room(dungeon, coordinates=[
     (10,12)
 ])
 
+path = [
+    (4,0),(4,1),(2,4),(1,4)
+]
+path += [(3,y) for y in range(1,11)]
+
 '''Add Walls'''
 pine_tex =  erukar.content.Pine()
 xo, yo = map(min, zip(*dungeon.dungeon_map))
@@ -56,8 +61,9 @@ for y in range(yo-1, yf+2):
 
 '''decorate ground'''
 grass_tex = erukar.content.Grass()
+dirt_tex = erukar.content.Dirt()
 for loc in dungeon.all_traversable_coordinates():
-    dungeon.tiles[loc] = grass_tex
+    dungeon.tiles[loc] = dirt_tex if loc in path else grass_tex
 
 dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per_side))
 
