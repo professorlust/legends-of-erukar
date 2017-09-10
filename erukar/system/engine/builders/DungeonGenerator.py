@@ -52,15 +52,6 @@ class DungeonGenerator(FactoryBase, AStarBase):
         e = erukar.content.enemies.undead.Skeleton()
         self.world.add_actor(e, random.choice([x for x in self.vertices]))
 
-        npc = erukar.system.engine.Npc(templates=[erukar.content.Shopkeeper()])
-        npc.inventory = [
-            erukar.content.Halberd(modifiers=[erukar.content.Steel]),
-            erukar.content.Burgonet(modifiers=[erukar.content.Leather]),
-            erukar.content.Potion()
-        ]
-        npc.wealth = 100
-        self.world.add_actor(npc, random.choice([x for x in self.vertices]))
-
         self.world.spawn_coordinates = self.vertices
 
         for coord in self.location.adjacent_sectors():
