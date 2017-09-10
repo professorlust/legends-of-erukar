@@ -48,3 +48,5 @@ for loc in dungeon.all_traversable_coordinates():
     dungeon.tiles[loc] = grass_tex
 
 dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per_side))
+
+dungeon.spawn_coordinates = [(4,0)]
