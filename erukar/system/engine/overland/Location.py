@@ -21,8 +21,11 @@ class Location:
 
     def get_dungeon(self):
         if self.dungeon_file_name:
-            return __import__(self.dungeon_file_name).dungeon
-        return self.random_dungeon() 
+            dungeon = __import__(self.dungeon_file_name).dungeon
+        else: dungeon = self.random_dungeon() 
+
+        dungeon.overland_location = self
+        return dungeon
 
     def random_dungeon(self):
         generator = DungeonGenerator(self)

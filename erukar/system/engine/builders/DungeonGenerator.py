@@ -48,7 +48,6 @@ class DungeonGenerator(FactoryBase, AStarBase):
 
     def generate(self, previous_instance_identifier=''):
         self.create_dungeon()
-        self.world.overland_location = self.location
         e = erukar.content.enemies.undead.Skeleton()
         self.world.add_actor(e, random.choice([x for x in self.vertices]))
 
