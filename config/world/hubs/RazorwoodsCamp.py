@@ -1,7 +1,7 @@
 import os, sys
 sys.path.append(os.getcwd())
 
-from erukar.system.engine import Npc, TransitionPiece
+from erukar.system.engine import Npc, TransitionPiece, Dungeon, Room, Wall, TileGenerator
 import erukar
 
 dungeon = Dungeon()
@@ -25,7 +25,26 @@ npc.inventory = [
     erukar.content.Potion()
 ]
 npc.wealth = 100
-self.world.add_actor(npc, (1,4))
+dungeon.add_actor(npc, (1,4))
 
 transition_piece  = TransitionPiece((0,-3,3), (1, -3, 2))
-self.world.add_actor(transition_piece, (4,0))
+dungeon.add_actor(transition_piece, (4,0))
+
+'''Add Walls'''
+pine_tex =  erukar.content.Pine()
+xo, yo = map(min, zip(*dungeon.dungeon_map))
+xf, yf = map(max, zip(*dungeon.dungeon_map))
+for y in range(yo-1, yf+2):
+    for x in range(xo-1, xf+2):
+        if (x,y) not in dungeon.dungeon_map:
+            wall = Wall()
+            wall.material = pine_tex
+            dungeon.walls[(x, y)] = wall
+            dungeon.tiles[(x, y)] = pine_tex
+
+'''decorate ground'''
+grass_tex = erukar.content.Grass()
+for loc in dungeon.all_traversable_coordinates():
+    dungeon.tiles[loc] = grass_tex
+
+dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per_side))
