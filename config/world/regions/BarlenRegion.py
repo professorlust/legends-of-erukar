@@ -1,5 +1,5 @@
 import erukar
-from erukar.system.engine import EnvironmentProfile, Sector, Region
+from erukar.system.engine import EnvironmentProfile, Sector, Region, Location
 
 def create():
     barlen = Region()
