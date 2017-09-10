@@ -1,0 +1,2 @@
+class RawMaterial(StackableItem):
+    pass

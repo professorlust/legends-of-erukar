@@ -43,7 +43,7 @@ southeast_area = Room(dungeon, coordinates=[
 ])
 
 path = [
-    (4,0),(4,1),(2,5),(1,5),(1,10),(2,10)
+    (4,0),(4,1),(1,10),(2,10)
 ]
 path += [(3,y) for y in range(1,11)]
 path += [(x,5) for x in range(4,9)]
@@ -72,6 +72,7 @@ dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per
 dungeon.spawn_coordinates = [(4,0)]
 
 npc = Npc(templates=[erukar.content.Shopkeeper()])
+npc.name = '{} of {}'.format(erukar.ext.math.Namer.random(), erukar.ext.math.Namer.random())
 npc.inventory = [
     erukar.content.Halberd(modifiers=[erukar.content.Steel]),
     erukar.content.Burgonet(modifiers=[erukar.content.Leather]),
