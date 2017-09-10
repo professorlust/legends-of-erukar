@@ -17,4 +17,4 @@ class TransitionPiece(ErukarActor):
                 else: yield {'r':0,'g':0,'b':0,'a':0}
 
     def alias(self, *_):
-        return 'a TRANSITIONING PIECE'
+        return 'TRANSITIONING PIECE'

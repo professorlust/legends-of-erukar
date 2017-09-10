@@ -19,11 +19,11 @@ class Instance(Manager):
     Frozen = 3
     Closing = 4
 
-    def __init__(self):
+    def __init__(self, location):
         super().__init__()
         self.properties = None
         self.identifier = str(uuid.uuid4())
-        self.location = Location() 
+        self.location = location
         self.dungeon = None
         self.reset()
 
@@ -41,6 +41,7 @@ class Instance(Manager):
         self.session = session
         self.status = Instance.Ready
         self.turn_manager = TurnManager()
+        self.dungeon = self.location.get_dungeon()
         if self.dungeon:
             self.on_start()
 
@@ -141,6 +142,17 @@ class Instance(Manager):
         ins = player.create_command(Inspect)
         self.try_execute(player, ins)
 
+    def send_update_to_players(self):
+        to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
+        for node in to_tell:
+            self.send_update_to(node)
+
+    def handle_all_transitions(self):
+        to_trans = [x for x in to_tell if x.status == PlayerNode.Transitioning]
+        for node in to_trans:
+            node.tell('nuke state', json.dumps('{}'))
+            self.unsubscribe(node)
+
     def try_execute(self, node, cmd):
         cmd.interactions = self.active_interactions
         if not self.any_connected_players():
@@ -152,31 +164,29 @@ class Instance(Manager):
             return self.try_execute_targeted_command(node, cmd)
         
         if node.uid == self.active_player.uid:
-            result = self.execute_command(cmd)
-            if result is None: return
-
-            if result.success:
-                if hasattr(result, 'interaction'):
-                    self.active_interactions.append(result.interaction)
-
-                if cmd.RebuildZonesOnSuccess:
-                    self.active_player.lifeform().flag_for_rebuild()
-
-                self.clean_dead_characters()
-                self.clean_interactions()
-
-                if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
-                    self.get_next_player()
+            self.execute_and_process(cmd)
 
             # Tell characters
-            to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
-            for node in to_tell:
-                self.send_update_to(node)
+            self.send_update_to_players()
+            self.handle_all_transitions()
 
-            to_trans = [x for x in to_tell if x.status == PlayerNode.Transitioning]
-            for node in to_trans:
-                node.tell('nuke state', json.dumps('{}'))
-                self.unsubscribe(node)
+    def execute_and_process(self, cmd):
+        '''When conditions allow an executable to be run, execute it 
+        and run the standard update workflow'''
+        result = self.execute_command(cmd)
+        if result is None or result.success: return
+
+        if hasattr(result, 'interaction'):
+            self.active_interactions.append(result.interaction)
+
+        if cmd.RebuildZonesOnSuccess:
+            self.active_player.lifeform().flag_for_rebuild()
+
+        self.clean_dead_characters()
+        self.clean_interactions()
+
+        if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
+            self.get_next_player()
 
     def try_execute_targeted_command(self, node, cmd):
         result = self.execute_command(cmd)
