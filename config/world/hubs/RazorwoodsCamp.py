@@ -72,13 +72,21 @@ dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per
 dungeon.spawn_coordinates = [(4,0)]
 
 npc = Npc(templates=[erukar.content.Shopkeeper()])
-npc.name = '{} of {}'.format(erukar.ext.math.Namer.random(), erukar.ext.math.Namer.random())
+npc.name = erukar.ext.math.Namer.random()
 npc.inventory = [
-    erukar.content.Halberd(modifiers=[erukar.content.Steel]),
-    erukar.content.Burgonet(modifiers=[erukar.content.Leather]),
-    erukar.content.Potion()
+    erukar.content.Potion(10),
+    erukar.content.Candle(),
+    erukar.content.Candle(),
+    erukar.content.Candle(),
+    erukar.content.Candle(),
+    erukar.content.Candle(),
+    erukar.content.Torch(),
+    erukar.content.Torch(),
+    erukar.content.Torch(),
+    erukar.content.Arrow(50),
+
 ]
-npc.wealth = 100
+npc.wealth = 1000
 dungeon.add_actor(npc, (1,4))
 
 transition_piece  = TransitionPiece((0,-3,3), (1, -3, 2))

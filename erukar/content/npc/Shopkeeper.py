@@ -10,13 +10,22 @@ class Shopkeeper(NpcTemplate):
             'type': 'Shop',
             'title': '{}\'s Shop'.format(npc.alias()),
             'wealth': npc.wealth,
-            'inventory': [self.format_item(x, for_player) for x in npc.inventory]
+            'inventory': list(self.process_inventory(npc, for_player))
         }
 
-    def format_item(self, item, for_player):
+    def process_inventory(self, npc, for_player):
+        mapped_items = set()
+        for item in npc.inventory:
+            if item.__module__ in mapped_items: continue
+            mapped_items.add(item.__module__)
+            quantity = len([x for x in npc.inventory if x.__module__ == item.__module__])
+            yield self.format_item(item, for_player, quantity) 
+
+
+    def format_item(self, item, for_player, quantity):
         object_output = {
             'id': str(item.uuid),
-            'alias': item.alias(),
+            'alias': item.alias() if quantity <= 1 else '{} x{}'.format(item.alias(), quantity),
             'price': item.price(),
         }
         return object_output
