@@ -43,9 +43,10 @@ southeast_area = Room(dungeon, coordinates=[
 ])
 
 path = [
-    (4,0),(4,1),(2,4),(1,4)
+    (4,0),(4,1),(2,5),(1,5),(1,10),(2,10)
 ]
 path += [(3,y) for y in range(1,11)]
+path += [(x,5) for x in range(4,9)]
 
 '''Add Walls'''
 pine_tex =  erukar.content.Pine()
