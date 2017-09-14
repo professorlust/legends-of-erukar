@@ -22,6 +22,7 @@ class PlayerNode(Indexer):
         self.emit = None
         self.sid = None
         self.clear()
+        self.previous_location = None
 
     def clear(self):
         self.dungeon_map = {}
@@ -73,4 +74,5 @@ class PlayerNode(Indexer):
 
     def mark_for_transition(self, new_coords):
         self.status = PlayerNode.Transitioning
+        self.previous_location = self.character.overland_coordinates()
         self.character.set_overland_coordinates(new_coords)

@@ -6,6 +6,7 @@ class Purchase(TargetedCommand):
     requires:
         interaction
         target
+        quantity (default 1)
     '''
     def __init__(self):
         super().__init__()
@@ -21,21 +22,34 @@ class Purchase(TargetedCommand):
         if self.args['target'] not in self.args['interaction'].main_npc.inventory:
             return self.fail('Item does not belong to NPC!')
 
-        if self.args['player_lifeform'].wealth >= self.args['target'].price():
-            return self.do_purchase()
+        self.get_quantity()
+        actual_price = self.args['quantity'] * self.args['target'].price()
+        if self.args['player_lifeform'].wealth >= actual_price:
+            return self.do_purchase(actual_price)
 
         return self.fail('You do not have enough money to buy {}'.format(self.args['target'].alias()))
 
-    def do_purchase(self):
-        price = self.args['target'].price()
+    def get_quantity(self):
+        self.args['quantity'] = max(1, self.args.get('quantity', -1))
+        self.args['quantity'] = min(getattr(self.args['target'], 'quantity', 1), self.args['quantity'])
+
+    def do_purchase(self, price):
+        failure = self.move_to_inventory()
+        if failure: return failure
+
         self.args['interaction'].main_npc.wealth += price
-        self.args['interaction'].main_npc.inventory.remove(self.args['target'])
         self.args['player_lifeform'].wealth -= price
+
         self.dirty(self.args['player_lifeform'])
         self.append_result(self.player_info.uid, 'You have bought {} from {} for {} riphons.'.format(self.args['target'].alias(), self.args['interaction'].main_npc.alias(), price))
-        return self.move_to_inventory()
+        return self.succeed()
 
     def move_to_inventory(self):
-        self.args['player_lifeform'].inventory.append(self.args['target'])
-        result = self.args['target'].on_take(self.args['player_lifeform'])
-        return result if result else self.succeed()
+        self.args['interaction'].main_npc.inventory.remove(self.args['target'])
+        items = self.args['target'].split(self.args['target'], self.args['quantity'])
+        self.args['player_lifeform'].inventory.append(items[0])
+        if len(items) > 1:
+            self.args['interaction'].main_npc.inventory.append(items[1])
+
+        failure = self.args['target'].on_take(self.args['player_lifeform'])
+        return failure

@@ -31,3 +31,10 @@ class Location:
         generator = DungeonGenerator(self)
         return generator.generate()
 
+    def direction_to(self, direction_to):
+        here = self.coordinates()
+        if direction_to[0] == here[0]:
+            return 'western' if direction_to[1] > here[1] else 'eastern'
+        if direction_to[1] == here[1]:
+            return 'southwestern' if direction_to[0] > here[0] else 'northeastern'
+        return 'southeastern' if direction_to[0] > here[0] else 'northwestern'

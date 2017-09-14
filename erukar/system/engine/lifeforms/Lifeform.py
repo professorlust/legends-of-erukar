@@ -1,4 +1,4 @@
-from erukar.system.engine import ErukarActor, Dead, Dying, Observation, Armor
+from erukar.system.engine import ErukarActor, Dead, Dying, Observation, Armor, Weapon
 from .Zones import Zones
 import math, random
 
@@ -443,3 +443,7 @@ class Lifeform(ErukarActor):
         method_name = 'offset_scale_for_{}'.format(type(weapon).__name__.lower()) 
         actual_method = getattr(self, method_name, None)
         return 0 if not actual_method else  actual_method()
+
+    def max_weapon_range(self):
+        slots = [getattr(self, slot) for slot in self.weapon_slots()]
+        return max([x.attack_range(self) for x in slots if x is not None and isinstance(x, Weapon)])

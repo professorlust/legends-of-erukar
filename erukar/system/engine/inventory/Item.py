@@ -176,3 +176,7 @@ class Item(Describable):
 
     def attack_range(self, lifeform):
         return 0
+
+    @classmethod
+    def split(cls, original, quantity):
+        return [original]

@@ -2,6 +2,7 @@ from erukar.system.engine import Weapon
 import numpy as np
 
 class Sword(Weapon):
+    MaximumRange = 1
     Probability = 2
     BaseName = "Sword"
     EssentialPart = "blade"

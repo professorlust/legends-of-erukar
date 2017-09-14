@@ -51,13 +51,41 @@ class DungeonGenerator(FactoryBase, AStarBase):
         e = erukar.content.enemies.undead.Skeleton()
         self.world.add_actor(e, random.choice([x for x in self.vertices]))
 
+        self.add_transitions()
         self.world.spawn_coordinates = self.vertices
+        return self.world
+
+    def add_transitions(self):
+        center = tuple([int(max([coord[i] for coord in self.vertices]) + min([coord[i] for coord in self.vertices])/2) for i in range(2)])
 
         for coord in self.location.adjacent_sectors():
+            direction = self.location.direction_to(coord)
             transition_piece  = TransitionPiece(self.location.coordinates(), coord)
-            self.world.add_actor(transition_piece, random.choice(self.vertices))
+            transition_coord = getattr(self, direction)(center)
+            self.world.add_actor(transition_piece, transition_coord)
+            self.world.location_transition_coordinates[coord] = transition_coord
+    
+    def northeastern(self, center):
+        center = center[0] + 100, center[1] + 100 
+        return self.get_closest_tile_to(center)
+    def northwestern(self, center):
+        center = center[0] - 100, center[1] + 100 
+        return self.get_closest_tile_to(center)
+    def southeastern(self, center):
+        center = center[0] + 100, center[1] - 100 
+        return self.get_closest_tile_to(center)
+    def southwestern(self, center):
+        center = center[0] - 100, center[1] - 100 
+        return self.get_closest_tile_to(center)
+    def eastern(self, center):
+        center = center[0] + 100, center[1]
+        return self.get_closest_tile_to(center)
+    def western(self, center):
+        center = center[0] - 100, center[1]
+        return self.get_closest_tile_to(center)
 
-        return self.world
+    def get_closest_tile_to(self, center):
+        return sorted(self.vertices, key=lambda y: math.sqrt((y[0]-center[0])**2 + (y[1]-center[1])**2))[0]
 
     def get_floor_tile(self):
         return self.get_tile(self.potential_floor_tiles)

@@ -60,6 +60,7 @@ class Inventory(Command):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
+            'quantity': getattr(item, 'quantity', 1),
             'price': item.price(),
             'isUsable': item.IsUsable,
             'desirabilityRating': item.rarity().name,

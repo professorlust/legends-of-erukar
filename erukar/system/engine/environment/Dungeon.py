@@ -19,6 +19,7 @@ class Dungeon(ErukarActor):
         self.actors = set()
         self.spawn_coordinates = []
         self.walls = {}
+        self.location_transition_coordinates = {}
 
         # Tiles
         self.tile_set_version = 0

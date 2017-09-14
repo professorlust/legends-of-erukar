@@ -44,3 +44,23 @@ class StackableItem(Item):
         self.quantity -= 1
         if self.quantity <= 0:
             self.owner.inventory.remove(self)
+
+    @classmethod
+    def split(cls, original, quantity):
+        if original.quantity <= 1 or original.quantity <= quantity: 
+            return [original]
+        new_quantity = max(1, original.quantity - quantity)
+        copied = cls.duplicate(original, new_quantity)
+        original.quantity -= new_quantity
+        return [original, copied]
+
+    def duplication_args(self, quantity):
+        return {
+            'quantity': quantity,
+            'modifiers': []
+        }
+
+    @classmethod
+    def duplicate(cls, obj, new_quantity):
+        return cls(**obj.duplication_args(new_quantity))
+

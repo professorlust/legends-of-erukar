@@ -103,5 +103,7 @@ class Command:
 
     def specified_coordinates(self):
         if 'coordinates' in self.args:
+            if isinstance(self.args['coordinates'], tuple):
+                return self.args['coordinates']
             return tuple([int(x) for x in self.args['coordinates'].split(',')])
         return self.args['player_lifeform'].coordinates

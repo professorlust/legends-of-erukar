@@ -84,7 +84,7 @@ class Instance(Manager):
 
         node.world = self.dungeon
         node.overland_coordinates = self.dungeon.overland_location.coordinates()
-        self.dungeon.add_actor(node.character, random.choice(self.dungeon.spawn_coordinates))
+        self.dungeon.add_actor(node.character, self.dungeon.location_transition_coordinates.get(node.previous_location, random.choice(self.dungeon.spawn_coordinates)))
         if self.active_player is None: self.active_player = node
 
         erukar.data.Character.update(node.character, self.session)
@@ -183,10 +183,16 @@ class Instance(Manager):
             self.active_player.lifeform().flag_for_rebuild()
 
         self.clean_dead_characters()
+        self.build_zones_where_necessary()
         self.clean_interactions()
 
         if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
             self.get_next_player()
+
+    def build_zones_where_necessary(self):
+        for player in self.players:
+            if player.lifeform().zones.desynced:
+                player.lifeform().build_zones(self.dungeon)
 
     def try_execute_targeted_command(self, node, cmd):
         result = self.execute_command(cmd)

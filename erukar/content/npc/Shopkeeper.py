@@ -26,6 +26,7 @@ class Shopkeeper(NpcTemplate):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias() if quantity <= 1 else '{} x{}'.format(item.alias(), quantity),
+            'quantity': quantity,
             'price': item.price(),
         }
         return object_output
