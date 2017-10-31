@@ -41,13 +41,15 @@ class BaseAI:
     def check_for_enemies_in_range(caller, dungeon):
         for loc in caller.zones.weapon_ranges:
             x = dungeon.creature_at(caller, loc)
-            if x: return x, caller.zones.weapon_ranges[loc]
+            if x and isinstance(x, erukar.system.engine.Player): 
+                return x, caller.zones.weapon_ranges[loc]
         return None, []
 
     def check_for_enemies_to_move_to(caller, world):
         for loc in caller.zones.fog_of_war:
             x = world.creature_at(caller, loc)
-            if x: return BaseAI.get_nearest_coordinate_in_attack_range(caller, world, x.coordinates)
+            if x and isinstance(x, erukar.system.engine.Player):
+                return BaseAI.get_nearest_coordinate_in_attack_range(caller, world, x.coordinates)
         return None
 
     def create_attack(caller, world, target, weapon):

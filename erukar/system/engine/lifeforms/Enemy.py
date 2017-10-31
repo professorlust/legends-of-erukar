@@ -49,7 +49,6 @@ class Enemy(Lifeform, Indexer):
     def define_level(self, level):
         self.level = level
         if self.should_randomize:
-            self.stat_points = 14 + level
             self.perform_level_ups()
             self.redefine_personality()
         super().define_level(level)

@@ -13,17 +13,19 @@ class Skeleton(Undead):
 
     def __init__(self, random=True):
         super().__init__("Skeleton", random)
-        self.dexterity  = -2
+        self.strength   =  5
+        self.dexterity  =  4
         self.vitality   = -1
         self.acuity     = -2
         self.sense      = -2
         # Now personality
-        self.str_ratio  = 0.2
-        self.dex_ratio  = 0.2
-        self.vit_ratio  = 0.3
+        self.str_ratio  = 0.4
+        self.dex_ratio  = 0.3
+        self.vit_ratio  = 0.2
         self.acu_ratio  = 0.0
         self.sen_ratio  = 0.0
-        self.res_ratio  = 0.3
+        self.res_ratio  = 0.1
+        self.stat_points = 8
         self.define_level(1)
         self.left = Buckler(modifiers=[Oak])
         self.right = Sword(modifiers=[Steel])

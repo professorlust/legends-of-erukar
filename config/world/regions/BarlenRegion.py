@@ -51,5 +51,5 @@ def create_razorwoods_camp(region):
 
 def create_sector_template(region=None):
     sector = Sector(region)
-    sector.environment_profile = EnvironmentProfile.AridDesert()
+    sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
     return sector

@@ -14,7 +14,7 @@ fh = logging.FileHandler('debug.log')
 logger.addHandler(fh)
 
 class Shard(Manager):
-    ErukarVersion = '0.0.7'
+    ErukarVersion = '0.0.9-indev'
 
     def __init__(self, emit_fn):
         super().__init__()
