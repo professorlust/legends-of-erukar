@@ -49,13 +49,58 @@ class DungeonGenerator(FactoryBase, AStarBase):
     def generate(self, previous_instance_identifier=''):
         self.create_dungeon()
 
-        for _ in range(random.choice([2,3,3,4,4,5])):
-            e = erukar.content.enemies.undead.Skeleton()
-            self.world.add_actor(e, random.choice([x for x in self.vertices]))
+        self.add_enemies()
+        self.add_items()
 
         self.add_transitions()
         self.world.spawn_coordinates = self.vertices
         return self.world
+
+    def add_enemies(self):
+        for _ in range(random.choice([2,3,3,4,4,5])):
+            e = erukar.content.enemies.undead.Skeleton()
+            self.world.add_actor(e, self.random_location())
+
+    def add_items(self):
+        possibilities = [
+            erukar.content.inventory.ammunition.Arrow,
+            erukar.content.inventory.ammunition.CrossbowBolt,
+            erukar.content.inventory.consumables.Candle,
+            erukar.content.inventory.consumables.Potion,
+            erukar.content.inventory.consumables.Torch,
+            erukar.content.inventory.weapons.standard.Axe,
+            erukar.content.inventory.weapons.standard.Bow,
+            erukar.content.inventory.weapons.standard.CrossBow,
+            erukar.content.inventory.weapons.standard.Halberd,
+            erukar.content.inventory.weapons.standard.Mace,
+            erukar.content.inventory.weapons.standard.Maul,
+            erukar.content.inventory.weapons.standard.MorningStar,
+            erukar.content.inventory.weapons.standard.Rapier,
+            erukar.content.inventory.weapons.standard.Spear,
+            erukar.content.inventory.weapons.standard.Staff,
+            erukar.content.inventory.weapons.standard.Sword,
+            erukar.content.inventory.weapons.standard.Wand
+        ]
+        for _ in range(random.choice([2,3,3,4,4,5])):
+            item = random.choice(possibilities)
+            if isinstance(item, erukar.engine.Ammunition):
+                self.add_ammo(item)
+                continue
+            if isinstance(item, erukar.engine.Weapon):
+                self.add_weapon(item)
+                continue
+            self.world.add_actor(item(), self.random_location())
+
+    def add_ammo(self, item):
+        material = ModuleDecorator('erukar.content.modifiers.material.random', self.world.environment_profile).create_one()
+        self.world.add_actor(item(random.randint(4,10), [material]), self.random_location())
+
+    def add_weapon(self, item):
+        material = ModuleDecorator('erukar.content.modifiers.material.random', self.world.environment_profile).create_one()
+        self.world.add_actor(item(modifiers=[material]), self.random_location())
+
+    def random_location(self):
+        return random.choice(self.vertices)
 
     def add_transitions(self):
         center = tuple([int(max([coord[i] for coord in self.vertices]) + min([coord[i] for coord in self.vertices])/2) for i in range(2)])
