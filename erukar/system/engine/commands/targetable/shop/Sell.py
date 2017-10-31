@@ -1,6 +1,7 @@
 from erukar.system.engine import Interaction, Item
 from ...TargetedCommand import TargetedCommand
 from ...auto.Inventory import Inventory
+import uuid
 
 class Sell(TargetedCommand):
     '''
@@ -54,12 +55,18 @@ class Sell(TargetedCommand):
         equipment_slot = self.get_equip_slot()
         if equipment_slot:
             setattr(self.args['player_lifeform'], equipment_slot, None)
-        del self.args['target'].id
 
         items = self.args['target'].split(self.args['target'], self.args['quantity'])
         self.args['interaction'].main_npc.inventory.append(items[0])
         if len(items) > 1:
+            Sell.fix_ids_on_split(items[1], items[0])
             self.args['player_lifeform'].inventory.append(items[1])
 
         failure = self.args['target'].on_take(self.args['interaction'].main_npc)
         return failure
+
+    def fix_ids_on_split(original, copied):
+        original.uuid = copied.uuid
+        copied.uuid = uuid.uuid4()
+        original.id = copied.id
+        del copied.id
