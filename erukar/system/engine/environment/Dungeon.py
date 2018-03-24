@@ -26,7 +26,7 @@ class Dungeon(ErukarActor):
         self.tiles = {}
         self.tile_set = {}
         self.pixel_density = 3
-        self.pixels_per_side = 12
+        self.pixels_per_side = 32
         self.tile_generator = None
 
     def on_start(self):
@@ -100,10 +100,13 @@ class Dungeon(ErukarActor):
             if x is not caller and x.coordinates == coordinate:
                 yield x
 
-    def creature_at(self, caller, coordinate):
+    def creatures_at(self, caller, coordinate):
+        yield from self.actors_of_type_at(caller, coordinate, Lifeform)
+
+    def actors_of_type_at(self, caller, coordinate, actor_type):
         for x in self.actors_at(caller, coordinate):
-            if isinstance(x, Lifeform):
-                return x
+            if isinstance(x, actor_type):
+                yield x
 
     def all_traversable_coordinates(self):
         '''Move to player later'''

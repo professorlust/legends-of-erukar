@@ -5,11 +5,11 @@ class Halberd(Weapon):
     Probability = 1
     BaseName = "Halberd"
     EssentialPart = "head"
-    AttackRange = 1
+    AttackRange = 2
     BaseWeight = 13.5
 
     # Damage
-    DamageRange = [3, 6]
+    DamageRange = [3, 7]
     DamageType = "slashing"
     DamageModifier = "strength"
 
@@ -24,3 +24,5 @@ class Halberd(Weapon):
         'strength': {'requirement': 4, 'scaling_factor': 3.5, 'cutoff': 200},
         'dexterity':  {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
     }
+
+    Variant = 'polearm'

@@ -440,10 +440,18 @@ class Lifeform(ErukarActor):
         self.zones.desynced = True
 
     def offset_scale(self, weapon):
-        method_name = 'offset_scale_for_{}'.format(type(weapon).__name__.lower()) 
+        method_name = 'offset_scale_for_{}'.format(type(weapon).Variant) 
         actual_method = getattr(self, method_name, None)
         return 0 if not actual_method else  actual_method()
 
     def max_weapon_range(self):
-        slots = [getattr(self, slot) for slot in self.weapon_slots()]
-        return max([x.attack_range(self) for x in slots if x is not None and isinstance(x, Weapon)])
+        weapons = list(self.viable_weapons())
+        if not weapons or len(weapons) == 0:
+            return 0
+        return max([weapon.attack_range(self) for weapon in weapons])
+
+    def viable_weapons(self):
+        for slot in self.weapon_slots():
+            weapon = getattr(self, slot)
+            if weapon and isinstance(weapon, Weapon):
+                yield weapon

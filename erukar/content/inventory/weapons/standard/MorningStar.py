@@ -20,3 +20,5 @@ class MorningStar(Weapon):
         'strength': {'requirement': 7, 'scaling_factor': 4, 'cutoff': 200},
         'dexterity':  {'requirement': 0, 'scaling_factor': 1.25, 'cutoff': 200},
     }
+
+    Variant = 'martial'

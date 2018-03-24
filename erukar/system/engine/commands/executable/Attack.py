@@ -49,6 +49,9 @@ class Attack(ActionCommand):
 
     def perform_attack(self):
         '''Used to actually resolve an attack roll made between a character and target'''
+        if self.args['weapon'].RequiresAmmo:
+            ammo = getattr(self.args['player_lifeform'], 'ammunition')
+            ammo.consume()
         attack_roll = self.calculate_attack()
 
         final_attack_roll, did_hit = self.check_for_hit(attack_roll)

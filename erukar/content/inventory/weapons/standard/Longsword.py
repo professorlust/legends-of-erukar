@@ -1,10 +1,10 @@
 from erukar.system.engine import Weapon
 import numpy as np
 
-class Sword(Weapon):
+class Longsword(Weapon):
     MaximumRange = 1
     Probability = 2
-    BaseName = "Sword"
+    BaseName = "Longsword"
     EssentialPart = "blade"
     BaseWeight = 7.0
 
@@ -21,3 +21,5 @@ class Sword(Weapon):
         'strength':  {'requirement': 4, 'scaling_factor': 4, 'cutoff': 200},
         'dexterity': {'requirement': 3, 'scaling_factor': 3, 'cutoff': 200},
     }
+
+    Variant = 'martial'

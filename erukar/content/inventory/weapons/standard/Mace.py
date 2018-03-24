@@ -15,3 +15,5 @@ class Mace(Weapon):
     # Distribution
     Distribution = np.random.uniform
     DistributionProperties = ()
+
+    Variant = 'simple'

@@ -1,6 +1,6 @@
 from erukar.system.engine import Enemy
 from ..templates.Undead import Undead
-from erukar.content.inventory import Sword, Buckler
+from erukar.content.inventory import Shortsword, Buckler
 from erukar.content.modifiers import Steel, Oak
 
 class Skeleton(Undead):
@@ -28,5 +28,5 @@ class Skeleton(Undead):
         self.stat_points = 8
         self.define_level(1)
         self.left = Buckler(modifiers=[Oak])
-        self.right = Sword(modifiers=[Steel])
+        self.right = Shortsword(modifiers=[Steel])
         self.inventory = [self.left, self.right]

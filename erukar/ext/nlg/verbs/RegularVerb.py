@@ -6,21 +6,29 @@ class RegularVerb(Verb):
             Tense.SimplePresent: '{}',
             Tense.SimplePast: '{}ed',
             Tense.SimpleFuture: 'will {}',
+            Tense.PresentContinuous: 'am {}ing',
+            Tense.PastContinuous: 'was {}ing'
         },
         'second': {
             Tense.SimplePresent: '{}',
             Tense.SimplePast: '{}ed',
             Tense.SimpleFuture: 'will {}',
+            Tense.PresentContinuous: 'are {}ing',
+            Tense.PastContinuous: 'were {}ing'
         },
         'third': {
             Tense.SimplePresent: '{}s',
             Tense.SimplePast: '{}ed',
             Tense.SimpleFuture: 'will {}',
+            Tense.PresentContinuous: 'is {}ing',
+            Tense.PastContinuous: 'was {}ing'
         },
         'plural': {
             Tense.SimplePresent: '{}',
             Tense.SimplePast: '{}ed',
             Tense.SimpleFuture: 'will {}',
+            Tense.PresentContinuous: 'are {}ing',
+            Tense.PastContinuous: 'were {}ing'
         }
     }
 

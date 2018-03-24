@@ -3,7 +3,8 @@ from .FencingStance import FencingStance
 from .Parry import Parry
 from .Riposte import Riposte
 from .ShieldTraining import ShieldTraining
-from .SwordTraining import SwordTraining
+from .MartialWeaponTraining import MartialWeaponTraining
+from .PolearmTraining import PolearmTraining
 from .SoldierStance import SoldierStance
 from .WeaponTraining import WeaponTraining
 
@@ -13,7 +14,8 @@ __all__ = [
     "Parry", 
     "Riposte", 
     "ShieldTraining", 
-    "SwordTraining", 
+    "MartialWeaponTraining", 
+    "PolearmTraining", 
     "SoldierStance", 
     "WeaponTraining"
 ]

@@ -28,6 +28,8 @@ class Wand(Weapon):
         'dexterity': {'requirement': 0, 'scaling_factor': 1.5, 'cutoff': 200},
     }
 
+    Variant = 'magical'
+
     def failing_requirements(self, wielder):
         if wielder.arcane_energy < self.EnergyCost:
             return ['Not enough Arcane Energy to use {} -- need {}, have {}'.format(self.alias(), self.EnergyCost, wielder.arcane_energy)]

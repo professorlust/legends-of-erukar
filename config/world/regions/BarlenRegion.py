@@ -33,6 +33,12 @@ def create_barlen_outskirts(region):
     sector.name = 'Barlen Town Outskirts'
     sector.environment_profile = EnvironmentProfile.CityOutdoors()
     sector.set_coordinates((0, 0, 0))
+    
+    town = Location(sector)
+    town.is_named = True
+    town.name = 'Barlent Town Outskirts'
+    town.dungeon_file_name = 'BarlenOutskirts'
+    sector.locations.add(town)
     return sector
 
 def create_razorwoods_camp(region):

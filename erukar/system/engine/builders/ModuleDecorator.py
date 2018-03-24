@@ -51,6 +51,10 @@ class ModuleDecorator(ProbablisticGenerator):
         mod = self.create_one()
         mod.apply_to(room)
 
+    def get_one_type(self):
+        type_to_create = self.values[numpy.digitize(numpy.random.uniform(0, 1), self.bins)]
+        return type_to_create[1]
+
     def create_one(self):
         type_to_create = self.values[numpy.digitize(numpy.random.uniform(0, 1), self.bins)]
         return self.create_type(type_to_create)

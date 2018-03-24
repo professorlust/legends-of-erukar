@@ -22,3 +22,5 @@ class Axe(Weapon):
         'strength': {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
         'dexterity':  {'requirement': 0, 'scaling_factor': 3.5, 'cutoff': 200},
     }
+
+    Variant = 'axe'

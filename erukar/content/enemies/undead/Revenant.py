@@ -13,5 +13,4 @@ class Revenant(Enemy):
         self.sen_ratio = 0.15
         self.res_ratio = 0.15
         self.define_level(10)
-        self.randomize_equipment()
         self.conditions.append(Undead(self))

@@ -27,13 +27,13 @@ class Modifier(ErukarBaseModel, Base):
             setattr(new_object, attribute_name, self.attributes[attribute_name])
 
     def create_new_object(self):
-        new_obj = ErukarBase.create_from_type(self.modifier_type)
+        new_obj = ErukarBaseModel.create_from_type(self.modifier_type)
         new_obj.id = self.id
         self.map_schema_to_object(new_obj)
         return new_obj
 
     def map_schema_to_object(self, new_object):
-        ErukarBase.map_schema_to_object(self, new_object)
+        ErukarBaseModel.map_schema_to_object(self, new_object)
         self.apply_attributes(new_object)
         new_object.is_set = True
 

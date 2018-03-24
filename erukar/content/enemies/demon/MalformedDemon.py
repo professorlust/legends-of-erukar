@@ -1,5 +1,4 @@
 from erukar.system.engine import Enemy
-from erukar.content.inventory import Sword, Buckler
 
 class MalformedDemon(Enemy):
     BriefDescription = "a malformed demon"

@@ -86,7 +86,7 @@ def make_fighter():
     fighter.stats['resolve']   = 1
     
     fighter.inventory = [
-        Sword(modifiers=[Iron]),
+        Longsword(modifiers=[Iron]),
         HeaterShield(modifiers=[Oak]),
         Piece(modifiers=[Chainmail]),
         Leggings(modifiers=[Chainmail]),
@@ -94,7 +94,7 @@ def make_fighter():
         Spear(modifiers=[Iron]),
     ]
     fighter.skills = [
-        erukar.content.skills.SwordTraining(),
+        erukar.content.skills.MartialWeaponTraining(),
     ]
     fighter.right = fighter.inventory[0]
     fighter.left  = fighter.inventory[1]
@@ -118,6 +118,7 @@ def make_mage():
     
     mage.inventory = [
         Wand(modifiers=[Oak]),
+        Focus(modifiers=[Oak]),
         Candle(),
         Robes(modifiers=[Cotton]),
         Sandals(modifiers=[Leather]),
@@ -151,7 +152,7 @@ def make_ranger():
     ranger.stats['resolve']   = 1
     
     ranger.inventory = [
-        Bow(modifiers=[Oak]),
+        Longbow(modifiers=[Oak]),
         Boots(modifiers=[Leather]),
         Vest(modifiers=[Leather]),
         Breeches(modifiers=[Leather]),

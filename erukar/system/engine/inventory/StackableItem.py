@@ -29,13 +29,27 @@ class StackableItem(Item):
             self.quantity = difference
             existing_stack.quantity = self.MaximumStackQuantity
 
-    def alias(self):
+    def long_alias(self):
         return '{} x{}'.format(super().alias(), self.quantity)
 
     def other_stacks(self, inventory):
         for item in inventory:
-            if type(item) == type(self) and item is not self and item.quantity < self.MaximumStackQuantity:
+            if self.can_stack_on(item): 
                 yield item
+
+    def can_stack_on(self, other):
+        return type(other) == type(self)\
+                and other is not self\
+                and self.matches_modifiers(other)\
+                and other.quantity < self.MaximumStackQuantity
+
+    def matches_modifiers(self, other):
+        return len(self.modifiers) == len(other.modifiers)\
+                and type(self.material) == type(other.material)\
+                and all(other.has_modifier(type(modifier)) for modifier in self.modifiers)
+
+    def has_modifier(self, material_type):
+        return material_type in [type(y) for y in self.modifiers]
 
     def on_inventory(self):
         return '{} x{}'.format(self.format(), self.quantity)
@@ -48,11 +62,10 @@ class StackableItem(Item):
     @classmethod
     def split(cls, original, quantity):
         if original.quantity <= 1 or original.quantity <= quantity: 
-            return [original]
-        new_quantity = max(1, original.quantity - quantity)
-        copied = cls.duplicate(original, new_quantity)
-        original.quantity -= new_quantity
-        return [original, copied]
+            return original, None
+        original.quantity -= quantity
+        split_off = cls.duplicate(original, quantity)
+        return split_off, original
 
     def duplication_args(self, quantity):
         return {

@@ -88,6 +88,8 @@ class Character(Lifeform):
                 existing.add_or_update(session)
                 self.inventory.append(existing)
                 item.id = existing.id
+            else:
+                existing.update_attributes(item, session)
             schema_map[item] = existing
 
         # Remove items which are in schema but not in schema_map

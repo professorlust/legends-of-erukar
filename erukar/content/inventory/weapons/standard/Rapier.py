@@ -20,3 +20,5 @@ class Rapier(Weapon):
         'strength': {'requirement': 2, 'scaling_factor': 1.5, 'cutoff': 200},
         'dexterity':  {'requirement': 8, 'scaling_factor': 5, 'cutoff': 200},
     }
+
+    Variant = 'finesse'

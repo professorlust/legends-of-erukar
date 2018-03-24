@@ -59,8 +59,8 @@ class Item(Describable):
         self.modifiers = []
 
         if modifiers:
-            for modifier in modifiers:
-                modifier().apply_to(self)
+            for modifier_type in modifiers:
+                modifier_type().apply_to(self)
 
     def equipment_slots(self, lifeform):
         return self.EquipmentLocations
@@ -145,6 +145,9 @@ class Item(Describable):
             alias = mod.on_alias(alias)
         return alias
 
+    def long_alias(self):
+        return self.alias()
+
     def belongs_in_hand(self, lifeform):
         return any(set(lifeform.attack_slots).intersection(set(self.EquipmentLocations)))
 
@@ -179,4 +182,4 @@ class Item(Describable):
 
     @classmethod
     def split(cls, original, quantity):
-        return [original]
+        return original, None

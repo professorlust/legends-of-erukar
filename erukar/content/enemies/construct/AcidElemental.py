@@ -10,6 +10,6 @@ class AcidElemental(Elemental):
         'electric': (-0.5, 0)
     }
 
-    def __init__(self, actual_name, is_random=True):
-        super().__init__(actual_name, is_random)
+    def __init__(self):
+        super().__init__('Acid Elemental', True)
         self.define_level(random.random()*20+5)

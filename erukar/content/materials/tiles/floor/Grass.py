@@ -15,6 +15,6 @@ class Grass(Tile):
 
     def generate(self, *_):
         random_red = int(random.uniform(40, 60))
-        random_green = int(random.uniform(120, 170))
-        random_blue = int(random.uniform(20, 60))
+        random_green = int(random.uniform(130, 160))
+        random_blue = int(random.uniform(30, 60))
         return [random_red,random_green,random_blue] + [1]

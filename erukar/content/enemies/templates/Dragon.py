@@ -11,12 +11,6 @@ class Dragon(Enemy):
         self.sense      = int(random.uniform(4, 9))
         self.resolve    = int(random.uniform(10, 13))
 
-    def perform_turn(self):
-        targets = list(self.viable_targets(self.current_room))
-        if len(targets) > 0:
-            return self.use_breath(targets[0])
-        return self.maybe_move_somewhere()
-
     def use_breath(self, target):
         cast = erukar.engine.commands.executable.Cast()
         cast.sender_uid = self.uid

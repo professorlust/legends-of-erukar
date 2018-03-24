@@ -4,7 +4,7 @@ from .ModuleDecorator import ModuleDecorator
 from .TileGenerator import TileGenerator
 from erukar.ext.math import *
 from erukar.ext.math.aux import AStarBase, Queue
-import math, random, erukar, numpy
+import math, random, erukar, numpy, sys, inspect
 
 class DungeonGenerator(FactoryBase, AStarBase):
     Small       = 8
@@ -57,9 +57,9 @@ class DungeonGenerator(FactoryBase, AStarBase):
         return self.world
 
     def add_enemies(self):
+        enemy_chooser = ModuleDecorator('erukar.content.enemies', self.environment_profile)
         for _ in range(random.choice([2,3,3,4,4,5])):
-            e = erukar.content.enemies.undead.Skeleton()
-            self.world.add_actor(e, self.random_location())
+            self.world.add_actor(enemy_chooser.create_one(), self.random_location())
 
     def add_items(self):
         possibilities = [
@@ -68,36 +68,31 @@ class DungeonGenerator(FactoryBase, AStarBase):
             erukar.content.inventory.consumables.Candle,
             erukar.content.inventory.consumables.Potion,
             erukar.content.inventory.consumables.Torch,
-            erukar.content.inventory.weapons.standard.Axe,
-            erukar.content.inventory.weapons.standard.Bow,
-            erukar.content.inventory.weapons.standard.CrossBow,
-            erukar.content.inventory.weapons.standard.Halberd,
-            erukar.content.inventory.weapons.standard.Mace,
-            erukar.content.inventory.weapons.standard.Maul,
-            erukar.content.inventory.weapons.standard.MorningStar,
-            erukar.content.inventory.weapons.standard.Rapier,
-            erukar.content.inventory.weapons.standard.Spear,
-            erukar.content.inventory.weapons.standard.Staff,
-            erukar.content.inventory.weapons.standard.Sword,
-            erukar.content.inventory.weapons.standard.Wand
         ]
+        possibilities += [x for _,x in inspect.getmembers(sys.modules['erukar.content.inventory.weapons.standard'], inspect.isclass)]
+
         for _ in range(random.choice([2,3,3,4,4,5])):
             item = random.choice(possibilities)
-            if isinstance(item, erukar.engine.Ammunition):
+            if issubclass(item, erukar.engine.Ammunition):
                 self.add_ammo(item)
                 continue
-            if isinstance(item, erukar.engine.Weapon):
+            if issubclass(item, erukar.engine.Weapon):
                 self.add_weapon(item)
                 continue
             self.world.add_actor(item(), self.random_location())
 
-    def add_ammo(self, item):
-        material = ModuleDecorator('erukar.content.modifiers.material.random', self.world.environment_profile).create_one()
-        self.world.add_actor(item(random.randint(4,10), [material]), self.random_location())
+    def add_ammo(self, item_type):
+        material = ModuleDecorator('erukar.content.modifiers.material.random', self.environment_profile).get_one_type()
+        self.world.add_actor(item_type(random.randint(4,10), [material]), self.random_location())
 
-    def add_weapon(self, item):
-        material = ModuleDecorator('erukar.content.modifiers.material.random', self.world.environment_profile).create_one()
-        self.world.add_actor(item(modifiers=[material]), self.random_location())
+    def add_weapon(self, item_type):
+        modifiers = [ModuleDecorator('erukar.content.modifiers.material.random', self.environment_profile).get_one_type()]
+        new_weapon = item_type(modifiers=modifiers)
+        while random.random() < 0.3:
+            ModuleDecorator('erukar.content.modifiers.inventory.weapon', self.environment_profile)\
+                .create_one()\
+                .apply_to(new_weapon)
+        self.world.add_actor(new_weapon, self.random_location())
 
     def random_location(self):
         return random.choice(self.vertices)
@@ -123,7 +118,6 @@ class DungeonGenerator(FactoryBase, AStarBase):
         return self.get_closest_tile_to(center)
     def southwestern(self, center):
         center = center[0] - 100, center[1] - 100 
-        return self.get_closest_tile_to(center)
     def eastern(self, center):
         center = center[0] + 100, center[1]
         return self.get_closest_tile_to(center)
@@ -161,7 +155,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
         for loc in self.world.all_traversable_coordinates():
             material = self.get_floor_tile()
             self.world.tiles[loc] = material
-        self.world.generate_tiles(TileGenerator(self.world.pixels_per_side, self.world.pixels_per_side))
+        self.world.generate_tiles(TileGenerator(width=self.world.pixels_per_side, breadth=self.world.pixels_per_side))
 
     def add_walls(self):
         xo, yo = map(min, zip(*self.world.dungeon_map))

@@ -28,6 +28,8 @@ class BaseAI:
         target, weapons = BaseAI.check_for_enemies_in_range(caller, instance.dungeon)
         if target:
             weapon = caller.right
+            if not weapon:
+                return BaseAI.create_command(caller, instance.dungeon, erukar.engine.commands.executable.Wait)
             return BaseAI.create_attack(caller, instance.dungeon, target, weapon)
 
         location = BaseAI.check_for_enemies_to_move_to(caller, instance.dungeon)
@@ -38,18 +40,16 @@ class BaseAI:
         return BaseAI.create_command(caller, instance.dungeon, erukar.engine.commands.executable.Inspect)
 
 
-    def check_for_enemies_in_range(caller, dungeon):
+    def check_for_enemies_in_range(caller, world):
         for loc in caller.zones.weapon_ranges:
-            x = dungeon.creature_at(caller, loc)
-            if x and isinstance(x, erukar.system.engine.Player): 
-                return x, caller.zones.weapon_ranges[loc]
+            for player in world.actors_of_type_at(caller, loc, erukar.system.engine.Player):
+                return player, caller.zones.weapon_ranges[loc]
         return None, []
 
     def check_for_enemies_to_move_to(caller, world):
         for loc in caller.zones.fog_of_war:
-            x = world.creature_at(caller, loc)
-            if x and isinstance(x, erukar.system.engine.Player):
-                return BaseAI.get_nearest_coordinate_in_attack_range(caller, world, x.coordinates)
+            for player in world.actors_of_type_at(caller, loc, erukar.system.engine.Player):
+                return BaseAI.get_nearest_coordinate_in_attack_range(caller, world, loc)
         return None
 
     def create_attack(caller, world, target, weapon):

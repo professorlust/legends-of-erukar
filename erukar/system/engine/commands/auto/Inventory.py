@@ -60,6 +60,7 @@ class Inventory(Command):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
+            'quantifiable_alias': item.long_alias(),
             'quantity': getattr(item, 'quantity', 1),
             'price': item.price(),
             'isUsable': item.IsUsable,
@@ -92,6 +93,7 @@ class Inventory(Command):
         for damage in item.damages:
             details = {
                 'name': damage.name.capitalize(),
+                'variant': item.Variant.capitalize(),
                 'range': '{} to {}'.format(*damage.scaled_values(self.args['player_lifeform'], item)),
                 'scaling': {
                     'attribute': damage.modifier[:3].upper(),

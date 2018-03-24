@@ -1,3 +1,4 @@
+import erukar
 from erukar.system.engine import Enemy
 from erukar.content.conditions import Undead
 
@@ -22,4 +23,4 @@ class Risen(Enemy):
         self.res_ratio = 0.6
         self.define_level(1)
         self.conditions.append(Undead(self))
-        self.right = erukar.content.Sword(modifiers=[erukar.content.Steel()])
+        self.right = erukar.content.Dagger(modifiers=[erukar.content.Steel])

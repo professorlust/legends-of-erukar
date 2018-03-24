@@ -1,4 +1,4 @@
-from erukar.system.engine import Tile
+from erukar.system.engine import Tile, Item
 from erukar.system.engine.environment import *
 from erukar.ext.math import Distance
 from ..Command import Command
@@ -64,20 +64,26 @@ class Map(Command):
 
     def get_room_details(self, x, y):
         return {
-            'overlay': self.overlay_for(x,y),
-            'layers': self.layers_for(x,y),
+            'coordinates': [x, y],
+            'tile': self.layers_for(x,y),
+            'walls': self.wall_overlays_at(x, y),
+            'actors': list(self.get_actors_at(x,y)),
             'actions': self.actions_for(x, y)
         }
 
+    def wall_overlays_at(self, x, y):
+        return self.world.get_wall_overlay((x,y))
+
     def layers_for(self, x, y):
-        result = ['black']
-        if (x,y) in self.open_space:
-            if (x,y) in self.world.all_traversable_coordinates():
-                result.append(self.world.get_floor_type((x,y)))
-            else: result.append(self.world.get_wall_type((x,y)))
-            result += self.world.get_wall_overlay((x,y))
-            result.append(self.world.moving_parts_at((x,y)))
-        return result
+        if (x,y) not in self.open_space:
+            return 'null'
+        if (x,y) in self.world.all_traversable_coordinates():
+            return self.world.get_floor_type((x,y))
+        return self.world.get_wall_type((x,y))
+
+    def get_actors_at(self, x, y):
+        for actor in self.world.actors_at(self.args['player_lifeform'], (x,y)):
+            yield str(actor.uuid)
 
     def action(command, description="", cost=1, target='', weapon=''):
         return {
@@ -91,36 +97,44 @@ class Map(Command):
     def attack_action(weapon, creature):
         return Map.action('Attack', description='Attack with {}'.format(weapon.alias()), weapon=str(weapon.uuid), target=str(creature.uuid))
 
-    def interact_action(creature):
-        return Map.action('Interact', description='Interact with {}'.format(creature.alias()), target=str(creature.uuid))
+    def interact_actions(npc):
+        for template in npc.templates:
+            if template.is_interactive:
+                yield Map.action('Interact', target=str(npc.uuid), description=template.interaction_text(npc))
 
     def transition_action(transition):
         return Map.action('Transition', description='Travel to {}'.format(transition.destination), target=str(transition.uuid))
 
+    def take_action(item):
+        return Map.action('Take', description='Take {}'.format(item.alias()), target=str(item.uuid))
+
     def actions_for(self, x, y):
         actions = []
+        player = self.args['player_lifeform']
+        loc = (x,y)
 
-        if self.args['player_lifeform'].action_points() >= 2:
+        if player.action_points() >= 2:
             actions.append(Map.action('Inspect', cost=2))
-
         actions.append(Map.action('Glance'))
 
         move = self.move_action(x,y)
         if move: actions.append(move)
 
-        transitions = [p for p in self.world.actors_at(self.args['player_lifeform'], (x,y)) if isinstance(p, TransitionPiece)]
-        for t in transitions:
-            actions.append(Map.transition_action(t))
-
-        creature_at = self.world.creature_at(self.args['player_lifeform'], (x,y))
-        zone = self.args['player_lifeform'].zones
-        if creature_at and (x,y) in zone.fog_of_war:
-            if not creature_at.is_hostile_to(self.args['player_lifeform']):
-                actions.append(Map.interact_action(creature_at))
-                return actions
-            for weapon in zone.weapon_ranges.get((x,y), []):
-                actions.append(Map.attack_action(weapon, creature_at))
+        for transition in self.world.actors_of_type_at(player, loc, TransitionPiece):
+            actions.append(Map.transition_action(transition))
+        for item in self.world.actors_of_type_at(player, loc, Item):
+            actions.append(Map.take_action(item))
+        for creature in self.world.creatures_at(player, loc):
+            actions += list(Map.append_creature_actions(player, creature, loc))
         return actions
+
+    def append_creature_actions(player, creature, loc):
+        if creature and loc in player.zones.fog_of_war:
+            if not creature.is_hostile_to(player):
+                yield from Map.interact_actions(creature)
+                return
+            for weapon in player.zones.weapon_ranges.get(loc, []):
+                yield Map.attack_action(weapon, creature)
 
     def move_action(self, x,y):
         move_sets = self.args['player_lifeform'].zones.movement

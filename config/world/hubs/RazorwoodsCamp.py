@@ -66,7 +66,7 @@ dirt_tex = erukar.content.Dirt()
 for loc in dungeon.all_traversable_coordinates():
     dungeon.tiles[loc] = dirt_tex if loc in path else grass_tex
 
-dungeon.generate_tiles(TileGenerator(dungeon.pixels_per_side, dungeon.pixels_per_side))
+dungeon.generate_tiles(TileGenerator(dungeon))
 
 
 dungeon.spawn_coordinates = [(4,0)]

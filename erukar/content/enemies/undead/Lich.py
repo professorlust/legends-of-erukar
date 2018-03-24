@@ -18,7 +18,3 @@ class Lich(Enemy):
         self.spells = [
         ]
         self.conditions.append(Undead(self))
-
-    def perform_turn(self):
-        targets = list(self.viable_targets(self.current_room))
-        return self.maybe_move_somewhere()

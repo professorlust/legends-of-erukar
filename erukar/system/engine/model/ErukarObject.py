@@ -6,6 +6,7 @@ class ErukarObject:
         self.uuid = uuid.uuid4()
 
     def generate_tile(self, dimensions):
+        '''Erukar Objects are, by default, Basic Blue Circles'''
         h, w = dimensions
         radius = int(w/3)-1
         circle = list(Distance.points_in_circle(radius, (int(h/2),int(w/2))))

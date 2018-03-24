@@ -56,13 +56,12 @@ class Sell(TargetedCommand):
         if equipment_slot:
             setattr(self.args['player_lifeform'], equipment_slot, None)
 
-        items = self.args['target'].split(self.args['target'], self.args['quantity'])
-        self.args['interaction'].main_npc.inventory.append(items[0])
-        if len(items) > 1:
-            Sell.fix_ids_on_split(items[1], items[0])
-            self.args['player_lifeform'].inventory.append(items[1])
-
-        failure = self.args['target'].on_take(self.args['interaction'].main_npc)
+        sold, remaining_stock = self.args['target'].split(self.args['target'], self.args['quantity'])
+        self.args['interaction'].main_npc.inventory.append(sold)
+        failure = sold.on_take(self.args['interaction'].main_npc)
+        if remaining_stock:
+            self.args['player_lifeform'].inventory.append(remaining_stock)
+            remaining_stock.on_take(self.args['player_lifeform'])
         return failure
 
     def fix_ids_on_split(original, copied):

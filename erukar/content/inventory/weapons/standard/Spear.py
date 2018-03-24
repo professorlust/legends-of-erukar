@@ -21,3 +21,5 @@ class Spear(Weapon):
         'strength': {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
         'dexterity':  {'requirement': 4, 'scaling_factor': 3.5, 'cutoff': 200},
     }
+
+    Variant = 'polearm'

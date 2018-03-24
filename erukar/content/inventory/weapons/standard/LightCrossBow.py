@@ -1,12 +1,12 @@
 from erukar.system.engine import Weapon
 import numpy as np
 
-class CrossBow(Weapon):
+class LightCrossBow(Weapon):
     Probability = 1
-    BaseName = "Crossbow"
+    BaseName = "Light Crossbow"
     EssentialPart = "string"
-    BaseWeight = 3.25
-    AttackRange = 2
+    BaseWeight = 3
+    AttackRange = 4
     RangePenalty = 2
 
     # Damage
@@ -26,3 +26,5 @@ class CrossBow(Weapon):
     BaseStatInfluences = {
         'dexterity':  {'requirement': 5, 'scaling_factor': 5, 'cutoff': 200},
     }
+
+    Variant = 'crossbow'

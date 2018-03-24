@@ -5,4 +5,5 @@ class ItemModifier(Modifier):
     PermittedEntities = [Item]
 
     def apply_to(self, item):
+        super().apply_to(item)
         item.modifiers.append(self)

@@ -26,6 +26,7 @@ class Instance(Manager):
         self.location = location
         self.dungeon = None
         self.reset()
+        self.players = set()
 
     def reset(self):
         self.active_player = None
@@ -93,14 +94,14 @@ class Instance(Manager):
         self.execute_pre_inspect(node)
         node.lifeform().build_zones(self.dungeon)
         self.turn_manager.subscribe(node)
-        super().subscribe(node)
+        self.players.add(node)
         self.give_tile_set(node)
         self.send_update_to(node)
 
     def subscribe_enemy(self, enemy):
         self.turn_manager.subscribe(enemy)
         self.subscribe_being(enemy)
-        super().subscribe(enemy)
+        self.players.add(enemy)
         enemy.build_zones(self.dungeon)
 
     def subscribe_being(self, being):

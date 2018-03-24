@@ -24,6 +24,7 @@ class Describable(ErukarObject):
     '''
     Glances = []
     Inspects = []
+    Vowels = ['a','e','i','o','u','y']
 
     MaximumMutationDepth = 4
 
@@ -118,7 +119,7 @@ class Describable(ErukarObject):
 
     def a_or_an(self, left, right):
         right = right.lstrip().lower()
-        vowel_sound =  (len(right) >= 1 and right[0] in ['a','e','i','o','u','y']) or (len(right) >= 2 and right[:1] in ['ho'] )
+        vowel_sound =  (len(right) >= 1 and right[0] in Describable.vowels) or (len(right) >= 2 and right[:1] in ['ho'] )
         return 'an' if vowel_sound else 'a'
 
     def on_inspect(self, lifeform, acuity, sense):

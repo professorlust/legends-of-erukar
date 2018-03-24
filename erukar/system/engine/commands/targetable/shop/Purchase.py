@@ -46,10 +46,10 @@ class Purchase(TargetedCommand):
 
     def move_to_inventory(self):
         self.args['interaction'].main_npc.inventory.remove(self.args['target'])
-        items = self.args['target'].split(self.args['target'], self.args['quantity'])
-        self.args['player_lifeform'].inventory.append(items[0])
-        if len(items) > 1:
-            self.args['interaction'].main_npc.inventory.append(items[1])
-
-        failure = self.args['target'].on_take(self.args['player_lifeform'])
+        purchased, remaining_stock = self.args['target'].split(self.args['target'], self.args['quantity'])
+        self.args['player_lifeform'].inventory.append(purchased)
+        if remaining_stock:
+            self.args['interaction'].main_npc.inventory.append(remaining_stock)
+            remaining_stock.on_take(self.args['interaction'].main_npc)
+        failure = purchased.on_take(self.args['player_lifeform'])
         return failure

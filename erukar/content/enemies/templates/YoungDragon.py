@@ -10,9 +10,3 @@ class YoungDragon(Enemy):
         self.acuity     = int(random.uniform(4, 9))
         self.sense      = int(random.uniform(4, 9))
         self.resolve    = int(random.uniform(10, 13))
-
-    def perform_turn(self):
-        targets = list(self.viable_targets(self.current_room))
-        if len(targets) > 0:
-            return self.use_breath(targets[0])
-        return self.maybe_move_somewhere()

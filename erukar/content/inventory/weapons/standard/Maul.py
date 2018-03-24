@@ -20,3 +20,5 @@ class Maul(Weapon):
         'strength': {'requirement': 3, 'scaling_factor': 5, 'cutoff': 200},
         'dexterity':  {'requirement': 0, 'scaling_factor': 1.25, 'cutoff': 200},
     }
+
+    Variant = 'simple'

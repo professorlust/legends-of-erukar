@@ -24,6 +24,7 @@ class Weapon(Item):
     YouAreHitBy = 'You are hit by {subject}\'s {weapon_name}!'
 
     # Used when you need to have projectiles
+    Variant = 'weapon' 
     RequiresAmmo = False
     AmmoType = ''
 

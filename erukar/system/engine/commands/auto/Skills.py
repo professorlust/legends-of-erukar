@@ -37,6 +37,8 @@ class Skills(Command):
             erukar.content.skills.Bloodlust,
             erukar.content.skills.Rage,
             erukar.content.skills.ImprovedSight,
-            erukar.content.skills.SwordTraining
+            erukar.content.skills.MartialWeaponTraining,
+            erukar.content.skills.PolearmTraining,
+            erukar.content.skills.BowTraining,
+            erukar.content.skills.CrossbowTraining
         ]
-

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, joinedload
 from sqlalchemy.dialects.postgresql import JSON
+from .Modifier import Modifier
 
 from ..ErukarBaseModel import ErukarBaseModel, Base
 
@@ -45,6 +46,10 @@ class Item(ErukarBaseModel, Base):
             modifier = modifier_schema.create_new_object()
             modifier.apply_to(new_object)
 
+    def update_attributes(self, item, session):
+        self.item_attributes = item.persistable_attributes()
+        self.add_or_update(session)
+
     def apply_attributes(self, new_object):
         if not self.item_attributes: return
         for attribute_name in self.item_attributes:
@@ -71,5 +76,5 @@ class Item(ErukarBaseModel, Base):
         for real_mod in item.modifiers:
             schema_mod = Modifier.create_from_object(session, real_mod)
             schema.modifiers.append(schema_mod)
-        schema.attributes = item.persistable_attributes()
+        schema.item_attributes = item.persistable_attributes()
         return schema

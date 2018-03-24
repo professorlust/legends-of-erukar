@@ -21,3 +21,5 @@ class Staff(Weapon):
         'acuity':  {'requirement': 6, 'scaling_factor': 3, 'cutoff': 200},
         'strength': {'requirement': 4, 'scaling_factor': 2, 'cutoff': 200},
     }
+
+    Variant = 'polearm'
