@@ -28,7 +28,7 @@ class ChanceToInflictCondition(WeaponMod):
 
     def randomize(self, parameters=None):
         '''In the future we will determine level based on the generation parameters level and desirability''' 
-        self.condition_name, self.condition = random.choice(list(Modules.get_members_of('erukar.game.conditions.negative')))
+        self.condition_name, self.condition = random.choice(list(Modules.get_members_of('erukar.content.conditions.negative')))
 
         self.level = int(random.random() * len(self.Levels))
         self.chance = 0.025 * (1 + self.level)

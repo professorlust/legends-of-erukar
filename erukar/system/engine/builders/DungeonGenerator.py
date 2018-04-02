@@ -98,14 +98,27 @@ class DungeonGenerator(FactoryBase, AStarBase):
         return random.choice(self.vertices)
 
     def add_transitions(self):
-        center = tuple([int(max([coord[i] for coord in self.vertices]) + min([coord[i] for coord in self.vertices])/2) for i in range(2)])
+        center = self.calculate_center()
 
         for coord in self.location.adjacent_sectors():
             direction = self.location.direction_to(coord)
-            transition_piece  = TransitionPiece(self.location.coordinates(), coord)
+            transition_piece = TransitionPiece(self.location.coordinates(), coord)
             transition_coord = getattr(self, direction)(center)
-            self.world.add_actor(transition_piece, transition_coord)
-            self.world.location_transition_coordinates[coord] = transition_coord
+            self.world.add_transition(transition_piece, transition_coord)
+
+    def calculate_center(self):
+        '''Moved this to be more explicit because the generator did not read well'''
+        max_x = max([coord[0] for coord in self.vertices])
+        max_y = max([coord[1] for coord in self.vertices])
+        min_x = min([coord[0] for coord in self.vertices])
+        min_y = min([coord[1] for coord in self.vertices])
+
+        center_x = max_x + min_x/2
+        center_y = max_y + min_y/2
+        return (center_x, center_y)
+
+    def central(self, center):
+        return self.get_closest_tile_to(center)
     
     def northeastern(self, center):
         center = center[0] + 100, center[1] + 100 
@@ -141,21 +154,29 @@ class DungeonGenerator(FactoryBase, AStarBase):
 
     def create_dungeon(self):
         self.world = Dungeon()
-        self.create_rooms() #
+        self.create_vertices()
         for vertex in self.vertices:
             self.connect_to_random_vertex(vertex) #
 
         self.create_rooms_along_lines()
+        self.add_floor_tiles()
+        self.place_chunks_on_random_vertices()
         self.add_walls()
+        self.world.generate_tiles(TileGenerator(width=self.world.pixels_per_side, breadth=self.world.pixels_per_side))
 
-        for loc in self.world.walls.keys():
-            material = self.get_wall_tile()
-            self.world.walls[loc].material = material
-            self.world.tiles[loc] = material
+    def add_floor_tiles(self):
         for loc in self.world.all_traversable_coordinates():
             material = self.get_floor_tile()
             self.world.tiles[loc] = material
-        self.world.generate_tiles(TileGenerator(width=self.world.pixels_per_side, breadth=self.world.pixels_per_side))
+
+    def place_chunks_on_random_vertices(self):
+        used_vertices = []
+        for chunk in self.location.chunks:
+            vertex = random.choice([x for x in self.vertices if x not in used_vertices])
+            chunk.generate(vertex, self.world)
+            self.vertices = [v for v in self.vertices if v in self.world.dungeon_map]
+            if len(self.vertices) <= 1: return
+            used_vertices.append(vertex)
 
     def add_walls(self):
         xo, yo = map(min, zip(*self.world.dungeon_map))
@@ -164,6 +185,11 @@ class DungeonGenerator(FactoryBase, AStarBase):
             for x in range(xo-1, xf+2):
                 if (x,y) not in self.world.dungeon_map:
                     self.world.walls[(x, y)] = Wall()
+        for loc in self.world.walls.keys():
+            material = self.get_wall_tile()
+            self.world.walls[loc].material = material
+            if loc in self.world.tiles: continue
+            self.world.tiles[loc] = material
 
     def create_rooms_along_lines(self):
         '''Use the connections from the random connection process to generate A* paths and then connect'''
@@ -280,7 +306,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
             current_path[i].linearity = i
             current_path[-i-1].linearity = i
         
-    def create_rooms(self):
+    def create_vertices(self):
         '''Should be pretty straightforward'''
         num_rooms = int(numpy.random.beta(8, 4) * self.size)
         for i in range(num_rooms):

@@ -15,8 +15,8 @@ class Elemental(Enemy):
         self.sen_ratio = 0
         self.res_ratio = 0.3
         
-        self.left = erukar.custom.inventory.weapons.enemy.Claws()
-        self.right = erukar.custom.inventory.weapons.enemy.Claws()
+        self.left = erukar.content.inventory.weapons.enemy.Claws()
+        self.right = erukar.content.inventory.weapons.enemy.Claws()
         self.apply_elemental_effects()
 
     def apply_elemental_effects(self):

@@ -35,6 +35,14 @@ blacklist = []
 shard = Shard(emit)
 shard.activate()
 
+@app.route('/api/shard')
+def get_shard_contents():
+    return jsonify({
+        str(sector): {
+            'name': shard.regions[0].sectors[sector].name,
+            'type': str(type(sector))
+        } for sector in shard.regions[0].sectors})
+
 @app.route('/api/ping')
 def do_ping():
     return jsonify({

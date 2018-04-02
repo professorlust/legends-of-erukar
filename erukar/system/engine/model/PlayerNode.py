@@ -72,7 +72,7 @@ class PlayerNode(Indexer):
         self.emit = connection.emit
         self.sid = connection.sid
 
-    def mark_for_transition(self, new_coords):
+    def mark_for_transition(self, new_sector):
         self.status = PlayerNode.Transitioning
-        self.previous_location = self.character.overland_coordinates()
-        self.character.set_overland_coordinates(new_coords)
+        self.previous_location = self.character.sector
+        self.character.sector = new_sector

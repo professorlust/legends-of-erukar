@@ -3,7 +3,8 @@ from erukar.system.engine import EnvironmentProfile, DungeonGenerator
 class Location:
     def __init__(self, sector=None):
         self.sector = sector
-        self.environment_profile = EnvironmentProfile()
+        self.chunks = [] # See config/world/chunks/
+        self.environment_profile = EnvironmentProfile() if not sector else sector.environment_profile
         self.name = 'Base Location'
         self.is_named = False
         self.dungeon_file_name = None
@@ -12,7 +13,7 @@ class Location:
         return self.sector.adjacent()
 
     def coordinates(self):
-        return self.sector.coordinates()
+        return self.sector.get_coordinates()
 
     def alias(self):
         if self.is_named:
@@ -33,6 +34,7 @@ class Location:
 
     def direction_to(self, direction_to):
         here = self.coordinates()
+        if isinstance(here, str): return 'central'
         if direction_to[0] == here[0]:
             return 'western' if direction_to[1] > here[1] else 'eastern'
         if direction_to[1] == here[1]:

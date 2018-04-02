@@ -21,6 +21,24 @@ class Door(ErukarActor):
         if self.description is '':
             self.description = self.generic_description
 
+    def tile_id(self, is_open=None):
+        if is_open is None:
+            is_open = self.is_open
+        return '{}-{}'.format(str(self.uuid), 'o' if is_open else 'c')
+
+    def ids_to_generate(self):
+        return [self.tile_id(is_open=False), self.tile_id(is_open=True)]
+
+    def generate_tile(self, dimensions, tile_id):
+        h, w = dimensions
+        for y in range(h):
+            for x in range(w):
+                if (x is 2 or x is w-2) or (y is 2 or y is h-2):
+                    yield {'r':205,'g':133,'b':63,'a':1}
+                elif 2 < x < (w-2) and 2 < y < (h-2) and tile_id == self.tile_id(is_open=False):
+                    yield {'r':139,'g':69,'b':19,'a':1}
+                else: yield {'r':0,'g':0,'b':0,'a':0}
+
     def alias(self):
         return 'door'
 

@@ -2,6 +2,8 @@ from erukar.system.engine import GenerationProfile, GenerationParameter, Tile
 import random
 
 class Sand(Tile):
+    BaseAlias = 'loose sand'
+
     generation_parameters = GenerationProfile(
         ambient_water = GenerationParameter(-0.2),
         precipitation = GenerationParameter(-0.7),
@@ -11,6 +13,9 @@ class Sand(Tile):
         shelter     = GenerationParameter(-1.0, dropoff=4.0),
         barrenness = GenerationParameter(0.5),
     )
+
+    def tile_id(self):
+        return 'env-sand'
 
     def generate(self, *_):
         random_red = int(random.uniform(210, 220))

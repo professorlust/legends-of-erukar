@@ -18,7 +18,7 @@ class IurianCleric(Enemy):
         self.res_ratio = 0.2
         self.define_level(5)
 
-    def generate_tile(self, dimensions):
+    def generate_tile(self, dimensions, tile_id):
         outline = {'r':32, 'g': 32, 'b': 32, 'a': 1}
         armor_color = {'r':158, 'g': 158, 'b': 158, 'a': 1}
         skin_tone = {'r': 160, 'g':108, 'b':89, 'a':1}

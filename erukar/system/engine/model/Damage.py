@@ -50,7 +50,7 @@ class Damage:
         return int(actual_scale) + value
 
     def adjusted_scalar(self, for_player, weapon):
-        if not self.scales: return value
+        if not self.scales: return 0.0
         return self.scalar + for_player.offset_scale(weapon)
 
     @staticmethod

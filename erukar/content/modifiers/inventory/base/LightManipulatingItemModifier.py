@@ -38,7 +38,8 @@ class LightManipulatingItemModifier(ItemModifier):
         self.aura.initiator = initiator
         self.aura.blocked_by_walls = True
         self.aura.modify_light = self.modify_light
-        initiator.initiate_aura(self.aura)
+        if initiator:
+            initiator.initiate_aura(self.aura)
 
     def on_unequip(self, lifeform):
         self.stop_aura()

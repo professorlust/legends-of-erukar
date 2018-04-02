@@ -1,45 +1,36 @@
 from erukar.system.engine import EnvironmentProfile, ErukarObject
 from .Location import Location
-import operator
+import operator, re
 
 class Sector(ErukarObject):
     def __init__(self, region=None):
-        self.set_coordinates((0,0,0))
+        self.coordinates = ""
         self.environment_profile = EnvironmentProfile()
         self.region = region
+        self.adjacent_sectors = set()
         self.locations = set()
         self.name = 'Random Sector'
 
     def alias(self):
-        return '{} {}'.format(self.name, self.coordinates())
+        return self.name
 
-    def coordinates(self):
-        return (self.x, self.alpha, self.beta)
+    def set_coordinates(self, new_coords):
+        self.coordinates = Sector.autocorrect(new_coords)
 
-    def set_coordinates(self, coordinates):
-        self.x, self.alpha, self.beta = coordinates
+    def get_coordinates(self):
+        return self.coordinates
 
     def adjacent(self):
-        sectors = self.region.sector_limits
-        if len(sectors) < 2: return
-        for neighbor in self.neighbors():
-            if neighbor in sectors:
-                yield neighbor
+        for sector in self.adjacent_sectors:
+            yield sector
 
     def neighbors(self):
-        return [
-            (self.x,   self.alpha+1, self.beta-1),
-            (self.x,   self.alpha-1, self.beta+1),
-            (self.x+1, self.alpha,   self.beta-1),
-            (self.x-1, self.alpha,   self.beta+1),
-            (self.x+1, self.alpha-1, self.beta),
-            (self.x-1, self.alpha+1, self.beta),
-        ]
+        return list(self.adjacent())
 
     def distance_to(self, sector):
         '''The sum of all coordinates adds up to zero. By taking the absolute
         value and summing them, you get twice the total distance between two coords.'''
-        return int(sum([abs(x) for x in tuple(map(operator.sub, self.coordinates(), sector))])/2)
+        return -1
 
     def location(self):
         if len(self.locations) > 0:
@@ -49,3 +40,29 @@ class Sector(ErukarObject):
         new_loc.environment_profile = self.environment_profile
         self.locations.add(new_loc)
         return new_loc
+
+    def is_overland(coords):
+        if coords is not str: coords = str(coords).replace(' ','')
+        return re.match(r'\(([-+]*\d+),([-+]*\d+),([-+]*\d+)\)', coords) is not None
+
+    def autocorrect(coord_string):
+        if Sector.is_overland(coord_string):
+            return Sector.to_overland(coord_string)
+        return coord_string
+
+    def to_overland(coords):
+        out = coords
+        if isinstance(coords,str):
+            out = coords\
+                .strip()\
+                .replace(' ','')\
+                .replace('(','')\
+                .replace(')','')\
+                .split(',')
+        elif not isinstance(coords, tuple) and not isinstance(coords, list):
+            raise ValueError('Malformed Overland Coordinates: Unable to parse a non-str non-list non-tuple input (received {})'.format(type(coords)))
+
+        if len(out) != 3:
+            raise ValueError('Malformed Overland Coordinates String: Received "{}", which returned "{}"'.format(coords, out))
+
+        return tuple(int(x) for x in out)

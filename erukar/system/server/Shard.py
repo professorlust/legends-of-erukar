@@ -1,10 +1,10 @@
-from erukar.system import Connector, Player, Manager, PlayerNode, Zones
+from erukar.system import Connector, Player, Manager, PlayerNode, Zones, Sector
 from .Interface import Interface
 from .InstanceInfo import InstanceInfo
 from .Instance import Instance
 from .ServerProperties import ServerProperties
 from .Connection import Connection
-import erukar, threading, json, asyncio
+import erukar, threading, json, asyncio, random
 import numpy as np
 
 import logging
@@ -204,10 +204,12 @@ class Shard(Manager):
         return next((x for x in self.connected_players if x.uid == uid), None)
 
     def location_for(self, player):
-        coords = player.overland_coordinates()
+        sector = Sector.autocorrect(player.sector)
         for region in self.regions:
-            if coords in region.sector_limits:
-                return region.sector_at(coords).location()
+            sector_at = region.sector_at(sector)
+            if sector_at:
+                return sector_at.location()
+        return random.choice(self.regions).default_sector.location()
 
     def get_instance_for(self, character, instance_identifier):
         '''Tries to find an active instance for whatever the character has marked'''

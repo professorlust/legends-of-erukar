@@ -12,4 +12,4 @@ class AcidElemental(Elemental):
 
     def __init__(self):
         super().__init__('Acid Elemental', True)
-        self.define_level(random.random()*20+5)
+        self.define_level(int(random.random())*20+5)

@@ -90,4 +90,4 @@ npc.wealth = 1000
 dungeon.add_actor(npc, (1,4))
 
 transition_piece  = TransitionPiece((0,-3,3), (1, -3, 2))
-dungeon.add_actor(transition_piece, (4,0))
+dungeon.add_transition(transition_piece, (4,0))

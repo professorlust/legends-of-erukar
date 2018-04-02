@@ -2,6 +2,10 @@ from erukar.system.engine import GenerationProfile, GenerationParameter, Tile
 import random, math
 
 class WoodWall(Tile):
+
+    def tile_id(self):
+        return 'env-wood-wall'
+
     def generate(self, loc, total_dimensions):
         if loc[1] % 3:
             random_red = int(random.uniform(140, 160))

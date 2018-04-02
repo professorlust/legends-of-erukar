@@ -8,6 +8,9 @@ class StoneWall(Tile):
         opulence    = GenerationParameter(0.0)
     )
 
+    def tile_id(self):
+        return 'env-stone-wall'
+
     def generate(self, *_):
         random_gray = random.uniform(130, 180)
         return [int(random_gray) for x in range(3)] + [1]

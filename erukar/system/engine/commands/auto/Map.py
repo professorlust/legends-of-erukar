@@ -46,7 +46,7 @@ class Map(Command):
             return
 
         self.args['player_lifeform'].build_zones(self.world)
-        self.open_space = self.args['player_lifeform'].zones.all_seen
+        self.open_space = self.player_zones().all_seen
 
         # Now get the min and max range for x and y
         max_x, max_y = map(max, zip(*self.open_space))
@@ -62,36 +62,51 @@ class Map(Command):
                 results['rooms'].append(details)
         self.append_result(self.player_info.uid, results)
 
+    def player_zones(self):
+        return self.args['player_lifeform'].zones
+
     def get_room_details(self, x, y):
         return {
+            'title': self.get_title_for(x,y),
             'coordinates': [x, y],
-            'tile': self.layers_for(x,y),
+            'tile': self.get_tile_at(x,y),
             'walls': self.wall_overlays_at(x, y),
             'actors': list(self.get_actors_at(x,y)),
-            'actions': self.actions_for(x, y)
+            'actions': self.actions_for(x, y),
+            'lighting': self.get_lighting_at(x,y)
         }
+
+    def get_title_for(self, x, y): 
+        if (x,y) not in self.player_zones().fog_of_war:
+            return 'Unknown: obscured by fog of war'
+        aliases = ", ".join(actor.alias() for actor in self.world.actors_at(self.args['player_lifeform'], (x,y)))
+        return (aliases if aliases else self.world.get_tile_name((x,y))).capitalize()
+
+    def get_lighting_at(self, x, y):
+        if (x,y) in self.player_zones().fog_of_war:
+            return Tile.rgba(255,255,255,1.0)
+        return Tile.rgba(0,0,0,0.2)
 
     def wall_overlays_at(self, x, y):
         return self.world.get_wall_overlay((x,y))
 
-    def layers_for(self, x, y):
+    def get_tile_at(self, x, y):
         if (x,y) not in self.open_space:
             return 'null'
-        if (x,y) in self.world.all_traversable_coordinates():
-            return self.world.get_floor_type((x,y))
-        return self.world.get_wall_type((x,y))
+        return self.world.get_tile_at((x,y))
 
     def get_actors_at(self, x, y):
-        for actor in self.world.actors_at(self.args['player_lifeform'], (x,y)):
-            yield str(actor.uuid)
+        for actor in self.world.actors_at(None, (x,y)):
+            yield actor.tile_id()
 
-    def action(command, description="", cost=1, target='', weapon=''):
+    def action(command, description="", cost=1, target='', weapon='', interaction_type=''):
         return {
             'command': command,
             'cost': cost,
             'description': command if not description else description,
             'interaction_target': target,
-            'weapon': weapon
+            'weapon': weapon,
+            'interaction_type': interaction_type
         }
 
     def attack_action(weapon, creature):
@@ -104,6 +119,10 @@ class Map(Command):
 
     def transition_action(transition):
         return Map.action('Transition', description='Travel to {}'.format(transition.destination), target=str(transition.uuid))
+
+    def basic_action(target):
+        interaction_type = 'close' if target.is_open else 'open'
+        return Map.action('BasicInteraction', description='{} the door'.format(interaction_type.capitalize()), target=str(target.uuid), interaction_type=interaction_type)
 
     def take_action(item):
         return Map.action('Take', description='Take {}'.format(item.alias()), target=str(item.uuid))
@@ -120,6 +139,8 @@ class Map(Command):
         move = self.move_action(x,y)
         if move: actions.append(move)
 
+        for door in self.world.actors_of_type_at(player, loc, Door):
+            actions.append(Map.basic_action(door))
         for transition in self.world.actors_of_type_at(player, loc, TransitionPiece):
             actions.append(Map.transition_action(transition))
         for item in self.world.actors_of_type_at(player, loc, Item):
@@ -137,7 +158,7 @@ class Map(Command):
                 yield Map.attack_action(weapon, creature)
 
     def move_action(self, x,y):
-        move_sets = self.args['player_lifeform'].zones.movement
+        move_sets = self.player_zones().movement
         applicable_move_costs = [cost for cost in move_sets if (x,y) in move_sets[cost]]
         if not applicable_move_costs: return None
 
@@ -152,12 +173,12 @@ class Map(Command):
         return Tile.rgba(0, 0, 0, 0.5)
 
     def get_movement_overlay_for(self, x,y):
-        if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[1]):
+        if any((x,y) == coord for coord in self.player_zones().movement[1]):
             return Tile.rgba(0, 100, 0, 0.2)
 
-        if any((x,y) == coord for coord in self.args['player_lifeform'].zones.movement[2]):
+        if any((x,y) == coord for coord in self.player_zones().movement[2]):
             return Tile.rgba(0, 80, 80, 0.2)
 
     def get_visual_overlay_for(self, x,y):
-        if any((x,y) == coord for coord in self.args['player_lifeform'].zones.fog_of_war):
+        if any((x,y) == coord for coord in self.player_zones().fog_of_war):
             return Tile.rgba(0, 0, 0, 0)

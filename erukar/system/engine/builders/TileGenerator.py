@@ -13,8 +13,8 @@ class TileGenerator:
         self.width = dungeon.pixels_per_side,
         self.height = dungeon.pixels_per_side
 
-    def build(self, tile):
-        return list(tile.build_generator((self.width, self.breadth)))
+    def build(self, tile, tile_id):
+        return list(tile.build_generator((self.width, self.breadth), tile_id))
 
-    def build_actor(self, actor):
-        return list(actor.generate_tile((self.width, self.breadth)))
+    def build_actor(self, actor, tile_id):
+        return list(actor.generate_tile((self.width, self.breadth), tile_id))

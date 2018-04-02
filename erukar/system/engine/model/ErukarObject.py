@@ -5,7 +5,13 @@ class ErukarObject:
     def __init__(self):
         self.uuid = uuid.uuid4()
 
-    def generate_tile(self, dimensions):
+    def tile_id(self):
+        return str(self.uuid)
+
+    def ids_to_generate(self):
+        return [self.tile_id()]
+
+    def generate_tile(self, dimensions, tile_id):
         '''Erukar Objects are, by default, Basic Blue Circles'''
         h, w = dimensions
         radius = int(w/3)-1

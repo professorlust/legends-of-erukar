@@ -12,4 +12,4 @@ class ShadowElemental(Elemental):
 
     def __init__(self):
         super().__init__('Shadow Elemental', True)
-        self.define_level(random.random()*20+5)
+        self.define_level(int(random.random())*20+5)

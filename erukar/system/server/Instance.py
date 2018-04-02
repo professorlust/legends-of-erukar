@@ -84,8 +84,9 @@ class Instance(Manager):
             raise Exception("No character")
 
         node.world = self.dungeon
-        node.overland_coordinates = self.dungeon.overland_location.coordinates()
-        self.dungeon.add_actor(node.character, self.dungeon.location_transition_coordinates.get(node.previous_location, random.choice(self.dungeon.spawn_coordinates)))
+        node.sector = self.dungeon.overland_location.coordinates()
+        spawn_location = self.dungeon.location_transition_coordinates.get(node.previous_location, random.choice(self.dungeon.spawn_coordinates))
+        self.dungeon.add_actor(node.character, spawn_location)
         if self.active_player is None: self.active_player = node
 
         erukar.data.Character.update(node.character, self.session)

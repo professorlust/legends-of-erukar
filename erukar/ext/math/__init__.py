@@ -6,6 +6,7 @@ from .Navigator import Navigator
 from .Neighbors import Neighbors
 from .Pathing import Pathing
 from .Random import Random
+from .Shapes import Shapes
 
 __all__ = [
     "Curves", 
@@ -15,5 +16,6 @@ __all__ = [
     "Navigator", 
     "Neighbors", 
     "Pathing", 
-    "Random"
+    "Random",
+    "Shapes"
 ]

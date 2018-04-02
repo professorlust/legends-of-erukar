@@ -18,7 +18,7 @@ class ErukarActor(Describable):
     def evasion(self):
         return self.base_evasion
 
-    def generate_tile(self, dimensions):
+    def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
         radius = int(w/3)-1
         circle = list(Distance.points_in_circle(radius, (int(h/2),int(w/2))))

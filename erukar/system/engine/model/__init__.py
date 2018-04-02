@@ -1,3 +1,4 @@
+from .CachedDataStructures import CachedList, CachedSet
 from .Condition import Condition
 from .Containable import Containable
 from .Damage import Damage
@@ -22,6 +23,8 @@ from .Stance import Stance
 from .Tile import Tile
 
 __all__ = [
+    "CachedList",
+    "CachedSet",
     "Condition", 
     "Containable", 
     "Damage", 

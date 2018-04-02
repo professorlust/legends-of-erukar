@@ -2,6 +2,8 @@ from erukar.system.engine import GenerationProfile, GenerationParameter, Tile
 import random
 
 class Grass(Tile):
+    BaseAlias = 'foot-tall grass'
+
     generation_parameters = GenerationProfile(
         ambient_water = GenerationParameter(0.5),
         precipitation = GenerationParameter(0.1),
@@ -12,6 +14,9 @@ class Grass(Tile):
         fabrication = GenerationParameter(-0.2),
         shelter     = GenerationParameter(-1.0, dropoff=0.5)
     )
+
+    def tile_id(self):
+        return 'env-grass'
 
     def generate(self, *_):
         random_red = int(random.uniform(40, 60))

@@ -1,6 +1,6 @@
 from erukar.system.engine import ErukarActor, Dead, Dying, Observation, Armor, Weapon
 from .Zones import Zones
-import math, random
+import math, random, re
 
 import logging
 logger = logging.getLogger('debug')
@@ -34,7 +34,7 @@ class Lifeform(ErukarActor):
         self.coordinates = (0,0)
         self.world = world
         self.instance = ''
-        self.set_overland_coordinates((0,0,0))
+        self.sector = "(0,0,0)"
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.zones = Zones()
@@ -76,7 +76,7 @@ class Lifeform(ErukarActor):
 
     def subscribe(self, instance):
         self.instance = instance.identifier
-        self.set_overland_coordinates(instance.location.sector.coordinates())
+        self.sector = instance.location.sector.get_coordinates()
         for skill in self.skills:
             if hasattr(skill, 'apply_to'):
                 skill.apply_to(self)
@@ -89,11 +89,10 @@ class Lifeform(ErukarActor):
         if hasattr(skill, 'apply_to'):
             skill.apply_to(self)
 
-    def set_overland_coordinates(self, new_loc):
-        self.overland_x, self.overland_alpha, self.overland_beta = new_loc
-
     def overland_coordinates(self):
-        return (self.overland_x, self.overland_alpha, self.overland_beta)
+        matches = re.match(r'\(([-+]*\d+),([-+]*\d+),([-+]*\d+)\)', self.sector)
+        if not matches: return self.sector
+        return tuple(int(x) for x in matches.group()[1:-1].split(','))
 
     def tick(self):
         '''Regular method which is performed every 5 seconds in game time'''

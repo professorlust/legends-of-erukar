@@ -7,7 +7,7 @@ class TransitionPiece(ErukarActor):
         self.origin = origin
         self.destination = destination
 
-    def generate_tile(self, dimensions):
+    def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
         for y in range(h):
             for x in range(w):

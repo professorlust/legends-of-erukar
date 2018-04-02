@@ -118,7 +118,7 @@ class Character(Lifeform):
         super().copy_from_object(player)
         self.copy_inventory(session, player)
         self.copy_skills(session, player)
-        self.sector = '{},{},{}'.format(*player.overland_coordinates())
+        self.sector = player.sector
         self.deceased = player.has_condition(erukar.system.engine.Dead)
 
     def create_from_object(session, player, node_schema=None):

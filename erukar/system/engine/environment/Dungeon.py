@@ -1,4 +1,5 @@
-from erukar.system.engine import ErukarActor, Lifeform, Item, Player, Enemy
+from erukar.system.engine import ErukarActor, Lifeform, Item, Player, Enemy, CachedSet
+from .Door import Door
 from erukar.ext.math import Navigator
 
 import logging
@@ -32,13 +33,26 @@ class Dungeon(ErukarActor):
     def on_start(self):
         super().on_start()
 
-    def add_tile(self, uuid, tile):
-        self.tile_set[uuid] = self.tile_generator.build(tile)
+    def add_tile(self, tile_id, tile):
+        if tile_id in self.tile_set: return
+        self.tile_set[tile_id] = self.tile_generator.build(tile, tile_id)
         self.tile_set_version += 1
+
+    def add_actor_tiles(self, actor):
+        for tile_id in actor.ids_to_generate():
+            if tile_id in self.tile_set: continue
+            self.tile_set[tile_id] = self.tile_generator.build_actor(actor, tile_id)
 
     def generate_tiles(self, tg):
         self.tile_generator = tg
-        self.tile_set = {str(tile.uuid): tg.build(tile) for tile in set(self.tiles.values())}
+        for tile in self.tiles.values():
+            for tile_id in tile.ids_to_generate():
+                if tile_id in self.tile_set: continue
+                self.tile_set[tile_id] = tg.build(tile, tile_id)
+        for actor in self.actors:
+            for tile_id in actor.ids_to_generate():
+                if tile_id in self.tile_set: continue
+                self.tile_set[tile_id] = tg.build_actor(actor, tile_id)
         self.tile_set_version = 1
 
     def get_object_by_uuid(self, uuid):
@@ -66,11 +80,15 @@ class Dungeon(ErukarActor):
             if aura.affects_tile(room_at):
                 yield aura
 
-    def get_floor_type(self, loc):
-        return str(self.tiles[loc].uuid)
+    def get_tile_at(self, loc):
+        if loc in self.tiles:
+            return self.tiles[loc].tile_id()
+        return 'null'
 
-    def get_wall_type(self, loc):
-        return str(self.tiles[loc].uuid)
+    def get_tile_name(self, loc):
+        if loc in self.tiles: 
+            return self.tiles[loc].alias()
+        return 'Unknown'
 
     def get_wall_overlay(self, loc):
         overlays = []
@@ -110,12 +128,49 @@ class Dungeon(ErukarActor):
 
     def all_traversable_coordinates(self):
         '''Move to player later'''
-        return [x for x in self.dungeon_map]
+        return list(self.traversable_coordinates_generator())
+
+    def traversable_coordinates_generator(self):
+        if not hasattr(self, 'door_cache'):
+            self.build_door_cache()
+        for loc in self.dungeon_map:
+            if loc in self.door_cache:
+                if any(not x.is_open for x in self.door_cache[loc]):
+                    continue
+            yield loc
+
+    def build_door_cache(self):
+         self.door_cache = {}
+         for loc in self.dungeon_map:
+             doors = list(self.actors_of_type_at(None, loc, Door))
+             if any(doors):
+                 self.door_cache[loc] = doors
 
     def get_room_at(self, location):
         if location in self.dungeon_map:
             return self.dungeon_map[location]
         return None
+
+    def apply_tiles_on_closed_space(self, spaces, tile):
+        for space in spaces:
+            if space in self.dungeon_map:
+                continue
+            self.tiles[space] = tile
+
+    def apply_tiles_on_all_open_space(self, tile):
+        for space in self.dungeon_map:
+            self.tiles[space] = tile
+
+    def apply_tiles_on_open_space(self, spaces, tile):
+        for space in spaces:
+            if space not in self.dungeon_map:
+                continue
+            self.tiles[space] = tile
+
+    def remove_space(self, closed_space):
+        for space in closed_space:
+            if space in self.dungeon_map:
+                self.dungeon_map.pop(space, None)
 
     def auras_for_locations(self, locations):
         '''
@@ -131,12 +186,19 @@ class Dungeon(ErukarActor):
     def clean_up_auras(self):
         self.active_auras = set(x for x in self.active_auras if not x.is_expired)
 
+    def add_door(self, door, coordinates):
+        self.add_actor(door, coordinates)
+        self.build_door_cache()
+
+    def add_transition(self, trans, coordinates):
+        self.add_actor(trans, coordinates)
+        self.location_transition_coordinates[trans.destination] = coordinates
+
     def add_actor(self, actor, coordinates):
         self.actors.add(actor)
         actor.coordinates = coordinates
         if self.tile_generator:
-            self.tile_set[str(actor.uuid)] = self.tile_generator.build_actor(actor)
-            logger.info(self.tile_set[str(actor.uuid)])
+            self.add_actor_tiles(actor)
 
     def remove_actor(self, actor):
         if actor in self.actors:

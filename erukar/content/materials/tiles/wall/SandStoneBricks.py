@@ -12,6 +12,9 @@ class SandStoneBricks(Tile):
         barrenness = GenerationParameter(0.5),
     )
 
+    def tile_id(self):
+        return 'env-sandstone-brick-wall'
+
     def generate(self, loc, total_dimensions):
         if (loc[1]+1) % 2 and (loc[1] + loc[0]) % 4:
             random_red = int(random.uniform(210, 220))
