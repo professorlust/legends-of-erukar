@@ -6,6 +6,13 @@ class Gauntlets(Armor):
     Probability = 1
 
     InventoryDescription = "Gauntlets todo"
-    BasePrice = 40
-    BaseWeight = 4.3
+    BasePrice = 180
+    BaseWeight = 15
 
+    ArmorClass = Armor.Heavy
+    AttackPenalty = 0.10
+    DamageMitigations = {
+        'piercing': (0.20, 10),
+        'slashing': (0.20, 10),
+        'bludgeoning': (0.07, 3)
+    }

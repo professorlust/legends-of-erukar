@@ -129,11 +129,14 @@ class Item(Describable):
             return functools.reduce(operator.mul, mults, self.BaseWeight * self.material.WeightMultiplier)
         return functools.reduce(operator.mul, mults, self.BaseWeight)
 
-    def price(self):
+    def price(self, econ=None):
         mults = [x.PriceMultiplier for x in self.modifiers]
         if hasattr(self, 'material') and self.material:
             return functools.reduce(operator.mul, mults, self.BasePrice * self.material.PriceMultiplier * self.durability_multiplier())
         return functools.reduce(operator.mul, mults, self.BasePrice)
+
+    def base_price(self):
+        return self.price()
 
     def durability_multiplier(self):
         mmdpm = self.material.MinimumDurabilityPriceMultiplier
@@ -183,3 +186,6 @@ class Item(Describable):
     @classmethod
     def split(cls, original, quantity):
         return original, None
+
+    def flavor_text(self, player):
+        return 'This is a generic item. Lorem ipsum dolor sit amet, consectetur adipiscing elit'

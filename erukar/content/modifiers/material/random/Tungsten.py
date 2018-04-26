@@ -14,4 +14,4 @@ class Tungsten(Metal):
     }
 
     InventoryDescription = "Heavy metal which is capable of dissipating high temperatures better than most other metals"
-    InventoryName = "Tungeten"
+    InventoryName = "Tungsten"

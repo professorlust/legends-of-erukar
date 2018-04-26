@@ -9,3 +9,7 @@ class Wraps(Armor):
     BasePrice = 10
     BaseWeight = 0.2
 
+    ArmorClass = Armor.Light
+    EvasionPenalty = -0.05
+    DamageMitigations = {
+    }

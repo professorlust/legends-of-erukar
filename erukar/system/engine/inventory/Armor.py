@@ -2,9 +2,20 @@ from erukar.system.engine import Damage
 from .Item import Item
 
 class Armor(Item):
+    Light = "LIGHT"
+    Medium = "MEDIUM"
+    Heavy = "HEAVY"
+
     EquipmentLocations = ['chest']
     Persistent = True
     EssentialPart = "armor"
+
+    EvasionPenalty = 0.00
+    AttackPenalty = 0.00
+    MovementSpeedPenalty = 0.00
+    VisionPenalty = 0.00
+
+    ArmorClass = "error"
     DamageMitigations = {
         # type, mitigation percent, glancing range
         'bludgeoning': (0.05, 2),

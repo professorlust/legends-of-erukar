@@ -12,6 +12,11 @@ def configure(shard):
         make_ranger()
     ]
 
+    for template in shard.templates:
+        template.skill_points = 0
+        template.stat_points = 0
+        template.wealth = 200
+
 def make_barbarian():
     barbarian = Lifeform(None)
     barbarian.name = 'Barbarian'
@@ -58,10 +63,11 @@ def make_cleric():
     
     cleric.inventory = [
         Mace(modifiers=[Iron]),
-        Piece(modifiers=[Chainmail]),
-        Leggings(modifiers=[Chainmail]),
-        Treads(modifiers=[Leather]),
-        Potion(5),
+        Cuirass(modifiers=[Leather]),
+        Leggings(modifiers=[Leather]),
+        Boots(modifiers=[Leather]),
+        HolyWater(5),
+        PotionOfHealing(5),
     ]
     cleric.spell_words = [
     ]
@@ -88,9 +94,9 @@ def make_fighter():
     fighter.inventory = [
         Longsword(modifiers=[Iron]),
         HeaterShield(modifiers=[Oak]),
-        Piece(modifiers=[Chainmail]),
-        Leggings(modifiers=[Chainmail]),
-        Treads(modifiers=[Leather]),
+        Brigandine(modifiers=[Leather]),
+        Leggings(modifiers=[Leather]),
+        Boots(modifiers=[Leather]),
         Spear(modifiers=[Iron]),
     ]
     fighter.skills = [
@@ -123,7 +129,8 @@ def make_mage():
         Robes(modifiers=[Cotton]),
         Sandals(modifiers=[Leather]),
         Breeches(modifiers=[Cotton]),
-        Potion(5)
+        PotionOfHealing(5),
+        PotionOfRenewal(5)
     ]
     mage.spell_words = [
     ]
@@ -156,8 +163,8 @@ def make_ranger():
         Boots(modifiers=[Leather]),
         Vest(modifiers=[Leather]),
         Breeches(modifiers=[Leather]),
-        Arrow(modifiers=[Oak]),
-        Potion(5) # This should be replaced with ammo
+        Arrow(quantity=25, modifiers=[Oak]),
+        PotionOfHealing(5)
     ]
 
     ranger.skills = [

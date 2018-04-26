@@ -4,3 +4,4 @@ from .skills import *
 from .enemies import *
 from .materials.tiles import *
 from .npc import *
+from .magic.effects import *

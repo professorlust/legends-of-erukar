@@ -5,9 +5,9 @@ from .Club import Club
 from .Dagger import Dagger
 from .Focus import Focus
 from .Halberd import Halberd
-from .HeavyCrossBow import HeavyCrossBow
+from .HeavyCrossbow import HeavyCrossbow
 from .Javelin import Javelin
-from .LightCrossBow import LightCrossBow
+from .LightCrossbow import LightCrossbow
 from .Longbow import Longbow
 from .Longsword import Longsword
 from .Mace import Mace
@@ -28,9 +28,9 @@ __all__ = [
     "Dagger", 
     "Focus", 
     "Halberd", 
-    "HeavyCrossBow", 
+    "HeavyCrossbow", 
     "Javelin", 
-    "LightCrossBow", 
+    "LightCrossbow", 
     "Longbow", 
     "Longsword", 
     "Mace", 

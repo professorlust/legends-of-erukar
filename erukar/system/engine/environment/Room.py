@@ -44,3 +44,9 @@ class Room(Containable):
     def get_object_by_uuid(self, uuid):
         for found in super().get_object_by_uuid(uuid):
             yield found
+
+    def annex(self, new_coordinates):
+        if not isinstance(new_coordinates, list):
+            new_coordinates = list(new_coordinates)
+        self.coordinates += new_coordinates
+        self.dungeon.annex(self, new_coordinates)

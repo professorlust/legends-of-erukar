@@ -9,3 +9,9 @@ class Robes(Armor):
     BasePrice = 10
     BaseWeight = 0.7
 
+    ArmorClass = Armor.Light
+    DamageMitigations = {
+        'piercing': (0.00, 0),
+        'slashing': (0.01, 2),
+        'bludgeoning': (0.00, 0)
+    }

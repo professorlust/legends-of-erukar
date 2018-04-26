@@ -8,6 +8,7 @@ class Location:
         self.name = 'Base Location'
         self.is_named = False
         self.dungeon_file_name = None
+        self.economic_profile = sector.economic_profile
 
     def adjacent_sectors(self):
         return self.sector.adjacent()

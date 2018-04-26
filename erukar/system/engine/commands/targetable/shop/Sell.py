@@ -1,4 +1,4 @@
-from erukar.system.engine import Interaction, Item
+from erukar.system.engine import Interaction, Item, Merchant
 from ...TargetedCommand import TargetedCommand
 from ...auto.Inventory import Inventory
 import uuid
@@ -17,29 +17,36 @@ class Sell(TargetedCommand):
         if 'target' not in self.args or not isinstance(self.args['target'], Item):
             return self.fail('Target is invalid')
 
-        if self.args['target'] not in self.args['player_lifeform'].inventory:
+        item = self.args['target']
+        player = self.args['player_lifeform']
+        npc = self.args['interaction'].main_npc
+
+        if item not in player.inventory:
             return self.fail('Item does not belong to you!')
 
         self.get_quantity()
-        actual_price = self.args['quantity'] * self.args['target'].price()
-        if self.args['interaction'].main_npc.wealth >= actual_price:
-            return self.do_sell(actual_price)
+        actual_price = self.args['quantity'] * npc.template(Merchant).buying_price(item, player)
 
-        return self.fail('NPC cannot buy your {}'.format(self.args['target'].alias()))
+        return self.do_sell()\
+            if npc.wealth >= actual_price\
+            else self.fail('NPC cannot buy your {}'.format(item.alias()))
 
     def get_quantity(self):
         self.args['quantity'] = max(1, self.args.get('quantity', -1))
         self.args['quantity'] = min(getattr(self.args['target'], 'quantity', 1), self.args['quantity'])
 
-    def do_sell(self, price):
+    def do_sell(self):
         failure = self.do_split()
         if failure: return failure
 
-        self.args['player_lifeform'].wealth += price
-        self.args['interaction'].main_npc.wealth -= price
+        item = self.args['target']
+        player = self.args['player_lifeform']
+        npc = self.args['interaction'].main_npc
+        self.dirty(player)
 
-        self.dirty(self.args['player_lifeform'])
-        self.append_result(self.player_info.uid, 'You have sold your {} to {} for {} riphons.'.format(self.args['target'].alias(), self.args['interaction'].main_npc.alias(), price))
+        price = npc.template(Merchant).buy_from(player, item, self.args['quantity'])
+        self.append_result(self.player_info.uid, 'You have sold your {} to {} for {} riphons.'.format(item.alias(), npc.alias(), price))
+        
         return self.succeed()
 
     def get_equip_slot(self):

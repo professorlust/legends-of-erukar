@@ -34,11 +34,14 @@ class Skills(Command):
         return [
             erukar.content.skills.ArcaneGift,
             erukar.content.skills.ArcaneTraining,
+            erukar.content.skills.BowTraining,
             erukar.content.skills.Bloodlust,
-            erukar.content.skills.Rage,
+            erukar.content.skills.Charisma,
+            erukar.content.skills.CrossbowTraining,
+            erukar.content.skills.EconomicSense,
+            erukar.content.skills.Haggling,
             erukar.content.skills.ImprovedSight,
             erukar.content.skills.MartialWeaponTraining,
             erukar.content.skills.PolearmTraining,
-            erukar.content.skills.BowTraining,
-            erukar.content.skills.CrossbowTraining
+            erukar.content.skills.Rage,
         ]

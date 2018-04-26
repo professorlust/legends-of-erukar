@@ -6,6 +6,14 @@ class Sabatons(Armor):
     Probability = 1
 
     InventoryDescription = "Highly protective, armored footgear which is often part of a platemail suit. Provides a large amount of protection around all sides of the feet."
-    BasePrice = 40
-    BaseWeight = 4.0
+    BasePrice = 200
+    BaseWeight = 8.0
 
+    ArmorClass = Armor.Light
+    EvasionPenalty = 0.15
+    MovementSpeedPenalty = 0.10
+    DamageMitigations = {
+        'bludgeoning': (0.12, 6),
+        'piercing': (0.15, 6),
+        'slashing': (0.15, 6),
+    }

@@ -111,3 +111,9 @@ class Modifier(Describable):
     def persistable_attributes(self):
         '''For use with database; getattrs all attributes defined by persistent_attr dict'''
         return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}
+
+    def get_additional_damages(self, weapon):
+        pass
+
+    def modify_base_damage(self, damage, weapon):
+        pass

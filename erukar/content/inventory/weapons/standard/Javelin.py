@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.PolearmWeapon import PolearmWeapon
 import numpy as np
 
-class Javelin(Weapon):
+class Javelin(PolearmWeapon):
     Probability = 1
     BaseName = "Javelin"
     AttackRange = 2
@@ -21,5 +21,3 @@ class Javelin(Weapon):
         'strength': {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
         'dexterity':  {'requirement': 4, 'scaling_factor': 3.5, 'cutoff': 200},
     }
-
-    Variant = 'polearm'

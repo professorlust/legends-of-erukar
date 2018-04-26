@@ -1,7 +1,8 @@
 from erukar.system.engine import Weapon
+from ..categories.FinesseWeapon import FinesseWeapon
 import numpy as np
 
-class Dagger(Weapon):
+class Dagger(FinesseWeapon):
     Probability = 1
     BaseName = "Dagger"
     EssentialPart = "blade"
@@ -19,5 +20,3 @@ class Dagger(Weapon):
     BaseStatInfluences = {
         'dexterity':  {'requirement': 4, 'scaling_factor': 6, 'cutoff': 220},
     }
-
-    Variant = 'finesse'

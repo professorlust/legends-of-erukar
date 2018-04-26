@@ -1,8 +1,8 @@
-from erukar.system.engine import Weapon
+from ..categories.ArcaneWeapon import ArcaneWeapon
 import numpy as np
 import random
 
-class Wand(Weapon):
+class Wand(ArcaneWeapon):
     Probability = 1
     BaseName = "Wand"
     EssentialPart = "tip"
@@ -27,8 +27,6 @@ class Wand(Weapon):
         'acuity':  {'requirement': 8, 'scaling_factor': 3, 'cutoff': 200},
         'dexterity': {'requirement': 0, 'scaling_factor': 1.5, 'cutoff': 200},
     }
-
-    Variant = 'magical'
 
     def failing_requirements(self, wielder):
         if wielder.arcane_energy < self.EnergyCost:

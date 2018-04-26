@@ -1,6 +1,5 @@
-from erukar.system.engine import DamageBuilder
 from .Item import Item
-import erukar
+import erukar, random
 import numpy as np
 
 class Weapon(Item):
@@ -11,10 +10,8 @@ class Weapon(Item):
     RangePenalty = 5
     EquipmentLocations = ['right','left']
 
-    DamageRange = [1, 2]
-    DamageType = "ambiguous"
-    DamageModifier = ""
-    DamageScalar = 2.0
+    DamageVariance        = 0.50
+    RawBase               = 10
     ScalingRequirement = 8
 
     Distribution = np.random.uniform
@@ -27,23 +24,13 @@ class Weapon(Item):
     Variant = 'weapon' 
     RequiresAmmo = False
     AmmoType = ''
+    BaseVariance = 0.8
 
     def __init__(self, modifiers=None):
         super().__init__(self.BaseName,modifiers=modifiers)
         self.name = self.BaseName
         self.item_type = "weapon"
-        self.damages = [
-            DamageBuilder()\
-                .with_type(self.DamageType)\
-                .with_range(self.DamageRange)\
-                .with_modifier(self.DamageModifier)\
-                .with_distribution(self.Distribution)\
-                .with_properties(self.DistributionProperties)\
-                .with_scalar(self.DamageScalar)\
-                .with_requirement(self.ScalingRequirement)\
-                .does_scale()\
-                .build()
-        ]
+        self.damages = []
 
     def equipment_slots(self, lifeform):
         return lifeform.weapon_slots()
@@ -58,12 +45,25 @@ class Weapon(Item):
     def has_correct_ammo(self, ammo):
         return isinstance(ammo, getattr(erukar.content.inventory.ammunition, self.AmmoType))
 
-    def roll(self, attacker):
-        return [self.rolled_damage(d, attacker) for d in self.damages]
+    def calculate_damage(self, attacker):
+        calculated = {}
+        for damage in self.get_damages():
+            scaled = list(self.vary_damage(attacker, damage.scalars))
+            calculated[damage.damage_type] = int(sum([amt for amt,dt in scaled]))
+        return [(calculated[dt],dt) for dt in calculated]
 
-    def rolled_damage(self, damage, attacker):
-        '''used to get processed result for a single damage type'''
-        return int(np.random.uniform(*damage.scaled_values(attacker, weapon=self))), damage.name
+    def vary_damage(self, attacker, scalars):
+         for scalar in scalars:
+             actual_variance = random.uniform(self.lower_variance(attacker), self.upper_variance(attacker))
+             yield (scalar.scale_for(attacker) * actual_variance, actual_variance)
+
+    def variance(self, attacker=None):
+        return self.BaseVariance
+
+    def lower_variance(self, caller=None):
+        return 1.0-self.variance()
+    def upper_variance(self, caller=None):
+        return 1.0+self.variance()
 
     def on_process_damage(self, attack_state, command):
         for modifier in self.modifiers:
@@ -77,24 +77,63 @@ class Weapon(Item):
 
     def on_inventory_inspect(self, lifeform):
         scale = self.efficacy_for(lifeform)
-        mod = lifeform.get(self.DamageModifier)
         name = '{} ({} / {})'.format(self.format(), int(self.durability()), int(self.max_durability()))
-        damage_desc = '\n'.join([self.damage_inspection(d, lifeform) for d in self.damages])
+        damage_desc = self.damage_inspection(lifeform)
         weight_desc = '{:>11} {:12}: {:3.2f} levts'.format('+', 'Weight:', self.weight())
         mods = ([self.material] + self.modifiers) if self.material else self.modifiers
         mod_desc = '\n'.join(['{:>11} {}: {}'.format('•',d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])
         return '\n'.join([name, weight_desc, damage_desc, mod_desc])
 
-    def damage_inspection(self, damage, lifeform):
-        scale, offset = self.efficacy_for(lifeform)
-        if damage.scales:
-            mod = lifeform.get(damage.modifier)
-            min_d = mod + offset + damage.damage[0] * scale
-            max_d = mod + offset + damage.damage[1] * scale
-        else:
-            min_d = damage.damage[0]
-            max_d = damage.damage[1]
-        return '{:>11} {} to {} {} Damage'.format('•', int(min_d), int(max_d), damage.name.capitalize())
-
     def attack_range(self, lifeform):
         return self.MaximumRange
+
+    def get_damages(self):
+        for damage in self.get_base_damages():
+            for modifier in self.modifiers:
+                modifier.modify_base_damage(damage, self)
+            yield damage
+        for modifier in self.modifiers:
+            gen = modifier.get_additional_damages(self)
+            if gen is not None:
+                yield from gen
+
+    def get_base_damages(self):
+        pass
+
+    def damage_inspection(self, lifeform):
+        descriptions = []
+        for damage in self.get_damages():
+            d_type = '{}Percentage'.format(damage.damage_type.capitalize())
+            if hasattr(d_type, self):
+                descriptions.append(self.inspect_percentage_damage(damage, lifeform, d_type))
+                continue
+            descriptions.append(self.inspect_normal_damage(damage, lifeform))
+        joined = ', '.join(descriptions)
+        return 'This {} deals damage distributed as follows: {}'.format(self.alias(), joined)
+
+    def inspect_normal_damage(self, damage, lifeform):
+        raw = damage.raw_scaled_for(lifeform)
+        low = self.lower_variance() * raw
+        high = self.upper_variance() * raw
+        return '{} ({} to {})'.format(damage.damage_type, low, high)
+
+    def generate_damage_details_for_inventory(self, caller):
+        for damage in self.get_damages():
+            raw = damage.raw_scaled_for(caller)
+            result = {
+                'type': damage.damage_type,
+                'raw': int(raw),
+                'low': int(self.lower_variance() * raw),
+                'high': int(self.upper_variance() * raw)
+            }
+            percent_string = '{}Percentage'.format(damage.damage_type.capitalize())
+            if hasattr(self, percent_string):
+                result['percent'] = int(getattr(self, percent_string, 0.0) * 100)
+            yield result
+
+    def inspect_percentage_damage(self, damage, lifeform, percent_string):
+        percentage = getattr(self, percent_string, 0.0) * 100.0
+        raw = damage.raw_scaled_for(lifeform)
+        low = self.lower_variance() * raw
+        high = self.upper_variance() * raw
+        return '{:0.0f}% {} ({} to {})'.format(percentage, damage.damage_type, low, high)

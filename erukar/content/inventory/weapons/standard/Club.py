@@ -1,7 +1,8 @@
 from erukar.system.engine import Weapon
+from ..categories.SimpleWeapon import SimpleWeapon
 import numpy as np
 
-class Club(Weapon):
+class Club(SimpleWeapon):
     Probability = 1
     BaseName = "Club"
     EssentialPart = "head"
@@ -16,5 +17,3 @@ class Club(Weapon):
     # Distribution
     Distribution = np.random.uniform
     DistributionProperties = ()
-
-    Variant = 'simple'

@@ -1,5 +1,5 @@
 from ...base.WeaponMod import WeaponMod
-from erukar.system.engine import Observation, DamageBuilder
+from erukar.system.engine import Observation, Damage, DamageScalar
 import numpy as np
 import random
 
@@ -108,23 +108,15 @@ class AdditionalDamage(WeaponMod):
 
     def apply_to(self, weapon):
         super().apply_to(weapon)
-        extra = DamageBuilder()\
-            .with_type(self.damage_type.capitalize())\
-            .with_range([self.min_damage, self.max_damage])\
-            .with_distribution(np.random.uniform)\
-            .with_properties((0, 1))\
-            .build()
+        extra = Damage(self.damage_type)
         weapon.damages.append(extra)
+
+    def get_additional_damages(self, weapon):
+        yield Damage(self.damage_type, DamageScalar(self.max_damage, 'acuity'))
 
     def on_alias(self, current):
         return self.Damages[self.damage_type]['inventory_name'].format(self.Levels[self.level], current).strip()
 
     def on_calculate_attack_ranged(self, attack_state):
-        extra = DamageBuilder()\
-            .with_type(self.damage_type.capitalize())\
-            .with_range([self.min_damage, self.max_damage])\
-            .with_distribution(np.random.uniform)\
-            .with_properties((0, 1))\
-            .build()
-
+        extra = Damage(self.damage_type)
         attack_state.add_extra_damage(extra)

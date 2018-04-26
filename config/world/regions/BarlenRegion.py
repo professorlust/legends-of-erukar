@@ -1,5 +1,5 @@
 import erukar
-from erukar.system.engine import EnvironmentProfile, OverlandSector,  Sector, Region, Location, Chunk
+from erukar.system.engine import EnvironmentProfile, OverlandSector,  Sector, Region, Location, Chunk, EconomicProfile
 
 def create():
     barlen = Region()
@@ -11,7 +11,7 @@ def create():
     barlen.add_sector(create_izeth_citadel_1f)
 
     barlen.sector_limits = acceptable_bounds()
-    barlen.sector_template = create_sector_template()
+    barlen.sector_template = create_sector_template(barlen)
 
     return barlen
 
@@ -30,7 +30,14 @@ def acceptable_bounds():
     ]
 
 def create_barlen_outskirts(region):
-    sector = create_sector_template(region) 
+    def econ_seed(sector):
+        econ = EconomicProfile()
+        econ.demand[erukar.IurwoodLumber] = 2000
+        econ.supply[erukar.IurwoodLumber] = 100
+        econ.demand[erukar.AshLumber] = 1000
+        econ.supply[erukar.AshLumber] = 100
+        return econ
+    sector = create_sector_template(region, econ_seed) 
     sector.name = 'Barlen Town Outskirts'
     sector.environment_profile = EnvironmentProfile.CityOutdoors()
     sector.set_coordinates((0,0,0))
@@ -43,7 +50,14 @@ def create_barlen_outskirts(region):
     return sector
 
 def create_razorwoods_camp(region):
-    sector = create_sector_template(region) 
+    def econ_seed(sector):
+        econ = EconomicProfile()
+        econ.demand[erukar.IurwoodLumber] = 10
+        econ.supply[erukar.IurwoodLumber] = 5000
+        econ.demand[erukar.AshLumber] = 10
+        econ.supply[erukar.AshLumber] = 5000
+        return econ
+    sector = create_sector_template(region, econ_seed) 
     sector.name = 'Feriden Razorwoods Camp'
     sector.set_coordinates((0,-3,3))
     sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
@@ -83,7 +97,7 @@ def create_izeth_citadel_1f(region):
 
     return sector
 
-def create_sector_template(region=None):
-    sector = OverlandSector(region)
+def create_sector_template(region=None, econ_seed_fn=None):
+    sector = OverlandSector(region, econ_seed_fn)
     sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
     return sector

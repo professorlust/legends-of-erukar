@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.SwordWeapon import SwordWeapon
 import numpy as np
 
-class Shortsword(Weapon):
+class Shortsword(SwordWeapon):
     MaximumRange = 1
     Probability = 2
     BaseName = "Shortsword"
@@ -21,5 +21,3 @@ class Shortsword(Weapon):
         'strength':  {'requirement': 4, 'scaling_factor': 4, 'cutoff': 200},
         'dexterity': {'requirement': 3, 'scaling_factor': 3, 'cutoff': 200},
     }
-
-    Variant = 'martial'

@@ -1,13 +1,19 @@
-from .Armet import Armet
-from .Barbute import Barbute
 from .Burgonet import Burgonet
 from .Cap import Cap
+from .Circlet import Circlet
 from .CloseHelm import CloseHelm
 from .Coif import Coif
-from .FrogMouthHelm import FrogMouthHelm
-from .GreatHelm import GreatHelm
+from .Helm import Helm
 from .Hood import Hood
 from .Mask import Mask
-from .Sallet import Sallet
 
-__all__ = ["Armet","Barbute","Burgonet","Cap","CloseHelm","Coif","FrogMouthHelm","GreatHelm","Hood","Mask","Sallet"]
+__all__ = [
+    "Burgonet", 
+    "Cap", 
+    "Circlet", 
+    "CloseHelm", 
+    "Coif", 
+    "Helm", 
+    "Hood", 
+    "Mask"
+]

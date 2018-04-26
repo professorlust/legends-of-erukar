@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.PolearmWeapon import PolearmWeapon
 import numpy as np
 
-class Halberd(Weapon):
+class Halberd(PolearmWeapon):
     Probability = 1
     BaseName = "Halberd"
     EssentialPart = "head"
@@ -24,5 +24,3 @@ class Halberd(Weapon):
         'strength': {'requirement': 4, 'scaling_factor': 3.5, 'cutoff': 200},
         'dexterity':  {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
     }
-
-    Variant = 'polearm'

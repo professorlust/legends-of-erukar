@@ -62,10 +62,11 @@ class Inventory(Command):
             'alias': item.alias(),
             'quantifiable_alias': item.long_alias(),
             'quantity': getattr(item, 'quantity', 1),
-            'price': item.price(),
+            'price': int(item.price(self.world.economy())),
             'isUsable': item.IsUsable,
             'desirabilityRating': item.rarity().name,
             'slots': item.equipment_slots(self.args['player_lifeform']),
+            'flavorText': item.flavor_text(self.args['player_lifeform']),
             'details': list(Inventory.generate_list_of_details(item)) 
         }
 
@@ -90,20 +91,7 @@ class Inventory(Command):
         # Description here
 
     def weapon_details(self, item):
-        for damage in item.damages:
-            details = {
-                'name': damage.name.capitalize(),
-                'variant': item.Variant.capitalize(),
-                'range': '{} to {}'.format(*damage.scaled_values(self.args['player_lifeform'], item)),
-                'scaling': {
-                    'attribute': damage.modifier[:3].upper(),
-                    'scalar': damage.adjusted_scalar(self.args['player_lifeform'], item),
-                    'requirement': damage.requirement,
-                    'max': damage.max_scale,
-                    'value': max(-99, getattr(self.args['player_lifeform'], damage.modifier.lower(), 0) - damage.requirement) * damage.adjusted_scalar(self.args['player_lifeform'], item)
-                }
-            }
-            yield details
+        yield from item.generate_damage_details_for_inventory(self.args['player_lifeform'])
 
     def armor_details(item):
         for mit in item.DamageMitigations:

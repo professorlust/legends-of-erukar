@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.BowWeapon import BowWeapon
 import numpy as np
 
-class Longbow(Weapon):
+class Longbow(BowWeapon):
     Probability = 1
     BaseName = "Longbow"
     EssentialPart = "bowstrings"
@@ -20,12 +20,6 @@ class Longbow(Weapon):
     Scale = 0.25
     DistributionProperties = (Shape, Scale)
 
-    RequiresTwoHands = True
-    RequiresAmmo     = True
-    AmmoType         = 'Arrow'
-
     BaseStatInfluences = {
         'dexterity':  {'requirement': 8, 'scaling_factor': 3, 'cutoff': 200},
     }
-
-    Variant = 'bow'

@@ -1,7 +1,8 @@
 from erukar.system.engine import Weapon
+from ..categories.SimpleWeapon import SimpleWeapon
 import numpy as np
 
-class Maul(Weapon):
+class Maul(SimpleWeapon):
     Probability = 1
     BaseName = "Maul"
     EssentialPart = "head"
@@ -20,5 +21,3 @@ class Maul(Weapon):
         'strength': {'requirement': 3, 'scaling_factor': 5, 'cutoff': 200},
         'dexterity':  {'requirement': 0, 'scaling_factor': 1.25, 'cutoff': 200},
     }
-
-    Variant = 'simple'

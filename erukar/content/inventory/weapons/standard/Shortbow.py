@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.BowWeapon import BowWeapon
 import numpy as np
 
-class Shortbow(Weapon):
+class Shortbow(BowWeapon):
     Probability = 1
     BaseName = "Shortbow"
     EssentialPart = "bowstrings"
@@ -27,5 +27,3 @@ class Shortbow(Weapon):
     BaseStatInfluences = {
         'dexterity':  {'requirement': 8, 'scaling_factor': 3, 'cutoff': 200},
     }
-
-    Variant = 'bow'

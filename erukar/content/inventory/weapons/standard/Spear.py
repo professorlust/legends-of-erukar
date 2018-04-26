@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.PolearmWeapon import PolearmWeapon
 import numpy as np
 
-class Spear(Weapon):
+class Spear(PolearmWeapon):
     Probability = 1
     BaseName = "Spear"
     AttackRange = 1
@@ -21,5 +21,3 @@ class Spear(Weapon):
         'strength': {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
         'dexterity':  {'requirement': 4, 'scaling_factor': 3.5, 'cutoff': 200},
     }
-
-    Variant = 'polearm'

@@ -11,5 +11,5 @@ class TieredKey(Key):
     def __init__(self):
         super().__init__('Key')
 
-    def price(self):
+    def price(self, econ=None):
         return self.BasePrice

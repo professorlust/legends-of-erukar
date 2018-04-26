@@ -1,13 +1,15 @@
 from .Lifeform import Lifeform
 from erukar.ext.math.Distance import Distance
+from erukar.ext.math.Namer import Namer
 
 class Npc(Lifeform):
     def __init__(self, templates=[]):
         super().__init__(None, "Npc")
         self.qualities = []
         self.templates = []
-        for template in templates:
-            template.apply(self)
+        self.name = Namer.random()
+        self.inactive_templates = templates
+        self.disposition_modifiers = {}
 
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
@@ -26,5 +28,18 @@ class Npc(Lifeform):
 
     def get_state(self, for_player):
         if self.templates:
-            return self.templates[0].get_state(self, for_player)
+            return self.templates[0].get_state(for_player)
         return {}
+
+    def template(self, template_type):
+        return next((x for x in self.templates if isinstance(x, template_type)), None)
+
+    def use_standard_inventory(self):
+        for template in self.templates:
+            self.inventory += template.standard_inventory()
+
+    def disposition_for(self, target):
+        bonus = target.disposition_bonuses(self) if isinstance(target, Lifeform) else 0
+        if target in self.disposition_modifiers:
+            bonus += self.disposition_modifiers[target]
+        return bonus

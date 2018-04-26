@@ -5,3 +5,8 @@ class Hood(Armor):
     BaseName="Hood"
     Probability = 1
 
+    ArmorClass = Armor.Light
+    BasePrice = 10
+    BaseWeight = 0.2
+    DamageMitigations = {
+    }

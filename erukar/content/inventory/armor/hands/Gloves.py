@@ -6,6 +6,11 @@ class Gloves(Armor):
     Probability = 1
 
     InventoryDescription = "Gloves todo"
-    BasePrice = 10
+    BasePrice = 25
     BaseWeight = 0.5
 
+    ArmorClass = Armor.Medium
+    DamageMitigations = {
+        'piercing': (0.07, 3),
+        'slashing': (0.07, 3),
+    }

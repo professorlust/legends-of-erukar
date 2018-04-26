@@ -54,6 +54,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
 
         self.add_transitions()
         self.world.spawn_coordinates = self.vertices
+        self.world.location = self.location
         return self.world
 
     def add_enemies(self):
@@ -66,7 +67,9 @@ class DungeonGenerator(FactoryBase, AStarBase):
             erukar.content.inventory.ammunition.Arrow,
             erukar.content.inventory.ammunition.CrossbowBolt,
             erukar.content.inventory.consumables.Candle,
-            erukar.content.inventory.consumables.Potion,
+            erukar.content.inventory.PotionOfRenewal,
+            erukar.content.inventory.PotionOfHealing,
+            erukar.content.inventory.PotionOfGreaterHealing,
             erukar.content.inventory.consumables.Torch,
         ]
         possibilities += [x for _,x in inspect.getmembers(sys.modules['erukar.content.inventory.weapons.standard'], inspect.isclass)]

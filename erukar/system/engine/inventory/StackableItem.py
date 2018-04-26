@@ -30,6 +30,7 @@ class StackableItem(Item):
             existing_stack.quantity = self.MaximumStackQuantity
 
     def long_alias(self):
+        if self.quantity <= 1: return super().alias()
         return '{} x{}'.format(super().alias(), self.quantity)
 
     def other_stacks(self, inventory):
@@ -52,6 +53,7 @@ class StackableItem(Item):
         return material_type in [type(y) for y in self.modifiers]
 
     def on_inventory(self):
+        if self.quantity <= 1: return self.format()
         return '{} x{}'.format(self.format(), self.quantity)
 
     def consume(self):

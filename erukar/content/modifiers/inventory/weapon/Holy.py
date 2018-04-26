@@ -1,5 +1,5 @@
 from ...base.WeaponMod import WeaponMod
-from erukar.system.engine import Weapon, DamageBuilder, Observation
+from erukar.system.engine import Weapon, Observation
 import numpy as np
 import re
 
@@ -25,12 +25,6 @@ class Holy(WeaponMod):
     def apply_to(self, weapon):
         super().apply_to(weapon)
         self.weapon = weapon
-        self.damage = DamageBuilder()\
-            .with_type("Divine")\
-            .with_range([1,4])\
-            .with_distribution(np.random.uniform)\
-            .with_properties((0,1))\
-            .build()
         weapon.damages.append(self.damage)
 
     def remove(self):

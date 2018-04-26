@@ -1,9 +1,9 @@
-from erukar.system.engine import Weapon
+from ..categories.AxeWeapon import AxeWeapon
 import numpy as np
 
-class Battleaxe(Weapon):
+class Battleaxe(AxeWeapon):
     Probability = 1
-    BaseName = "Axe"
+    BaseName = "Battle Axe"
     EssentialPart = "edge"
     BaseWeight = 4.0
 
@@ -23,4 +23,4 @@ class Battleaxe(Weapon):
         'dexterity':  {'requirement': 0, 'scaling_factor': 3.5, 'cutoff': 200},
     }
 
-    Variant = 'axe'
+    RequiresTwoHands = True

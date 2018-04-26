@@ -4,8 +4,8 @@ from .Location import Location
 import operator
 
 class OverlandSector(Sector):
-    def __init__(self, region=None):
-        super().__init__(region)
+    def __init__(self, region=None, econ_seed_fn=None):
+        super().__init__(region, econ_seed_fn)
         self.coordinates = "(0,0,0)"
         self.x = 0
         self.alpha = 0

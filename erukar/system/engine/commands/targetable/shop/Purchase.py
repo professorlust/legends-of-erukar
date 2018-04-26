@@ -1,4 +1,4 @@
-from erukar.system.engine import Interaction, Item, SearchScope
+from erukar.system.engine import Interaction, Item, SearchScope, Merchant
 from ...TargetedCommand import TargetedCommand
 
 class Purchase(TargetedCommand):
@@ -19,15 +19,19 @@ class Purchase(TargetedCommand):
         if 'target' not in self.args or not isinstance(self.args['target'], Item):
             return self.fail('Target is invalid')
         
-        if self.args['target'] not in self.args['interaction'].main_npc.inventory:
+        item = self.args['target']
+        player = self.args['player_lifeform']
+        npc = self.args['interaction'].main_npc
+
+        if item not in npc.inventory:
             return self.fail('Item does not belong to NPC!')
 
         self.get_quantity()
-        actual_price = self.args['quantity'] * self.args['target'].price()
-        if self.args['player_lifeform'].wealth >= actual_price:
+        actual_price = self.args['quantity'] * npc.template(Merchant).selling_price(item, player)
+        if player.wealth >= actual_price:
             return self.do_purchase(actual_price)
 
-        return self.fail('You do not have enough money to buy {}'.format(self.args['target'].alias()))
+        return self.fail('You do not have enough money to buy {}'.format(item.alias()))
 
     def get_quantity(self):
         self.args['quantity'] = max(1, self.args.get('quantity', -1))
@@ -37,11 +41,14 @@ class Purchase(TargetedCommand):
         failure = self.move_to_inventory()
         if failure: return failure
 
-        self.args['interaction'].main_npc.wealth += price
-        self.args['player_lifeform'].wealth -= price
+        item = self.args['target']
+        player = self.args['player_lifeform']
+        npc = self.args['interaction'].main_npc
 
-        self.dirty(self.args['player_lifeform'])
-        self.append_result(self.player_info.uid, 'You have bought {} from {} for {} riphons.'.format(self.args['target'].alias(), self.args['interaction'].main_npc.alias(), price))
+        self.dirty(player)
+        price = npc.template(Merchant).sell_to(player, item, self.args['quantity'])
+
+        self.append_result(self.player_info.uid, 'You have bought {} from {} for {} riphons.'.format(item.alias(), npc.alias(), price))
         return self.succeed()
 
     def move_to_inventory(self):

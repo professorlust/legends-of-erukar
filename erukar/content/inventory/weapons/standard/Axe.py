@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.AxeWeapon import AxeWeapon
 import numpy as np
 
-class Axe(Weapon):
+class Axe(AxeWeapon):
     Probability = 1
     BaseName = "Axe"
     EssentialPart = "edge"
@@ -9,8 +9,6 @@ class Axe(Weapon):
 
     # Damage
     DamageRange = [4, 8]
-    DamageType = "slashing"
-    DamageModifier = "strength"
 
     # Distribution
     Distribution = np.random.exponential
@@ -19,8 +17,6 @@ class Axe(Weapon):
     DistributionProperties = (Scale, Size)
 
     BaseStatInfluences = {
-        'strength': {'requirement': 5, 'scaling_factor': 2.5, 'cutoff': 200},
-        'dexterity':  {'requirement': 0, 'scaling_factor': 3.5, 'cutoff': 200},
+        'strength': {'requirement': 5, 'scaling_factor': 3.5, 'cutoff': 200},
+        'dexterity':  {'requirement': 0, 'scaling_factor': 1.5, 'cutoff': 200},
     }
-
-    Variant = 'axe'

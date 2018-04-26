@@ -1,0 +1,3 @@
+'''
+Desecrates an area
+'''

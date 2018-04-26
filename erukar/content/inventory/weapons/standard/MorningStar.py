@@ -1,7 +1,8 @@
 from erukar.system.engine import Weapon
+from ..categories.SimpleWeapon import SimpleWeapon
 import numpy as np
 
-class MorningStar(Weapon):
+class MorningStar(SimpleWeapon):
     Probability = 1
     BaseName = "Morning Star"
     EssentialPart = "head"
@@ -20,5 +21,3 @@ class MorningStar(Weapon):
         'strength': {'requirement': 7, 'scaling_factor': 4, 'cutoff': 200},
         'dexterity':  {'requirement': 0, 'scaling_factor': 1.25, 'cutoff': 200},
     }
-
-    Variant = 'martial'

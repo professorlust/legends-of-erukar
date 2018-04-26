@@ -2,7 +2,7 @@ from .CachedDataStructures import CachedList, CachedSet
 from .Condition import Condition
 from .Containable import Containable
 from .Damage import Damage
-from .DamageBuilder import DamageBuilder
+from .DamageScalar import DamageScalar
 from .Describable import Describable
 from .EnvironmentPiece import EnvironmentPiece
 from .EnvironmentProfile import EnvironmentProfile
@@ -13,6 +13,7 @@ from .GenerationProfile import GenerationProfile
 from .Indexer import Indexer
 from .Interaction import Interaction
 from .Manager import Manager
+from .MagicEffect import MagicEffect
 from .Modifier import Modifier
 from .Observation import Observation
 from .PlayerNode import PlayerNode
@@ -28,7 +29,7 @@ __all__ = [
     "Condition", 
     "Containable", 
     "Damage", 
-    "DamageBuilder", 
+    "DamageScalar", 
     "Describable", 
     "EnvironmentPiece", 
     "EnvironmentProfile", 
@@ -38,6 +39,7 @@ __all__ = [
     "GenerationProfile", 
     "Indexer", 
     "Interaction", 
+    "MagicEffect", 
     "Manager", 
     "Modifier", 
     "Observation", 

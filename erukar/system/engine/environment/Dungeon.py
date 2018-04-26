@@ -1,8 +1,10 @@
 from erukar.system.engine import ErukarActor, Lifeform, Item, Player, Enemy, CachedSet
 from .Door import Door
+from .Wall import Wall
+from .Room import Room
 from erukar.ext.math import Navigator
 
-import logging
+import logging, random
 logger = logging.getLogger('debug')
 
 class Dungeon(ErukarActor):
@@ -110,8 +112,11 @@ class Dungeon(ErukarActor):
     def add_room(self, new_room, coordinates):
         '''Adds a safeguard to prevent duplication'''
         self.rooms.append(new_room)
+        self.annex(new_room, coordinates)
+
+    def annex(self, room, coordinates):
         for coord in coordinates:
-            self.dungeon_map[coord] = new_room
+            self.dungeon_map[coord] = room
 
     def actors_at(self, caller, coordinate):
         for x in self.actors:
@@ -139,6 +144,11 @@ class Dungeon(ErukarActor):
                     continue
             yield loc
 
+    def is_traversable(self, loc):
+        return loc in self.dungeon_map\
+            and (loc not in self.door_cache\
+            or any(not x.is_open for x in self.door_cache[loc]))
+
     def build_door_cache(self):
          self.door_cache = {}
          for loc in self.dungeon_map:
@@ -150,6 +160,18 @@ class Dungeon(ErukarActor):
         if location in self.dungeon_map:
             return self.dungeon_map[location]
         return None
+
+    def apply_tiles_on_all_closed_space(self, tile):
+        xo, yo = map(min, zip(*self.dungeon_map))
+        xf, yf = map(max, zip(*self.dungeon_map))
+        for y in range(yo-1, yf+2):
+            for x in range(xo-1, xf+2):
+                if (x,y) not in self.dungeon_map:
+                    if (x,y) not in self.walls:
+                        wall = Wall()
+                        wall.material = tile
+                        self.walls[(x, y)] = wall
+                    self.tiles[(x, y)] = tile
 
     def apply_tiles_on_closed_space(self, spaces, tile):
         for space in spaces:
@@ -166,6 +188,15 @@ class Dungeon(ErukarActor):
             if space not in self.dungeon_map:
                 continue
             self.tiles[space] = tile
+
+    def apply_tiles_to_room(self, room, open_tile=None, closed_tile=None):
+        if open_tile:
+            self.apply_tiles_on_open_space(room.coordinates, open_tile)
+
+    def deintersect(self, space):
+        for loc in space:
+            if self.is_traversable(loc):
+                yield loc
 
     def remove_space(self, closed_space):
         for space in closed_space:
@@ -194,11 +225,19 @@ class Dungeon(ErukarActor):
         self.add_actor(trans, coordinates)
         self.location_transition_coordinates[trans.destination] = coordinates
 
-    def add_actor(self, actor, coordinates):
+    def add_actor(self, actor, loc):
         self.actors.add(actor)
-        actor.coordinates = coordinates
+        if isinstance(loc, Room):
+            loc = random.choice(loc.coordinates)
+        actor.coordinates = loc
         if self.tile_generator:
             self.add_actor_tiles(actor)
+
+    def add_npc(self, npc, coordinates):
+        for template in npc.inactive_templates:
+            template(self).apply(npc)
+        npc.inactive_templates = []
+        self.add_actor(npc, coordinates)
 
     def remove_actor(self, actor):
         if actor in self.actors:
@@ -214,3 +253,6 @@ class Dungeon(ErukarActor):
             if actor.coordinates != coordinates: continue
             return str(actor.uuid)
         return ''
+
+    def economy(self):
+        return self.location.economic_profile

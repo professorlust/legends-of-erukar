@@ -3,13 +3,16 @@ from .Location import Location
 import operator, re
 
 class Sector(ErukarObject):
-    def __init__(self, region=None):
+    def __init__(self, region, economic_seed_fn=None):
         self.coordinates = ""
         self.environment_profile = EnvironmentProfile()
         self.region = region
         self.adjacent_sectors = set()
         self.locations = set()
         self.name = 'Random Sector'
+        self.economic_profile = region.economic_profile\
+            if not economic_seed_fn\
+            else economic_seed_fn(self)
 
     def alias(self):
         return self.name
@@ -66,3 +69,9 @@ class Sector(ErukarObject):
             raise ValueError('Malformed Overland Coordinates String: Received "{}", which returned "{}"'.format(coords, out))
 
         return tuple(int(x) for x in out)
+
+    def supply_and_demand_scalar(self, good):
+        return self.economic_profile.supply_and_demand_scalar(good)
+
+    def register_transaction(self, good, at_price, supply_shift):
+        self.economic_profile.register_transaction(good, at_price, supply_shift)

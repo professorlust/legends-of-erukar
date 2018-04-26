@@ -1,7 +1,9 @@
-from .Environment import Environment
 from .Drink import Drink
+from .Environment import Environment
+from .Healing import Healing
 
 __all__ = [
-    "Environment",
-    "Drink"
+    "Drink", 
+    "Environment", 
+    "Healing"
 ]

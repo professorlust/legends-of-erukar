@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.SwordWeapon import SwordWeapon
 import numpy as np
 
-class BastardSword(Weapon):
+class BastardSword(SwordWeapon):
     MaximumRange = 1
     Probability = 2
     BaseName = "Bastard Sword"
@@ -22,5 +22,4 @@ class BastardSword(Weapon):
         'dexterity': {'requirement': 2, 'scaling_factor': 1.75, 'cutoff': 100},
     }
 
-    Variant = 'martial'
     RequiresTwoHands = True

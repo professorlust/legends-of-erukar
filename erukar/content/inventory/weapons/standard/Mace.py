@@ -1,7 +1,8 @@
 from erukar.system.engine import Weapon
+from ..categories.SimpleWeapon import SimpleWeapon
 import numpy as np
 
-class Mace(Weapon):
+class Mace(SimpleWeapon):
     Probability = 1
     BaseName = "Mace"
     EssentialPart = "head"
@@ -15,5 +16,3 @@ class Mace(Weapon):
     # Distribution
     Distribution = np.random.uniform
     DistributionProperties = ()
-
-    Variant = 'simple'

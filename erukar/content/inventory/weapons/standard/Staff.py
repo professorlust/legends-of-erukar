@@ -1,7 +1,7 @@
-from erukar.system.engine import Weapon
+from ..categories.ArcaneWeapon import ArcaneWeapon
 import numpy as np
 
-class Staff(Weapon):
+class Staff(ArcaneWeapon):
     Probability = 1
     BaseName = "Staff"
     EssentialPart = "head"
@@ -21,5 +21,3 @@ class Staff(Weapon):
         'acuity':  {'requirement': 6, 'scaling_factor': 3, 'cutoff': 200},
         'strength': {'requirement': 4, 'scaling_factor': 2, 'cutoff': 200},
     }
-
-    Variant = 'polearm'

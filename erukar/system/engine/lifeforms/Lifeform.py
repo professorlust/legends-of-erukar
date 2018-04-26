@@ -175,7 +175,7 @@ class Lifeform(ErukarActor):
         return attack_roll
 
     def on_successful_hit(self, target, weapon, attack_roll):
-        return weapon.roll(self)
+        return weapon.calculate_damage(self)
 
     def on_failed_dodge(self, attacker, weapon, attack_roll):
         pass
@@ -454,3 +454,8 @@ class Lifeform(ErukarActor):
             weapon = getattr(self, slot)
             if weapon and isinstance(weapon, Weapon):
                 yield weapon
+
+    '''Used in Skills'''
+    def disposition_bonuses(self, other): return 0
+    def haggling_buy_modifier(self): return 0.8
+    def haggling_sell_modifier(self): return 1.2

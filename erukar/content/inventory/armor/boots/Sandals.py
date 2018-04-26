@@ -7,5 +7,10 @@ class Sandals(Armor):
 
     InventoryDescription = "Rudimentary shoe which is very light but offers little to no protection."
     BaseWeight = 0.5
-    BasePrice = 8
+    BasePrice = 15
 
+    ArmorClass = Armor.Light
+    DamageMitigations = {
+        'bludgeoning': (0.05, 2),
+        'piercing': (0.05, 2)
+    }

@@ -5,6 +5,11 @@ class Leggings(Armor):
     Probability = 1
 
     InventoryDescription = "Leggings todo"
-    BasePrice = 15
-    BaseWeight = 1.0
 
+    ArmorClass = Armor.Medium
+    BasePrice = 120
+    BaseWeight = 10
+    DamageMitigations = {
+        'slashing': (0.20, 12),
+        'piercing': (0.10, 6)
+    }

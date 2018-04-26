@@ -115,7 +115,7 @@ class Map(Command):
     def interact_actions(npc):
         for template in npc.templates:
             if template.is_interactive:
-                yield Map.action('Interact', target=str(npc.uuid), description=template.interaction_text(npc))
+                yield Map.action('Interact', target=str(npc.uuid), description=template.interaction_text())
 
     def transition_action(transition):
         return Map.action('Transition', description='Travel to {}'.format(transition.destination), target=str(transition.uuid))

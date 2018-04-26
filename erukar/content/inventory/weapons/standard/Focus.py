@@ -1,8 +1,8 @@
-from erukar.system.engine import Weapon
 import numpy as np
+from ..categories.ArcaneWeapon import ArcaneWeapon
 import random
 
-class Focus(Weapon):
+class Focus(ArcaneWeapon):
     Probability = 1
     BaseName = "Focus"
     EssentialPart = "devotion"
@@ -27,8 +27,6 @@ class Focus(Weapon):
         'sense':  {'requirement': 8, 'scaling_factor': 3.5, 'cutoff': 200},
         'acuity': {'requirement': 0, 'scaling_factor': 1.2, 'cutoff': 100},
     }
-
-    Variant = 'magical'
 
     def failing_requirements(self, wielder):
         if wielder.arcane_energy < self.EnergyCost:

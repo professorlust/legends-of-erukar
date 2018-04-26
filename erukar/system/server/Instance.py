@@ -43,6 +43,7 @@ class Instance(Manager):
         self.status = Instance.Ready
         self.turn_manager = TurnManager()
         self.dungeon = self.location.get_dungeon()
+        self.dungeon.location = self.location
         if self.dungeon:
             self.on_start()
 
