@@ -1,9 +1,13 @@
 from erukar.ext.math import Distance, Navigator
 from erukar.system.engine import Weapon
-import logging, time
+import logging
+import time
 logger = logging.getLogger('debug')
 
+
 class Zones:
+    BuildLogFmt = 'Zones -- Clear and rebuild for {} took {:.3f} s to execute'
+
     def __init__(self):
         self.desynced = True
         self.all_seen = set()
@@ -16,14 +20,16 @@ class Zones:
 
     def rebuild_if_desynced(self, lifeform, world):
         if self.desynced:
-            self.clear_and_rebuild(lifeform, world.all_traversable_coordinates())
+            space = world.all_traversable_coordinates()
+            self.clear_and_rebuild(lifeform, space)
 
     def clear_and_rebuild(self, lifeform, available_space):
         self.desynced = False
         start_time = time.time()
         self.clear()
         self.build(lifeform, available_space)
-        logger.info('Zones -- Clear and rebuild for {} took {:.3f} s to execute'.format(lifeform.name, time.time() - start_time))
+        d_time = time.time() - start_time
+        logger.info(Zones.BuildLogFmt.format(lifeform.name, d_time))
 
     def build(self, lifeform, available_space):
         self.add_all_movements(lifeform.coordinates, lifeform, available_space)
@@ -38,10 +44,17 @@ class Zones:
             previous_set = self.movement[cost]
 
     def add_movement(self, start, lifeform, available_space, cost):
-        self.movement[cost] = Distance.pathed_traversable(start, available_space, (lifeform.move_speed()*cost)-1)
+        potential_speed = (lifeform.move_speed() * cost) - 1
+        self.movement[cost] = Distance.pathed_traversable(
+            origin=start,
+            traversable_collection=available_space,
+            max_tiles=potential_speed)
 
     def compute_fog_of_war(self, lifeform, available_space):
-        for seen in Distance.direct_los(lifeform.coordinates, available_space, lifeform.visual_fog_of_war()):
+        coords = lifeform.coordinates
+        fog_of_war = lifeform.visual_fog_of_war()
+        los = Distance.direct_los(coords, available_space, fog_of_war)
+        for seen in los:
             self.fog_of_war.append(seen)
             self.all_seen.add(seen)
 
@@ -51,11 +64,13 @@ class Zones:
 
     def compute_weapon_range(self, lifeform, weapon_slot):
         weapon = getattr(lifeform, weapon_slot, None)
-        if not weapon or not isinstance(weapon, Weapon): return
-        for coordinate in self.fog_of_war:
-            if Navigator.distance(coordinate, lifeform.coordinates) > weapon.attack_range(lifeform):
+        if not weapon or not isinstance(weapon, Weapon):
+            return
+        attack_range = weapon.attack_range(lifeform)
+        for coord in self.fog_of_war:
+            if Navigator.distance(coord, lifeform.coordinates) > attack_range:
                 continue
-            if coordinate not in self.weapon_ranges:
-                self.weapon_ranges[coordinate] = []
-            if weapon not in self.weapon_ranges[coordinate]:
-                self.weapon_ranges[coordinate].append(weapon)
+            if coord not in self.weapon_ranges:
+                self.weapon_ranges[coord] = []
+            if weapon not in self.weapon_ranges[coord]:
+                self.weapon_ranges[coord].append(weapon)

@@ -1,6 +1,6 @@
-from erukar.system.engine import Lifeform, Weapon, Armor
+from erukar.system.engine import Weapon, Armor
 from ..Command import Command
-import json
+
 
 class Inventory(Command):
     NeedsArgs = False
@@ -43,17 +43,19 @@ class Inventory(Command):
         return self.succeed()
 
     def assemble_equipment(self):
+        lifeform = self.args['player_lifeform']
         for slot in Inventory.InventorySlots:
             yield {
                 'slot': slot,
                 'slotName': Inventory.SlotName[slot],
-                'id': Inventory.uid_for_slot(self.args['player_lifeform'], slot)
+                'id': Inventory.uid_for_slot(lifeform, slot)
             }
 
     def uid_for_slot(pawn, slot):
         if hasattr(pawn, slot):
             item = getattr(pawn, slot)
-            if item: return str(item.uuid)
+            if item:
+                return str(item.uuid)
         return -1
 
     def format_item(self, item):
@@ -67,11 +69,14 @@ class Inventory(Command):
             'desirabilityRating': item.rarity().name,
             'slots': item.equipment_slots(self.args['player_lifeform']),
             'flavorText': item.flavor_text(self.args['player_lifeform']),
-            'details': list(Inventory.generate_list_of_details(item)) 
+            'details': list(Inventory.generate_list_of_details(item))
         }
 
         if item.material:
-            object_output['durability'] = {'current': item.durability(), 'max': item.max_durability()}
+            object_output['durability'] = {
+                'current': item.durability,
+                'max': item.max_durability()
+            }
 
         if isinstance(item, Weapon):
             object_output['damages'] = list(self.weapon_details(item))
@@ -91,11 +96,15 @@ class Inventory(Command):
         # Description here
 
     def weapon_details(self, item):
-        yield from item.generate_damage_details_for_inventory(self.args['player_lifeform'])
+        lifeform = self.args['player_lifeform']
+        yield from item.generate_damage_details_for_inventory(lifeform)
 
     def armor_details(item):
         for mit in item.DamageMitigations:
-            yield mit.capitalize(), {'deflection': item.DamageMitigations[mit][1], 'mitigation': item.DamageMitigations[mit][0]}
+            yield mit.capitalize(), {
+                'deflection': item.DamageMitigations[mit][1],
+                'mitigation': item.DamageMitigations[mit][0]
+            }
 
     def format_modifier(modifier):
         return {
@@ -103,4 +112,3 @@ class Inventory(Command):
             'title': modifier.InventoryName,
             'value': modifier.InventoryDescription
         }
-            

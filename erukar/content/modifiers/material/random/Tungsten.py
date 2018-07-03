@@ -1,5 +1,7 @@
 from ..base.Metal import Metal
 from erukar.system.engine import Observation
+import erukar
+
 
 class Tungsten(Metal):
     Probability = 0.05
@@ -15,3 +17,9 @@ class Tungsten(Metal):
 
     InventoryDescription = "Heavy metal which is capable of dissipating high temperatures better than most other metals"
     InventoryName = "Tungsten"
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
+    ]

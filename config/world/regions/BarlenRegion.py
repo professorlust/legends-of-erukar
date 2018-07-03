@@ -1,6 +1,7 @@
 import erukar
 from erukar.system.engine import EnvironmentProfile, OverlandSector,  Sector, Region, Location, Chunk, EconomicProfile
 
+
 def create():
     barlen = Region()
     barlen.name = "Greater Barlen Region"
@@ -17,16 +18,16 @@ def create():
 
 def acceptable_bounds():
     return [
-        (0,0,0),
-        (2,-2,0),
-        (2,-3,1),
-        (1,-1,0),
-        (1,-2,1),
-        (1,-3,2),
-        (0,-1,1),
-        (0,-2,2),
-        (0,-3,3),
-        (-1,0,1)
+        (0, 0, 0),
+        (2, -2, 0),
+        (2, -3, 1),
+        (1, -1, 0),
+        (1, -2, 1),
+        (1, -3, 2),
+        (0, -1, 1),
+        (0, -2, 2),
+        (0, -3, 3),
+        (-1, 0, 1)
     ]
 
 def create_barlen_outskirts(region):
@@ -37,11 +38,10 @@ def create_barlen_outskirts(region):
         econ.demand[erukar.AshLumber] = 1000
         econ.supply[erukar.AshLumber] = 100
         return econ
-    sector = create_sector_template(region, econ_seed) 
+    sector = create_sector_template(region, econ_seed)
     sector.name = 'Barlen Town Outskirts'
     sector.environment_profile = EnvironmentProfile.CityOutdoors()
     sector.set_coordinates((0,0,0))
-    
     town = Location(sector)
     town.is_named = True
     town.name = 'Barlen Town Outskirts'
@@ -57,7 +57,7 @@ def create_razorwoods_camp(region):
         econ.demand[erukar.AshLumber] = 10
         econ.supply[erukar.AshLumber] = 5000
         return econ
-    sector = create_sector_template(region, econ_seed) 
+    sector = create_sector_template(region, econ_seed)
     sector.name = 'Feriden Razorwoods Camp'
     sector.set_coordinates((0,-3,3))
     sector.environment_profile = EnvironmentProfile.SnowyWoodlands()

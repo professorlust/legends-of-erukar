@@ -1,5 +1,7 @@
 from ..base.Wood import Wood
 from erukar.system.engine import Observation
+import erukar
+
 
 class Oak(Wood):
     Probability = 0.05
@@ -19,4 +21,12 @@ class Oak(Wood):
     Inspects = [
         Observation(acuity=5, sense=0, result="The {EssentialPart} has been carved from wood."),
         Observation(acuity=20, sense=0, result="The {EssentialPart} has been carved from white oak.")
+    ]
+
+    PermittedEntities = [
+        erukar.system.inventory.ArcaneWeapon,
+        erukar.system.inventory.BowWeapon,
+        erukar.system.inventory.CrossbowWeapon,
+        erukar.system.inventory.SimpleWeapon,
+        erukar.system.Ammunition
     ]

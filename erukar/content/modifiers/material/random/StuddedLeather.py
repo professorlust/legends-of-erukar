@@ -1,5 +1,7 @@
 from ..base.Cloth import Cloth
 from erukar.system.engine import Observation, Weapon
+import erukar
+
 
 class StuddedLeather(Cloth):
     ProhibitedEntities = [Weapon]
@@ -18,3 +20,7 @@ class StuddedLeather(Cloth):
 
     InventoryDescription = "Provides better slashing and piercing protection other standard leather"
     InventoryName = "Studded Leather"
+
+    PermittedEntities = [
+        erukar.system.Armor
+    ]

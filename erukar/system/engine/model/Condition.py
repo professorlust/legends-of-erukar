@@ -1,10 +1,12 @@
 class Condition:
     '''Such as Dead, Dying, Incapacitated, etc.'''
     Incapacitates = False
-    IsTemporary = False # AKA can be tied to a timer
-    Persistent = False # AKA DB Persistent
+    IsTemporary = False  # AKA can be tied to a timer
+    Persistent = False  # AKA DB Persistent
     Duration = 4
     DamageMitigations = {}
+    RemoveOnStartOfTurn = False
+    RemoveOnEndOfTurn = False
 
     Noun = 'Condition'
     Participle = 'Conditioning'
@@ -16,6 +18,10 @@ class Condition:
         self.instigator = instigator
         self.timer = self.Duration
         self.efficiency = 1.0
+
+    def damage_mitigation(self, damage_type):
+        if damage_type in self.DamageMitigations:
+            yield self.DamageMitigations[damage_type]
 
     def duration_remaining(self):
         if self.IsTemporary:
@@ -30,9 +36,13 @@ class Condition:
         return self.Description
 
     def do_begin_of_turn_effect(self):
+        if (self.timer <= 0 or self.Duration == 0) and self.RemoveOnStartOfTurn:
+            self.exit()
         return ''
 
     def do_end_of_turn_effect(self):
+        if (self.timer <= 0 or self.Duration == 0) and self.RemoveOnEndOfTurn:
+            self.exit()
         return ''
 
     def do_tick_effect(self):
@@ -47,15 +57,6 @@ class Condition:
 
     def exit(self):
         self.target.conditions.remove(self)
-
-    def modify_acuity_to_detect(self):
-        return 0
-
-    def modify_sense_to_detect(self):
-        return 0
-
-    def modify_attack_roll(self, target):
-        return 0
 
     def on_process_damage(self, attack_state, command):
         pass

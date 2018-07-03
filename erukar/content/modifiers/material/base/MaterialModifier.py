@@ -1,10 +1,11 @@
 from ...base.ItemModifier import ItemModifier
 from erukar.system.engine import Modifier, Weapon, Armor
 
+
 class MaterialModifier(ItemModifier):
     PermissionType = Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED
-    PermittedEntities = [Weapon, Armor]
-    
+    PermittedEntities = []
+
     FlexibilityMultiplier = 1.0
     WeightMultiplier = 1.0
     DurabilityMultiplier = 1.0

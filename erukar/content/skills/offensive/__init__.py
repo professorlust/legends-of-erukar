@@ -1,5 +1,5 @@
-from .OffensiveStance import OffensiveStance
+from .DualWielding import DualWielding
 
 __all__ = [
-    "OffensiveStance"
+    "DualWielding"
 ]

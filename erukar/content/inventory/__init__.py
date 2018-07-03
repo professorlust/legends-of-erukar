@@ -5,5 +5,4 @@ from .weapons import *
 from .armor import *
 from .materials import *
 from .consumables.potions import *
-from .weapons.categories import *
 from .materials.base import *

@@ -20,8 +20,8 @@ itsdangerous==0.24
 Jinja2==2.9.6
 lxml==3.8.0
 MarkupSafe==1.0
-numpy==1.11.2
-psycopg2==2.7.1
+numpy==1.14.3
+psycopg2==2.7.4
 PyGreSQL==5.0.1
 python-engineio==1.5.4
 python-socketio==1.7.5

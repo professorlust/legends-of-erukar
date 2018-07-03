@@ -1,5 +1,7 @@
 from ..base.Wood import Wood
 from erukar.system.engine import Observation
+import erukar
+
 
 class Beechwood(Wood):
     Probability = 0.05
@@ -12,3 +14,10 @@ class Beechwood(Wood):
     InventoryName = "Beechwood"
     InventoryDescription = ''
 
+    PermittedEntities = [
+        erukar.system.inventory.ArcaneWeapon,
+        erukar.system.inventory.BowWeapon,
+        erukar.system.inventory.CrossbowWeapon,
+        erukar.system.inventory.SimpleWeapon,
+        erukar.system.Ammunition
+    ]

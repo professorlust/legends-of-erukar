@@ -1,5 +1,7 @@
 from ..base.MagicOre import MagicOre
 from erukar.system.engine import Observation
+import erukar
+
 
 class Negacite(MagicOre):
     Probability = 0.05
@@ -24,4 +26,10 @@ class Negacite(MagicOre):
         Observation(acuity=10, sense=5, result="The {EssentialPart} is whitish, with a shimmering blue light. A sign of magic."),
         Observation(acuity=35, sense=0, result="The {EssentialPart} of the {BaseName} has been forged from a metal known as Atherite."),
         Observation(acuity=35, sense=10, result="The {BaseName}'s {EssentialPart} has been forged from Atherite, a magical ore which is white and shimmers a blue light; you feel that this weapon possesses some link to magical chaos.")
+    ]
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
     ]

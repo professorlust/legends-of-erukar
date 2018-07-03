@@ -1,6 +1,8 @@
 from .Describable import Describable
 from erukar.ext.math.Distance import Distance
-import math, random, re
+import random
+import erukar
+
 
 class ErukarActor(Describable):
     equipment_types = []
@@ -15,6 +17,12 @@ class ErukarActor(Describable):
         'resolve'
     ]
 
+    def minimum_sense_to_detect(self):
+        return 1
+
+    def minimum_acuity_to_detect(self):
+        return 1
+
     def evasion(self):
         return self.base_evasion
 
@@ -25,12 +33,13 @@ class ErukarActor(Describable):
         inner_circle = list(Distance.points_in_circle(int(w/4)-1, (int(h/2),int(w/2))))
         for y in range(h):
             for x in range(w):
-                if (x,y) in circle:
-                    if (x,y) not in inner_circle:
-                        yield {'r':0,'g':0,'b':0,'a':1}
-                    else: 
-                        yield {'r':255,'g':0,'b':0,'a':1}
-                else: yield {'r':0,'g':0,'b':0,'a':0}
+                if (x, y) in circle:
+                    if (x, y) not in inner_circle:
+                        yield {'r': 0, 'g': 0, 'b': 0, 'a': 1}
+                    else:
+                        yield {'r': 255, 'g': 0, 'b': 0, 'a': 1}
+                else:
+                    yield {'r': 0, 'g': 0, 'b': 0, 'a': 0}
 
     def roll(self, roll_range, distribution=None):
         if distribution is None:
@@ -38,12 +47,22 @@ class ErukarActor(Describable):
         return max(1, distribution(*roll_range))
 
     def deflection(self, damage_type):
-        return sum( [df for mit, df in self.matching_deflections_and_mitigations(damage_type)] )
+        return sum(self._deflections(damage_type))
 
     def mitigation(self, damage_type):
-        return 1.0-sum([mit for mit, df in self.matching_deflections_and_mitigations(damage_type)])
+        return 1.0 - sum(self._mitigations(damage_type))
 
-    def matching_deflections_and_mitigations(self, damage_type):
+    def _deflections(self, damage_type):
+        for protection in self.protections(damage_type):
+            mitigation, deflection = protection
+            yield deflection
+
+    def _mitigations(self, damage_type):
+        for protection in self.protections(damage_type):
+            mitigation, deflection = protection
+            yield mitigation
+
+    def protections(self, damage_type):
         if damage_type in self.BaseDamageMitigations:
             yield self.BaseDamageMitigations[damage_type]
 
@@ -55,47 +74,21 @@ class ErukarActor(Describable):
                 armor.take_damage(damage)
 
     def process_damage(self, damages, instigator, efficacy=1.0):
-        '''Apply a list of damages to this player and return a result'''
-        damage_result = self.calculate_damage_result(damages, instigator, efficacy)
-        damage_result.parse_status()
-        return damage_result
+        pass
 
     def apply_damage(self, damage_result, instigator):
         damage_sum = sum(x.amount_dealt for x in damage_result.reports)
-        self.take_damage(damage_sum, instigator)  
+        self.take_damage(damage_sum, instigator)
 
     def calculate_damage_result(self, damages, instigator, efficacy=1.0):
-        '''
-        Similar to singular version but accepts a list.
-        Returns a DamageResult object
-        '''
-        result = DamageResult(self, instigator)
-        for damage in damages:
-            damage_report = self.calculate_actual_damage_values(damage, instigator, efficacy)
-            result.reports.append(damage_report)
-        return result
+        pass
 
     def calculate_actual_damage_values(self, damage, instigator, efficacy):
-        '''Apply Deflection and Mitigation to a damage value'''
-        result = DamageMitigationResult(damage)
-        result.set_attacker(instigator)
-        result.raw = int(damage.roll(instigator) * efficacy)
-
-        # Check to see how much damage is mitigated
-        after_deflection = result.raw - self.deflection(damage.name)
-        if after_deflection <= 0:
-            result.amount_deflected = result.raw - after_deflection
-            result.stopped_by_deflection = True
-            return result
-
-        # Check to see how much is mitigated
-        result.amount_dealt = int(after_deflection * self.mitigation(damage.name))
-        if result.amount_dealt < 1:
-            result.amount_mitigated = after_deflection - result.amount_dealt
-            result.stopped_by_mitigation = True
-
-        return result
+        pass
 
     def take_damage(self, damage_amount, instigator=None):
         '''This is to be handled in subclasses'''
         pass
+
+    def modify_element(self, mod_name, element):
+        return element

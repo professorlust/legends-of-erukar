@@ -1,6 +1,9 @@
 from erukar.ext.math import Modules
 from .ProbablisticGenerator import ProbablisticGenerator
-import functools, math, numpy
+import functools
+import math
+import numpy
+
 
 class ModuleDecorator(ProbablisticGenerator):
     ConditionalProb = 'ProbabilityFrom{}'
@@ -8,7 +11,8 @@ class ModuleDecorator(ProbablisticGenerator):
     def __init__(self, module, generation_parameters):
         super().__init__()
         self.generation_parameters = generation_parameters
-        self.initialize(module)
+        if isinstance(module, str):
+            self.initialize(module)
 
     def initialize(self, module):
         poss = list(Modules.get_members_of(module))
@@ -63,4 +67,3 @@ class ModuleDecorator(ProbablisticGenerator):
         new_one = type_to_create[1]()
         setattr(new_one, 'generation_parameters', self.generation_parameters)
         return new_one
-

@@ -1,5 +1,7 @@
 from ..base.Mineral import Mineral
 from erukar.system.engine import Observation
+import erukar
+
 
 class Crystal(Mineral):
     Probability = 0.05
@@ -11,3 +13,9 @@ class Crystal(Mineral):
 
     InventoryName = "Crystal"
     InventoryDescription = 'Delicate, clear, and the most expensive material known to man'
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor,
+    ]

@@ -1,5 +1,7 @@
 from ..base.Cloth import Cloth
 from erukar.system.engine import Observation
+import erukar
+
 
 class Cotton(Cloth):
     Probability = 0.05
@@ -11,3 +13,7 @@ class Cotton(Cloth):
 
     InventoryName = 'Cotton'
     InventoryDescription = 'Mass produced fabric which can be made into many different colors via the usage of dyes.'
+
+    PermittedEntities = [
+        erukar.system.Armor
+    ]

@@ -1,5 +1,7 @@
 from ..base.Cloth import Cloth
 from erukar.system.engine import Observation, Weapon, Armor
+import erukar
+
 
 class Leather(Cloth):
     ProhibitedEntities = [Weapon]
@@ -28,3 +30,6 @@ class Leather(Cloth):
         Observation(acuity=0, sense=0, result="The {BaseType} has been created with a tanned leather.")
     ]
 
+    PermittedEntities = [
+        erukar.system.Armor
+    ]

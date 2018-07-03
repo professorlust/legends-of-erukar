@@ -1,6 +1,7 @@
 from ..base.LightSource import LightSource
 from erukar.system.engine import Observation
 
+
 class Torch(LightSource):
     BaseName = "Torch"
     EssentialPart = "tip"
@@ -14,7 +15,7 @@ class Torch(LightSource):
 
     MaxFuel = 100
     FuelConsumptionRate = 0.3
-    StrengthAtMaxFuel = 6.0
-    StrengthAtZeroFuel = 2.0
-    DecayAtMaxFuel = 0.75
-    DecayAtZeroFuel = 0.2
+    StrengthAtMaxFuel = 1.0
+    StrengthAtZeroFuel = 0.2
+    DistanceAtMaxFuel = 10
+    DistanceAtZeroFuel = 3

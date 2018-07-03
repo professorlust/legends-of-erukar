@@ -95,7 +95,7 @@ def get_templates():
             'description': template.description,
             'stats': template.stats,
             'inventory': [format_item_for_template(x, template) for x in template.inventory],
-            'skills': [format_skill_for_template(x, template) for x in template.skills]
+            'skills': [format_skill_for_template(x, template) for x in template.skills if x.ShowInLists]
         }
 
     templates = [format_template(t) for t in shard.templates]

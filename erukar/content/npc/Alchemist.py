@@ -1,6 +1,7 @@
 import erukar
 from erukar.system.engine import Merchant
 
+
 class Alchemist(Merchant):
     def __init__(self, world):
         super().__init__(world)
@@ -22,4 +23,14 @@ class Alchemist(Merchant):
             erukar.content.PotionOfBrilliance(10),
             erukar.content.PotionOfAwareness(10),
             erukar.content.PotionOfCourage(10),
+            erukar.content.FoulLiquid(25),
+            erukar.content.HolyWater(25),
+            erukar.content.PotionOfProtectionFromFire(10),
+            erukar.content.PotionOfProtectionFromIce(10),
+            erukar.content.PotionOfProtectionFromElectricity(10),
+            erukar.content.PotionOfProtectionFromAcid(10),
+            erukar.content.PotionOfResistanceToFire(10),
+            erukar.content.PotionOfResistanceToIce(10),
+            erukar.content.PotionOfResistanceToElectricity(10),
+            erukar.content.PotionOfResistanceToAcid(10),
         ]

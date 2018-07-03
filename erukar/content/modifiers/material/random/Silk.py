@@ -1,5 +1,7 @@
 from ..base.Cloth import Cloth
 from erukar.system.engine import Observation
+import erukar
+
 
 class Silk(Cloth):
     Probability = 0.05
@@ -11,3 +13,7 @@ class Silk(Cloth):
 
     InventoryName = 'Silk'
     InventoryDescription = 'Intricate fabric used primarily by the aristocracy'
+
+    PermittedEntities = [
+        erukar.system.Armor
+    ]

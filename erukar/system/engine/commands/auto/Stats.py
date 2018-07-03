@@ -1,5 +1,6 @@
-from erukar.system.engine import Damage, Lifeform
+from erukar.system.engine import Damage
 from ..Command import Command
+
 
 class Stats(Command):
     NeedsArgs = False
@@ -15,24 +16,33 @@ class Stats(Command):
     def perform(self):
         pawn = self.args['player_lifeform']
         output_result = {
-			'level': pawn.level,
-			'xp': {
-                'current': pawn.experience, 
+            'level': pawn.level,
+            'xp': {
+                'current': pawn.experience,
                 'nextLevel': pawn.calculate_necessary_xp()
             },
-			'health': {'current': pawn.health, 'max': pawn.max_health},
-			'evasion': pawn.evasion(),
-			'equipLoad': {'current': pawn.equip_load(), 'max': pawn.max_equip_load()},
-			'arcaneEnergy': {'current': pawn.arcane_energy, 'max': pawn.maximum_arcane_energy()},
-			'strength':  {'base': pawn.strength, 'mod': Stats.get_mod(pawn, 'strength')},
-			'dexterity': {'base': pawn.dexterity, 'mod': Stats.get_mod(pawn, 'dexterity')},
-			'vitality':  {'base': pawn.vitality, 'mod': Stats.get_mod(pawn, 'vitality')},
-			'acuity':    {'base': pawn.acuity, 'mod': Stats.get_mod(pawn, 'acuity')},
-			'sense':     {'base': pawn.sense, 'mod': Stats.get_mod(pawn, 'sense')},
-            'resolve':   {'base': pawn.resolve, 'mod': Stats.get_mod(pawn, 'resolve')},
+            'health': {
+                'current': pawn.health,
+                'max': pawn.maximum_health()
+            },
+            'evasion': pawn.evasion(),
+            'equipLoad': {
+                'current': pawn.equip_load(),
+                'max': pawn.max_equip_load()
+            },
+            'arcaneEnergy': {
+                'current': pawn.arcane_energy,
+                'max': pawn.maximum_arcane_energy()
+            },
             'mitigations': [],
             'conditions': []
         }
+
+        for attribute in Stats.attribute_types:
+            output_result[attribute] = {
+                'base': getattr(pawn, attribute),
+                'mod': Stats.get_mod(pawn, attribute)
+            }
 
         for damage in Damage.Types:
             output_result['mitigations'].append({

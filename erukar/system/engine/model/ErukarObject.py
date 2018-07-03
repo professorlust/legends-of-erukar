@@ -1,9 +1,11 @@
 from erukar.ext.math.Distance import Distance
 import uuid
 
+
 class ErukarObject:
     def __init__(self):
         self.uuid = uuid.uuid4()
+        self.coordinates = (0, 0)
 
     def tile_id(self):
         return str(self.uuid)

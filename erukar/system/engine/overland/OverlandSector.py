@@ -1,12 +1,12 @@
 from erukar.system.engine import EnvironmentProfile, ErukarObject
 from .Sector import Sector
-from .Location import Location
 import operator
 
 class OverlandSector(Sector):
     def __init__(self, region=None, econ_seed_fn=None):
         super().__init__(region, econ_seed_fn)
         self.coordinates = "(0,0,0)"
+        self.use_day_night_cycle = True
         self.x = 0
         self.alpha = 0
         self.beta = 0

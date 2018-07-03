@@ -1,5 +1,6 @@
 import math, operator
 
+
 class Navigator:
     '''Static class which does most Pathfinding.'''
 
@@ -24,7 +25,6 @@ class Navigator:
         return Navigator.angle_to_direction(angle)
 
     def raytrace(start, finish):
-        '''Basic path tracing from one room to another; yields the furthest traversible Room'''
         angle = Navigator.angle(start.coordinates, finish.coordinates)
         hyp = Navigator.distance(start.coordinates, finish.coordinates)
         paths = list(set(Navigator.project(start.coordinates, angle, x) for x in range(math.ceil(hyp)+1)))
@@ -49,8 +49,7 @@ class Navigator:
         return math.sqrt(sum(math.pow(a-b, 2) for a,b in zip(finish, start)))
 
     def exists_obstruction_between(start, finish):
-        raytrace_collision = Navigator.raytrace(start, finish)
-        return raytrace_collision != finish
+        return False
 
     def ccw(A,B,C):
         '''Credit to Bryce Boe ... found at http://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/'''

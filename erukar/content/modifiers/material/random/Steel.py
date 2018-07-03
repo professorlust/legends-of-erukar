@@ -1,5 +1,7 @@
 from ..base.Metal import Metal
 from erukar.system.engine import Observation
+import erukar
+
 
 class Steel(Metal):
     Probability = 100
@@ -20,4 +22,10 @@ class Steel(Metal):
     Inspects = [
         Observation(acuity=5, sense=0, result="The {EssentialPart} appears to be forged with some sort of metal."),
         Observation(acuity=20, sense=0, result="The {EssentialPart} has been forged from a steel alloy.")
+    ]
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
     ]

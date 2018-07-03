@@ -1,4 +1,4 @@
-from ..categories.CrossbowWeapon import CrossbowWeapon
+from erukar.system.engine.inventory import CrossbowWeapon
 import numpy as np
 
 class HeavyCrossbow(CrossbowWeapon):

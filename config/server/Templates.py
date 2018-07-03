@@ -42,8 +42,8 @@ def make_barbarian():
     barbarian.spell_words = [
     ]
     barbarian.skills = [
-        erukar.content.skills.Bloodlust(),
         erukar.content.skills.Rage(),
+        erukar.content.skills.MartialWeaponTraining()
     ]
 
     barbarian.description = 'Barbarians are hardy melee fighters capable of dealing lots of damage in bursts. Their raw strength allows them great amounts of damage with heavy, blunted weapons such as Maces and Staves.\nEach barbarian has access to a skill called "Rage" which temporarily grants bonuses to attack damage/health equal to the barbarian\'s resolve score and a 33% increase to physical damage mitigation.'
@@ -70,6 +70,11 @@ def make_cleric():
         PotionOfHealing(5),
     ]
     cleric.spell_words = [
+    ]
+
+    cleric.skills = [
+        erukar.content.skills.SupernaturalSense(),
+        erukar.content.skills.Smite()
     ]
 
     cleric.left  = cleric.inventory[0]
@@ -101,6 +106,7 @@ def make_fighter():
     ]
     fighter.skills = [
         erukar.content.skills.MartialWeaponTraining(),
+        erukar.content.skills.Defend(),
     ]
     fighter.right = fighter.inventory[0]
     fighter.left  = fighter.inventory[1]
@@ -168,7 +174,8 @@ def make_ranger():
     ]
 
     ranger.skills = [
-        erukar.content.skills.ImprovedSight()
+        erukar.content.skills.ImprovedSight(),
+        erukar.content.skills.BowTraining()
     ]
     ranger.right = ranger.inventory[0]
     ranger.feet  = ranger.inventory[1]

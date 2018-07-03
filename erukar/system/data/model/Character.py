@@ -24,7 +24,6 @@ class Character(Lifeform):
         'name',
         'stat_points',
         'skill_points',
-        'max_health',
         'health',
         'strength',
         'dexterity',
@@ -67,6 +66,8 @@ class Character(Lifeform):
 
     def copy_skills(self, session, player):
         for skill in player.skills:
+            if not skill.ShowInLists:
+                continue
             existing = next((x for x in self.skills if getattr(skill, 'id', -1) == x.id), None) 
             if existing:
                 existing.copy_from_object(session, skill)

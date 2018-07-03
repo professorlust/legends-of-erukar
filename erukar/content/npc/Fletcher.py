@@ -1,13 +1,14 @@
 import erukar
 from erukar.system.engine import Merchant
 
+
 class Fletcher(Merchant):
     def __init__(self, world):
         super().__init__(world)
         self.desired_item_types = [
             erukar.engine.Ammunition,
-            erukar.content.BowWeapon,
-            erukar.content.CrossbowWeapon,
+            erukar.system.inventory.BowWeapon,
+            erukar.system.inventory.CrossbowWeapon,
             erukar.content.inventory.RawWoodMaterial
         ]
 

@@ -6,10 +6,10 @@ from .TemporaryIllumination import TemporaryIllumination
 from .Undead import Undead
 
 __all__ = [
-    "AugmentedWeapon", 
-    "Cloaked", 
-    "Ethereal", 
-    "Muted", 
-    "TemporaryIllumination", 
+    "AugmentedWeapon",
+    "Cloaked",
+    "Ethereal",
+    "Muted",
+    "TemporaryIllumination",
     "Undead"
 ]

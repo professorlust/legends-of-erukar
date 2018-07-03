@@ -1,2 +1,0 @@
-class ImprovedAiming:
-    pass

@@ -1,4 +1,5 @@
-from erukar.system.engine import ErukarActor 
+from erukar.system.engine import ErukarActor
+
 
 class Door(ErukarActor):
     close_success = 'You have successfully closed the door'
@@ -71,18 +72,26 @@ class Door(ErukarActor):
         return self.can_open_or_close and self.is_open
 
     def can_open(self):
-        return self.can_open_or_close and not self.is_open and (self.lock is None or not self.lock.is_locked)
+        return self.can_open_or_close\
+                and not self.is_open\
+                and (self.lock is None or not self.lock.is_locked)
 
-    def on_close(self, player):
+    def on_close(self, cmd):
+        player = cmd.args['player_lifeform']
         if self.can_close():
             self.is_open = False
-            return Door.close_success, True
+            cmd.append_result(player.uid, Door.close_success)
+            for aura in cmd.world.get_applicable_auras(self.coordinates):
+                aura.needs_rebuilt = True
+            return cmd.succeed()
+        return cmd.fail("Cannot close this door")
 
-        return "Cannot close this door.", False
-
-    def on_open(self, *_):
+    def on_open(self, cmd):
+        player = cmd.args['player_lifeform']
         if self.can_open():
             self.is_open = True
-            return Door.open_success, True
-
-        return "Cannot open this door", False
+            cmd.append_result(player.uid, Door.open_success)
+            for aura in cmd.world.get_applicable_auras(self.coordinates):
+                aura.needs_rebuilt = True
+            return cmd.succeed()
+        return cmd.fail("Cannot open this door")

@@ -1,5 +1,7 @@
 from ..base.Mineral import Mineral
 from erukar.system.engine import Observation
+import erukar
+
 
 class Abyssium(Mineral):
     Probability = 200
@@ -24,4 +26,10 @@ class Abyssium(Mineral):
         Observation(acuity=10, sense=0, result="The {EssentialPart} appears to be carved out of a dark, reddish black stone that seems to lightly glow a faint red light."),
         Observation(acuity=10, sense=10, result="The {EssentialPart} appears to be carved out of some sort of unholy, reddish black stone that glows a faint red light."),
         Observation(acuity=35, sense=0, result="The {EssentialPart} is made of a blood red stone known as \"Abyssium\".")
+    ]
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
     ]

@@ -1,5 +1,7 @@
 from ..base.Metal import Metal
 from erukar.system.engine import Observation
+import erukar
+
 
 class Copper(Metal):
     Probability = 0.05
@@ -11,3 +13,9 @@ class Copper(Metal):
 
     InventoryName = "Copper"
     InventoryDescription = 'Orangish brown metal which is fairly light but weak'
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
+    ]

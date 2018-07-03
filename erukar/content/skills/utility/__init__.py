@@ -1,11 +1,11 @@
-from .QuickGrab import QuickGrab
 from .Charisma import Charisma
 from .EconomicSense import EconomicSense
 from .Haggling import Haggling
+from .Heal import Heal
 
 __all__ = [
-    "QuickGrab",
     "Charisma",
     "EconomicSense",
     "Haggling",
+    "Heal"
 ]

@@ -1,5 +1,6 @@
 from erukar.system.engine import Skill
 
+
 class ImprovedSight(Skill):
     Name = 'Improved Self Awareness'
 

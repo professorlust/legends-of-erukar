@@ -1,4 +1,4 @@
-from ..categories.SwordWeapon import SwordWeapon
+from erukar.system.engine.inventory import SwordWeapon
 import numpy as np
 
 class Shortsword(SwordWeapon):

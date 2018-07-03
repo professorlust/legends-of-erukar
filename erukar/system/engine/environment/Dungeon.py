@@ -1,13 +1,16 @@
-from erukar.system.engine import ErukarActor, Lifeform, Item, Player, Enemy, CachedSet
+from erukar.system.engine import ErukarActor, Lifeform
 from .Door import Door
 from .Wall import Wall
 from .Room import Room
 from erukar.ext.math import Navigator
 
-import logging, random
+import random
+import logging
 logger = logging.getLogger('debug')
 
+
 class Dungeon(ErukarActor):
+    GAA_Expects_Coord = 'get_applicable_auras expects a coordinate argument'
     minimum_rooms = 3
 
     def __init__(self):
@@ -23,6 +26,11 @@ class Dungeon(ErukarActor):
         self.spawn_coordinates = []
         self.walls = {}
         self.location_transition_coordinates = {}
+        self.base_ambient_light = 0
+        self.base_ambient_sanctity = 0
+
+        # from 0 to 99.99, where 0 is midnight and 50.0 is midday
+        self.time_of_day = 50.0
 
         # Tiles
         self.tile_set_version = 0
@@ -34,52 +42,80 @@ class Dungeon(ErukarActor):
 
     def on_start(self):
         super().on_start()
+        for actor in self.actors:
+            actor.on_start(self)
 
     def add_tile(self, tile_id, tile):
-        if tile_id in self.tile_set: return
+        if tile_id in self.tile_set:
+            return
         self.tile_set[tile_id] = self.tile_generator.build(tile, tile_id)
         self.tile_set_version += 1
 
     def add_actor_tiles(self, actor):
         for tile_id in actor.ids_to_generate():
-            if tile_id in self.tile_set: continue
-            self.tile_set[tile_id] = self.tile_generator.build_actor(actor, tile_id)
+            if tile_id in self.tile_set:
+                continue
+            new_actor = self.tile_generator.build_actor(actor, tile_id)
+            self.tile_set[tile_id] = new_actor
 
-    def generate_tiles(self, tg):
-        self.tile_generator = tg
+    def refresh_tiles(self):
+        self.generate_tiles
+        self.tile_set_version += 1
+
+    def generate_tiles(self, tg=None):
+        self.tile_generator = tg or self.tile_generator
         for tile in self.tiles.values():
             for tile_id in tile.ids_to_generate():
-                if tile_id in self.tile_set: continue
+                if tile_id in self.tile_set:
+                    continue
                 self.tile_set[tile_id] = tg.build(tile, tile_id)
         for actor in self.actors:
-            for tile_id in actor.ids_to_generate():
-                if tile_id in self.tile_set: continue
-                self.tile_set[tile_id] = tg.build_actor(actor, tile_id)
-        self.tile_set_version = 1
+            self.add_actor_tiles(actor)
+        self.tile_set_version = 1 if tg else self.tile_set_version + 1
 
     def get_object_by_uuid(self, uuid):
-        if uuid == self.uuid: return self
-
+        if uuid == self.uuid:
+            return self
         matched = next((x for x in self.actors if x.uuid == uuid), None)
-        if matched: return matched
-
+        if matched:
+            return matched
         for lifeform in (x for x in self.actors if isinstance(x, Lifeform)):
             matched = lifeform.get_object_by_uuid(uuid)
-            if matched: return matched
-
+            if matched:
+                return matched
         for room in self.rooms:
             matched = next((room.get_object_by_uuid(uuid)), None)
-            if matched: return matched
+            if matched:
+                return matched
+
+    def ambient_light(self):
+        return self.base_ambient_light
+
+    def lighting_at(self, loc):
+        light_sum = self.ambient_light()
+        for aura in self.get_applicable_auras(loc):
+            if hasattr(aura, 'modify_light'):
+                light_sum += aura.modify_light(loc)
+        total_light = 0.2 + 0.8 * max(0.0, light_sum)
+        return max(0.0, min(1.0, total_light))
+
+    def ambient_sanctity(self):
+        return self.base_ambient_sanctity
+
+    def sanctity_at(self, loc):
+        aura_sum = self.ambient_sanctity()
+        for aura in self.get_applicable_auras(loc):
+            if hasattr(aura, 'modify_sanctity'):
+                aura_sum += aura.modify_sanctity(loc)
+        total_sanctity = min(1, max(-1, aura_sum))
+        return total_sanctity
 
     def get_applicable_auras(self, for_loc):
         '''Generator which gets all applicable, active auras at a location'''
         if not isinstance(for_loc, tuple):
-            for_loc = for_loc.coordinates
-        room_at = self.get_room_at(for_loc)
-        if room_at is None:
-            return
+            raise Exception(self.GAA_Expects_Coord)
         for aura in self.active_auras:
-            if aura.affects_tile(room_at):
+            if aura.affects_tile(for_loc):
                 yield aura
 
     def get_tile_at(self, loc):
@@ -88,13 +124,14 @@ class Dungeon(ErukarActor):
         return 'null'
 
     def get_tile_name(self, loc):
-        if loc in self.tiles: 
+        if loc in self.tiles:
             return self.tiles[loc].alias()
         return 'Unknown'
 
     def get_wall_overlay(self, loc):
         overlays = []
-        if loc not in self.dungeon_map: return overlays
+        if loc not in self.dungeon_map:
+            return overlays
         # Check to the Left
         if (loc[0]-1, loc[1]) in self.walls:
             overlays.append('wall left')
@@ -146,15 +183,15 @@ class Dungeon(ErukarActor):
 
     def is_traversable(self, loc):
         return loc in self.dungeon_map\
-            and (loc not in self.door_cache\
-            or any(not x.is_open for x in self.door_cache[loc]))
+            and (loc not in self.door_cache
+                 or any(not x.is_open for x in self.door_cache[loc]))
 
     def build_door_cache(self):
-         self.door_cache = {}
-         for loc in self.dungeon_map:
-             doors = list(self.actors_of_type_at(None, loc, Door))
-             if any(doors):
-                 self.door_cache[loc] = doors
+        self.door_cache = {}
+        for loc in self.dungeon_map:
+            doors = list(self.actors_of_type_at(None, loc, Door))
+            if any(doors):
+                self.door_cache[loc] = doors
 
     def get_room_at(self, location):
         if location in self.dungeon_map:
@@ -166,8 +203,8 @@ class Dungeon(ErukarActor):
         xf, yf = map(max, zip(*self.dungeon_map))
         for y in range(yo-1, yf+2):
             for x in range(xo-1, xf+2):
-                if (x,y) not in self.dungeon_map:
-                    if (x,y) not in self.walls:
+                if (x, y) not in self.dungeon_map:
+                    if (x, y) not in self.walls:
                         wall = Wall()
                         wall.material = tile
                         self.walls[(x, y)] = wall
@@ -203,19 +240,29 @@ class Dungeon(ErukarActor):
             if space in self.dungeon_map:
                 self.dungeon_map.pop(space, None)
 
+    def initiate_aura(self, aura, location):
+        aura.location = location
+        self.active_auras.add(aura)
+
     def auras_for_locations(self, locations):
         '''
-        Takes a set of locations (coordinates) and returns a dict of coordinates
-        as keys which map to sets of auras that are applicable at that given
-        coordinate.
+        Takes a set of locations (coordinates) and returns a dict of
+        coordinates as keys which map to sets of auras that are
+        applicable at that given coordinate.
         '''
         return {loc: set(self.get_applicable_auras(loc)) for loc in locations}
 
     def tick(self):
+        self.time_of_day = (self.time_of_day + 0.75) % 100.0
         self.clean_up_auras()
 
     def clean_up_auras(self):
-        self.active_auras = set(x for x in self.active_auras if not x.is_expired)
+        self.active_auras = set(self.not_expired_auras())
+
+    def not_expired_auras(self):
+        for x in self.active_auras:
+            if not x.is_expired:
+                yield x
 
     def add_door(self, door, coordinates):
         self.add_actor(door, coordinates)
@@ -229,6 +276,7 @@ class Dungeon(ErukarActor):
         self.actors.add(actor)
         if isinstance(loc, Room):
             loc = random.choice(loc.coordinates)
+        actor.world = self
         actor.coordinates = loc
         if self.tile_generator:
             self.add_actor_tiles(actor)
@@ -248,9 +296,17 @@ class Dungeon(ErukarActor):
             if Navigator.distance(start, actor.coordinates) <= distance:
                 yield actor
 
+    def sentient_actors(self, caller):
+        for actor in self.actors:
+            if actor is caller:
+                continue
+            if isinstance(actor, Lifeform):
+                yield actor
+
     def moving_parts_at(self, coordinates):
         for actor in self.actors:
-            if actor.coordinates != coordinates: continue
+            if actor.coordinates != coordinates:
+                continue
             return str(actor.uuid)
         return ''
 

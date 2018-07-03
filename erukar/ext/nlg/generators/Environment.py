@@ -28,7 +28,6 @@ class Environment(BaseNLG):
             qualities = [Qualities.Numeric] if count > 1 else []
             yield NlgObject(alias, count=count, qualities=qualities)
 
-
     def get_detected_nlg_objects(observer, acu, sen, potentially_spotted):
         for actor in potentially_spotted:
             if actor.is_detected(acu, sen):

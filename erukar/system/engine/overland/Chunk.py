@@ -2,6 +2,7 @@ from erukar.system.engine import Room, Door, TransitionPiece
 from erukar.ext.math import Shapes
 import erukar
 
+
 class Chunk:
     def generate(self, vertex, dungeon):
         x, y = vertex
@@ -24,6 +25,5 @@ class Chunk:
         dungeon.apply_tiles_on_open_space(indoor_space, indoor_floor_tile)
 
         dungeon.add_door(Door(), (x+1, y+3))
-        
         to_izeth  = TransitionPiece((0, -2, 2), "IzethCitadel1F")
         dungeon.add_transition(to_izeth, (x, y))

@@ -31,7 +31,7 @@ class Modifier(Describable):
     def __init__(self):
         super().__init__()
         self.is_set = False
-        self.target = None
+        self.applied_to = None
         self.persistent = self.DefaultPersistence
         self.rarity = Rarity.Mundane
 
@@ -42,6 +42,7 @@ class Modifier(Describable):
 
     def apply_to(self, entity, parameters=None):
         '''Actually does the modification; this should be overridden'''
+        self.applied_to = entity
         if not self.is_set and self.ShouldRandomizeOnApply:
             self.is_set = True
             self.randomize(parameters)
@@ -76,25 +77,16 @@ class Modifier(Describable):
     def on_unequip(self, lifeform):
         pass
 
-    def can_apply_to(self, entity):
-        '''
-        Checks to see if this is a valid entity based on entities specified
-        in PermittedEntities and ProhibitedEntities and this Modifier's
-        PermissionType
-        '''
-        is_permitted = Modifier.is_in_group(self, entity, self.PermittedEntities)
-        is_prohibited = any(r for r in self.ProhibitedEntities if r == type(entity))
-
-        return self.PermissionType is Modifier.ALL \
-                or (self.PermissionType is Modifier.NONE_PROHIBITED and not is_prohibited) \
-                or (self.PermissionType is Modifier.ALL_PERMITTED_BUT_NOT_PROHIBITED\
-                    and not is_prohibited and is_permitted) \
-                or (self.PermissionType is Modifier.ALL_PERMITTED and is_permitted) \
-                and not self.PermissionType is Modifier.NONE
+    @classmethod
+    def can_apply_to(cls, item):
+        for item_type in cls.PermittedEntities:
+            if isinstance(item, item_type):
+                return True
+        return False
 
     def is_in_group(self, entity, group):
         '''
-        Used to determine if the entity belongs to either the Permitted or 
+        Used to determine if the entity belongs to either the Permitted or
         the Prohibited Entities Lists
         '''
         return any(r for r in group if isinstance(entity, r))
@@ -112,8 +104,14 @@ class Modifier(Describable):
         '''For use with database; getattrs all attributes defined by persistent_attr dict'''
         return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}
 
-    def get_additional_damages(self, weapon):
+    def get_additional_damages(self, weapon, is_attack=False):
         pass
 
     def modify_base_damage(self, damage, weapon):
+        pass
+
+    def post_successful_attack(self, cmd, attacker, weapon, target):
+        pass
+
+    def post_missed_attack(self, cmd, attacker, weapon, target):
         pass

@@ -14,7 +14,6 @@ class Lifeform(ErukarBaseModel, Base):
     id          = Column(Integer, primary_key=True)
     type        = Column(String(50))
     deceased    = Column(Boolean, default=False)
-    max_health  = Column(Integer, default=4)
     name        = Column(String,  default="unnamed")
     instance    = Column(String)
     region      = Column(String)
@@ -42,7 +41,6 @@ class Lifeform(ErukarBaseModel, Base):
     SimpleMapParams = [
         'id',
         'name',
-        'max_health',
         'health',
         'strength',
         'dexterity',

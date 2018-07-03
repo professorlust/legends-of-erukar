@@ -1,5 +1,6 @@
 from ...base.Potion import Potion
-import erukar, random
+import erukar
+
 
 class PotionOfHealing(Potion):
     BaseName = "Potion of Healing"

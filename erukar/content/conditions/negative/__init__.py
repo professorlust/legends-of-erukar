@@ -1,3 +1,4 @@
+from .Bleeding import Bleeding
 from .Blinded import Blinded
 from .BlurredVision import BlurredVision
 from .Concussed import Concussed
@@ -13,17 +14,18 @@ from .Vertigo import Vertigo
 from .Weakened import Weakened
 
 __all__ = [
-    "Blinded", 
-    "BlurredVision", 
-    "Concussed", 
-    "DamageOverTime", 
-    "Deafened", 
-    "Disoriented", 
-    "Frozen", 
-    "Grappled", 
-    "Nauseous", 
-    "Stunned", 
-    "Terrified", 
-    "Vertigo", 
+    "Bleeding",
+    "Blinded",
+    "BlurredVision",
+    "Concussed",
+    "DamageOverTime",
+    "Deafened",
+    "Disoriented",
+    "Frozen",
+    "Grappled",
+    "Nauseous",
+    "Stunned",
+    "Terrified",
+    "Vertigo",
     "Weakened"
 ]

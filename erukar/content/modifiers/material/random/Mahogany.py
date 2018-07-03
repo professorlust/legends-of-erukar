@@ -1,5 +1,7 @@
 from ..base.Wood import Wood
 from erukar.system.engine import Observation
+import erukar
+
 
 class Mahogany(Wood):
     Probability = 0.05
@@ -11,3 +13,11 @@ class Mahogany(Wood):
 
     InventoryName = "Mahogany"
     InventoryDescription = 'Fine wood which is used in expensive carpentry, its durability is matched by its price'
+
+    PermittedEntities = [
+        erukar.system.inventory.ArcaneWeapon,
+        erukar.system.inventory.BowWeapon,
+        erukar.system.inventory.CrossbowWeapon,
+        erukar.system.inventory.SimpleWeapon,
+        erukar.system.Ammunition
+    ]

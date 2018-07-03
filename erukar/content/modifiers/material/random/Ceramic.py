@@ -1,5 +1,7 @@
 from ..base.Mineral import Mineral
 from erukar.system.engine import Observation
+import erukar
+
 
 class Ceramic(Mineral):
     Probability = 200
@@ -17,3 +19,10 @@ class Ceramic(Mineral):
         'slashing': (0.2, 4),
         'piercing': (1, 0)
     }
+
+    PermittedEntities = [
+        erukar.system.inventory.SwordWeapon,
+        erukar.system.inventory.PolearmWeapon,
+        erukar.system.inventory.SimpleWeapon,
+        erukar.system.Armor,
+    ]

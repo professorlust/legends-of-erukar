@@ -1,7 +1,8 @@
-from erukar.system.engine import Weapon
+from erukar.system.engine.inventory import FinesseWeapon
 import numpy as np
 
-class Claws(Weapon):
+
+class Claws(FinesseWeapon):
     IsInteractible = False
     Probability = 0
     BaseName = "Claws"
@@ -15,3 +16,5 @@ class Claws(Weapon):
     # Distribution
     Distribution = np.random.uniform
     DistributionProperties = ()
+    CannotDrop = True
+    AttackRange = 1

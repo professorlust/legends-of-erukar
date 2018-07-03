@@ -1,6 +1,7 @@
 from .NpcTemplate import NpcTemplate
 from erukar.system.engine import StackableItem
 
+
 class Merchant(NpcTemplate):
     def __init__(self, world):
         super().__init__(world)
@@ -10,10 +11,16 @@ class Merchant(NpcTemplate):
         return 1.25
 
     def selling_price(self, item, seller):
-        return int(item.price(self.world.location.economic_profile) * self.disposition(seller) * seller.haggling_sell_modifier())
+        base_price = item.price(self.world.location.economic_profile)
+        disposition_scalar = 1/self.disposition(seller)
+        haggling_scalar = seller.haggling_sell_modifier()
+        return int(base_price * disposition_scalar * haggling_scalar)
 
     def buying_price(self, item, buyer):
-        return int(item.price(self.world.location.economic_profile) * 1/self.disposition(buyer) * seller.haggling_buy_modifier())
+        base_price = item.price(self.world.location.economic_profile)
+        disposition_scalar = 1/self.disposition(buyer)
+        haggling_scalar = buyer.haggling_buy_modifier()
+        return int(base_price * disposition_scalar * haggling_scalar)
 
     def buy_from(self, from_player, item, quantity):
         price = self.buying_price(item, from_player) * quantity
@@ -42,7 +49,8 @@ class Merchant(NpcTemplate):
     def process_player_inventory(self, player):
         mapped_items = set()
         for item in player.inventory:
-            if item.__module__ in mapped_items or self.should_ignore_item(item): continue
+            if item.__module__ in mapped_items or self.should_ignore_item(item):
+                continue
             mapped_items.add(item.__module__)
             quantity = self.quantity(item, player.inventory)
             price = self.buying_price(item, player)

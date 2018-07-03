@@ -1,6 +1,6 @@
-from erukar.system.engine import Weapon
-from ..categories.FinesseWeapon import FinesseWeapon
+from erukar.system.engine.inventory import FinesseWeapon
 import numpy as np
+
 
 class Rapier(FinesseWeapon):
     Probability = 1

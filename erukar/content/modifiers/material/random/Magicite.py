@@ -1,5 +1,7 @@
 from ..base.MagicOre import MagicOre
 from erukar.system.engine import Observation
+import erukar
+
 
 class Magicite(MagicOre):
     Probability = 100
@@ -26,3 +28,8 @@ class Magicite(MagicOre):
         Observation(acuity=20, sense=10, result="The {EssentialPart} has been forged and enchanted with Magicite, a magically-infused reddish alloy.")
     ]
 
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
+    ]

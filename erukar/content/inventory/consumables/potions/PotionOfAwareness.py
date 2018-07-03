@@ -1,5 +1,6 @@
 from ...base.Potion import Potion
-import erukar, random
+import erukar
+
 
 class PotionOfAwareness(Potion):
     BaseName = "Potion of Awareness"
@@ -14,7 +15,5 @@ class PotionOfAwareness(Potion):
             erukar.content.InflictCondition
         ]
 
-    def get_kwargs(self, effect_type):
-        if effect_type == erukar.content.InflictCondition:
-            return {'type': erukar.content.conditions.Wisened}
-        return {}
+    def get_kwargs(self):
+        return {'type': erukar.content.conditions.Wisened}

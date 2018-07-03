@@ -9,6 +9,9 @@ from .StackableItem import StackableItem
 from .TieredKey import TieredKey
 from .UniqueKey import UniqueKey
 from .Weapon import Weapon
+from .HealingTool import HealingTool
+
+from .categories import *
 
 __all__ = [
     "Ammunition", 
@@ -21,5 +24,6 @@ __all__ = [
     "StackableItem", 
     "TieredKey", 
     "UniqueKey", 
-    "Weapon"
+    "Weapon",
+    "HealingTool"
 ]

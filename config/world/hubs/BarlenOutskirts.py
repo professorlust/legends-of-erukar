@@ -1,11 +1,11 @@
-import os, sys
-sys.path.append(os.getcwd())
-
-from erukar.system.engine import Npc, TransitionPiece, Dungeon, Room, Wall, TileGenerator, Door
+from erukar.system.engine import Npc, TransitionPiece, OverlandZone, Room, Wall, TileGenerator, Door
 from erukar.ext.math import Shapes
 import erukar
+import sys
+import os
+sys.path.append(os.getcwd())
 
-dungeon = Dungeon()
+dungeon = OverlandZone()
 wall_texture = erukar.content.StoneBricks()
 floor_texture = erukar.content.WoodFloor()
 
@@ -21,6 +21,8 @@ alchemist = Npc(templates=[erukar.content.Alchemist])
 dungeon.add_npc(alchemist, arcanist_shop)
 alchemist.use_standard_inventory()
 alchemist.wealth = 800
+dungeon.add_actor(erukar.content.Torch(), (2,5))
+dungeon.add_door(Door(), (2, 3))
 
 ''' Trade Commissioner '''
 trade_commission = Room(dungeon, coordinates=Shapes.rect((7,9),(4,6)))
@@ -30,6 +32,7 @@ commissioner = Npc(templates=[erukar.content.TradeCommissioner])
 dungeon.add_npc(commissioner, trade_commission)
 commissioner.use_standard_inventory()
 commissioner.wealth = 1500
+dungeon.add_door(Door(), (8, 3))
 
 ''' Smithy '''
 smithy = Room(dungeon, coordinates=Shapes.rect((1,3),(-4,-2)))
@@ -39,6 +42,7 @@ smith_npc = Npc(templates=[erukar.content.Smithy])
 dungeon.add_npc(smith_npc, smithy)
 smith_npc.use_standard_inventory()
 smith_npc.wealth = 500
+dungeon.add_door(Door(), (2, -1))
 
 ''' Wall Textures '''
 dungeon.apply_tiles_on_all_closed_space(erukar.content.Pine())

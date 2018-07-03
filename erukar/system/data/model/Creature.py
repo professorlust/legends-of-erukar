@@ -6,7 +6,7 @@ from erukar.system.engine import Enemy
 
 class Creature(Lifeform):
     __tablename__ = 'creatures'
-    __mapper_args_ = { 
+    __mapper_args_ = {
         'polymorphic_identity': 'creatures',
     }
 
@@ -26,7 +26,6 @@ class Creature(Lifeform):
 
     SimpleMapParams = [
         'name',
-        'max_health',
         'strength',
         'dexterity',
         'vitality',
@@ -68,6 +67,7 @@ class Creature(Lifeform):
 
     def map_schema_to_object(self, existing_object=None):
         '''Map our properties onto an Enemy object'''
-        if not existing_object: raise Exception('Creature Schema Object attempted to map a null object')
+        if not existing_object:
+            raise Exception('Creature Schema Object attempted to map a null object')
         super().map_schema_to_object(existing_object)
-        existing_object.health = existing_object.max_health
+        existing_object.health = existing_object.maximum_health()

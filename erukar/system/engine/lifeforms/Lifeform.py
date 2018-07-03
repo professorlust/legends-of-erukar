@@ -1,9 +1,13 @@
-from erukar.system.engine import ErukarActor, Dead, Dying, Observation, Armor, Weapon
+from erukar.system.engine import ErukarActor, Dead, Dying, Armor, Weapon
+from erukar.ext.math import Navigator, Distance
 from .Zones import Zones
-import math, random, re
-
+import erukar
+import math
+import random
+import re
 import logging
 logger = logging.getLogger('debug')
+
 
 class Lifeform(ErukarActor):
     equipment_types = [
@@ -18,23 +22,28 @@ class Lifeform(ErukarActor):
         "amulet",
         "blessing",
         "ammunition",
+        "healing_tool",
+        "maintenance_tool"
     ]
-    attack_slots = [ "left", "right" ]
-    base_health = 4
+    attack_slots = ["left", "right"]
+    base_health = 30
     UnknownWordEfficiency = 0.01
     BaseDualWieldingPenalty = 60
     ArcaneEnergyRegenPercentage = 0.05
+    BaseSenseToDetect = 10
+    BaseAcuityToDetect = 10
 
     def __init__(self, world=None, name=""):
         super().__init__()
-        self.name       = name
-        self.uid        = ""
-        self.inventory  = []
-        self.initialize_stats() 
-        self.coordinates = (0,0)
+        self.name = name
+        self.uid = ""
+        self.inventory = []
+        self.initialize_stats()
+        self.coordinates = (0, 0)
         self.world = world
         self.instance = ''
         self.sector = "(0,0,0)"
+        self.detected_entities = {self}
         for eq_type in self.equipment_types:
             setattr(self, eq_type, None)
         self.zones = Zones()
@@ -50,32 +59,74 @@ class Lifeform(ErukarActor):
         return out
 
     def initialize_effects(self):
-        self.skill_points   = 5
-        self.skills         = []
-        self.conditions     = []
-        self.spell_words    = []
-        self.reserved_action_points  = 0
-        self.current_action_points  = 0
+        self.skill_points = 5
+        self.skills = [
+            erukar.system.engine.Move(),
+            erukar.system.engine.Attack(),
+        ]
+        self.conditions = []
+        self.spell_words = []
+        self.reserved_action_points = 0
+        self.current_action_points = 0
 
     def initialize_stats(self):
-        self.stat_points    = 15
-        self.strength       = 0
-        self.dexterity      = 0
-        self.vitality       = 0
-        self.acuity         = 0
-        self.sense          = 0
-        self.resolve        = 0
-        self.experience     = 0
-        self.arcane_energy  = 0
-        self.health         = self.base_health
-        self.max_health     = self.base_health
-        self.level          = 1
+        self.stat_points = 15
+        self.strength = 0
+        self.dexterity = 0
+        self.vitality = 0
+        self.acuity = 0
+        self.sense = 0
+        self.resolve = 0
+        self.experience = 0
+        self.arcane_energy = 0
+        self.health = self.base_health
+        self.level = 1
+
+    def maximum_health(self):
+        _max = self.base_health + self.level_health() + self.vitality_health()
+        mod_name = 'modify_maximum_health'
+        return self.modify_element(mod_name, _max)
+
+    def modify_element(self, mod_name, _el):
+        for condition in self.conditions:
+            if hasattr(condition, mod_name):
+                _el = getattr(condition, mod_name)(self, _el) or _el
+        for item in self.equipped_items():
+            _el = item.modify_element(mod_name, _el) or _el
+        return _el
+
+    def level_health(self):
+        if self.level <= 25:
+            return 10 * self.level
+        if self.level <= 50:
+            return 250 + 7*(self.level-25)
+        if self.level <= 100:
+            return 425 + 5*(self.level-50)
+        if self.level <= 150:
+            return 675 + 3*(self.level-100)
+        if self.level <= 200:
+            return 825 + 2*(self.level-150)
+        return 725 + self.level
+
+    def vitality_health(self):
+        if self.vitality <= 25:
+            return 5 * self.vitality
+        if self.vitality <= 50:
+            return 125 + 3*(self.vitality - 25)
+        if self.vitality <= 75:
+            return 200 + 2*(self.vitality - 50)
+        if self.vitality <= 125:
+            return 250 + self.vitality - 75
+        if self.vitality <= 200:
+            return 300 + int(0.5*(self.vitality - 125))
+        return int(337.5 + 0.1*(self.vitality-200))
 
     def is_hostile_to(self, lifeform):
         return False
 
     def subscribe(self, instance):
         self.instance = instance.identifier
+        self.world = instance.dungeon
         self.sector = instance.location.sector.get_coordinates()
         for skill in self.skills:
             if hasattr(skill, 'apply_to'):
@@ -168,14 +219,17 @@ class Lifeform(ErukarActor):
 
     def calculate_attack_roll(self, efficiency, target):
         raw = self.roll(self.stat_random_range('dexterity'))
-        attack_mod = sum([x.modify_attack_roll(target) for x in self.conditions])
-        return int((raw + attack_mod) * efficiency)
+        total = self.modify_element('modify_attack_roll', raw)
+        return int(total * efficiency)
 
     def on_check_for_hit(self, attacker, weapon, attack_roll):
         return attack_roll
 
-    def on_successful_hit(self, target, weapon, attack_roll):
+    def get_damage_from_attack(self, target, weapon):
         return weapon.calculate_damage(self)
+
+    def on_successful_attack(self, target, weapon, roll):
+        pass
 
     def on_failed_dodge(self, attacker, weapon, attack_roll):
         pass
@@ -183,17 +237,45 @@ class Lifeform(ErukarActor):
     def on_successful_dodge(self, attacker, weapon, attack_roll):
         pass
 
-    def on_missed_hit(self, target, weapon, attack_roll):
+    def on_missed_attack(self, target, weapon, attack_roll):
+        pass
+
+    def post_successful_attack(self, cmd, attacker, weapon, target):
+        pass
+
+    def post_missed_attack(self, cmd, attacker, weapon, target):
         pass
 
     def apply_deflection(self, attacker, weapon, damages):
-        return damages
+        post_deflection = []
+        for damage in damages:
+            amount, damage_type = damage
+            dfl = self.deflection(damage_type)
+            reduced = max(0, amount - dfl)
+            if reduced > 0:
+                post_deflection.append((reduced, damage_type))
+        return post_deflection
 
     def apply_mitigation(self, attacker, weapon, damages):
-        return damages
+        post_mitigation = []
+        for damage in damages:
+            amount, damage_type = damage
+            mit = self.mitigation(damage_type)
+            reduced = int(amount * mit)
+            if reduced > 0:
+                post_mitigation.append((reduced, damage_type))
+        return post_mitigation
 
     def apply_damage(self, attacker, weapon, damages):
-        self.take_damage(sum(x[0] for x in damages), attacker)
+        undeflected = self.apply_deflection(attacker, weapon, damages)
+        unmitigated = self.apply_mitigation(attacker, weapon, undeflected)
+        total_damage = sum(x[0] for x in unmitigated)
+        self.take_damage(total_damage, attacker)
+        return {
+            'post_deflection': undeflected,
+            'post_mitigation': unmitigated,
+            'total': int(total_damage)
+        }
 
     def on_process_damage(self, attack_state, command):
         '''Called after a successful attack'''
@@ -202,17 +284,61 @@ class Lifeform(ErukarActor):
         if attack_state.weapon:
             attack_state.weapon.on_process_damage(attack_state, command)
 
+    def detect_in_area(self, area):
+        for loc in area:
+            self.zones.all_seen.add(loc)
+            for actor in self.world.actors_at(self, loc):
+                if self.can_detect(actor):
+                    self.detected_entities.add(actor)
+
+    def can_detect(self, other):
+        if not isinstance(other, ErukarActor):
+            return False
+        sen_min = other.minimum_sense_to_detect()
+        acu_min = other.minimum_acuity_to_detect()
+        acu, sen = self.get_detection_pair()
+        acu *= self.vision_penalty(other)
+        return other in self.detected_entities\
+            or acu >= acu_min\
+            or sen >= sen_min\
+            or (acu >= acu_min * 0.75 and sen >= sen_min * 0.75)
+
+    def vision_penalty(self, other):
+        light = self.world.lighting_at(other.coordinates)
+        distance = Navigator.distance(self.coordinates, other.coordinates)
+        l_penalty = self.light_penalty(light)
+        d_penalty = self.distance_penalty(distance)
+        return (1 - l_penalty) * (1 - d_penalty)
+
+    def light_penalty(self, light):
+        if light > 0.5:
+            return 0.0
+        if light > 0.25:
+            return 0.5
+        if light > 0.1:
+            return 0.75
+        return 1.0
+
+    def distance_penalty(self, dist):
+        if dist < 8:
+            return 0.0
+        if dist < 16:
+            return 0.5
+        return 1.0
+
     def get_detection_pair(self):
         '''Retrieve a rolled Acuity and Sense for detection'''
         return [math.floor(random.uniform(*self.stat_random_range(x))) for x in ('acuity', 'sense')]
 
     def minimum_sense_to_detect(self):
-        condition_mod = sum([x.modify_sense_to_detect() for x in self.conditions])
-        return 1 + condition_mod
+        s2d = self.BaseSenseToDetect
+        mod_name = 'modify_sense_to_detect'
+        return self.modify_element(mod_name, s2d)
 
     def minimum_acuity_to_detect(self):
-        condition_mod = sum([x.modify_acuity_to_detect() for x in self.conditions])
-        return self.calculate_effective_stat('dexterity') + condition_mod
+        a2d = self.BaseAcuityToDetect
+        mod_name = 'modify_acuity_to_detect'
+        return self.modify_element(mod_name, a2d)
 
     def get_grasp_index(self, word):
         return next((i for i,x in enumerate(self.spell_words) if x.word_class == word), None)
@@ -265,8 +391,7 @@ class Lifeform(ErukarActor):
     def define_level(self, level):
         '''Set this lifeform's level and defined the health appropriately'''
         self.level = level
-        self.max_health = sum([Lifeform.base_health + self.get('vitality') for x in range(level)])
-        self.health = self.max_health
+        self.health = self.maximum_health()
 
     def dual_wielding_penalty(self):
         '''Figures out the penalty for wielding a weapon in the character's offhand'''
@@ -275,11 +400,9 @@ class Lifeform(ErukarActor):
     def evasion(self):
         if self.is_incapacitated():
             return ErukarActor.base_evasion / 4
-
-        ac_mod = self.get('dexterity')
-        total_ac = ErukarActor.base_evasion
-
-        return total_ac + ac_mod
+        base_ac = ErukarActor.base_evasion + self.get('dexterity')
+        total_ac = self.modify_element('modify_evasion', base_ac)
+        return total_ac
 
     def has_condition(self, aff_type):
         '''Alias to simplify the check to see if the lifeform has an affliction'''
@@ -292,7 +415,7 @@ class Lifeform(ErukarActor):
         return math.ceil((x/100)*(100*x) + ((100-x)/100) * (10+0.5*x*x + pow(2, math.exp((x-100)/x))))
 
     def calculate_necessary_xp(self):
-        return self.calculate_xp_worth()
+        return 22*self.calculate_xp_worth()
 
     def award_xp(self, xp, cmd):
         '''Award a certain amount of XP to the player and level if the threshold is met'''
@@ -304,18 +427,14 @@ class Lifeform(ErukarActor):
         while self.experience >= necessary_xp:
             self.experience -= necessary_xp
             self.perform_level_up(output_strings)
-    
         cmd.append_result(self.uid, '\n'.join(output_strings))
 
     def perform_level_up(self, output_strings):
         '''Level up the character once'''
+        hp_proportion = self.health / self.maximum_health()
         self.level += 1
         output_strings.append('{} has leveled up! Now Level {}.'.format(self.alias(), self.level))
-
-        # Manage Health
-        hp_proportion = self.health / self.max_health
-        self.max_health += (4 + self.vitality)
-        self.health = int(math.ceil(self.max_health * hp_proportion))
+        self.health = int(math.ceil(self.maximum_health() * hp_proportion))
 
         # Manage stat and skill points
         self.stat_points += 1
@@ -336,7 +455,7 @@ class Lifeform(ErukarActor):
 
         if self.level == 100:
             self.skill_points += 1
-    
+
         if eligible:
             self.skill_points += 1
             output_strings.append('{} now has {} skill points.'.format(self.alias(), self.skill_points))
@@ -349,24 +468,44 @@ class Lifeform(ErukarActor):
             return
         self.health = max(0, self.health - damage_amount)
         if self.health == 0:
-            logger.info('dying')
             self.conditions.append(Dying(self, None))
 
     def kill(self, killer):
         '''Mark us as dead, then return our net worth in XP'''
         self.conditions = [Dead(self, None)]
+        dropped = self.inventory
+        self.inventory = []
+        for loc in self.equipment_types:
+            setattr(self, loc, None)
+        for item in dropped:
+            if item.CannotDrop:
+                continue
+            self.world.add_actor(item, self.coordinates)
+        self.world.refresh_tiles()
 
     def on_move(self, new_coordinates):
         '''Called after Move command starts'''
         self.coordinates = new_coordinates
+        self.observe()
         for eq in self.equipment_types:
             equip = getattr(self, eq)
             if equip is not None:
-                equip.on_move(None)
+                equip.on_move(new_coordinates)
+
+    def observe(self, max_range=None, loc=None, radius=None):
+        visual_area = list(Distance.direct_los(
+            self.coordinates,
+            self.world.all_traversable_coordinates(),
+            max_range or self.visual_fog_of_war(),
+            loc or self.coordinates,
+            radius or max_range))
+        self.detect_in_area(visual_area)
 
     def get(self, attribute):
         '''Alias for getattr(self, ____)'''
-        return getattr(self, attribute)
+        base = getattr(self, attribute)
+        mod_name = 'modify_{}'.format(attribute)
+        return self.modify_element(mod_name, base)
 
     def matches(self, payload):
         return payload.lower() in self.alias().lower()
@@ -408,23 +547,23 @@ class Lifeform(ErukarActor):
         return self.on_inspect(lifeform, acuity, sense)
 
     def add_to_inventory(self, item):
-        if item in self.inventory: return
+        if item in self.inventory:
+            return
         self.inventory.append(item)
         item.owner = self
 
     def possessive_pronoun(self):
         return 'his'
 
-    def matching_deflections_and_mitigations(self, damage_type):
+    def protections(self, damage_type):
         # Check for Mitigation in Armor
         for x in self.equipment_types:
             armor = getattr(self, x)
             if isinstance(armor, Armor):
-                yield armor.mitigation_for(damage_type)
+                yield from armor.protection(damage_type)
         # Check for Mitigation Conditions
         for condition in self.conditions:
-            if damage_type in condition.DamageMitigations:
-                yield condition.DamageMitigations[damage_type]
+            yield from condition.damage_mitigation(damage_type)
         # Check for Base Mitigations
         if damage_type in self.BaseDamageMitigations:
             yield self.BaseDamageMitigations[damage_type]
@@ -439,9 +578,9 @@ class Lifeform(ErukarActor):
         self.zones.desynced = True
 
     def offset_scale(self, weapon):
-        method_name = 'offset_scale_for_{}'.format(type(weapon).Variant) 
+        method_name = 'offset_scale_for_{}'.format(type(weapon).Variant)
         actual_method = getattr(self, method_name, None)
-        return 0 if not actual_method else  actual_method()
+        return 0 if not actual_method else actual_method()
 
     def max_weapon_range(self):
         weapons = list(self.viable_weapons())
@@ -455,7 +594,21 @@ class Lifeform(ErukarActor):
             if weapon and isinstance(weapon, Weapon):
                 yield weapon
 
+    def additional_commands(self):
+        for skill in self.skills:
+            yield from skill.commands_provided()
+
+    def find_in_inventory(self, _type):
+        for item in self.inventory:
+            if isinstance(item, _type):
+                return item
+
     '''Used in Skills'''
-    def disposition_bonuses(self, other): return 0
-    def haggling_buy_modifier(self): return 0.8
-    def haggling_sell_modifier(self): return 1.2
+    def disposition_bonuses(self, other):
+        return 0
+
+    def haggling_buy_modifier(self):
+        return 0.8
+
+    def haggling_sell_modifier(self):
+        return 1.2

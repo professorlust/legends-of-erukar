@@ -1,5 +1,6 @@
 from ...base.Potion import Potion
-import erukar, random
+import erukar
+
 
 class PotionOfGreaterHealing(Potion):
     BaseName = "Potion of Greater Healing"
@@ -14,7 +15,5 @@ class PotionOfGreaterHealing(Potion):
             erukar.content.AddHealth
         ]
 
-    def get_kwargs(self, effect_type):
-        if effect_type == erukar.content.AddHealth:
-            return {'range': (25, 50)}
-        return {}
+    def get_kwargs(self):
+        return {'range': (100, 150)}

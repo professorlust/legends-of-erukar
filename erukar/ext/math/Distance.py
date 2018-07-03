@@ -57,18 +57,28 @@ class Distance:
         pre_distance_points = [x for x in Distance.points_in_circle(radius_around, centered_on)]
         points = list(sorted(pre_distance_points, key=lambda x: Navigator.distance(origin, x), reverse=True))
         while points:
-            line = list(Navigator.bressenhams(origin, points[0]))
-            blocker_found = False
-            while line:
-                coord = line.pop(0)
-                if coord in points: points.remove(coord)
-                if blocker_found: continue
-                if not any(x == coord for x in open_space) or Navigator.distance(coord, origin) > max_distance: 
-                    blocker_found = True
-                yield coord
+            yield from Distance.unblocked_in_line(origin,
+                                                  target=points[0],
+                                                  open_space=open_space,
+                                                  max_dist=max_distance,
+                                                  uncached=points)
+
+    def unblocked_in_line(origin, target, open_space, max_dist=99, uncached=None):
+        line = list(Navigator.bressenhams(origin, target))
+        blocker_found = False
+        while line:
+            coord = line.pop(0)
+            if uncached and coord in uncached:
+                uncached.remove(coord)
+            if blocker_found:
+                continue
+            any_open = any(x == coord for x in open_space)
+            within_dist = Navigator.distance(coord, origin) <= max_dist
+            blocker_found = not any_open or not within_dist
+            yield coord
 
     def points_in_circle(radius, origin):
-        r = int(radius) 
+        r = int(radius)
         for x in range(-r, r+1):
             Y = int((r*r - x*x) ** 0.5)
             for y in range(-Y, Y+1):

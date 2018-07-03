@@ -1,33 +1,35 @@
-from erukar.ext.ai.BaseAI import BaseAI
-from erukar.system.engine import Indexer, Describable
+from erukar.system.engine import Indexer, Describable, AiModule
 from erukar.ext.math import Random, Namer
 from .Lifeform import Lifeform
 from .Player import Player
-import math, random, string
+
+import erukar
+import random
+import string
+
 
 class Enemy(Lifeform, Indexer):
     RandomizedArmor = []
     RandomizedWeapons = []
     ElitePointClassificationMinimum = 3.0
+    ClassLevel = 100
+    ClassName = 'ERROR'
 
     def __init__(self, name="", world=None, is_random=True):
         Indexer.__init__(self)
-        Lifeform.__init__(self, world,name)
+        name = name or self.ClassName
+        Lifeform.__init__(self, world, name)
 
         # Personality
-        self.stat_points = 0
         self.elite_points = 0
-        self.str_ratio = 0.1667
-        self.dex_ratio = 0.1667
-        self.vit_ratio = 0.1667
-        self.acu_ratio = 0.1667
-        self.sen_ratio = 0.1667
-        self.res_ratio = 0.1667
+        # using getattr allows for declarations before super()s
         self.commander = None   # Used in conjuration or with Elites
         self.faction   = None   # Reserved
         self.spells    = []     # Enemies GENERALLY use pre-defined Spells instead of Spell words, though not necessarily 
 
-        self.ai_module = BaseAI
+        self.init_stats()
+        self.init_personality()
+        self.ai_module = erukar.system.BasicAI(self)
 
         # Flavor
         self.history = []
@@ -35,13 +37,33 @@ class Enemy(Lifeform, Indexer):
         self.region = ''
         self.name = name
 
-        # Randomized/Persistent enemy 
+        # Randomized/Persistent enemy
         self.is_transient = True
         self.requesting_persisted = False
         self.should_randomize = is_random
+        self.define_level(self.ClassLevel)
 
         chars = string.ascii_uppercase + string.digits
         self.uid = ''.join(random.choice(chars) for x in range(128))
+        self.init_inventory()
+
+    def init_stats(self):
+        pass
+
+    def init_personality(self):
+        self.stat_points = 0
+        self.str_ratio = 0.1667
+        self.dex_ratio = 0.1667
+        self.vit_ratio = 0.1667
+        self.acu_ratio = 0.1667
+        self.sen_ratio = 0.1667
+        self.res_ratio = 0.1667
+
+    def init_inventory(self):
+        pass
+
+    def maximum_arcane_energy(self):
+        return 100
 
     def is_hostile_to(self, lifeform):
         return isinstance(lifeform, Player)
@@ -66,14 +88,18 @@ class Enemy(Lifeform, Indexer):
         return self.name
 
     def is_elite(self):
-        return self.elite_points >= Enemy.ElitePointClassificationMinimum and not self.is_transient
+        return self.elite_points >= Enemy.ElitePointClassificationMinimum\
+                and not self.is_transient
 
     def stop_execution(self):
         self.current_action_points = 0
         self.reserved_action_points = 0
 
-    def perform_turn(self, instance):
-        self.ai_module.perform_turn(self, instance)
+    def perform_turn(self):
+        return self.ai_module.perform_turn()
+
+    def should_pass(self):
+        return self.action_points() <= 0
 
     def perform_level_ups(self):
         while self.stat_points > 0:
@@ -87,9 +113,10 @@ class Enemy(Lifeform, Indexer):
         super().award_xp(xp, target)
         self.perform_level_ups()
 
-        if not target: return []
+        if not target:
+            return []
         if isinstance(target, Player)\
-        or (isinstance(target, Enemy) and target.is_elite()):
+           or (isinstance(target, Enemy) and target.is_elite()):
             total_ep = max(0.5, 3.0 * target.level/self.level)
             self.award_elite_points(total_ep)
             self.history.append('Slew {}.'.format(target.alias()))
@@ -99,7 +126,7 @@ class Enemy(Lifeform, Indexer):
         before = self.elite_points
         self.elite_points += amt
         self.check_for_elite_level_up(before)
-        
+
     def check_for_elite_level_up(self, before):
         if before < 2.0 <= self.elite_points:
             self.is_transient = False
@@ -119,36 +146,12 @@ class Enemy(Lifeform, Indexer):
                     mod = erukar.content.modifiers.enemy.Cloaked
                 mod().apply_to(self)
 
-
         upgrade_increment = 25.0 if before > 50.0 else 10.0
         # The following is only possible if we pass the threshold of an upgrade
         if before % upgrade_increment > self.elite_points % upgrade_increment:
-            # Add a weapon 
+            # Add a weapon
             # Gain a random modifier
-            return 
-
-    def viable_attack_targets(self, room):
-        acuity, sense = [math.floor(random.uniform(*self.stat_random_range(x))) for x in ('acuity', 'sense')]
-        for item in room.contents:
-            # Can't be viable if it's not detected, can't be viable if is our commander
-            if not item.is_detected(acuity, sense) or self.our_commander_is(item):
-                continue
-
-            # Typically, monsters are aggressive towards players so yield it if we've gotten this far
-            if isinstance(item, Player):
-                yield item
-
-            # If you have sense < -2, you might attack inanimate objects...
-            if self.sense <= -2 or isinstance(item, Lifeform):
-                # If you have sense < -3, you might attack other enemies
-                if self.sense > -3 and not isinstance(item, Player):
-                    continue
-                # If you have sense < -4, you might attack yourself on accident 
-                if self.sense <= -4 or item is not self:
-                    yield item
-
-    def our_commander_is(self, target):
-        return self.commander is not None and target is self.commander
+            return
 
     def lifeform(self):
         return self
@@ -171,5 +174,7 @@ class Enemy(Lifeform, Indexer):
         self.requesting_persisted = True
 
     def on_inspect(self, lifeform, acu, sen):
-        return 'A skeleton' 
-        
+        return 'A skeleton'
+
+    def on_start(self, world):
+        self.ai_module.on_start(world)

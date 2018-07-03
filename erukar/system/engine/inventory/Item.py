@@ -1,6 +1,8 @@
 from erukar.system.engine import Describable, Rarity
 from erukar.ext.math import Curves
-import functools, operator, math
+import functools
+import operator
+
 
 class Item(Describable):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
@@ -10,47 +12,28 @@ class Item(Describable):
     EssentialPart = 'item part'
     SupportPart = 'item part'
     Persistent = False
-    PersistentAttributes = ['durability_coefficient']
+    PersistentAttributes = ['durability']
 
+    ModifierPath = ''
     MaxDurability = 100
     BaseWeight = 0 # In Pounds
     BasePrice = 10
     EquipmentLocations = []
 
+    CannotDrop = False
     IsUsable = False
     RequiresTwoHands = False
     ActionPointCostToEquip = 1
     ActionPointCostToUnequip = 1
 
-    '''
-    Stat scaling is a linear relationship between a specific attribute and the scaling_factor
-    The Damage Range is essentially a proportion
-    
-    # Assuming damage range is 1 to 4
-    # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5 }
-    @ str = 15,  damage = damage * 15/20            = 0.75 * damage          =   1 to   3
-    @ str = 20,  damage = damage * 20/20            = 1.0 * damage           =   1 to   4
-    @ str = 30,  damage = damage + (30 - 20) * 1.5  = damage +  15 + STR-req =  21 to  34
-    @ str = 60,  damage = damage + (60 - 20) * 1.5  = damage +  60 + STR-req =  81 to 124
-    @ str = 200, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 361 to 574
-    @ str = 260, damage = damage + 180 * 1.5        = damage + 270 + STR-req = 391 to 694
-
-    In the event of multiple stat influences, 
-
-    It can, however, be an s-curve if you specify 's-curve': True as in below
-    # 'strength': { 'requirement': 20, 'cutoff': 200, 'scaling_factor': 1.5, 's-curve': True }
-    '''
-    BaseStatInfluences = {
-    }
-
     def __init__(self, item_type='Item', name="Item", modifiers=None):
         super().__init__()
-        self.stat_influences = self.BaseStatInfluences
         self.item_type = item_type
         self.owner = None
         self.name = name
         self.description = Item.generic_description
-        self.durability_coefficient = 1
+        self.total_durability = 100
+        self.durability = self.total_durability
 
         # Modifiers
         self.material = None
@@ -62,6 +45,9 @@ class Item(Describable):
             for modifier_type in modifiers:
                 modifier_type().apply_to(self)
 
+    def durability_coefficient(self):
+        return self.durability / self.total_durability
+
     def equipment_slots(self, lifeform):
         return self.EquipmentLocations
 
@@ -69,7 +55,7 @@ class Item(Describable):
         full_mod_list = self.modifiers + [self.material]
         if not any([x for x in full_mod_list if x]):
             return Rarity.Mundane
-        max_rarity = max([x.rarity.value for x in full_mod_list])
+        max_rarity = max([getattr(x, 'rarity', Rarity.Mundane).value for x in full_mod_list])
         return Rarity(max_rarity)
 
     def efficacy_for(self, lifeform):
@@ -85,9 +71,9 @@ class Item(Describable):
         return other.lower() in self.alias().lower() \
             or other.lower() in self.item_type.lower()
 
-    def on_start(self, room):
+    def on_start(self, dungeon):
         for modifier in self.modifiers:
-            modifier.on_start(room)
+            modifier.on_start(dungeon)
 
     def on_take(self, lifeform):
         self.owner = lifeform
@@ -118,7 +104,7 @@ class Item(Describable):
             modifier.on_equip(lifeform)
 
     def durability(self):
-        return self.durability_coefficient * self.max_durability() 
+        return self.durability_coefficient * self.max_durability()
 
     def max_durability(self):
         return self.material.DurabilityMultiplier * self.MaxDurability
@@ -130,10 +116,12 @@ class Item(Describable):
         return functools.reduce(operator.mul, mults, self.BaseWeight)
 
     def price(self, econ=None):
-        mults = [x.PriceMultiplier for x in self.modifiers]
-        if hasattr(self, 'material') and self.material:
-            return functools.reduce(operator.mul, mults, self.BasePrice * self.material.PriceMultiplier * self.durability_multiplier())
-        return functools.reduce(operator.mul, mults, self.BasePrice)
+        price = self.BasePrice
+        for modifier in self.modifiers:
+            price *= modifier.PriceMultiplier
+        if hasattr(self, 'material'):
+            return price * getattr(self.material, 'PriceMultiplier', 1.0)
+        return price
 
     def base_price(self):
         return self.price()
@@ -189,3 +177,17 @@ class Item(Describable):
 
     def flavor_text(self, player):
         return 'This is a generic item. Lorem ipsum dolor sit amet, consectetur adipiscing elit'
+
+    def modify_element(self, mod_name, element):
+        for mod in self.modifiers:
+            if hasattr(mod, mod_name):
+                element = getattr(mod, mod_name)(self, element)
+        return element
+
+    def post_successful_attack(self, cmd, attacker, weapon, target):
+        for modifier in self.modifiers:
+            modifier.post_successful_attack(cmd, attacker, weapon, target)
+
+    def post_missed_attack(self, cmd, attacker, weapon, target):
+        for modifier in self.modifiers:
+            modifier.post_missed_attack(cmd, attacker, weapon, target)

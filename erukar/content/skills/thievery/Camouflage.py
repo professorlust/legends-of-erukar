@@ -1,2 +1,0 @@
-class Camouflage:
-    pass

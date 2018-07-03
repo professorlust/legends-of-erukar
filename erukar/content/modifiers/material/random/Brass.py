@@ -1,5 +1,7 @@
 from ..base.Metal import Metal
 from erukar.system.engine import Observation
+import erukar
+
 
 class Brass(Metal):
     Probability = 200
@@ -26,4 +28,10 @@ class Brass(Metal):
         Observation(acuity=35, sense=0, result="The {EssentialPart} of the {BaseName} has been forged from Brass."),
         Observation(acuity=35, sense=5, result="The {EssentialPart} of the {BaseName} is light, as it has been forged polished brass."),
         Observation(acuity=35, sense=10, result="The {BaseName}'s {EssentialPart} has been forged from a resilient and lightweight brass.")
+    ]
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
     ]

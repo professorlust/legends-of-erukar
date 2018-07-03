@@ -1,5 +1,4 @@
-from erukar.system.engine import Weapon
-from ..categories.SimpleWeapon import SimpleWeapon
+from erukar.system.engine.inventory import SimpleWeapon
 import numpy as np
 
 class Maul(SimpleWeapon):

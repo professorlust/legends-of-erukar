@@ -1,6 +1,6 @@
-from erukar.system.engine import StackableItem
+from erukar.system.engine import StackableItem, SpellInstance
 from erukar.ext.nlg import Drink
-import erukar
+
 
 class Potion(StackableItem):
     Persistent = True
@@ -22,14 +22,11 @@ class Potion(StackableItem):
 
     def on_use(self, observer):
         self.consume()
-        base_description = Drink.taste(observer, *observer.get_detection_pair(), self)
-        return ' '.join([base_description] + list(self.apply_effects(observer)))
+        acu, sen = observer.get_detection_pair()
+        base_description = Drink.taste(observer, acu, sen, self)
+        spell = SpellInstance(self.effects)
+        log = spell.execute(observer, observer, **self.get_kwargs())
+        return ' '.join([base_description] + list(log))
 
-    def apply_effects(self, instigator):
-        for effect in self.effects:
-            instance = effect()
-            if isinstance(instance, erukar.system.engine.MagicEffect):
-                yield instance.enact(instigator, instigator, **self.get_kwargs(effect))
-
-    def get_kwargs(self, effect_type):
+    def get_kwargs(self):
         return {}

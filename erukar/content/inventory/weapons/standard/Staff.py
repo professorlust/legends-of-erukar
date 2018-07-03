@@ -1,4 +1,4 @@
-from ..categories.ArcaneWeapon import ArcaneWeapon
+from erukar.system.engine.inventory import ArcaneWeapon
 import numpy as np
 
 class Staff(ArcaneWeapon):

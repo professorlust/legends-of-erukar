@@ -1,5 +1,6 @@
-from ..categories.AxeWeapon import AxeWeapon
+from erukar.system.engine.inventory import AxeWeapon
 import numpy as np
+
 
 class Axe(AxeWeapon):
     Probability = 1

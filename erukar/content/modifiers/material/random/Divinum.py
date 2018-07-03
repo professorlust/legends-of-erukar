@@ -1,5 +1,7 @@
 from ..base.MagicOre import MagicOre
 from erukar.system.engine import Observation
+import erukar
+
 
 class Divinum(MagicOre):
     Probability = 0.05
@@ -11,3 +13,9 @@ class Divinum(MagicOre):
 
     InventoryName = "Divinum"
     InventoryDescription = 'A holy ore which is highly durable and is predisposed towards sanctification'
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
+    ]

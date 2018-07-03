@@ -1,5 +1,5 @@
-from erukar.system.engine import Damage
 from .Item import Item
+
 
 class Armor(Item):
     Light = "LIGHT"
@@ -22,39 +22,25 @@ class Armor(Item):
         'piercing': (0.1, 4)
     }
 
-    def __init__(self, name="",modifiers=None):
-        super().__init__("armor", name if name else self.BaseName, modifiers=modifiers)
+    def __init__(self, name="", modifiers=None):
+        super().__init__("armor", name or self.BaseName, modifiers=modifiers)
 
+    def protection(self, damage_type):
+        if self.durability <= 0.0:
+            yield (0, 0)
+            return
+        yield from self.base_protection(damage_type)
+        mod_methodname = '{}_protection'.format(damage_type)
+        for modifier in self.modifiers:
+            if hasattr(modifier, mod_methodname):
+                yield getattr(modifier, mod_methodname)(self)
 
-    def on_inventory(self):
-        '''Basic inventory description; includes information about possible equipment locations and durability'''
-        equip_loc = ', '.join(x.capitalize() for x in self.EquipmentLocations)
-        return '{} [{}] ({}%)'.format(self.format(), equip_loc, int(100*self.durability_coefficient))
+    def base_protection(self, damage_type):
+        if damage_type in self.DamageMitigations:
+            yield self.DamageMitigations[damage_type]
 
-    def on_inventory_inspect(self, lifeform):
-        '''This is what you get whenever you inspect something in your inventory, or whenever you view your equipped items'''
-        name = '{} ({} / {})'.format(self.format(), int(self.durability()), int(self.max_durability()))
-        mit_desc = '\n'.join(list(self.mitigation_descriptions()))
-        mods = [self.material] + self.modifiers if self.material else self.modifiers
-        mod_desc = '\n'.join(['{:>11} {:12}: {}'.format('+', d.InventoryName, d.mutate(d.InventoryDescription)) for d in mods])
-        weight_desc = '{:>11} {:12}: {:3.2} levts'.format('+', 'Weight:', self.weight())
-        inv_desc = '{:>11} {}'.format('+', self.InventoryDescription)
-        return '\n'.join([name, weight_desc, mit_desc, mod_desc, inv_desc])
-
-    def mitigation_for(self, damage_type):
-        '''result is (%MIT, DFL)'''
-        if self.durability_coefficient > 0.0 and damage_type in self.DamageMitigations:
-            mat_mult = self.material.mitigation_multiplier_for(damage_type)
-            return (
-                self.DamageMitigations[damage_type][0] * mat_mult[0],
-                int(self.DamageMitigations[damage_type][1] * mat_mult[1]),
-            )
-        return (0, 0)
-
-    def mitigation_descriptions(self, show_non_empty=False):
-        for dam_type in Damage.Types:
-            if dam_type in self.DamageMitigations or show_non_empty:
-                mit, dfl = self.mitigation_for(dam_type)
-                if mit > 0 and dfl > 0:
-                    yield '{:>11} {:12}: {:3.0f}% MIT / {:3} DFL'.format('-',dam_type.capitalize(), mit*100.0, dfl)
-
+    def take_damage(self, amount, damage_type):
+        protection = list(self.protection(damage_type))
+        mit = sum(x[0] for x in protection)
+        absorbed_damage = amount * mit
+        self.durability = max(0.0, self.durability - absorbed_damage)

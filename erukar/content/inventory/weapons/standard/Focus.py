@@ -1,6 +1,6 @@
 import numpy as np
-from ..categories.ArcaneWeapon import ArcaneWeapon
-import random
+from erukar.system.engine.inventory import ArcaneWeapon
+
 
 class Focus(ArcaneWeapon):
     Probability = 1

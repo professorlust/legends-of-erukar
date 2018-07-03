@@ -1,5 +1,7 @@
 from ..base.MagicOre import MagicOre
 from erukar.system.engine import Observation
+import erukar
+
 
 class Infernite(MagicOre):
     Probability = 0.05
@@ -11,3 +13,9 @@ class Infernite(MagicOre):
 
     InventoryName = "Infernite"
     InventoryDescription = 'Hot to the touch, has a tendency to attract fiery and infernal magics'
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
+    ]

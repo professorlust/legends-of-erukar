@@ -1,2 +1,0 @@
-class SoldierStance:
-    pass

@@ -1,16 +1,20 @@
-from erukar.system.engine import Manager, Player, PlayerNode, Dead, Enemy, Location
-from erukar.system.engine.commands import LocalIndex, Map, Inspect, Inventory, Stats, Skills, Wait, TargetedCommand
-from erukar.system.data import Connector
+from erukar.system.engine import Manager, Player, PlayerNode, Dead, Enemy
+from erukar.system.engine.commands import LocalIndex, Map, Inspect, Inventory
+from erukar.system.engine.commands import Stats, Skills, Wait, TargetedCommand
 from .TurnManager import TurnManager
-import erukar, threading, random, datetime, json, uuid
-
+import erukar
+import random
+import datetime
+import json
+import uuid
 import logging
 logger = logging.getLogger('debug')
 
+
 class Instance(Manager):
-    MaximumTurnTime = 30.0 # In seconds
-    MaximumTurnSkipPenalty = 5 # in turns
-    TickRate = 0.2 # in seconds
+    MaximumTurnTime = 30.0  # In seconds
+    MaximumTurnSkipPenalty = 5  # in turns
+    TickRate = 0.2  # in seconds
 
     NotInitialized = -1
     Ready = 0
@@ -86,10 +90,12 @@ class Instance(Manager):
 
         node.world = self.dungeon
         node.sector = self.dungeon.overland_location.coordinates()
-        spawn_location = self.dungeon.location_transition_coordinates.get(node.previous_location, random.choice(self.dungeon.spawn_coordinates))
+        random_loc = random.choice(self.dungeon.spawn_coordinates)
+        all_coords = self.dungeon.location_transition_coordinates
+        spawn_location = all_coords.get(node.previous_location, random_loc)
         self.dungeon.add_actor(node.character, spawn_location)
-        if self.active_player is None: self.active_player = node
-
+        if self.active_player is None:
+            self.active_player = node
         erukar.data.Character.update(node.character, self.session)
         node.character.uid = node.uid
         self.subscribe_being(node.lifeform())
@@ -134,11 +140,16 @@ class Instance(Manager):
         logger.info('Instance -- Reducing player count')
 
     def try_to_get_persistent_enemy(self, enemy):
-        possible_uids = [e.uid for e in self.connector.get_creature_uids() if not self.session.find_player(e.uid)]
-        if len(possible_uids) <= 0: 
+        possible_uids = list(self.get_possible_uids(enemy))
+        if len(possible_uids) <= 0:
             return
         uid = random.choice(possible_uids)
         return self.connector.load_creature(uid)
+
+    def get_possible_uids(self, enemy):
+        for e in self.connector.get_creature_uids():
+            if not self.session.find_player(e.uid):
+                yield e.uid
 
     def execute_pre_inspect(self, player):
         player.lifeform().current_action_points += Inspect.ActionPointCost
@@ -151,12 +162,20 @@ class Instance(Manager):
             self.send_update_to(node)
 
     def handle_all_transitions(self):
-        to_trans = [x for x in self.players if isinstance(x,PlayerNode) if x.status == PlayerNode.Transitioning]
+        to_trans = list(self.transitioning_players())
         for node in to_trans:
             node.tell('nuke state', json.dumps('{}'))
             self.unsubscribe(node)
 
-    def try_execute(self, node, cmd):
+    def transitioning_players(self):
+        for player in self.players:
+            if isinstance(player, PlayerNode)\
+              and player.status == PlayerNode.Transitioning:
+                yield player
+
+    def try_execute(self, node, cmd, auto_advance=True):
+        if not cmd:
+            return
         cmd.interactions = self.active_interactions
         if not self.any_connected_players():
             if isinstance(self.active_player, Enemy):
@@ -165,31 +184,36 @@ class Instance(Manager):
 
         if isinstance(cmd, TargetedCommand):
             return self.try_execute_targeted_command(node, cmd)
-        
+
         if node.uid == self.active_player.uid:
-            self.execute_and_process(cmd)
+            self.execute_and_process(cmd, auto_advance)
 
             # Tell characters
             self.send_update_to_players()
             self.handle_all_transitions()
 
-    def execute_and_process(self, cmd):
-        '''When conditions allow an executable to be run, execute it 
+    def execute_and_process(self, cmd, auto_advance=True):
+        '''When conditions allow an executable to be run, execute it
         and run the standard update workflow'''
         result = self.execute_command(cmd)
-        if result is None or not result.success: return
+        if result is None or not result.success:
+            return
 
         if hasattr(result, 'interaction'):
             self.active_interactions.append(result.interaction)
 
+        active_lifeform = self.active_player.lifeform()
+
         if cmd.RebuildZonesOnSuccess:
-            self.active_player.lifeform().flag_for_rebuild()
+            active_lifeform.flag_for_rebuild()
 
         self.clean_dead_characters()
         self.build_zones_where_necessary()
         self.clean_interactions()
 
-        if self.active_player.lifeform().action_points() == 0 or isinstance(cmd, Wait):
+        if not auto_advance:
+            return
+        if active_lifeform.action_points() == 0 or isinstance(cmd, Wait):
             self.get_next_player()
 
     def build_zones_where_necessary(self):
@@ -199,7 +223,8 @@ class Instance(Manager):
 
     def try_execute_targeted_command(self, node, cmd):
         result = self.execute_command(cmd)
-        if result is None: return
+        if result is None:
+            return
 
         if result.success:
             if hasattr(result, 'interaction'):
@@ -208,23 +233,33 @@ class Instance(Manager):
         self.send_update_to(node)
 
     def clean_interactions(self):
-        for interaction in self.active_interactions: 
+        for interaction in self.active_interactions:
             for leaving in interaction.leaving:
                 self.send_update_to(leaving)
             interaction.clean()
-        self.active_interactions = [x for x in self.active_interactions if not x.ended]
+        self.active_interactions = list(self.unended_interactions())
+
+    def unended_interactions(self):
+        for x in self.active_interactions:
+            if not x.ended:
+                yield x
 
     def clean_dead_characters(self):
         dead_characters = [x for x in self.characters if x.has_condition(Dead)]
         for char in dead_characters:
-            node = next((x for x in self.players if x.lifeform() is char), None)
-            self.send_update_to(node) 
-            
+            node = self.dead_player_node(char)
+            self.send_update_to(node)
             self.unsubscribe(node)
             self.slain_characters.append(node)
 
+    def dead_player_node(self, character):
+        for x in self.players:
+            if x.lifeform() is character:
+                return x
+
     def send_update_to(self, node):
-        if not isinstance(node, PlayerNode): return
+        if not isinstance(node, PlayerNode):
+            return
         msgs = self.get_messages_for(node)
         node.tell('update state', msgs)
 
@@ -233,18 +268,38 @@ class Instance(Manager):
         node.tile_set_version = self.dungeon.tile_set_version
 
     def do_non_player_turn(self):
-        if issubclass(type(self.active_player), Enemy):
-            if not self.active_player.is_incapacitated():
-                self.active_player.perform_turn(self)
+        if not self.should_do_non_player_turn():
+            return
+        cmd, exec_count = None, 0
+        while self.should_continue_non_player_turn(cmd, exec_count):
+            cmd = self.active_player.perform_turn()
+            self.try_execute(self.active_player, cmd, auto_advance=False)
+            exec_count += 1
+        self.get_next_player()
+
+    def should_do_non_player_turn(self):
+        return issubclass(type(self.active_player), Enemy)\
+            and not self.active_player.is_incapacitated()
+
+    def should_continue_non_player_turn(self, cmd, exec_count):
+        return not isinstance(cmd, Wait)\
+                and not self.active_player.should_pass()\
+                and exec_count < 4
+
+    def active_player_is_player(self):
+        return self.active_player is not None\
+            and not isinstance(self.active_player, str)
 
     def get_next_player(self):
-        if self.active_player is not None and not isinstance(self.active_player, str):
+        if len(list(self.real_players())) <= 0:
+            return
+        if self.active_player_is_player():
             res = self.active_player.end_turn()
             if len(res) > 0:
                 self.append_response(self.active_player.uid, res)
 
         self.active_player = self.turn_manager.next()
-        if self.active_player is not None and not isinstance(self.active_player, str):
+        if self.active_player_is_player():
             res = self.active_player.begin_turn()
             if len(res) > 0:
                 self.append_response(self.active_player.uid, res)
@@ -264,6 +319,11 @@ class Instance(Manager):
             player.lifeform().tick()
         self.get_next_player()
 
+    def real_players(self):
+        for player in self.players:
+            if isinstance(player, PlayerNode):
+                yield player
+
     def execute_command(self, cmd):
         cmd.server_properties = self.properties
         cmd.context = self.command_contexts[cmd.player_info.uid]
@@ -278,7 +338,7 @@ class Instance(Manager):
             if hasattr(result, 'results'):
                 self.append_result_responses(result)
 
-            # Save Dirtied Characters in DB 
+            # Save Dirtied Characters in DB
             if hasattr(result, 'dirtied_characters'):
                 for dirty in result.dirtied_characters:
                     if isinstance(dirty, Player):
@@ -291,7 +351,8 @@ class Instance(Manager):
 
     def append_result_responses(self, result):
         for uid in result.results:
-            self.append_response(uid,'\n'.join(result.result_for(uid)) + '\n')
+            response = '\n'.join(result.result_for(uid)) + '\n'
+            self.append_response(uid, response)
 
     def append_response(self, uid, response):
         if uid not in self.responses:
@@ -300,7 +361,8 @@ class Instance(Manager):
         self.responses[uid] = self.responses[uid] + [response]
 
     def get_messages_for(self, node):
-        if not node: return Instance.waiting_to_join()
+        if not node:
+            return Instance.waiting_to_join()
         self.send_tile_set_if_necessary(node)
 
         log = list(self.convert_responses_to_log(node))
@@ -309,13 +371,21 @@ class Instance(Manager):
         return self.send_full_state(node, log)
 
     def waiting_to_join():
-        return json.dumps({'log': {'text': 'Waiting to join', 'when': str(datetime.datetime.now())}})
+        return json.dumps({
+            'log': {
+                'text': 'Waiting to join',
+                'when': str(datetime.datetime.now())
+            }
+        })
 
     def convert_responses_to_log(self, node):
         if node.uid in self.responses and len(self.responses[node.uid]) > 0:
-            responses =  self.responses.pop(node.uid, [])
+            responses = self.responses.pop(node.uid, [])
             for line in responses:
-                yield {'text':line, 'when': str(datetime.datetime.now())}
+                yield {
+                    'text': line,
+                    'when': str(datetime.datetime.now())
+                }
 
     def send_tile_set_if_necessary(self, node):
         if self.dungeon.tile_set_version > node.tile_set_version:
@@ -324,14 +394,14 @@ class Instance(Manager):
     def get_interaction_results(self, node):
         interaction_state = {}
         for interaction in self.active_interactions:
-            if node not in interaction.involved: 
+            if node not in interaction.involved:
                 continue
             result = interaction.get_result_for(node)
             interaction_state[str(interaction.uuid)] = result
         return interaction_state
 
     def send_full_state(self, node, log):
-        '''The full state of this node in this instance is returned as a json object'''
+        '''The full state of this node in this instance is returned as json'''
         character = node.lifeform()
 
         inv_cmd = node.create_command(Inventory)
@@ -358,7 +428,10 @@ class Instance(Manager):
             'statPoints': character.stat_points,
             'skillPoints': character.skill_points,
             'skills': skill_res[0],
-            'actionPoints': { 'current': character.current_action_points, 'reserved': character.reserved_action_points },
+            'actionPoints': {
+                'current': character.current_action_points,
+                'reserved': character.reserved_action_points
+            },
             'inventory': inv_res['inventory'],
             'equipment': inv_res['equipment'],
             'vitals': stat_res[0],

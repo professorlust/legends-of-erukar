@@ -7,3 +7,5 @@ from .environment import *
 from .builders import *
 from .overland import *
 from .commands import *
+from .abilities import *
+from .ai import *

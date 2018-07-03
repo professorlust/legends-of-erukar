@@ -1,4 +1,4 @@
-from ..categories.PolearmWeapon import PolearmWeapon
+from erukar.system.engine.inventory import PolearmWeapon
 import numpy as np
 
 class Javelin(PolearmWeapon):

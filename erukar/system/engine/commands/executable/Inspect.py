@@ -1,14 +1,11 @@
-from erukar.system.engine import Containable
 from ..ActionCommand import ActionCommand
 from erukar.ext.nlg import Environment
 from erukar.ext.math import Distance
-import random, math
+
 
 class Inspect(ActionCommand):
     NoTarget = 'Unable to locate interaction_target'
     NotEnoughAP = 'Not enough action points!'
-    abyss = "There is nothing to your {0} except the abyss... plain and nothingness forever."
-    
     NeedsArgs = False
     ActionPointCost = 2
 
@@ -23,28 +20,50 @@ class Inspect(ActionCommand):
     '''
 
     def perform(self):
-        if 'interaction_target' not in self.args or not self.args['interaction_target']:
-            self.args['interaction_target'] = self.specified_coordinates()
+        self.args['interaction_target'] = getattr(
+            self.args,
+            'interaction_target',
+            self.specified_coordinates())
 
-        if self.args['player_lifeform'].action_points() < self.ActionPointCost:
+        cost = self.ActionPointCost
+        if self.args['player_lifeform'].action_points() < cost:
             return self.fail(Inspect.NotEnoughAP)
-        self.args['player_lifeform'].consume_action_points(self.ActionPointCost)
+        self.args['player_lifeform'].consume_action_points(cost)
 
         self.perform_inspection()
+        self.inspect_sanctity()
         return self.succeed()
-    
+
     def perform_inspection(self):
-        acu, sen = self.args['player_lifeform'].get_detection_pair()
+        player = self.args['player_lifeform']
+        acu, sen = player.get_detection_pair()
         acu *= (1.0 - self.ObservationPenalty)
         sen *= (1.0 - self.ObservationPenalty)
 
-        origin = self.args['player_lifeform'].coordinates
+        origin = player.coordinates
         open_space = self.world.all_traversable_coordinates()
         at = self.args['interaction_target']
-        max_range = self.FogOfWarScalar * self.args['player_lifeform'].visual_fog_of_war()
-        visual_area = list(Distance.direct_los(origin, open_space, max_range, at, self.RadiusAroundInspection))
-        for loc in visual_area:
-            self.args['player_lifeform'].zones.all_seen.add(loc)
+        max_range = self.FogOfWarScalar * player.visual_fog_of_war()
 
-        room_description = Environment.describe_area_visually(self.args['player_lifeform'], acu, sen, self.world, visual_area)
+        visual_area = list(Distance.direct_los(
+            origin,
+            open_space,
+            max_range,
+            at,
+            self.RadiusAroundInspection))
+
+        player.detect_in_area(visual_area)
+
+        room_description = Environment.describe_area_visually(
+            player, acu, sen,
+            self.world, visual_area)
+
         self.append_result(self.player_info.uid, room_description)
+
+    def inspect_sanctity(self):
+        loc = self.args['interaction_target']
+        sanctity = self.world.sanctity_at(loc)
+        if sanctity < -0.3:
+            self.append_result(self.player_info.uid, 'This area is demonic.')
+        elif sanctity > 0.3:
+            self.append_result(self.player_info.uid, 'This area feels sacred.')

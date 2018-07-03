@@ -1,5 +1,7 @@
 from ..base.Metal import Metal
 from erukar.system.engine import Observation
+import erukar
+
 
 class Aluminum(Metal):
     Probability = 200
@@ -26,4 +28,10 @@ class Aluminum(Metal):
         Observation(acuity=35, sense=0, result="The {EssentialPart} of the {BaseName} has been forged from an unpolished aluminum."),
         Observation(acuity=35, sense=5, result="The {EssentialPart} of the {BaseName} is very light, as it has been forged from some sort of unpolished aluminum."),
         Observation(acuity=35, sense=10, result="The {BaseName}'s {EssentialPart} has been forged from a sturdy and lightweight, yet unpolished, aluminum.")
+    ]
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
     ]

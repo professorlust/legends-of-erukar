@@ -6,7 +6,7 @@ class Forester(Merchant):
         super().__init__(world)
         self.desired_item_types = [
             erukar.content.RawWoodMaterial,
-            erukar.content.AxeWeapon,
+            erukar.system.inventory.AxeWeapon,
             erukar.content.inventory.RawWoodMaterial
         ]
 

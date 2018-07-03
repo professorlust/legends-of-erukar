@@ -3,6 +3,7 @@ class Skill:
         'Basic Description per level here'
     ]
     Name = 'Default Skill Name'
+    ShowInLists = True
 
     def __init__(self):
         self.level = 1
@@ -25,3 +26,10 @@ class Skill:
     def next_level_description(self):
         return 'None' if self.level >= len(self.Descriptions) else self.Descriptions[self.level]
 
+    def commands_provided(self):
+        pass
+
+    def modify_element(self, mod_name, _el):
+        if hasattr(self, mod_name):
+            _el = getattr(self, mod_name)(_el) or _el
+        return _el

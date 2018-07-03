@@ -10,6 +10,7 @@ class Sector(ErukarObject):
         self.adjacent_sectors = set()
         self.locations = set()
         self.name = 'Random Sector'
+        self.use_day_night_cycle = False
         self.economic_profile = region.economic_profile\
             if not economic_seed_fn\
             else economic_seed_fn(self)

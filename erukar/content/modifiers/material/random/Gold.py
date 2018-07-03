@@ -1,5 +1,7 @@
 from ..base.Metal import Metal
 from erukar.system.engine import Observation
+import erukar
+
 
 class Gold(Metal):
     Probability = 0.05
@@ -11,3 +13,9 @@ class Gold(Metal):
 
     InventoryName = "Gold"
     InventoryDescription = 'Gold\'s status as a precious commodity stems from its rarity, not its durability.'
+
+    PermittedEntities = [
+        erukar.system.Weapon,
+        erukar.system.Ammunition,
+        erukar.system.Armor
+    ]
