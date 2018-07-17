@@ -2,7 +2,7 @@ from erukar.system.engine import ErukarActor, Lifeform
 from .Door import Door
 from .Wall import Wall
 from .Room import Room
-from erukar.ext.math import Navigator
+from erukar.ext.math import Navigator, Distance
 
 import random
 import logging
@@ -53,10 +53,9 @@ class Dungeon(ErukarActor):
 
     def add_actor_tiles(self, actor):
         for tile_id in actor.ids_to_generate():
-            if tile_id in self.tile_set:
-                continue
             new_actor = self.tile_generator.build_actor(actor, tile_id)
             self.tile_set[tile_id] = new_actor
+            self.tile_set_version += 1
 
     def refresh_tiles(self):
         self.generate_tiles
@@ -252,7 +251,7 @@ class Dungeon(ErukarActor):
         '''
         return {loc: set(self.get_applicable_auras(loc)) for loc in locations}
 
-    def tick(self):
+    def tick(self, cmd):
         self.time_of_day = (self.time_of_day + 0.75) % 100.0
         self.clean_up_auras()
 
@@ -295,6 +294,15 @@ class Dungeon(ErukarActor):
         for actor in self.actors:
             if Navigator.distance(start, actor.coordinates) <= distance:
                 yield actor
+
+    def actors_in_range_los(self, caller, start, distance):
+        coords = list(Distance.direct_los(
+            origin=start,
+            open_space=self.all_traversable_coordinates(),
+            max_distance=distance
+        ))
+        for coord in coords:
+            yield from self.actors_at(caller, coord)
 
     def sentient_actors(self, caller):
         for actor in self.actors:

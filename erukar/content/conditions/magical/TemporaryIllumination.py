@@ -17,17 +17,19 @@ class TemporaryIllumination(Condition):
         self.aura.blocked_by_walls = True
         self.target.initiate_aura(self.aura)
 
-    def tick(self):
+    def tick(self, cmd):
         self.timer -= 1
         if self.timer <= 0:
             self.aura.is_expired = True
             self.target.conditions.remove(self)
+            cmd.append_result(
+                self.target,
+                'Your light disappears!')
 
-    def do_end_of_turn_effect(self):
+    def do_end_of_turn_effect(self, cmd):
         if not hasattr(self, 'aura'):
             self.initiate_aura()
         self.aura.location = self.target.current_room
-        return ''
 
     def modify_light(self, decay=1):
         return self.light_power * decay

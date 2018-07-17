@@ -5,7 +5,7 @@ from erukar.ext.math import Pathing
 class Move(TargetedAbility):
     Name = "Move"
     ShowInLists = False
-    Description = 'Move Ability to {}'
+    Description = 'Move to {}'
 
     def valid_at(self, cmd, loc):
         ap = cmd.args['player_lifeform'].action_points()
@@ -73,7 +73,7 @@ class Move(TargetedAbility):
         cmd.append_result(player.uid, move_str)
         player.on_move(final)
         detected_str = 'You see {} move to {} from {}.'.format(
-            player.alias(), final, start)
+            player.alias(), start, final)
         for lf in cmd.world.sentient_actors(player):
             if lf.can_detect(player):
                 lf.detected_entities.add(player)

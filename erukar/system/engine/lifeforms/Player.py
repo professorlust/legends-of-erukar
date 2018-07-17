@@ -6,6 +6,7 @@ class Player(Lifeform, Indexer):
     def __init__(self, world=None):
         Indexer.__init__(self)
         super().__init__(world)
+        self.faction = 'iurian'
         self.uid = '' # Player UID
         self.credits = 0
         self.define_level(1)

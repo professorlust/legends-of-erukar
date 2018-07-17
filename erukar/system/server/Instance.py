@@ -1,7 +1,8 @@
 from erukar.system.engine import Manager, Player, PlayerNode, Dead, Enemy
 from erukar.system.engine.commands import LocalIndex, Map, Inspect, Inventory
-from erukar.system.engine.commands import Stats, Skills, Wait, TargetedCommand
+from erukar.system.engine.commands import Stats, Skills, Wait, TargetedCommand, TickExecution
 from .TurnManager import TurnManager
+from .DifferentialMessageEngine import DifferentialMessageEngine
 import erukar
 import random
 import datetime
@@ -25,12 +26,14 @@ class Instance(Manager):
 
     def __init__(self, location):
         super().__init__()
+        self.diff_engine = DifferentialMessageEngine()
         self.properties = None
         self.identifier = str(uuid.uuid4())
         self.location = location
         self.dungeon = None
         self.reset()
         self.players = set()
+        self.outbox = {}
 
     def reset(self):
         self.active_player = None
@@ -40,6 +43,7 @@ class Instance(Manager):
         self.characters = []
         self.slain_characters = []
         self.active_interactions = []
+        self.outbox = {}
 
     def initialize_instance(self, session):
         '''Turn on players and generate a dungeon'''
@@ -117,6 +121,7 @@ class Instance(Manager):
         self.command_contexts[being.uid] = None
         self.characters.append(being)
         being.world = self.dungeon
+        self.dungeon.add_actor_tiles(being)
 
         # Run on_equip for all equipped items
         for equip in being.equipment_types:
@@ -157,9 +162,10 @@ class Instance(Manager):
         self.try_execute(player, ins)
 
     def send_update_to_players(self):
-        to_tell = [x for x in self.players if isinstance(x, PlayerNode)]
-        for node in to_tell:
-            self.send_update_to(node)
+        for player in self.players:
+            if not isinstance(player, PlayerNode):
+                continue
+            self.send_update_to(player)
 
     def handle_all_transitions(self):
         to_trans = list(self.transitioning_players())
@@ -199,6 +205,9 @@ class Instance(Manager):
         if result is None or not result.success:
             return
 
+        for uid in cmd.outbox:
+            self.outbox[uid] = self.outbox.get(uid, []) + cmd.outbox[uid]
+
         if hasattr(result, 'interaction'):
             self.active_interactions.append(result.interaction)
 
@@ -213,7 +222,7 @@ class Instance(Manager):
 
         if not auto_advance:
             return
-        if active_lifeform.action_points() == 0 or isinstance(cmd, Wait):
+        if active_lifeform.should_auto_end_turn() or isinstance(cmd, Wait):
             self.get_next_player()
 
     def build_zones_where_necessary(self):
@@ -257,12 +266,6 @@ class Instance(Manager):
             if x.lifeform() is character:
                 return x
 
-    def send_update_to(self, node):
-        if not isinstance(node, PlayerNode):
-            return
-        msgs = self.get_messages_for(node)
-        node.tell('update state', msgs)
-
     def give_tile_set(self, node):
         node.tell('update tile set', json.dumps(self.dungeon.tile_set))
         node.tile_set_version = self.dungeon.tile_set_version
@@ -294,15 +297,25 @@ class Instance(Manager):
         if len(list(self.real_players())) <= 0:
             return
         if self.active_player_is_player():
-            res = self.active_player.end_turn()
-            if len(res) > 0:
-                self.append_response(self.active_player.uid, res)
+            cmd = TickExecution()
+            cmd.world = self.dungeon
+            self.active_player.end_turn(cmd)
+            result = cmd.execute()
+            self.append_result_responses(result)
 
         self.active_player = self.turn_manager.next()
         if self.active_player_is_player():
-            res = self.active_player.begin_turn()
-            if len(res) > 0:
-                self.append_response(self.active_player.uid, res)
+            cmd = TickExecution()
+            cmd.world = self.dungeon
+            self.active_player.begin_turn(cmd)
+            result = cmd.execute()
+            uid = self.active_player.uid
+            self.outbox[uid] = self.outbox.get('uid', []) + [{
+                'change': 'your turn',
+                'data': []
+            }]
+            self.append_result_responses(result)
+            self.send_update_to(self.active_player)
 
         if isinstance(self.active_player, str):
             self.tick()
@@ -314,9 +327,14 @@ class Instance(Manager):
             self.do_non_player_turn()
 
     def tick(self):
-        self.dungeon.tick()
+        cmd = TickExecution()
+        cmd.world = self.dungeon
+        self.dungeon.tick(cmd)
         for player in self.players:
-            player.lifeform().tick()
+            player.lifeform().tick(cmd)
+        result = cmd.execute()
+        self.append_result_responses(result)
+        self.send_update_to_players()
         self.get_next_player()
 
     def real_players(self):
@@ -334,6 +352,7 @@ class Instance(Manager):
 
         # Check results
         if result is not None:
+            self.subscribe_new_characters(cmd.added_characters)
             # Print Result, replace with outbox later
             if hasattr(result, 'results'):
                 self.append_result_responses(result)
@@ -349,6 +368,10 @@ class Instance(Manager):
 
         return result
 
+    def subscribe_new_characters(self, added):
+        for character in added:
+            self.subscribe_enemy(character)
+
     def append_result_responses(self, result):
         for uid in result.results:
             response = '\n'.join(result.result_for(uid)) + '\n'
@@ -362,13 +385,12 @@ class Instance(Manager):
 
     def get_messages_for(self, node):
         if not node:
-            return Instance.waiting_to_join()
+            yield 'joining', Instance.waiting_to_join()
         self.send_tile_set_if_necessary(node)
 
         log = list(self.convert_responses_to_log(node))
         if node in self.slain_characters:
-            return json.dumps({'log': log})
-        return self.send_full_state(node, log)
+            yield 'you died', json.dumps({'log': log})
 
     def waiting_to_join():
         return json.dumps({
@@ -400,44 +422,13 @@ class Instance(Manager):
             interaction_state[str(interaction.uuid)] = result
         return interaction_state
 
-    def send_full_state(self, node, log):
-        '''The full state of this node in this instance is returned as json'''
-        character = node.lifeform()
+    def send_update_to(self, node):
+        if not isinstance(node, PlayerNode):
+            return
 
-        inv_cmd = node.create_command(Inventory)
-        result = inv_cmd.execute()
-        inv_res = result.result_for(node.uid)[0]
-
-        stat_cmd = node.create_command(Stats)
-        stat_res = stat_cmd.execute().result_for(node.uid)
-
-        skill_cmd = node.create_command(Skills)
-        skill_res = skill_cmd.execute().result_for(node.uid)
-
-        map_cmd = node.create_command(Map)
-        map_res = map_cmd.execute().result_for(node.uid)
-
-        li_cmd = node.create_command(LocalIndex)
-        li_res = li_cmd.execute().result_for(node.uid)
-
-        interaction_results = self.get_interaction_results(node)
-
-        return json.dumps({
-            'wealth': character.wealth,
-            'turnOrder': self.turn_manager.frontend_readable_turn_order()[:4],
-            'statPoints': character.stat_points,
-            'skillPoints': character.skill_points,
-            'skills': skill_res[0],
-            'actionPoints': {
-                'current': character.current_action_points,
-                'reserved': character.reserved_action_points
-            },
-            'inventory': inv_res['inventory'],
-            'equipment': inv_res['equipment'],
-            'vitals': stat_res[0],
-            'map': map_res[0],
-            'localList': li_res[0],
-            'log': log,
-            'location': self.dungeon.overland_location.alias(),
-            'interactions': interaction_results
-        })
+        outbox = self.outbox.pop(node.uid, [])
+        log = list(self.convert_responses_to_log(node))
+        for msg in outbox:
+            node.tell(msg['change'], json.dumps(msg['data']))
+        for _type, msg in self.diff_engine.messages_for(self, node, log):
+            node.tell(_type, json.dumps(msg))

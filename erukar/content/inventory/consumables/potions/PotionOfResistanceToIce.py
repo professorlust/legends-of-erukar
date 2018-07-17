@@ -12,11 +12,7 @@ class PotionOfResistanceToIce(Potion):
     def __init__(self, quantity=1):
         super().__init__(quantity)
         self.effects = [
+            erukar.content.PotionSource,
+            erukar.content.Cryomorph,
             erukar.content.AddMitigation
         ]
-
-    def get_kwargs(self):
-        return {
-            'damage_type': 'ice',
-            'percent': 0.20
-        }

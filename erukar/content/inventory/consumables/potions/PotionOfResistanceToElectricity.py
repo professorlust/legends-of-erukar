@@ -12,11 +12,7 @@ class PotionOfResistanceToElectricity(Potion):
     def __init__(self, quantity=1):
         super().__init__(quantity)
         self.effects = [
+            erukar.content.PotionSource,
+            erukar.content.Electromorph,
             erukar.content.AddMitigation
         ]
-
-    def get_kwargs(self):
-        return {
-            'damage_type': 'electricity',
-            'percent': 0.20
-        }

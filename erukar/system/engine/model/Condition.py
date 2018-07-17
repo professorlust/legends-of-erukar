@@ -35,24 +35,28 @@ class Condition:
     def describe(self):
         return self.Description
 
-    def do_begin_of_turn_effect(self):
-        if (self.timer <= 0 or self.Duration == 0) and self.RemoveOnStartOfTurn:
+    def do_begin_of_turn_effect(self, cmd):
+        if self.expired() and self.RemoveOnStartOfTurn:
             self.exit()
-        return ''
 
-    def do_end_of_turn_effect(self):
-        if (self.timer <= 0 or self.Duration == 0) and self.RemoveOnEndOfTurn:
+    def do_end_of_turn_effect(self, cmd):
+        if self.expired() and self.RemoveOnEndOfTurn:
             self.exit()
-        return ''
 
-    def do_tick_effect(self):
+    def expired(self):
+        return self.IsTemporary and (self.timer <= 0 or self.Duration == 0)
+
+    def do_tick_effect(self, cmd):
         pass
 
-    def tick(self):
-        self.do_tick_effect()
+    def tick(self, cmd):
+        self.do_tick_effect(cmd)
         if self.IsTemporary:
             self.timer -= 1
-            if self.timer <= 0:
+            if self.expired():
+                cmd.append_result(
+                    self.target.uid,
+                    '{} expires.'.format(self.name()))
                 self.exit()
 
     def exit(self):

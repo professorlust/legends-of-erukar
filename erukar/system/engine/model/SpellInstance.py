@@ -1,36 +1,56 @@
 from .MagicEffect import MagicEffect
+from .SpellMutator import SpellMutator
+import erukar
 
 
 class SpellInstance:
     '''Class which is basically just a way for spells to
     maintain parity from effect to effect'''
+    NoSource = 'Your spell fails! You must begin a spell chain with an '\
+        'Energy Source.'
 
     def __init__(self, chain=None):
         self.chain = chain if chain and isinstance(chain, list) else []
 
-    def cmd_execute(self, cmd):
+    def cmd_execute(self, cmd, caster=None):
         if len(self.chain) < 1:
             return
-        caster = cmd.args['player_lifeform']
-        target = cmd.args['interaction_target']
-        return self.execute(caster, target)
+        caster = caster or cmd.args['player_lifeform']
+        target = cmd.args.get('interaction_target', caster)
+        mutator = SpellMutator(cmd.args.get('kwargs', {}))
+        self.execute(caster, target, cmd, mutator)
 
-    def execute(self, caster, target, **kwargs):
-        mut_args = kwargs if kwargs else {}
-        full_log = []
-        for effect in self.chain:
-            instance = effect()
-            if not isinstance(instance, MagicEffect):
-                continue
-            log, mut_args = instance.enact(
-                instigator=caster,
-                target=SpellInstance.target(target, mut_args),
-                **mut_args)
-            if log:
-                full_log.append(log)
-        return full_log
+    def execute(self, caster, target, cmd, mutator):
+        if not SpellInstance.is_source(self.chain[0]):
+            cmd.log(caster, self.NoSource)
+            return
+        # Attempt to source
+        success, kwargs = self.chain[0]().source(caster, cmd, mutator)
+        if success:
+            self.run_chain(caster, target, cmd, mutator)
 
-    def target(target, mut_args):
-        if not mut_args or 'target' not in mut_args:
-            return target
-        return mut_args['target']
+    def run_chain(self, caster, target, cmd, mutator):
+        index = 1
+        for effect in self.chain[1:]:
+            index += 1
+            if SpellInstance.is_selector(effect):
+                self.split(caster, effect(), self.chain[index:], cmd, mutator)
+                return
+            mutator = effect().enact(caster, target, cmd, mutator)
+
+    def split(self, caster, selector, chain, cmd, mutator):
+        all_targets = set(selector.applicable_targets(caster, cmd, mutator))
+        new_source = erukar.system.engine.SplitEnergySource
+        new_chain = [new_source] + chain
+        mutator.remove('target')
+        for target in all_targets:
+            mut_copy = mutator.copy()
+            selector.adjust_energy(len(all_targets), mut_copy)
+            subinstance = SpellInstance(new_chain)
+            subinstance.execute(caster, target, cmd, mut_copy)
+
+    def is_source(link):
+        return issubclass(link, erukar.system.engine.EnergySource)
+
+    def is_selector(link):
+        return issubclass(link, erukar.system.engine.Selector)

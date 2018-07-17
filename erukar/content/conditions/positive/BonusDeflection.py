@@ -17,4 +17,10 @@ class BonusDeflection(Condition):
 
     def damage_mitigation(self, damage_type):
         if damage_type == self.damage_type:
-            return (0.00, self.deflection_amount)
+            yield (0.00, self.deflection_amount)
+
+    def mutate_damage_type(self, new_type):
+        self.damage_type = new_type
+
+    def name(self):
+        return self.Noun.format(self.damage_type.capitalize())

@@ -21,7 +21,7 @@ class AiModule:
 
     def get_path_to(self, goal):
         if not self.world:
-            return None
+            return []
         start = self.puppet.coordinates
         collection = self.world.all_traversable_coordinates()
 

@@ -117,6 +117,7 @@ class DungeonGenerator(FactoryBase, AStarBase):
         if isinstance(item, erukar.engine.Ammunition):
             item.quantity = random.randint(3,20)
         self.world.add_actor(item, self.random_location())
+        self.world.add_actor_tiles(item)
 
     def random_location(self):
         return random.choice(self.vertices)

@@ -1,4 +1,4 @@
-from erukar.system.engine import Enemy
+from erukar.system.engine import Enemy, BasicAI
 from ..templates.Undead import Undead
 from erukar.content.inventory import Shortsword, Buckler
 from erukar.content.modifiers import Steel, Oak
@@ -22,6 +22,7 @@ class Skeleton(Undead):
         self.sense      = -2
 
     def init_personality(self):
+        self.ai_module = BasicAI(self)
         self.str_ratio  = 0.4
         self.dex_ratio  = 0.3
         self.vit_ratio  = 0.2

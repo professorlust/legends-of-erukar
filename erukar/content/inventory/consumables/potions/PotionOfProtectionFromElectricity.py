@@ -12,11 +12,7 @@ class PotionOfProtectionFromElectricity(Potion):
     def __init__(self, quantity=1):
         super().__init__(quantity)
         self.effects = [
+            erukar.content.PotionSource,
+            erukar.content.Electromorph,
             erukar.content.AddDeflection
         ]
-
-    def get_kwargs(self):
-        return {
-            'damage_type': 'electricity',
-            'power': 20.0
-        }

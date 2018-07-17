@@ -9,8 +9,6 @@ class Purifying(WeaponMod):
     PriceMod = 0.1
 
     PercentChance = 0.10
-    PurifyPower = 1.0
-    PurifyRadius = 4
     InventoryName = "Purifying"
     InventoryDescription = 'On successful hit, has a 10% chance to Hallow the area around target'
     InventoryFlavorText = ''
@@ -29,13 +27,10 @@ class Purifying(WeaponMod):
     def modify_post_inflict_damage(self, weapon, cmd):
         if random.random() >= Purifying.PercentChance:
             return
-        chain = [erukar.content.CreateSanctityAura]
-        kwargs = {
-            'radius': Purifying.PurifyRadius,
-            'sanctity': Purifying.PurifyPower
-        }
+        chain = [
+            erukar.content.PotionSource,
+            erukar.content.Divinomorph,
+            erukar.content.CreateSanctityAura
+        ]
         spell = SpellInstance(chain)
-        instigator = cmd.args['player_lifeform']
-        target = cmd.args['interaction_target']
-        log = spell.execute(instigator, target, **kwargs)
-        cmd.append_result(instigator.uid, ' '.join(log))
+        spell.cmd_execute(cmd)

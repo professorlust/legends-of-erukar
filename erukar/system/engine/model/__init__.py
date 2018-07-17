@@ -25,6 +25,7 @@ from .Range import Range
 from .Shop import Shop
 from .Skill import Skill
 from .SpellInstance import SpellInstance
+from .SpellMutator import SpellMutator
 from .Stance import Stance
 from .Tile import Tile
 
@@ -54,6 +55,7 @@ __all__ = [
     "Shop",
     "Skill",
     "SpellInstance",
+    "SpellMutator",
     "Stance",
     "Tile",
     "ActivatedAbility",

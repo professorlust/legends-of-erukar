@@ -33,4 +33,6 @@ class Alchemist(Merchant):
             erukar.content.PotionOfResistanceToIce(10),
             erukar.content.PotionOfResistanceToElectricity(10),
             erukar.content.PotionOfResistanceToAcid(10),
+            erukar.content.PotionOfSkeletalSummoning(200),
+            erukar.content.PotionOfExplosions(200)
         ]

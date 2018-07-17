@@ -15,8 +15,8 @@ class Chunk:
         dungeon.remove_space(outdoor_space)
         outdoor_space = [p for p in outdoor_space if p not in closed_space]
 
-        room = Room(dungeon, coordinates=outdoor_space)
-        room = Room(dungeon, coordinates=indoor_space)
+        Room(dungeon, coordinates=outdoor_space)
+        Room(dungeon, coordinates=indoor_space)
         outdoor_floor_tile = erukar.content.Grass()
         indoor_floor_tile = erukar.content.StoneFloor()
         wall_tile = erukar.content.StoneBricks()
@@ -24,6 +24,11 @@ class Chunk:
         dungeon.apply_tiles_on_open_space(outdoor_space, outdoor_floor_tile)
         dungeon.apply_tiles_on_open_space(indoor_space, indoor_floor_tile)
 
-        dungeon.add_door(Door(), (x+1, y+3))
+        door = Door()
+        door.lock_type = erukar.Silver
+        key = erukar.Key(modifiers=[erukar.Silver])
+        dungeon.add_actor(key, (x+1, y+4))
+
+        dungeon.add_door(door, (x+1, y+3))
         to_izeth  = TransitionPiece((0, -2, 2), "IzethCitadel1F")
         dungeon.add_transition(to_izeth, (x, y))

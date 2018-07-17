@@ -1,7 +1,6 @@
 from erukar.ext.math import Distance, Navigator
 from erukar.system.engine import Weapon
 import logging
-import time
 logger = logging.getLogger('debug')
 
 
@@ -24,12 +23,8 @@ class Zones:
             self.clear_and_rebuild(lifeform, space)
 
     def clear_and_rebuild(self, lifeform, available_space):
-        self.desynced = False
-        start_time = time.time()
         self.clear()
         self.build(lifeform, available_space)
-        d_time = time.time() - start_time
-        logger.info(Zones.BuildLogFmt.format(lifeform.name, d_time))
 
     def build(self, lifeform, available_space):
         self.add_all_movements(lifeform.coordinates, lifeform, available_space)

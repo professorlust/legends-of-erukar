@@ -1,6 +1,7 @@
-from erukar.system.engine import SearchScope
+from erukar.system.engine import SearchScope, Lifeform
 from .CommandResult import CommandResult
 import uuid
+
 
 class Command:
     SearchTargetMustBeIndexed = False
@@ -15,11 +16,13 @@ class Command:
         self.world = None
         self.args = {}
         self.dirtied_characters = []
+        self.added_characters = []
         self.results = {}
+        self.outbox = {}
 
     def process_args(self):
-        if not self.args: 
-            if not self.NeedsArgs: 
+        if not self.args:
+            if not self.NeedsArgs:
                 self.args = {'player_lifeform': self.player_info.lifeform() }
                 return
             raise Exception('Cannot process args -- Command\'s args are undefined')
@@ -88,6 +91,7 @@ class Command:
 
     def succeed(self):
         result = CommandResult(True, self, self.results, self.dirtied_characters)
+        result.outbox = self.outbox.copy()
         self.sever()
         return result
 
@@ -103,7 +107,31 @@ class Command:
 
     def specified_coordinates(self):
         if 'coordinates' in self.args:
-            if isinstance(self.args['coordinates'], tuple):
-                return self.args['coordinates']
-            return tuple([int(x) for x in self.args['coordinates'].split(',')])
+            coords = self.args['coordinates']
+            if isinstance(coords, tuple):
+                return coords
+            coords = coords.replace('(', '').replace(')', '')
+            return tuple([int(x) for x in coords.split(',')])
         return self.args['player_lifeform'].coordinates
+
+    def log(self, lf, result):
+        if hasattr(lf, 'uid'):
+            self.append_result(lf.uid, result)
+
+    def obs(self, origin, message, acu=0, sen=0, radius=8, exclude=[]):
+        observers = list(self.world.actors_in_range(
+            origin,
+            radius
+        ))
+        for actor in observers:
+            if not isinstance(actor, Lifeform) or actor in exclude:
+                continue
+            self.log(actor, message)
+
+    def add_to_outbox(self, target, action_message, payload):
+        if target.uid not in self.outbox:
+            self.outbox[target.uid] = []
+        self.outbox[target.uid].append({
+            'change': action_message,
+            'data': payload
+        })

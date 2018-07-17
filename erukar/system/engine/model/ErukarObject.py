@@ -26,11 +26,12 @@ class ErukarObject:
                 else: yield {'r':0,'g':0,'b':0,'a':0}
 
     def get_object_by_uuid(self, uuid):
-        if uuid == self.uuid: 
+        if uuid == self.uuid:
             return self
 
     def is_detected(self, acuity, sense):
-        return acuity > self.minimum_acuity_to_detect() or sense > self.minimum_sense_to_detect()
+        return acuity >= self.minimum_acuity_to_detect() \
+                or sense >= self.minimum_sense_to_detect()
 
     def minimum_sense_to_detect(self):
         return 1

@@ -11,6 +11,7 @@ class Skills(Command):
         acquired = [Skills.format(skill) for skill in self.acquired_skills()]
         activatable = list(self.all_activatable())
         full_list = {
+            'skillPoints': self.args['player_lifeform'].skill_points,
             'available': available,
             'acquired': acquired,
             'activatable': activatable

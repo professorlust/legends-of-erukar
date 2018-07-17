@@ -15,12 +15,8 @@ class DamageOverTime(Condition):
         self.damage_efficacy = 1.0
         self.affects_dying = False
 
-    def do_tick_effect(self):
+    def do_tick_effect(self, cmd):
         if self.target.has_condition(erukar.engine.conditions.Dead): return
         if self.target.has_condition(erukar.engine.conditions.Dying) and not self.affects_dying: return
     
         result = self.target.process_damage(self.damage, self.instigator, self.damage_efficacy)
-#        a_res, self_res = MagicDamageFormatter.get_string_results(result)
-#       print('\n'.join(a_res))
-#       print('\n'.join(self_res))
-#       return '\n'.join(self_res)

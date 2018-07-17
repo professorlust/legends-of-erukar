@@ -12,8 +12,6 @@ class PotionOfGreaterHealing(Potion):
     def __init__(self, quantity=1):
         super().__init__(quantity)
         self.effects = [
+            erukar.content.GreaterPotionSource,
             erukar.content.AddHealth
         ]
-
-    def get_kwargs(self):
-        return {'range': (100, 150)}

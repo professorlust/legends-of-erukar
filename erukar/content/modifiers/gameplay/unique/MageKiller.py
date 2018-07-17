@@ -25,13 +25,9 @@ class MageKiller(WeaponMod):
     ]
 
     def modify_post_inflict_damage(self, weapon, cmd):
-        chain = [erukar.content.EnergyBurn]
-        kwargs = {
-            'percent': MageKiller.BurnPercent,
-            'power': MageKiller.BurnPower
-        }
-        burn_spell = SpellInstance(chain)
-        instigator = cmd.args['player_lifeform']
-        target = cmd.args['interaction_target']
-        log = burn_spell.execute(instigator, target, **kwargs)
-        cmd.append_result(instigator.uid, ' '.join(log))
+        chain = [
+            erukar.content.PotionSource,
+            erukar.content.EnergyBurn
+        ]
+        spell = SpellInstance(chain)
+        spell.cmd_execute(cmd)

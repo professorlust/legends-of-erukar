@@ -18,6 +18,8 @@ from .PotionOfResistanceToAcid import PotionOfResistanceToAcid
 from .PotionOfResistanceToElectricity import PotionOfResistanceToElectricity
 from .PotionOfResistanceToFire import PotionOfResistanceToFire
 from .PotionOfResistanceToIce import PotionOfResistanceToIce
+from .PotionOfSkeletalSummoning import PotionOfSkeletalSummoning
+from .PotionOfExplosions import PotionOfExplosions
 
 __all__ = [
     "FoulLiquid",
@@ -39,5 +41,7 @@ __all__ = [
     "PotionOfResistanceToAcid",
     "PotionOfResistanceToElectricity",
     "PotionOfResistanceToFire",
-    "PotionOfResistanceToIce"
+    "PotionOfResistanceToIce",
+    "PotionOfSkeletalSummoning",
+    "PotionOfExplosions"
 ]

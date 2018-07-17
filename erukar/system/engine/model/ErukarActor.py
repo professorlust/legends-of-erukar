@@ -18,10 +18,10 @@ class ErukarActor(Describable):
     ]
 
     def minimum_sense_to_detect(self):
-        return 1
+        return 0
 
     def minimum_acuity_to_detect(self):
-        return 1
+        return 0
 
     def evasion(self):
         return self.base_evasion

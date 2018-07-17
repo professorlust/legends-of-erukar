@@ -115,3 +115,6 @@ class Modifier(Describable):
 
     def post_missed_attack(self, cmd, attacker, weapon, target):
         pass
+
+    def tick(self, cmd, owner):
+        pass

@@ -1,5 +1,6 @@
 from erukar.system.engine import Condition
 
+
 class Shielded(Condition):
     IsTemporary = True
     Duration = 300
@@ -9,6 +10,7 @@ class Shielded(Condition):
     Participle = '{damage} Shielding'
     Description = 'Allows the deflection of a total of {value} {damage} damage ({remaining} remaining in shield)'
 
+    RemoveAtStartOfTurn = True
     BaseShield = 10
 
     def __init__(self,target, instigator=None):
@@ -26,3 +28,7 @@ class Shielded(Condition):
             damage=self.damage_type)
         self.Noun = self.Noun.format(damage=self.damage_type.capitalize())
         self.Participle = self.Participle.format(damage=self.damage_type.capitalize())
+
+    def do_begin_of_turn_effect(self, cmd):
+        cmd.append_result(self.target, 'Defense returns to normal.')
+        self.exit()

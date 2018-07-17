@@ -5,6 +5,7 @@ from erukar.ext.math.Namer import Namer
 class Npc(Lifeform):
     def __init__(self, templates=[]):
         super().__init__(None, "Npc")
+        self.faction = 'iurian'
         self.qualities = []
         self.templates = []
         self.name = Namer.random()
@@ -24,7 +25,6 @@ class Npc(Lifeform):
                     else: 
                         yield {'r':0,'g':0,'b':255,'a':1}
                 else: yield {'r':0,'g':0,'b':0,'a':0}
-
 
     def get_state(self, for_player):
         if self.templates:

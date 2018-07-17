@@ -1,6 +1,9 @@
 from ..Command import Command
+from ..auto.Stats import Stats
+
 
 class AddStatPoint(Command):
+    Success = 'Successfully upgraded {} to {}'
     ValidStats = [
         'strength',
         'dexterity',
@@ -13,16 +16,24 @@ class AddStatPoint(Command):
     RebuildZonesOnSuccess = True
 
     def perform(self):
-        if 'stat' not in self.args: raise Exception('Malformed message received by Add Stat Point')
-        if self.args['stat'].lower() not in AddStatPoint.ValidStats:
+        stat = self.args.get('stat', None)
+        if not stat:
+            raise Exception('Malformed message received by Add Stat Point')
+        if stat.lower() not in AddStatPoint.ValidStats:
             return self.fail('Not a valid stat to upgrade')
 
-        if self.args['player_lifeform'].stat_points <= 0:
+        player = self.args['player_lifeform']
+        if player.stat_points <= 0:
             return self.fail('You have no stat points to spend!')
 
-        self.dirty(self.args['player_lifeform'])
-        self.args['player_lifeform'].stat_points -= 1
-        current_value = getattr(self.args['player_lifeform'], self.args['stat'].lower())
-        setattr(self.args['player_lifeform'], self.args['stat'].lower(), current_value + 1)
-        self.append_result(self.player_info.uid, 'Successfully upgraded {} to {}'.format(self.args['stat'], current_value+1))
+        self.dirty(player)
+        player.stat_points -= 1
+        current_value = getattr(player, stat.lower())
+        setattr(player, stat.lower(), current_value + 1)
+        self.log(player, self.Success.format(stat, current_value+1))
+        payload = {
+            'stat': stat,
+            'newValue': Stats.format_stat(player, stat)
+        }
+        self.add_to_outbox(player, 'change stat', payload)
         return self.succeed()

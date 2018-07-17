@@ -5,23 +5,24 @@ class StackableItem(Item):
     PersistentAttributes = ['quantity']
     MaximumStackQuantity = 100
 
-    def __init__(self, name, quantity=1, modifiers=None):
+    def __init__(self, name='', quantity=1, modifiers=None):
         super().__init__(name, name, modifiers=modifiers)
         self.quantity = quantity
 
-    def on_take(self, lifeform):
+    def on_take(self, cmd, taker=None):
         '''On Take here handles stacking'''
-        super().on_take(lifeform)
+        super().on_take(cmd, taker)
+        taker = taker or cmd.args['player_lifeform']
 
         # Check to see if there's an existing stack that isn't full
-        existing_stack = next(self.other_stacks(lifeform.inventory), None)
+        existing_stack = next(self.other_stacks(taker.inventory), None)
         # if there is one, add our quantity to that quantity
         if existing_stack is not None:
             existing_stack.quantity += self.quantity
 
             # If we were able to put everything in the existing stack, remove this item and leave
             if existing_stack.quantity <= self.MaximumStackQuantity:
-                lifeform.inventory.remove(self)
+                taker.inventory.remove(self)
                 return
 
             # We have exceeded the max, so split the difference and make a new stack
@@ -35,7 +36,7 @@ class StackableItem(Item):
 
     def other_stacks(self, inventory):
         for item in inventory:
-            if self.can_stack_on(item): 
+            if self.can_stack_on(item):
                 yield item
 
     def can_stack_on(self, other):
@@ -53,17 +54,30 @@ class StackableItem(Item):
         return material_type in [type(y) for y in self.modifiers]
 
     def on_inventory(self):
-        if self.quantity <= 1: return self.format()
+        if self.quantity <= 1:
+            return self.format()
         return '{} x{}'.format(self.format(), self.quantity)
 
-    def consume(self):
+    def consume(self, cmd=None):
         self.quantity -= 1
         if self.quantity <= 0:
             self.owner.inventory.remove(self)
+            payload = {'uid': str(self.uuid)}
+            if cmd:
+                cmd.add_to_outbox(self.owner, 'remove item', payload)
+        elif cmd:
+            payload = {
+                'uid': str(self.uuid),
+                'changes': {
+                    'quantity': self.quantity,
+                    'quantifiable_alias': self.long_alias()
+                }
+            }
+            cmd.add_to_outbox(self.owner, 'update item', payload)
 
     @classmethod
     def split(cls, original, quantity):
-        if original.quantity <= 1 or original.quantity <= quantity: 
+        if original.quantity <= 1 or original.quantity <= quantity:
             return original, None
         original.quantity -= quantity
         split_off = cls.duplicate(original, quantity)

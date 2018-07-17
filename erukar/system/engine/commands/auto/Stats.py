@@ -39,10 +39,7 @@ class Stats(Command):
         }
 
         for attribute in Stats.attribute_types:
-            output_result[attribute] = {
-                'base': getattr(pawn, attribute),
-                'mod': Stats.get_mod(pawn, attribute)
-            }
+            output_result[attribute] = Stats.format_stat(pawn, attribute)
 
         for damage in Damage.Types:
             output_result['mitigations'].append({
@@ -64,3 +61,9 @@ class Stats(Command):
 
     def get_mod(pawn, stat):
         return pawn.calculate_effective_stat(stat) - getattr(pawn, stat)
+
+    def format_stat(player, stat):
+        return {
+            'base': getattr(player, stat),
+            'mod': Stats.get_mod(player, stat)
+        }

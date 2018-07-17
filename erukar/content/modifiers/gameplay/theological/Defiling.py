@@ -9,8 +9,6 @@ class Defiling(WeaponMod):
     PriceMod = 0.1
 
     PercentChance = 0.10
-    DefilePower = -1.0
-    DefileRadius = 4
     InventoryName = "Defiling"
     InventoryDescription = 'On successful hit, has a 10% chance to Desecrate the area around target'
     InventoryFlavorText = ''
@@ -29,13 +27,10 @@ class Defiling(WeaponMod):
     def modify_post_inflict_damage(self, weapon, cmd):
         if random.random() >= Defiling.PercentChance:
             return
-        chain = [erukar.content.CreateSanctityAura]
-        kwargs = {
-            'radius': Defiling.DefileRadius,
-            'sanctity': Defiling.DefilePower
-        }
+        chain = [
+            erukar.content.PotionSource,
+            erukar.content.Daemomorph,
+            erukar.content.CreateSanctityAura
+        ]
         spell = SpellInstance(chain)
-        instigator = cmd.args['player_lifeform']
-        target = cmd.args['interaction_target']
-        log = spell.execute(instigator, target, **kwargs)
-        cmd.append_result(instigator.uid, ' '.join(log))
+        spell.cmd_execute(cmd)

@@ -1,5 +1,4 @@
 from erukar.system.engine import Describable, Containable
-from .Lock import Lock
 import random
 
 class Container(Containable):

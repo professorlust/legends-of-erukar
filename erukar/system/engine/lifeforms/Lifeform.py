@@ -35,6 +35,7 @@ class Lifeform(ErukarActor):
 
     def __init__(self, world=None, name=""):
         super().__init__()
+        self.faction = 'unknown'
         self.name = name
         self.uid = ""
         self.inventory = []
@@ -49,6 +50,7 @@ class Lifeform(ErukarActor):
         self.zones = Zones()
         self.wealth = 0
         self.initialize_effects()
+        self.movement_allowed = 0
 
     def build_from_payloads(stats, bio):
         out = Lifeform(None)
@@ -61,6 +63,7 @@ class Lifeform(ErukarActor):
     def initialize_effects(self):
         self.skill_points = 5
         self.skills = [
+            erukar.system.engine.MicroMove(),
             erukar.system.engine.Move(),
             erukar.system.engine.Attack(),
         ]
@@ -122,7 +125,7 @@ class Lifeform(ErukarActor):
         return int(337.5 + 0.1*(self.vitality-200))
 
     def is_hostile_to(self, lifeform):
-        return False
+        return lifeform.faction != self.faction
 
     def subscribe(self, instance):
         self.instance = instance.identifier
@@ -132,7 +135,12 @@ class Lifeform(ErukarActor):
             if hasattr(skill, 'apply_to'):
                 skill.apply_to(self)
         self.arcane_energy = self.maximum_arcane_energy()
-        logger.info('Lifeform -- Energy set to {} out of a possible {} for {}'.format(self.arcane_energy, self.maximum_arcane_energy(), self.name))
+        self.check_for_detectors()
+
+    def check_for_detectors(self):
+        for lf in self.world.sentient_actors(self):
+            if lf.can_detect(self):
+                lf.detected_entities.add(self)
 
     def add_skill(self, skill):
         self.skill_points  -= 1
@@ -145,22 +153,20 @@ class Lifeform(ErukarActor):
         if not matches: return self.sector
         return tuple(int(x) for x in matches.group()[1:-1].split(','))
 
-    def tick(self):
+    def tick(self, cmd):
         '''Regular method which is performed every 5 seconds in game time'''
-        results = []
         # Tick all equipped items
         for item_slot in self.equipment_types:
             item = getattr(self, item_slot)
             if item is not None:
-                results.append(item.tick())
+                item.tick(cmd, self)
         # Tick all conditions
         for condition in self.conditions:
-            results.append(condition.tick())
+            condition.tick(cmd)
         # regenerate arcane energy
         max_arcane = self.maximum_arcane_energy()
         if not self.is_incapacitated() and self.arcane_energy < max_arcane:
             self.arcane_energy = min(max_arcane, self.arcane_energy + int(max_arcane * Lifeform.ArcaneEnergyRegenPercentage))
-        return results
 
     def get_object_by_uuid(self, uuid):
         for item in self.inventory:
@@ -526,19 +532,30 @@ class Lifeform(ErukarActor):
         self.reserved_action_points -= remainder
 
     def move_speed(self):
-        return math.floor(3 + self.calculate_effective_stat('dexterity')/8)
+        return 4 + math.floor(self.calculate_effective_stat('dexterity')/5)
+
+    def provision_movement_points(self):
+        if self.movement_allowed <= 0 and self.action_points() > 0:
+            self.movement_allowed = self.move_speed()
+            self.consume_action_points(1)
+            return True
+        return self.movement_allowed > 0
+
+    def should_auto_end_turn(self):
+        return self.action_points() <= 0 and self.movement_allowed <= 0
 
     def visual_fog_of_war(self):
-        return 4.0
+        return 8.0
 
-    def begin_turn(self):
+    def begin_turn(self, cmd):
+        self.movement_allowed = 0
         self.gain_action_points()
-        results = [aff.do_begin_of_turn_effect() for aff in self.conditions]
-        return '\n'.join(r for r in results if r is not '')
+        for condition in self.conditions:
+            condition.do_begin_of_turn_effect(cmd)
 
-    def end_turn(self):
-        results = [aff.do_end_of_turn_effect() for aff in self.conditions]
-        return '\n'.join(r for r in results if r is not '')
+    def end_turn(self, cmd):
+        for condition in self.conditions:
+            condition.do_end_of_turn_effect(cmd)
 
     def lifeform(self):
         return self
@@ -598,10 +615,19 @@ class Lifeform(ErukarActor):
         for skill in self.skills:
             yield from skill.commands_provided()
 
+    def find_uid_in_inventory(self, uid):
+        for item in self.inventory:
+            if str(item.uuid) == str(uid):
+                return item
+
     def find_in_inventory(self, _type):
+        for item in self.find_all_in_inventory(_type):
+            return item
+
+    def find_all_in_inventory(self, _type):
         for item in self.inventory:
             if isinstance(item, _type):
-                return item
+                yield item
 
     '''Used in Skills'''
     def disposition_bonuses(self, other):
@@ -612,3 +638,15 @@ class Lifeform(ErukarActor):
 
     def haggling_sell_modifier(self):
         return 1.2
+
+    def allocated_arcane_energy(self):
+        '''
+        This will be a specified value in the UI, but we
+        will default to 50% for now
+        '''
+        return int(0.5 * self.maximum_arcane_energy())
+
+    def get_key(self, key_type):
+        for key in self.find_all_in_inventory(erukar.Key):
+            if issubclass(type(key.material), key_type):
+                return key

@@ -1,10 +1,10 @@
-from erukar.system.engine import Describable, Rarity
+from erukar.system.engine import ErukarActor, Rarity
 from erukar.ext.math import Curves
 import functools
 import operator
 
 
-class Item(Describable):
+class Item(ErukarActor):
     generic_description = 'This is {BaseName}, but it otherwise has no real description whatsoever'
     IsInteractible = True
     BaseName = 'base'
@@ -45,6 +45,21 @@ class Item(Describable):
             for modifier_type in modifiers:
                 modifier_type().apply_to(self)
 
+    def generate_tile(self, dimensions, tile_id):
+        h, w = dimensions
+        for y in range(h):
+            for x in range(w):
+                if not (int(h/4) < y < int(3*h/4)):
+                    yield {'r': 0, 'g': 0, 'b': 0, 'a': 0}
+                    continue
+                if not (int(h/4) < x < int(3*h/4)):
+                    yield {'r': 0, 'g': 0, 'b': 0, 'a': 0}
+                    continue
+                if (x > w/2 and x > y) or (x <= w/2 and y > x):
+                    yield {'r': 245, 'g': 245, 'b': 220, 'a': 1}
+                    continue
+                yield {'r': 0, 'g': 0, 'b': 0, 'a': 0}
+
     def durability_coefficient(self):
         return self.durability / self.total_durability
 
@@ -64,8 +79,9 @@ class Item(Describable):
     def describe(self):
         return self.name
 
-    def tick(self):
-        pass
+    def tick(self, cmd, owner):
+        for modifier in self.modifiers:
+            modifier.tick(cmd, owner)
 
     def matches(self, other):
         return other.lower() in self.alias().lower() \
@@ -75,10 +91,10 @@ class Item(Describable):
         for modifier in self.modifiers:
             modifier.on_start(dungeon)
 
-    def on_take(self, lifeform):
-        self.owner = lifeform
+    def on_take(self, cmd, taker=None):
+        self.owner = taker or cmd.args['player_lifeform']
         for modifier in self.modifiers:
-            modifier.on_take(lifeform)
+            modifier.on_take(taker)
 
     def on_drop(self, room, lifeform):
         self.owner = None

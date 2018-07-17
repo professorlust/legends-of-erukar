@@ -33,8 +33,9 @@ class Inventory(Command):
 
     def perform(self):
         items = []
-        for item in self.args['player_lifeform'].inventory:
-            items.append(self.format_item(item))
+        player = self.args['player_lifeform']
+        for item in player.inventory:
+            items.append(Inventory.format_item(item, player))
         obj_response = {
             'inventory': items,
             'equipment': list(self.assemble_equipment())
@@ -43,13 +44,16 @@ class Inventory(Command):
         return self.succeed()
 
     def assemble_equipment(self):
-        lifeform = self.args['player_lifeform']
+        player = self.args['player_lifeform']
         for slot in Inventory.InventorySlots:
-            yield {
-                'slot': slot,
-                'slotName': Inventory.SlotName[slot],
-                'id': Inventory.uid_for_slot(lifeform, slot)
-            }
+            yield Inventory.format_equipment(player, slot)
+
+    def format_equipment(player, slot):
+        return {
+            'slot': slot,
+            'slotName': Inventory.SlotName[slot],
+            'id': Inventory.uid_for_slot(player, slot)
+        }
 
     def uid_for_slot(pawn, slot):
         if hasattr(pawn, slot):
@@ -58,17 +62,17 @@ class Inventory(Command):
                 return str(item.uuid)
         return -1
 
-    def format_item(self, item):
+    def format_item(item, player):
         object_output = {
             'id': str(item.uuid),
             'alias': item.alias(),
             'quantifiable_alias': item.long_alias(),
             'quantity': getattr(item, 'quantity', 1),
-            'price': int(item.price(self.world.economy())),
+            'price': int(item.price(player.world.economy())),
             'isUsable': item.IsUsable,
             'desirabilityRating': item.rarity().name,
-            'slots': item.equipment_slots(self.args['player_lifeform']),
-            'flavorText': item.flavor_text(self.args['player_lifeform']),
+            'slots': item.equipment_slots(player),
+            'flavorText': item.flavor_text(player),
             'details': list(Inventory.generate_list_of_details(item))
         }
 
@@ -79,7 +83,8 @@ class Inventory(Command):
             }
 
         if isinstance(item, Weapon):
-            object_output['damages'] = list(self.weapon_details(item))
+            details = list(Inventory.weapon_details(player, item))
+            object_output['damages'] = details
 
         if isinstance(item, Armor):
             object_output['protection'] = {}
@@ -93,11 +98,9 @@ class Inventory(Command):
             yield Inventory.format_modifier(item.material)
         for modifier in item.modifiers:
             yield Inventory.format_modifier(modifier)
-        # Description here
 
-    def weapon_details(self, item):
-        lifeform = self.args['player_lifeform']
-        yield from item.generate_damage_details_for_inventory(lifeform)
+    def weapon_details(player, item):
+        yield from item.generate_damage_details_for_inventory(player)
 
     def armor_details(item):
         for mit in item.DamageMitigations:

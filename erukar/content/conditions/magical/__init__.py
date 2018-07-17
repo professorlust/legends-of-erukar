@@ -4,6 +4,7 @@ from .Ethereal import Ethereal
 from .Muted import Muted
 from .TemporaryIllumination import TemporaryIllumination
 from .Undead import Undead
+from .HealthDrain import HealthDrain
 
 __all__ = [
     "AugmentedWeapon",
@@ -11,5 +12,6 @@ __all__ = [
     "Ethereal",
     "Muted",
     "TemporaryIllumination",
-    "Undead"
+    "Undead",
+    "HealthDrain"
 ]

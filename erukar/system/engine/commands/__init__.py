@@ -8,6 +8,7 @@ from .auto.LocalIndex import LocalIndex
 from .auto.Map import Map
 from .auto.Skills import Skills
 from .auto.Stats import Stats
+from .auto.TickExecution import TickExecution
 
 from .executable.ActivateAbility import ActivateAbility
 from .executable.AddSkill import AddSkill
@@ -59,5 +60,6 @@ __all__ = [
     "Start",
     "Purchase",
     "Sell",
-    "Interact"
+    "Interact",
+    "TickExecution"
 ]

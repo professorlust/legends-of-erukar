@@ -205,7 +205,7 @@ def ws_select_character(raw_data):
 
     con = shard.get_client(request)
     if con is None: return "Connection is invalid"
-    
+
     character = erukar.data.model.Character.select(shard.session, cid, con.uid())
 
     if character is not None:

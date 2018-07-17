@@ -20,13 +20,15 @@ class Potion(StackableItem):
     def price(self, econ=None):
         return 10
 
-    def on_use(self, observer):
-        self.consume()
+    def on_use(self, cmd):
+        self.consume(cmd)
+        observer = cmd.args['player_lifeform']
         acu, sen = observer.get_detection_pair()
-        base_description = Drink.taste(observer, acu, sen, self)
+        cmd.args['kwargs'] = self.get_kwargs()
+        cmd.append_result(observer.uid, Drink.taste(observer, acu, sen, self))
         spell = SpellInstance(self.effects)
-        log = spell.execute(observer, observer, **self.get_kwargs())
-        return ' '.join([base_description] + list(log))
+        spell.cmd_execute(cmd)
+        return cmd.succeed()
 
     def get_kwargs(self):
         return {}

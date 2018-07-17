@@ -17,4 +17,10 @@ class BonusMitigation(Condition):
 
     def damage_mitigation(self, damage_type):
         if damage_type == self.damage_type:
-            return (self.mitigation_amount, 0)
+            yield (self.mitigation_amount, 0)
+
+    def mutate_damage_type(self, new_type):
+        self.damage_type = new_type
+
+    def name(self):
+        return self.Noun.format(self.damage_type.capitalize())

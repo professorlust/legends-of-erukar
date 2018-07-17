@@ -1,4 +1,4 @@
-from erukar.system.engine import Tile, Item, TargetedAbility
+from erukar.system.engine import Tile, Item, TargetedAbility, Npc
 from erukar.system.engine.environment import Door, TransitionPiece
 from ..Command import Command
 
@@ -36,7 +36,11 @@ class Map(Command):
                 'density': self.world.pixel_density,
                 'numberOnASide': self.world.pixels_per_side
             },
-            'rooms': []
+            'rooms': {},
+            'actions': {},
+            'actors': {},
+            'lighting': {},
+            'coordinates': [],
         }
 
         if not self.world:
@@ -56,8 +60,12 @@ class Map(Command):
 
         for y in range(min_y-1, max_y+2):
             for x in range(min_x-1, max_x+2):
-                details = self.get_room_details(x, y)
-                results['rooms'].append(details)
+                coord = '({}, {})'.format(x, y)
+                results['rooms'][coord] = self.get_room_details(x, y)
+                results['actions'][coord] = self.actions_for(x, y)
+                results['actors'][coord] = list(self.get_actors_at(x, y))
+                results['lighting'][coord] = self.get_lighting_at(x, y)
+                results['coordinates'].append(coord)
         self.append_result(self.player_info.uid, results)
 
     def player_zones(self):
@@ -66,12 +74,8 @@ class Map(Command):
     def get_room_details(self, x, y):
         return {
             'title': self.get_title_for(x, y),
-            'coordinates': [x, y],
             'tile': self.get_tile_at(x, y),
             'walls': self.wall_overlays_at(x, y),
-            'actors': list(self.get_actors_at(x, y)),
-            'actions': self.actions_for(x, y),
-            'lighting': self.get_lighting_at(x, y)
         }
 
     def get_title_for(self, x, y):
@@ -103,6 +107,8 @@ class Map(Command):
 
     def get_actors_at(self, x, y):
         caller = self.args['player_lifeform']
+        if (x, y) not in caller.zones.fog_of_war:
+            return
         for actor in self.world.actors_at(None, (x, y)):
             if actor in caller.detected_entities:
                 yield actor.tile_id()
@@ -116,13 +122,6 @@ class Map(Command):
             'weapon': weapon,
             'interaction_type': interaction
         }
-
-    def attack_action(weapon, creature):
-        return Map.action(
-            cmd='Attack',
-            desc='Attack with {}'.format(weapon.alias()),
-            weapon=str(weapon.uuid),
-            target=str(creature.uuid))
 
     def interact_actions(npc):
         for template in npc.templates:
@@ -156,13 +155,15 @@ class Map(Command):
         actions = []
         player = self.args['player_lifeform']
         loc = (x, y)
-
+        if loc not in player.zones.fog_of_war:
+            return []
         if player.action_points() >= 2:
             actions.append(Map.action('Inspect', cost=2))
         actions.append(Map.action('Glance'))
 
         for door in self.world.actors_of_type_at(player, loc, Door):
-            actions.append(Map.basic_action(door))
+            for action in door.actions(player):
+                actions.append(action)
         for x in self.world.actors_of_type_at(player, loc, TransitionPiece):
             actions.append(Map.transition_action(x))
         for item in self.world.actors_of_type_at(player, loc, Item):
@@ -184,7 +185,7 @@ class Map(Command):
 
     def append_creature_actions(player, creature, loc):
         if creature and loc in player.zones.fog_of_war:
-            if not creature.is_hostile_to(player):
+            if isinstance(creature, Npc):
                 yield from Map.interact_actions(creature)
                 return
 

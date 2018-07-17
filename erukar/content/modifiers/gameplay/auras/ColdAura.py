@@ -1,20 +1,14 @@
-from ...base.DamagingAuraModifier import DamagingAuraModifier
+from ...base.AutomagicModifier import AutomagicModifier
 import erukar
 
 
-class ColdAura(DamagingAuraModifier):
+class ColdAura(AutomagicModifier):
     Probability = 1
     PriceMod = 1.7
 
-    InventoryName = "Cold Aura"
+    InventoryName = "Cold Nova"
     InventoryDescription = "Deals 10 cold damage to all hostile creatures in a 3 unit radius every tick"
     InventoryFlavorText = ''
-
-    DamageType = 'ice'
-    RawDamage = 10
-    ScalarStat = 'acuity'
-    ScaleAmount = 1.5
-    Requirement = 0
 
     Glances = [
     ]
@@ -27,8 +21,14 @@ class ColdAura(DamagingAuraModifier):
         erukar.system.Weapon
     ]
 
+    def get_effects(self):
+        return [
+            erukar.content.PotionSource,
+            erukar.content.Cryomorph,
+            erukar.content.RadialArea,
+            erukar.content.InflictDamage
+        ]
+
     def apply_to(self, item):
         super().apply_to(item)
-        self.max_distance = 3
-        self.power = 1.0
         item.name = 'Frost-emitting ' + item.name

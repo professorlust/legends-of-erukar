@@ -36,13 +36,13 @@ class Cleave(Attack):
         player = cmd.args['player_lifeform']
         if player.action_points() < self.ap_cost(cmd, loc):
             return False
-        if not any(self.weapons_in_range(player, loc)):
+        if not any(Attack.weapons_in_range(player, loc)):
             return False
         return True
 
     def action_for_map(self, cmd, loc):
         player = cmd.args['player_lifeform']
-        for weapon in self.weapons_in_range(player, loc):
+        for weapon in Attack.weapons_in_range(player, loc):
             yield self.command(player, weapon, loc)
 
     def perform_attack(self, cmd, player, weapon, target):

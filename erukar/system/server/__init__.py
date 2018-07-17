@@ -1,4 +1,5 @@
 from .Connection import Connection
+from .DifferentialMessageEngine import DifferentialMessageEngine
 from .HubInstance import HubInstance
 from .Instance import Instance
 from .InstanceInfo import InstanceInfo
@@ -10,12 +11,13 @@ from .TurnManager import TurnManager
 
 __all__ = [
     "Connection",
-    "HubInstance", 
-    "Instance", 
-    "InstanceInfo", 
-    "Interface", 
-    "RandomDungeonInstance", 
-    "ServerProperties", 
-    "Shard", 
-    "TurnManager"
+    "DifferentialMessageEngine",
+    "HubInstance",
+    "Instance",
+    "InstanceInfo",
+    "Interface",
+    "RandomDungeonInstance",
+    "ServerProperties",
+    "Shard",
+    "TurnManager",
 ]

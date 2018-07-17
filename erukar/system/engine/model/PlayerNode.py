@@ -46,14 +46,14 @@ class PlayerNode(Indexer):
 
         return self.character.has_condition(type_of)
 
-    def begin_turn(self):
+    def begin_turn(self, cmd):
         if self.character is not None:
-            return self.character.begin_turn()
+            return self.character.begin_turn(cmd)
         return ''
 
-    def end_turn(self):
+    def end_turn(self, cmd):
         if self.character is not None:
-            return self.character.end_turn()
+            return self.character.end_turn(cmd)
         return ''
 
     def is_incapacitated(self):

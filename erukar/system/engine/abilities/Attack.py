@@ -20,22 +20,30 @@ class Attack(TargetedAbility):
         '({evasion} Evasion vs {roll} Attack Roll)'
     Dodged = 'You move faster than {attacker}\'s {weapon} and evade its '\
         '{weapon}! ({evasion} Evasion) vs {roll} Attack Roll)'
+    SeeMiss = '{attacker} swings a {weapon} at {target}, but {target} '\
+        'dodges the attack!'
     DidHit = 'Your attack swings true!'
     GotHit = 'You can\'t dodge out of the way in time and are hit!'
+    SeeHit = '{attacker} hits {target} with a {weapon}!'
     DealDamage = 'You deal {final} damage to {target}!'
     TakeDamage = 'You take {total} ({final}) damage.'
     DidNoDamage = 'Your attack deals no damage.'
     TakeNoDamage = 'Your armor mitigates all damage!'
     CauseDying = '{target} collapses, dying!'
     BecomeDying = 'You collapse and are now dying...'
+    SeeDying = 'You see {target} collapse and start dying!'
     KillTarget = 'You have killed {target}!'
     BecomeKilled = 'You have been slain...'
+    SeeKill = '{target} has been slain!'
 
     def valid_at(self, cmd, loc):
         player = cmd.args['player_lifeform']
         if player.action_points() < self.ap_cost(cmd, loc):
             return False
-        for creature in cmd.world.creatures_at(player, loc):
+        return Attack._valid_at(player, cmd.world, loc)
+
+    def _valid_at(player, world, loc):
+        for creature in world.creatures_at(player, loc):
             if creature.is_hostile_to(player):
                 return Attack.has_weapons(player)
         return False
@@ -67,7 +75,7 @@ class Attack(TargetedAbility):
         if isinstance(player.right, Weapon):
             yield player.right
 
-    def weapons_in_range(self, player, loc):
+    def weapons_in_range(player, loc):
         dist = Navigator.distance(player.coordinates, loc)
         for weapon in Attack.valid_weapons(player):
             if dist <= weapon.attack_range(player):
@@ -164,8 +172,8 @@ class Attack(TargetedAbility):
             'weapon': weapon.alias(),
             'target': target.alias()
         }
-        cmd.append_result(player.uid, Attack.DidRoll.format(**strings))
-        cmd.append_result(target.uid, Attack.RolledAt.format(**strings))
+        cmd.log(player, Attack.DidRoll.format(**strings))
+        cmd.log(target, Attack.RolledAt.format(**strings))
         return roll
 
     def attack_succeeded(self, cmd, player, weapon, target, roll):
@@ -181,13 +189,23 @@ class Attack(TargetedAbility):
         if roll <= evasion:
             target.on_successful_dodge(player, weapon, roll)
             player.on_missed_attack(target, weapon, roll)
-            cmd.append_result(player.uid, self.Missed.format(**strings))
-            cmd.append_result(target.uid, self.Dodged.format(**strings))
+            cmd.log(player, self.Missed.format(**strings))
+            cmd.log(target, self.Dodged.format(**strings))
+            cmd.obs(
+                player.coordinates,
+                self.SeeMiss.format(**strings),
+                exclude=[player, target]
+            )
             return False
         target.on_failed_dodge(player, weapon, roll)
         player.on_successful_attack(target, weapon, roll)
-        cmd.append_result(player.uid, self.DidHit.format(**strings))
-        cmd.append_result(target.uid, self.GotHit.format(**strings))
+        cmd.log(player, self.DidHit.format(**strings))
+        cmd.log(target, self.GotHit.format(**strings))
+        cmd.obs(
+            target.coordinates,
+            self.SeeHit.format(**strings),
+            exclude=[player, target]
+        )
         return True
 
     def do_damage(self, cmd, player, weapon, target):
@@ -221,13 +239,13 @@ class Attack(TargetedAbility):
             'total': Attack.total(result)
         }
         if Attack.total(result) <= 0:
-            cmd.append_result(player.uid, Attack.DidNoDamage.format(**strs))
-            cmd.append_result(target.uid, Attack.TakeNoDamage.format(**strs))
+            cmd.log(player, Attack.DidNoDamage.format(**strs))
+            cmd.log(target, Attack.TakeNoDamage.format(**strs))
             return
         cmd.dirty(player)
         cmd.dirty(target)
-        cmd.append_result(player.uid, Attack.DealDamage.format(**strs))
-        cmd.append_result(target.uid, Attack.TakeDamage.format(**strs))
+        cmd.log(player, Attack.DealDamage.format(**strs))
+        cmd.log(target, Attack.TakeDamage.format(**strs))
 
     def check_for_kill(self, cmd, player, weapon, target):
         strs = {
@@ -236,12 +254,22 @@ class Attack(TargetedAbility):
             'target': target.alias(),
         }
         if target.has_condition(Dying):
-            cmd.append_result(player.uid, Attack.CauseDying.format(**strs))
-            cmd.append_result(target.uid, Attack.BecomeDying.format(**strs))
+            cmd.log(player, Attack.CauseDying.format(**strs))
+            cmd.log(target, Attack.BecomeDying.format(**strs))
+            cmd.obs(
+                target.coordinates,
+                self.SeeDying.format(**strs),
+                exclude=[player, target]
+            )
             return
         if target.has_condition(Dead):
-            cmd.append_result(player.uid, Attack.KillTarget.format(**strs))
-            cmd.append_result(target.uid, Attack.BecomeKilled.format(**strs))
+            cmd.log(player, Attack.KillTarget.format(**strs))
+            cmd.log(target, Attack.BecomeKilled.format(**strs))
+            cmd.obs(
+                target.coordinates,
+                self.SeeKill.format(**strs),
+                exclude=[player, target]
+            )
             Attack.corpsify(cmd, player, target)
             weapon.on_kill(player, target)
 

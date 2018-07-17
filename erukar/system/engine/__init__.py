@@ -9,3 +9,4 @@ from .overland import *
 from .commands import *
 from .abilities import *
 from .ai import *
+from .magic import *

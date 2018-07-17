@@ -12,6 +12,7 @@ from .Stunned import Stunned
 from .Terrified import Terrified
 from .Vertigo import Vertigo
 from .Weakened import Weakened
+from .Wither import Wither
 
 __all__ = [
     "Bleeding",
@@ -27,5 +28,6 @@ __all__ = [
     "Stunned",
     "Terrified",
     "Vertigo",
-    "Weakened"
+    "Weakened",
+    "Wither"
 ]

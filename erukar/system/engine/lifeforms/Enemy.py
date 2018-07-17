@@ -24,12 +24,11 @@ class Enemy(Lifeform, Indexer):
         self.elite_points = 0
         # using getattr allows for declarations before super()s
         self.commander = None   # Used in conjuration or with Elites
-        self.faction   = None   # Reserved
+        self.faction   = 'enemy'
         self.spells    = []     # Enemies GENERALLY use pre-defined Spells instead of Spell words, though not necessarily 
 
         self.init_stats()
         self.init_personality()
-        self.ai_module = erukar.system.BasicAI(self)
 
         # Flavor
         self.history = []
@@ -51,6 +50,7 @@ class Enemy(Lifeform, Indexer):
         pass
 
     def init_personality(self):
+        self.ai_module = erukar.system.BasicAI(self)
         self.stat_points = 0
         self.str_ratio = 0.1667
         self.dex_ratio = 0.1667
@@ -64,9 +64,6 @@ class Enemy(Lifeform, Indexer):
 
     def maximum_arcane_energy(self):
         return 100
-
-    def is_hostile_to(self, lifeform):
-        return isinstance(lifeform, Player)
 
     def define_level(self, level):
         self.level = level

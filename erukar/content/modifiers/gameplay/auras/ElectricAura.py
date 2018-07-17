@@ -1,21 +1,14 @@
-from ...base.DamagingAuraModifier import DamagingAuraModifier
-from erukar.system.engine import Damage, DamageScalar, Lifeform
+from ...base.AutomagicModifier import AutomagicModifier
 import erukar
 
 
-class ElectricAura(DamagingAuraModifier):
+class ElectricAura(AutomagicModifier):
     Probability = 1
     PriceMod = 1.7
 
     InventoryName = "Electric Aura"
     InventoryDescription = "Deals 10 lightning damage to all hostile creatures in a 3 unit radius every tick"
     InventoryFlavorText = ''
-
-    DamageType = 'lightning'
-    RawDamage = 10
-    ScalarStat = 'acuity'
-    ScaleAmount = 1.5
-    Requirement = 0
 
     Glances = [
     ]
@@ -28,8 +21,14 @@ class ElectricAura(DamagingAuraModifier):
         erukar.system.Weapon
     ]
 
+    def get_effects(self):
+        return [
+            erukar.content.PotionSource,
+            erukar.content.Electromorph,
+            erukar.content.RadialArea,
+            erukar.content.InflictDamage
+        ]
+
     def apply_to(self, item):
         super().apply_to(item)
-        self.max_distance = 3
-        self.power = 1.0
-        item.name = 'Charge-Dissipating ' + item.name
+        item.name = 'Static-field ' + item.name
