@@ -6,7 +6,7 @@ class LightCrossbow(CrossbowWeapon):
     BaseName = "Light Crossbow"
     EssentialPart = "string"
     BaseWeight = 3
-    AttackRange = 4
+    MaximumRange = 10
     RangePenalty = 2
 
     # Damage

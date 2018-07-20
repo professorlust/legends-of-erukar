@@ -5,7 +5,6 @@ import erukar
 
 def configure(shard):
     shard.templates = [
-        make_barbarian(),
         make_cleric(),
         make_fighter(),
         make_mage(),
@@ -16,39 +15,6 @@ def configure(shard):
         template.skill_points = 0
         template.stat_points = 0
         template.wealth = 200
-
-def make_barbarian():
-    barbarian = Lifeform(None)
-    barbarian.name = 'Barbarian'
-    barbarian.stats = {}
-    barbarian.stats['strength']  = 4
-    barbarian.stats['dexterity'] = 1
-    barbarian.stats['vitality']  = 4
-    barbarian.stats['acuity']    = 1
-    barbarian.stats['sense']     = 1
-    barbarian.stats['resolve']   = 4
-    
-    barbarian.inventory = [
-        Axe(modifiers=[Iron]),
-        Mace(modifiers=[Iurwood]),
-        Breeches(modifiers=[Leather]),
-        Candle(),
-    ]
-
-    barbarian.left  = barbarian.inventory[0]
-    barbarian.right = barbarian.inventory[1]
-    barbarian.legs  = barbarian.inventory[2]
-
-    barbarian.spell_words = [
-    ]
-    barbarian.skills = [
-        erukar.content.skills.Rage(),
-        erukar.content.skills.MartialWeaponTraining()
-    ]
-
-    barbarian.description = 'Barbarians are hardy melee fighters capable of dealing lots of damage in bursts. Their raw strength allows them great amounts of damage with heavy, blunted weapons such as Maces and Staves.\nEach barbarian has access to a skill called "Rage" which temporarily grants bonuses to attack damage/health equal to the barbarian\'s resolve score and a 33% increase to physical damage mitigation.'
-
-    return barbarian
 
 def make_cleric():
     cleric = Lifeform(None)
@@ -117,17 +83,18 @@ def make_fighter():
 
     return fighter
 
-def make_mage():
+
+def make_arcanist():
     mage = Lifeform(None)
     mage.name = 'Mage'
     mage.stats = {}
-    mage.stats['strength']  = 1
+    mage.stats['strength'] = 1
     mage.stats['dexterity'] = 2
-    mage.stats['vitality']  = 1
-    mage.stats['acuity']    = 6
-    mage.stats['sense']     = 2
-    mage.stats['resolve']   = 2
-    
+    mage.stats['vitality'] = 1
+    mage.stats['acuity'] = 6
+    mage.stats['sense'] = 2
+    mage.stats['resolve'] = 2
+
     mage.inventory = [
         Wand(modifiers=[Oak]),
         Focus(modifiers=[Oak]),

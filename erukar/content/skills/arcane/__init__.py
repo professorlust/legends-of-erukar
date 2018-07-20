@@ -1,7 +1,7 @@
 from .ArcaneGift import ArcaneGift
-from .ArcaneTraining import ArcaneTraining
+from .PracticedSpellcasting import PracticedSpellcasting
 
 __all__ = [
     "ArcaneGift",
-    "ArcaneTraining"
+    "PracticedSpellcasting"
 ]

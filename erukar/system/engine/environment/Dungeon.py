@@ -42,6 +42,8 @@ class Dungeon(ErukarActor):
 
     def on_start(self):
         super().on_start()
+        for room in self.rooms:
+            room.on_start()
         for actor in self.actors:
             actor.on_start(self)
 

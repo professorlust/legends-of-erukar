@@ -2,7 +2,7 @@ from erukar.system.engine import EnvironmentProfile, DungeonGenerator
 
 
 class Location:
-    def __init__(self, sector=None):
+    def __init__(self, sector):
         self.sector = sector
         self.chunks = [] # See config/world/chunks/
         self.environment_profile = getattr(sector, 'environment_profile', EnvironmentProfile())

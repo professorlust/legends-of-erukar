@@ -48,8 +48,8 @@ class DungeonGenerator(FactoryBase, AStarBase):
             erukar.content.SandStoneBricks()
         ]
 
-    def generate(self, previous_instance_identifier=''):
-        self.create_dungeon()
+    def generate(self, previous_instance_identifier='', override_type=None):
+        self.create_dungeon(override_type)
 
         self.enemy_generator = EnemyGenerator(self)
         self.enemy_generator.add_enemies()
@@ -60,20 +60,23 @@ class DungeonGenerator(FactoryBase, AStarBase):
         self.world.location = self.location
         return self.world
 
-    def create_dungeon(self):
-        self.world = OverlandZone()\
-            if self.location.use_day_night_cycle\
-            else Dungeon()
+    def create_dungeon(self, override_type=None):
+        self.world = (override_type or (
+            OverlandZone if self.location.use_day_night_cycle else Dungeon
+        ))()
         self.world.base_ambient_light = self.location.ambient_light
         self.create_vertices()
         for vertex in self.vertices:
-            self.connect_to_random_vertex(vertex) #
+            self.connect_to_random_vertex(vertex)
 
         self.create_rooms_along_lines()
         self.add_floor_tiles()
         self.place_chunks_on_random_vertices()
         self.add_walls()
-        self.world.generate_tiles(TileGenerator(width=self.world.pixels_per_side, breadth=self.world.pixels_per_side))
+        self.world.generate_tiles(TileGenerator(
+            width=self.world.pixels_per_side,
+            breadth=self.world.pixels_per_side
+        ))
 
     def add_enemies(self):
         enemy_chooser = ModuleDecorator('erukar.content.enemies', self.environment_profile)

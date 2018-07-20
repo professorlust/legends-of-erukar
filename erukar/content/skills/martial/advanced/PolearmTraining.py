@@ -1,3 +1,4 @@
+from ..MartialWeaponTraining import MartialWeaponTraining
 from erukar.system.engine import Skill
 
 class PolearmTraining(Skill):
@@ -18,3 +19,5 @@ class PolearmTraining(Skill):
     def offset_scale_for_polearm(self):
         return self.scalar_at(self.level)
 
+    def meets_requirements(player):
+        return player.has_skill(MartialWeaponTraining, 5)

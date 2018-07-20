@@ -52,14 +52,8 @@ class Instance(Manager):
         self.turn_manager = TurnManager()
         self.dungeon = self.location.get_dungeon()
         self.dungeon.location = self.location
-        if self.dungeon:
-            self.on_start()
-
-    def on_start(self):
         self.dungeon.on_start()
         self.subscribe_enemies()
-        for room in self.dungeon.rooms:
-            room.on_start()
         self.status = Instance.Running
         self.info.on_instance_ready()
 

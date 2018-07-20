@@ -181,6 +181,10 @@ class Lifeform(ErukarActor):
             return next((x for x in self.skills if x.__module__ == skill_class), None)
         return next((x for x in self.skills if isinstance(x, skill_class)), None)
 
+    def has_skill(self, _type, min_level=1):
+        skill = self.get_skill(_type)
+        return skill and skill.level >= min_level
+
     def initiate_aura(self, aura):
         '''Initiates an aura within the current room'''
         room = self.world.get_room_at(self.coordinates)

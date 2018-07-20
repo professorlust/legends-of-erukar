@@ -1,6 +1,6 @@
 from erukar.system.engine import Skill
 
-class ArcaneTraining(Skill):
+class PracticedSpellcasting(Skill):
     Name = 'Arcane Training'
 
     Descriptions = [

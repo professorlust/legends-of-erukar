@@ -1,7 +1,9 @@
 from .MartialWeaponTraining import MartialWeaponTraining
-from .PolearmTraining import PolearmTraining
+from .Cleave import Cleave
+from .Lunge import Lunge
 
 __all__ = [
     "MartialWeaponTraining",
-    "PolearmTraining",
+    "Cleave",
+    "Lunge"
 ]

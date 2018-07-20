@@ -36,20 +36,21 @@ class Attack(TargetedAbility):
     BecomeKilled = 'You have been slain...'
     SeeKill = '{target} has been slain!'
 
-    def valid_at(self, cmd, loc):
+    def valid_at(cmd, loc):
         player = cmd.args['player_lifeform']
-        if player.action_points() < self.ap_cost(cmd, loc):
+        if player.action_points() < Attack.ap_cost(cmd, loc):
             return False
         return Attack._valid_at(player, cmd.world, loc)
 
     def _valid_at(player, world, loc):
         for creature in world.creatures_at(player, loc):
             if creature.is_hostile_to(player):
-                return Attack.has_weapons(player)
+                dist = Navigator.distance(player.coordinates, loc)
+                return Attack.has_weapons(player, dist)
         return False
 
-    def has_weapons(player):
-        return any(Attack.valid_weapons(player))
+    def has_weapons(player, dist=0):
+        return any(Attack.valid_weapons(player, dist))
 
     def action_for_map(self, cmd, loc):
         player = cmd.args['player_lifeform']
@@ -63,17 +64,17 @@ class Attack(TargetedAbility):
         return {
             'command': 'ActivateAbility',
             'abilityModule': self.__module__,
-            'cost': self.ap_cost(None, None),
+            'cost': Attack.ap_cost(None, None),
             'description': self.format_description(creature, weapon, loc),
             'weapon': str(weapon.uuid),
             'interaction_target': str(creature.uuid)
         }
 
-    def valid_weapons(player):
-        if isinstance(player.left, Weapon):
-            yield player.left
-        if isinstance(player.right, Weapon):
-            yield player.right
+    def valid_weapons(player, dist=0):
+        for item in [player.left, player.right]:
+            if isinstance(item, Weapon):
+                if item.attack_range(player) >= dist:
+                    yield item
 
     def weapons_in_range(player, loc):
         dist = Navigator.distance(player.coordinates, loc)
@@ -92,7 +93,7 @@ class Attack(TargetedAbility):
         failures = self.validate(cmd, player, target, weapon)
         if failures:
             return failures
-        player.consume_action_points(self.ap_cost(cmd))
+        player.consume_action_points(Attack.ap_cost(cmd))
         self.possible_modifiers = [self, player, weapon]
         self.handle_ammo(cmd, player, weapon)
         result = self.perform_attack(cmd, player, weapon, target)
@@ -119,37 +120,37 @@ class Attack(TargetedAbility):
     def can_activate(self):
         return True
 
-    def ap_cost(self, *_):
+    def ap_cost(*_):
         return 1
 
     def validate(self, cmd, player, target, weapon):
         if not target:
             return cmd.fail(Attack.NotFound)
-        if not weapon or not self.weapon_exists(player, weapon):
+        if not weapon or not Attack.weapon_exists(player, weapon):
             return cmd.fail(Attack.NoWeapon)
 
         failed_requirements = weapon.failing_requirements(player)
         if failed_requirements:
             return cmd.fail('. '.join(failed_requirements))
-        if not self.has_ammo_if_needed(player, weapon):
+        if not Attack.has_ammo_if_needed(player, weapon):
             return cmd.fail(Attack.NoAmmo)
-        if not self.is_in_valid_range(player, weapon, target):
+        if not Attack.is_in_valid_range(player, weapon, target):
             return cmd.fail(Attack.OutOfRange)
 
-        cost = self.ap_cost(cmd)
+        cost = Attack.ap_cost(cmd)
         if player.action_points() < cost:
             return cmd.fail(Attack.NotEnoughAP)
 
-    def weapon_exists(self, player, weapon):
+    def weapon_exists(player, weapon):
         return isinstance(weapon, Weapon)\
                 and (player.left == weapon or player.right == weapon)
 
-    def has_ammo_if_needed(self, player, weapon):
+    def has_ammo_if_needed(player, weapon):
         '''Do we consume ammo and have the right ammo?'''
         return not weapon.RequiresAmmo\
             or weapon.has_correct_ammo(player.ammunition)
 
-    def is_in_valid_range(self, player, weapon, target):
+    def is_in_valid_range(player, weapon, target):
         dist = Navigator.distance(player.coordinates, target.coordinates)
         return dist <= weapon.attack_range(player)
 
