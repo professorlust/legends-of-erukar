@@ -35,6 +35,10 @@ class Attack(TargetedAbility):
     KillTarget = 'You have killed {target}!'
     BecomeKilled = 'You have been slain...'
     SeeKill = '{target} has been slain!'
+    YouTotallyMitigate = 'Your armor totally mitigated {} damage'
+    YouPartiallyMitigate = 'Your armor partially mitigated {} damage.'
+    YouMixMitigate = 'Your armor totally mitigated {} damage and '\
+        'opartially mitigated {} damage.'
 
     def valid_at(cmd, loc):
         player = cmd.args['player_lifeform']
@@ -221,7 +225,27 @@ class Attack(TargetedAbility):
         return ', '.join(res)
 
     def mitigated(result):
-        return '[[mitigated]]'
+        total_mit = list(Attack._total_mitigation(result))
+        partial_mit = list(Attack._partial_mitigation(result))
+        if len(total_mit) > 0:
+            if len(partial_mit) > 0:
+                return Attack.YouMixMitigate.format(total_mit, partial_mit)
+            return Attack.YouTotallyMitigate.format(total_mit)
+        return Attack.YouPartiallyMitigate.format(partial_mit)
+
+    def _total_mitigation(result):
+        mit_list = [*result['post_mitigation']]
+        for _type in result['post_deflection']:
+            if _type not in mit_list:
+                amount = result['post_deflection'][_type]
+                yield '{} {}'.format(amount, _type)
+
+    def _partial_mitigation(result):
+        for _type in result['post_mitigation']:
+            deflected = result['post_deflection'][_type]
+            mitigated = result['post_mitigation'][_type]
+            if deflected > mitigated:
+                yield '{} {}'.format(deflected - mitigated, _type)
 
     def deflected(result):
         return '[[deflected]]'

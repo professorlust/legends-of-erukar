@@ -257,31 +257,32 @@ class Lifeform(ErukarActor):
         pass
 
     def apply_deflection(self, attacker, weapon, damages):
-        post_deflection = []
-        for damage in damages:
-            amount, damage_type = damage
-            dfl = self.deflection(damage_type)
+        post_deflection = {}
+        for _type in [*damages]:
+            amount = damages[_type]
+            dfl = self.deflection(_type)
             reduced = max(0, amount - dfl)
             if reduced > 0:
-                post_deflection.append((reduced, damage_type))
+                post_deflection[_type] = reduced
         return post_deflection
 
     def apply_mitigation(self, attacker, weapon, damages):
-        post_mitigation = []
-        for damage in damages:
-            amount, damage_type = damage
-            mit = self.mitigation(damage_type)
+        post_mitigation = {}
+        for _type in [*damages]:
+            amount = damages[_type]
+            mit = self.mitigation(_type)
             reduced = int(amount * mit)
             if reduced > 0:
-                post_mitigation.append((reduced, damage_type))
+                post_mitigation[_type] = reduced
         return post_mitigation
 
     def apply_damage(self, attacker, weapon, damages):
         undeflected = self.apply_deflection(attacker, weapon, damages)
         unmitigated = self.apply_mitigation(attacker, weapon, undeflected)
-        total_damage = sum(x[0] for x in unmitigated)
+        total_damage = sum(unmitigated[_type] for _type in unmitigated)
         self.take_damage(total_damage, attacker)
         return {
+            'raw': damages,
             'post_deflection': undeflected,
             'post_mitigation': unmitigated,
             'total': int(total_damage)

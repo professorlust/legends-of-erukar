@@ -252,7 +252,7 @@ class Attack_Test(unittest.TestCase):
 
     def test__do_damage__does_damage(self):
         def damage_from_attack(*_):
-            return [(10, 'fire')]
+            return {'fire': 10}
         self.player.get_damage_from_attack = damage_from_attack
         cmd = self.interface.create_command(ActivateAbility, self.basic_data)
         target = Enemy()
@@ -261,3 +261,78 @@ class Attack_Test(unittest.TestCase):
         ability.possible_modifiers = []
         ability.do_damage(cmd, self.player, erukar.Longsword(), target)
         self.assertEqual(10, target.health)
+
+    def test__final_damages__formats_appropriately(self):
+        damages = {'post_mitigation': [(10, 'fire'), (10, 'ice')]}
+        self.assertEqual(
+            Attack.final_damages(damages),
+            '10 fire, 10 ice'
+        )
+
+    def test__total_mitigation__yields_correctly(self):
+        damages = {
+            'post_deflection': {
+                'fire': 15,
+                'ice': 10
+            },
+            'post_mitigation': {
+                'fire': 15,
+            }
+        }
+        mitigations = list(Attack._total_mitigation(damages))
+        self.assertEqual(len(mitigations), 1)
+        self.assertEqual(
+            mitigations[0],
+            '10 ice'
+        )
+
+    def test__partial_mitigation__yields_correctly(self):
+        damages = {
+            'post_deflection': {
+                'fire': 15,
+                'ice': 10
+            },
+            'post_mitigation': {
+                'fire': 10,
+            }
+        }
+        mitigations = list(Attack._partial_mitigation(damages))
+        self.assertEqual(len(mitigations), 1)
+        self.assertEqual(
+            mitigations[0],
+            '5 fire'
+        )
+
+    def test__total_mitigation__yields_correctly(self):
+        damages = {
+            'post_deflection': {
+                'fire': 15,
+                'ice': 10
+            },
+            'post_mitigation': {
+                'fire': 15,
+            }
+        }
+        mitigations = list(Attack._total_mitigation(damages))
+        self.assertEqual(len(mitigations), 1)
+        self.assertEqual(
+            mitigations[0],
+            '10 ice'
+        )
+
+    def test__partial_mitigation__yields_correctly(self):
+        damages = {
+            'post_deflection': {
+                'fire': 15,
+                'ice': 10
+            },
+            'post_mitigation': {
+                'fire': 10,
+            }
+        }
+        mitigations = list(Attack._partial_mitigation(damages))
+        self.assertEqual(len(mitigations), 1)
+        self.assertEqual(
+            mitigations[0],
+            '5 fire'
+        )

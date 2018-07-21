@@ -54,7 +54,7 @@ class Weapon(Item):
             scaled = list(self.vary_damage(attacker, damage.scalars))
             sum_damage = int(sum([amt for amt, dt in scaled]))
             calculated[damage.damage_type] = sum_damage
-        return [(calculated[dt], dt) for dt in calculated]
+        return calculated
 
     def vary_damage(self, attacker, scalars):
         variance = self.lower_variance(attacker), self.upper_variance(attacker)
