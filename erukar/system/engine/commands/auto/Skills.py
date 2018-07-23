@@ -42,29 +42,40 @@ class Skills(Command):
                 yield skill
 
     def unacquired_skills(self):
+        player = self.args['player_lifeform']
         for skill in Skills.all_possible():
-            if not any(isinstance(acquired, skill) for acquired in self.args['player_lifeform'].skills):
+            if player.has_skill(skill):
+                continue
+            if skill.meets_requirements(player):
                 yield skill()
 
     def all_possible():
         return [
             erukar.content.skills.ArcaneGift,
-            erukar.content.skills.ArcaneTraining,
-            erukar.content.skills.BowTraining,
-            erukar.content.skills.Charisma,
-            erukar.content.skills.CrossbowTraining,
-            erukar.content.skills.EconomicSense,
-            erukar.content.skills.Haggling,
-            erukar.content.skills.ImprovedSight,
-            erukar.content.skills.MartialWeaponTraining,
-            erukar.content.skills.PolearmTraining,
-            erukar.content.skills.Smite,
-            erukar.content.skills.Cleave,
-            erukar.content.skills.Rage,
+            # erukar.content.skills.BloodMagic
+            erukar.content.skills.PracticedSpellcasting,
+            # erukar.content.skills.SpellDeflection()
+            erukar.content.skills.WandTraining,
+            # erukar.content.skills.CleanseDesecrate,
             erukar.content.skills.Heal,
+            # erukar.content.skills.Prayer,
+            erukar.content.skills.Smite,
+            erukar.content.skills.SupernaturalSense,
+            erukar.content.skills.MartialWeaponTraining,
+            erukar.content.skills.Cleave,
+            erukar.content.skills.Lunge,
+            # erukar.content.skills.BasicStances,
+            # erukar.content.skills.ArmorTraining,
             erukar.content.skills.Defend,
+            # erukar.content.skills.Intuition,
+            # erukar.content.skills.KnowYourEnemy,
+            # erukar.content.skills.Parry,
+            # erukar.content.skills.Rally,
             erukar.content.skills.Dodge,
-            erukar.content.skills.Lunge
+            erukar.content.skills.EagleEye,
+            erukar.content.skills.Hide,
+            # erukar.content.skills.RangedWeaponTraining,
+            # erukar.content.skills.Sprint,
         ]
 
     def all_activatable(self):

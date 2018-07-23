@@ -1,32 +1,26 @@
 from erukar.system.engine import Skill
 
-class PracticedSpellcasting(Skill):
-    Name = 'Arcane Training'
 
-    Descriptions = [
-        'Initiate',
-        'Novice',
-        'Advanced Beginner',
-        'Competent',
-        'Proficient',
-        'Adept',
-        'Expert',
-        'Master',
-    ]
+class PracticedSpellcasting(Skill):
+    Name = 'Practiced Spellcasting'
+    Current = 'Can cast spells with {} Energy at 100% efficiency'
+    Next = '+{} Max Energy for 100%'
 
     def max_effective_arcane_energy(self):
-        return ArcaneTraining.max_arc_at_level(self.level)
+        return PracticedSpellcasting.max_arc_at_level(self.level)
 
     def current_level_description(self):
-        return '{}: Can cast spells with {} Energy at 100% efficiency'.format(\
-                self.Descriptions[self.level-1],\
-                self.max_effective_arcane_energy())
+        return self.Current.format(self.max_effective_arcane_energy())
 
     def next_level_description(self):
-        if self.level >= len(self.Descriptions):
-            return 'None'
-        diff = ArcaneTraining.max_arc_at_level(self.level + 1) - ArcaneTraining.max_arc_at_level(self.level)
-        return '{} (+{} Max Energy for 100%)'.format(self.Descriptions[self.level], diff)
+        diff = PracticedSpellcasting.d_efficiency(self.level)
+        return self.Next.format(diff)
+
+    def d_efficiency(level_i, level_f=-1):
+        level_f = level_f if level_f > 0 else level_i + 1
+        initial = PracticedSpellcasting.max_arc_at_level(level_i)
+        final = PracticedSpellcasting.max_arc_at_level(level_f)
+        return final - initial
 
     def max_arc_at_level(level):
         return 5 * level

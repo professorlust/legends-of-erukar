@@ -40,7 +40,7 @@ class Attack(TargetedAbility):
     YouMixMitigate = 'Your armor totally mitigated {} damage and '\
         'opartially mitigated {} damage.'
 
-    def valid_at(cmd, loc):
+    def valid_at(self, cmd, loc):
         player = cmd.args['player_lifeform']
         if player.action_points() < Attack.ap_cost(cmd, loc):
             return False

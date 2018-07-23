@@ -33,3 +33,6 @@ class Skill:
         if hasattr(self, mod_name):
             _el = getattr(self, mod_name)(_el) or _el
         return _el
+
+    def meets_requirements(player):
+        return True

@@ -3,12 +3,13 @@ from erukar.content.inventory import *
 from erukar.content.modifiers.material import *
 import erukar
 
+
 def configure(shard):
     shard.templates = [
-        make_cleric(),
-        make_fighter(),
-        make_mage(),
-        make_ranger()
+        make_devout(),
+        make_warrior(),
+        make_arcanist(),
+        make_deceiver()
     ]
 
     for template in shard.templates:
@@ -16,7 +17,8 @@ def configure(shard):
         template.stat_points = 0
         template.wealth = 200
 
-def make_cleric():
+
+def make_devout():
     cleric = Lifeform(None)
     cleric.name = 'Cleric'
     cleric.stats = {}
@@ -51,7 +53,7 @@ def make_cleric():
 
     return cleric
 
-def make_fighter():
+def make_warrior():
     fighter = Lifeform(None)
     fighter.name = 'Fighter'
     fighter.stats = {}
@@ -96,59 +98,72 @@ def make_arcanist():
     mage.stats['resolve'] = 2
 
     mage.inventory = [
-        Wand(modifiers=[Oak]),
-        Focus(modifiers=[Oak]),
-        Candle(),
-        Robes(modifiers=[Cotton]),
-        Sandals(modifiers=[Leather]),
-        Breeches(modifiers=[Cotton]),
-        PotionOfHealing(5),
-        PotionOfRenewal(5)
+        erukar.Wand(modifiers=[erukar.Oak]),
+        erukar.Focus(modifiers=[erukar.Oak]),
+        erukar.Candle(),
+        erukar.Robes(modifiers=[erukar.Cotton]),
+        erukar.Sandals(modifiers=[erukar.Leather]),
+        erukar.Breeches(modifiers=[erukar.Cotton]),
+        erukar.PotionOfHealing(5),
+        erukar.PotionOfRenewal(5)
     ]
     mage.spell_words = [
     ]
     mage.skills = [
         erukar.content.skills.ArcaneGift(),
-        erukar.content.skills.ArcaneTraining(),
+        erukar.content.skills.PracticedSpellcasting(),
+        erukar.content.skills.WandTraining()
     ]
     mage.right = mage.inventory[0]
-    mage.left  = mage.inventory[1]
+    mage.left = mage.inventory[1]
     mage.chest = mage.inventory[2]
-    mage.feet  = mage.inventory[3]
-    mage.legs  = mage.inventory[4]
+    mage.feet = mage.inventory[3]
+    mage.legs = mage.inventory[4]
 
-    mage.description = 'Mages excel in observation and intellect. Their orders are highly diverse and tend to attract the most intelligent of indivuals. Mages specialize in casting arcane magics, though some may tend to prefer alchemy or research.\nMages start with several Arcane Words: Three Elemental Augments (Ice, Fire, and Electric) and two Spellshapes (Bolt, Shield). By combining these words, they can shape their spells to their needs with minimal downtime.'
+    mage.description = 'Arcanists excel in observation and intellect. '\
+        'Their orders are highly diverse and tend to attract the '\
+        'most intelligent of indivuals. Mages specialize in casting '\
+        'arcane magics, though some may tend to prefer alchemy or '\
+        'research.\nMages start with several Arcane Words: Three Elemental '\
+        'Augments (Ice, Fire, and Electric) and two Spellshapes (Bolt, '\
+        'Shield). By combining these words, they can shape their spells '\
+        'to their needs with minimal downtime.'
     return mage
 
-def make_ranger():
+
+def make_deceiver():
     ranger = Lifeform(None)
     ranger.name = 'Ranger'
     ranger.stats = {}
-    ranger.stats['strength']  = 3
+    ranger.stats['strength'] = 3
     ranger.stats['dexterity'] = 5
-    ranger.stats['vitality']  = 2
-    ranger.stats['acuity']    = 2
-    ranger.stats['sense']     = 2
-    ranger.stats['resolve']   = 1
-    
+    ranger.stats['vitality'] = 2
+    ranger.stats['acuity'] = 2
+    ranger.stats['sense'] = 2
+    ranger.stats['resolve'] = 1
+
     ranger.inventory = [
-        Longbow(modifiers=[Oak]),
-        Boots(modifiers=[Leather]),
-        Vest(modifiers=[Leather]),
-        Breeches(modifiers=[Leather]),
-        Arrow(quantity=25, modifiers=[Oak]),
-        PotionOfHealing(5)
+        erukar.Longbow(modifiers=[erukar.Oak]),
+        erukar.Boots(modifiers=[erukar.Leather]),
+        erukar.Vest(modifiers=[erukar.Leather]),
+        erukar.Breeches(modifiers=[erukar.Leather]),
+        erukar.Arrow(quantity=25, modifiers=[erukar.Oak]),
+        erukar.PotionOfHealing(5)
     ]
 
     ranger.skills = [
-        erukar.content.skills.ImprovedSight(),
-        erukar.content.skills.BowTraining()
+        erukar.content.skills.Dodge(),
+        erukar.content.skills.EagleEye()
     ]
     ranger.right = ranger.inventory[0]
-    ranger.feet  = ranger.inventory[1]
+    ranger.feet = ranger.inventory[1]
     ranger.chest = ranger.inventory[2]
-    ranger.legs  = ranger.inventory[3]
+    ranger.legs = ranger.inventory[3]
     ranger.ammunition = ranger.inventory[4]
-    
-    ranger.description = 'Rangers are marksmen, specializing in the art of archery and ranged combat. They tend to prefer keeping ther targets at a distance\nRangers start with advanced training in bows and crossbows and have Snipe, an active skill which provides additional accuracy at long ranges at the cost of damage.'
+
+    ranger.description = 'Rangers are marksmen, specializing in the art '\
+        'of archery and ranged combat. They tend to prefer keeping their '\
+        'targets at a distance\nRangers start with advanced training in bows '\
+        'and crossbows and have Snipe, an active skill which provides '\
+        'additional accuracy at long ranges at the cost of damage.'
     return ranger

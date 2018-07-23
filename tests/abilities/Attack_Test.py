@@ -21,18 +21,18 @@ class Attack_Test(unittest.TestCase):
     def test__valid_at__no_ap(self):
         self.player.consume_action_points(2)
         cmd = self.interface.create_command(ActivateAbility, self.basic_data)
-        self.assertFalse(Attack.valid_at(cmd, (0, 4)))
+        self.assertFalse(Attack().valid_at(cmd, (0, 4)))
 
     def test__valid_at__no_creature(self):
         cmd = self.interface.create_command(ActivateAbility, self.basic_data)
-        self.assertFalse(Attack.valid_at(cmd, (0, 4)))
+        self.assertFalse(Attack().valid_at(cmd, (0, 4)))
 
     def test__valid_at__no_weapon(self):
         loc = (0, 4)
         cmd = self.interface.create_command(ActivateAbility, self.basic_data)
         self.interface.dungeon.add_actor(Enemy(), loc)
         self.assertTrue(any(cmd.world.creatures_at(self.player, loc)))
-        self.assertFalse(Attack.valid_at(cmd, loc))
+        self.assertFalse(Attack().valid_at(cmd, loc))
 
     def test__valid_at__too_far(self):
         loc = (0, 4)
@@ -40,7 +40,7 @@ class Attack_Test(unittest.TestCase):
         cmd = self.interface.create_command(ActivateAbility, self.basic_data)
         self.interface.dungeon.add_actor(Enemy(), loc)
         self.assertTrue(Attack.has_weapons(self.player))
-        self.assertFalse(Attack.valid_at(cmd, loc))
+        self.assertFalse(Attack().valid_at(cmd, loc))
 
     def test__valid_at__has_weapon(self):
         loc = (0, 1)
@@ -48,7 +48,7 @@ class Attack_Test(unittest.TestCase):
         cmd = self.interface.create_command(ActivateAbility, self.basic_data)
         self.interface.dungeon.add_actor(Enemy(), loc)
         self.assertTrue(Attack.has_weapons(self.player))
-        self.assertTrue(Attack.valid_at(cmd, loc))
+        self.assertTrue(Attack().valid_at(cmd, loc))
 
     def test__has_weapons__is_true_with_left(self):
         self.player.left = erukar.Longsword()
