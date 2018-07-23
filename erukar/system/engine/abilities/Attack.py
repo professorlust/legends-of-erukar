@@ -1,5 +1,5 @@
 from erukar.system.engine import TargetedAbility, Weapon
-from erukar.system.engine import Corpse, Dying, Dead
+from erukar.system.engine import Corpse, Dying, Dead, Damage
 from erukar.ext.math import Navigator
 
 
@@ -221,13 +221,13 @@ class Attack(TargetedAbility):
         Attack.append_post_damage_strings(cmd, player, weapon, target, result)
 
     def final_damages(result):
-        final = result['post_mitigation']
-        res = ['{} {}'.format(final[k], k) for k in [*final]]
-        return ', '.join(res)
+        return ', '.join(Damage.ordered(result['post_mitigation']))
 
     def mitigated(result):
-        total_mit = list(Attack._total_mitigation(result))
-        partial_mit = list(Attack._partial_mitigation(result))
+        _total = {k: v for k, v in Attack._total_mitigation(result)}
+        _partial = {k: v for k, v in Attack._partial_mitigation(result)}
+        total_mit = ', '.join(Damage.ordered(_total))
+        partial_mit = ', '.join(Damage.ordered(_partial))
         if len(total_mit) > 0:
             if len(partial_mit) > 0:
                 return Attack.YouMixMitigate.format(total_mit, partial_mit)
@@ -239,14 +239,14 @@ class Attack(TargetedAbility):
         for _type in result['post_deflection']:
             if _type not in mit_list:
                 amount = result['post_deflection'][_type]
-                yield '{} {}'.format(amount, _type)
+                yield _type, amount
 
     def _partial_mitigation(result):
         for _type in result['post_mitigation']:
             deflected = result['post_deflection'][_type]
             mitigated = result['post_mitigation'][_type]
             if deflected > mitigated:
-                yield '{} {}'.format(deflected - mitigated, _type)
+                yield _type, deflected - mitigated
 
     def deflected(result):
         return '[[deflected]]'

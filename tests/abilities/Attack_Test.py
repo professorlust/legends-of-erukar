@@ -287,7 +287,7 @@ class Attack_Test(unittest.TestCase):
         self.assertEqual(len(mitigations), 1)
         self.assertEqual(
             mitigations[0],
-            '10 ice'
+            ('ice', 10)
         )
 
     def test__partial_mitigation__yields_correctly(self):
@@ -304,7 +304,7 @@ class Attack_Test(unittest.TestCase):
         self.assertEqual(len(mitigations), 1)
         self.assertEqual(
             mitigations[0],
-            '5 fire'
+            ('fire', 5)
         )
 
     def test__integration__deal_damage(self):

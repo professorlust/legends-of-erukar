@@ -1,7 +1,7 @@
 class Damage:
     Types = [
-        'piercing',
         'bludgeoning',
+        'piercing',
         'slashing',
         'fire',
         'ice',
@@ -30,7 +30,7 @@ class Damage:
             enemy.damage_armor(damage_taken_by_armor)
             # After mitigation, if there is any remaining damage, the lifeform takes that in health
             if actual_damage > 0:
-               yield (actual_damage, damage_type)
+                yield (actual_damage, damage_type)
 
     @staticmethod
     def deflections(instigator, enemy, damages):
@@ -40,3 +40,9 @@ class Damage:
 
     def raw_scaled_for(self, lifeform):
         return sum([s.scale_for(lifeform) for s in self.scalars])
+
+    @staticmethod
+    def ordered(damage_dict):
+        for _type in Damage.Types:
+            if _type in damage_dict:
+                yield '{} {}'.format(damage_dict[_type], _type)
