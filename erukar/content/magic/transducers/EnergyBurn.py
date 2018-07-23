@@ -1,4 +1,4 @@
-from erukar.system.engine import Transducer, Lifeform
+from erukar.system.engine import Transducer, Lifeform, Attack
 
 
 class EnergyBurn(Transducer):
@@ -15,10 +15,10 @@ class EnergyBurn(Transducer):
             return mutator
         burn = int(actual_energy * EnergyBurn.damage_scalar(mutator.power()))
         target.arcane_energy -= actual_energy
-        result = target.apply_damage(instigator, None, [
-            (burn, damage_type)
-        ])
-        damage_str = ', '.join('{} {}'.format(*x) for x in result['post_mitigation'])
+        result = target.apply_damage(instigator, None, {
+            damage_type: burn
+        })
+        damage_str = Attack.final_damages(result)
         log = self.Success.format(damage_str, target.alias(), actual_energy)
         target_str = self.TargetSuccess.format(
             instigator.alias(),
@@ -35,6 +35,7 @@ class EnergyBurn(Transducer):
         return 2 + 0.5 * power
 
     def actual_energy(self, target, percent):
+        print(target)
         if not isinstance(target, Lifeform):
             return 0
         max_amount = int(max(0.0, target.maximum_arcane_energy() * percent))

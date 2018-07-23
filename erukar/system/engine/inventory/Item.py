@@ -194,10 +194,10 @@ class Item(ErukarActor):
     def flavor_text(self, player):
         return 'This is a generic item. Lorem ipsum dolor sit amet, consectetur adipiscing elit'
 
-    def modify_element(self, mod_name, element):
+    def modify_element(self, mod_name, element, cmd=None):
         for mod in self.modifiers:
             if hasattr(mod, mod_name):
-                element = getattr(mod, mod_name)(self, element)
+                element = getattr(mod, mod_name)(element, cmd)
         return element
 
     def post_successful_attack(self, cmd, attacker, weapon, target):

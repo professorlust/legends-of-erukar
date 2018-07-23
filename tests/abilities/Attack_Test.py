@@ -2,6 +2,7 @@ import unittest
 import erukar
 from erukar import ActivateAbility, Enemy, Attack
 from erukar.ext.math import Shapes
+from erukar.content.modifiers.gameplay.unique.MageKiller import MageKiller
 
 
 class Attack_Test(unittest.TestCase):
@@ -228,9 +229,9 @@ class Attack_Test(unittest.TestCase):
                 self.called_modify_roll = False
                 self.called_calculate_attack = False
 
-            def modify_element(self, mod_name, roll):
+            def modify_element(self, *_):
                 self.called_modify_roll = True
-                return roll
+                return 50
 
             def on_calculate_attack(self, *_):
                 self.called_calculate_attack = True
@@ -323,6 +324,43 @@ class Attack_Test(unittest.TestCase):
         self.player.left.upper_variance = variance
         cmd.args['weapon'] = self.player.left
         target = Enemy()
+        self.interface.dungeon.add_actor(target, (0, 1))
+        cmd.args['interaction_target'] = target
+        attack = Attack()
+        attack.validate = validate
+        res = attack.perform(cmd)
+        self.assertEqual(
+            res.results['test'][-1][:9],
+            'You deal '
+        )
+        self.assertEqual(
+            res.results['test'][-1][-17:],
+            ' damage to ERROR!'
+        )
+
+    def test__integration__energy_burn_mod_deal_damage(self):
+        def validate(*_):
+            return None
+
+        def return_attack_roll(*_):
+            return 50
+
+        def variance(*_):
+            return 10
+
+        def max_arc(*_):
+            return 50
+        cmd = self.interface.create_command(ActivateAbility, self.basic_data)
+        self.player.calculate_attack_roll = return_attack_roll
+        self.player.left = erukar.Longsword()
+        self.player.inventory = [self.player.left]
+        MageKiller().apply_to(self.player.left)
+        self.player.left.lower_variance = variance
+        self.player.left.upper_variance = variance
+        cmd.args['weapon'] = self.player.left
+        target = Enemy()
+        target.maximum_arcane_energy = max_arc
+        target.arcane_energy = 50
         self.interface.dungeon.add_actor(target, (0, 1))
         cmd.args['interaction_target'] = target
         attack = Attack()

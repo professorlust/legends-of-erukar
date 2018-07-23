@@ -90,5 +90,5 @@ class ErukarActor(Describable):
         '''This is to be handled in subclasses'''
         pass
 
-    def modify_element(self, mod_name, element):
+    def modify_element(self, mod_name, element, cmd=None):
         return element

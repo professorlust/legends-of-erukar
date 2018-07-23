@@ -151,10 +151,5 @@ class Weapon(Item):
                 raw_damage = modifier.modify_raw_base_damage(self, raw_damage)
         return raw_damage
 
-    def post_inflict_damage(self, attack_cmd):
-        for modifier in self.modifiers:
-            if hasattr(modifier, 'modify_post_inflict_damage'):
-                modifier.modify_post_inflict_damage(self, attack_cmd)
-
     def on_kill(self, player, target):
         pass

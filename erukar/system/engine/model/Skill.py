@@ -29,9 +29,9 @@ class Skill:
     def commands_provided(self):
         pass
 
-    def modify_element(self, mod_name, _el):
+    def modify_element(self, mod_name, _el, cmd=None):
         if hasattr(self, mod_name):
-            _el = getattr(self, mod_name)(_el) or _el
+            _el = getattr(self, mod_name)(self, _el, cmd) or _el
         return _el
 
     def meets_requirements(player):

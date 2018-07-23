@@ -90,12 +90,12 @@ class Lifeform(ErukarActor):
         mod_name = 'modify_maximum_health'
         return self.modify_element(mod_name, _max)
 
-    def modify_element(self, mod_name, _el):
+    def modify_element(self, mod_name, _el, cmd=None):
         for condition in self.conditions:
             if hasattr(condition, mod_name):
-                _el = getattr(condition, mod_name)(self, _el) or _el
+                _el = getattr(condition, mod_name)(self, _el, cmd) or _el
         for item in self.equipped_items():
-            _el = item.modify_element(mod_name, _el) or _el
+            _el = item.modify_element(mod_name, _el, cmd) or _el
         return _el
 
     def level_health(self):

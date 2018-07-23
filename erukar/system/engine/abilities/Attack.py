@@ -170,7 +170,7 @@ class Attack(TargetedAbility):
         roll = player.calculate_attack_roll(1.0, target)
         for mod in self.possible_modifiers:
             mod_name = 'modify_attack_roll'
-            roll = mod.modify_element(mod_name, roll)
+            roll = mod.modify_element(mod_name, roll, cmd)
         strings = {
             'attacker': player.alias(),
             'roll': roll,
@@ -216,7 +216,7 @@ class Attack(TargetedAbility):
     def do_damage(self, cmd, player, weapon, target):
         damage = player.get_damage_from_attack(target, weapon)
         for modifier in self.possible_modifiers:
-            damage = modifier.modify_element('modify_damage', damage)
+            damage = modifier.modify_element('modify_damage', damage, cmd)
         result = target.apply_damage(player, weapon, damage)
         Attack.append_post_damage_strings(cmd, player, weapon, target, result)
 
@@ -305,3 +305,6 @@ class Attack(TargetedAbility):
         cmd.world.add_actor(corpse, target.coordinates)
         xp = target.calculate_xp_worth()
         player.award_xp(xp, cmd)
+
+    def post_inflict_damage(self, cmd):
+        pass
