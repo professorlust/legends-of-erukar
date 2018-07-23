@@ -29,12 +29,12 @@ class ErukarActor(Describable):
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
         radius = int(w/3)-1
-        circle = list(Distance.points_in_circle(radius, (int(h/2),int(w/2))))
-        inner_circle = list(Distance.points_in_circle(int(w/4)-1, (int(h/2),int(w/2))))
+        circle = list(Distance.points_in_circle(radius, (int(h/2), int(w/2))))
+        inner = list(Distance.points_in_circle(int(w/4)-1, (int(h/2), int(w/2))))
         for y in range(h):
             for x in range(w):
                 if (x, y) in circle:
-                    if (x, y) not in inner_circle:
+                    if (x, y) not in inner:
                         yield {'r': 0, 'g': 0, 'b': 0, 'a': 1}
                     else:
                         yield {'r': 255, 'g': 0, 'b': 0, 'a': 1}

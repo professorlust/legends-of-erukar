@@ -365,12 +365,12 @@ class Attack_Test(unittest.TestCase):
         cmd.args['interaction_target'] = target
         attack = Attack()
         attack.validate = validate
-        res = attack.perform(cmd)
+        res = attack.perform(cmd).results['test']
         self.assertEqual(
-            res.results['test'][-1][:9],
+            res[-1][:9],
             'You deal '
         )
         self.assertEqual(
-            res.results['test'][-1][-17:],
+            res[-1][-17:],
             ' damage to ERROR!'
         )

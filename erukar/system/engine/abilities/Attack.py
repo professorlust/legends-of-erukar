@@ -98,7 +98,7 @@ class Attack(TargetedAbility):
         if failures:
             return failures
         player.consume_action_points(Attack.ap_cost(cmd))
-        self.possible_modifiers = [self, player, weapon]
+        self.possible_modifiers = [self, player]
         self.handle_ammo(cmd, player, weapon)
         result = self.perform_attack(cmd, player, weapon, target)
         self.possible_modifiers = []

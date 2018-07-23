@@ -24,10 +24,11 @@ class MageKiller(WeaponMod):
         erukar.system.Ammunition
     ]
 
-    def modify_post_inflict_damage(self, damage, cmd):
+    def modify_damage(self, damage, cmd):
         chain = [
             erukar.content.PotionSource,
             erukar.content.EnergyBurn
         ]
         spell = SpellInstance(chain)
         spell.cmd_execute(cmd)
+        return damage
