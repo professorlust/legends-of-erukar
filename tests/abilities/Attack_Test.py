@@ -263,7 +263,10 @@ class Attack_Test(unittest.TestCase):
         self.assertEqual(10, target.health)
 
     def test__final_damages__formats_appropriately(self):
-        damages = {'post_mitigation': [(10, 'fire'), (10, 'ice')]}
+        damages = {'post_mitigation': {
+            'fire': 10,
+            'ice': 10
+        }}
         self.assertEqual(
             Attack.final_damages(damages),
             '10 fire, 10 ice'
@@ -303,36 +306,33 @@ class Attack_Test(unittest.TestCase):
             '5 fire'
         )
 
-    def test__total_mitigation__yields_correctly(self):
-        damages = {
-            'post_deflection': {
-                'fire': 15,
-                'ice': 10
-            },
-            'post_mitigation': {
-                'fire': 15,
-            }
-        }
-        mitigations = list(Attack._total_mitigation(damages))
-        self.assertEqual(len(mitigations), 1)
-        self.assertEqual(
-            mitigations[0],
-            '10 ice'
-        )
+    def test__integration__deal_damage(self):
+        def validate(*_):
+            return None
 
-    def test__partial_mitigation__yields_correctly(self):
-        damages = {
-            'post_deflection': {
-                'fire': 15,
-                'ice': 10
-            },
-            'post_mitigation': {
-                'fire': 10,
-            }
-        }
-        mitigations = list(Attack._partial_mitigation(damages))
-        self.assertEqual(len(mitigations), 1)
+        def return_attack_roll(*_):
+            return 50
+
+        def variance(*_):
+            return 10
+        cmd = self.interface.create_command(ActivateAbility, self.basic_data)
+        self.player.calculate_attack_roll = return_attack_roll
+        self.player.left = erukar.Longsword()
+        self.player.inventory = [self.player.left]
+        self.player.left.lower_variance = variance
+        self.player.left.upper_variance = variance
+        cmd.args['weapon'] = self.player.left
+        target = Enemy()
+        self.interface.dungeon.add_actor(target, (0, 1))
+        cmd.args['interaction_target'] = target
+        attack = Attack()
+        attack.validate = validate
+        res = attack.perform(cmd)
         self.assertEqual(
-            mitigations[0],
-            '5 fire'
+            res.results['test'][-1][:9],
+            'You deal '
+        )
+        self.assertEqual(
+            res.results['test'][-1][-17:],
+            ' damage to ERROR!'
         )

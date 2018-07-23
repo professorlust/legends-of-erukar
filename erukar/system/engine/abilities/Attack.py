@@ -221,7 +221,8 @@ class Attack(TargetedAbility):
         Attack.append_post_damage_strings(cmd, player, weapon, target, result)
 
     def final_damages(result):
-        res = ['{} {}'.format(*x) for x in result['post_mitigation']]
+        final = result['post_mitigation']
+        res = ['{} {}'.format(final[k], k) for k in [*final]]
         return ', '.join(res)
 
     def mitigated(result):

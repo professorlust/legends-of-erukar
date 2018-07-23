@@ -51,9 +51,10 @@ class Weapon(Item):
     def calculate_damage(self, attacker):
         calculated = {}
         for damage in self.get_damages(is_attack=True):
-            scaled = list(self.vary_damage(attacker, damage.scalars))
-            sum_damage = int(sum([amt for amt, dt in scaled]))
-            calculated[damage.damage_type] = sum_damage
+            _type = damage.damage_type
+            for _range in self.vary_damage(attacker, damage.scalars):
+                amount = int(random.uniform(*_range))
+                calculated[_type] = calculated.get(_type, 0) + amount
         return calculated
 
     def vary_damage(self, attacker, scalars):
