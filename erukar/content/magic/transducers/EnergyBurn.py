@@ -35,7 +35,6 @@ class EnergyBurn(Transducer):
         return 2 + 0.5 * power
 
     def actual_energy(self, target, percent):
-        print(target)
         if not isinstance(target, Lifeform):
             return 0
         max_amount = int(max(0.0, target.maximum_arcane_energy() * percent))

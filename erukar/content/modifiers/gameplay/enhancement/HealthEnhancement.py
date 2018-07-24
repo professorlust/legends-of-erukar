@@ -21,5 +21,5 @@ class HealthEnhancement(WeaponMod):
         erukar.system.Armor
     ]
 
-    def modify_maximum_health(self, item, _max):
+    def modify_maximum_health(self, _max, *_):
         return _max + self.MaxHealthBonus
