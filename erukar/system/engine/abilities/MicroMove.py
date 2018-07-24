@@ -41,9 +41,8 @@ class MicroMove(Move):
         player = cmd.args.get('player_lifeform')
         if MicroMove.should_attack(player, coord, cmd):
             return cmd.perform()
-        cmd_res = MicroMove.should_door(player, coord, cmd)
-        if cmd_res:
-            return cmd_res
+        if MicroMove.should_door(player, coord, cmd):
+            return cmd.door.on_open(cmd)
         if not player.provision_movement_points():
             return cmd.fail('Cannot move!')
         player.movement_allowed -= 1
@@ -66,6 +65,5 @@ class MicroMove(Move):
         door = next(cmd.world.actors_of_type_at(player, loc, Door), None)
         if not door or door.is_open:
             return None
-        if door.lock_type:
-            return door.on_unlock(cmd)
-        return door.on_open(cmd)
+        cmd.door = door
+        return door.can_unlock(player) or door.can_open()

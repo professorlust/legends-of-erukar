@@ -106,3 +106,8 @@ class Door(ErukarActor):
                 aura.needs_rebuilt = True
             return cmd.succeed()
         return cmd.fail("Cannot open this door")
+
+    def can_unlock(self, player):
+        return not self.is_open \
+                and self.lock_type \
+                and player.get_key(self.lock_type)
