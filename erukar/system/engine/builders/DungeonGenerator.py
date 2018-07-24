@@ -149,19 +149,19 @@ class DungeonGenerator(FactoryBase, AStarBase):
         return self.get_closest_tile_to(center)
 
     def northeastern(self, center):
-        center = center[0] + 100, center[1] + 100
-        return self.get_closest_tile_to(center)
-
-    def northwestern(self, center):
-        center = center[0] - 100, center[1] + 100
-        return self.get_closest_tile_to(center)
-
-    def southeastern(self, center):
         center = center[0] + 100, center[1] - 100
         return self.get_closest_tile_to(center)
 
-    def southwestern(self, center):
+    def northwestern(self, center):
         center = center[0] - 100, center[1] - 100
+        return self.get_closest_tile_to(center)
+
+    def southeastern(self, center):
+        center = center[0] + 100, center[1] + 100
+        return self.get_closest_tile_to(center)
+
+    def southwestern(self, center):
+        center = center[0] - 100, center[1] + 100
         return self.get_closest_tile_to(center)
 
     def eastern(self, center):
