@@ -12,7 +12,7 @@ class Dodging(Condition):
     Participle = 'Preparing Dodge'
     Description = 'You have prepared a dodge, granting {}% bonus evasion'
 
-    def modify_evasion(self, caller, evasion):
+    def modify_evasion(self, caller, evasion, *_):
         if caller is self.target:
             return (1 + self.EvasionBonus) * evasion
         return evasion
