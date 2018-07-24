@@ -39,7 +39,11 @@ class MicroMove(Move):
         player = cmd.args.get('player_lifeform')
         if MicroMove.should_attack(player, coord, cmd):
             return cmd.perform()
-        if MicroMove.should_door(player, coord, cmd):
+        if MicroMove.should_unlock_door(player, coord, cmd):
+            player.consume_action_points(1)
+            return cmd.door.on_unlock(cmd)
+        if MicroMove.should_open_door(player, coord, cmd):
+            player.consume_action_points(1)
             return cmd.door.on_open(cmd)
         if not cmd.world.is_traversable(coord):
             return cmd.fail('Cannot move in this direction')
@@ -61,9 +65,12 @@ class MicroMove(Move):
         cmd.args['abilityModule'] = Attack.__module__
         return True
 
-    def should_door(player, loc, cmd):
+    def should_unlock_door(player, loc, cmd):
         door = next(cmd.world.actors_of_type_at(player, loc, Door), None)
-        if not door or door.is_open:
-            return None
         cmd.door = door
-        return door.can_unlock(player) or door.can_open()
+        return door and door.can_unlock(player)
+
+    def should_open_door(player, loc, cmd):
+        door = next(cmd.world.actors_of_type_at(player, loc, Door), None)
+        cmd.door = door
+        return door and door.can_open(player)
