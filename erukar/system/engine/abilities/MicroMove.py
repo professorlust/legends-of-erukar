@@ -73,4 +73,4 @@ class MicroMove(Move):
     def should_open_door(player, loc, cmd):
         door = next(cmd.world.actors_of_type_at(player, loc, Door), None)
         cmd.door = door
-        return door and door.can_open(player)
+        return door and door.can_open()
