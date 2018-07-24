@@ -36,13 +36,13 @@ class MicroMove(Move):
         return MicroMove.do_move(cmd, coord)
 
     def do_move(cmd, coord):
-        if not cmd.world.is_traversable(coord):
-            return cmd.fail('Cannot move in this direction')
         player = cmd.args.get('player_lifeform')
         if MicroMove.should_attack(player, coord, cmd):
             return cmd.perform()
         if MicroMove.should_door(player, coord, cmd):
             return cmd.door.on_open(cmd)
+        if not cmd.world.is_traversable(coord):
+            return cmd.fail('Cannot move in this direction')
         if not player.provision_movement_points():
             return cmd.fail('Cannot move!')
         player.movement_allowed -= 1
