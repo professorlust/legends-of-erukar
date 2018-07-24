@@ -90,7 +90,7 @@ class Item(ErukarActor):
         for modifier in self.modifiers:
             modifier.on_start(dungeon)
         if not hasattr(self, 'durability'):
-            self.durability = self.total_durability
+            self.durability = self.total_durability()
 
     def on_take(self, cmd, taker=None):
         self.owner = taker or cmd.args['player_lifeform']
