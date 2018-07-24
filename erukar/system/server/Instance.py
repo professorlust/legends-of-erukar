@@ -114,7 +114,6 @@ class Instance(Manager):
         being.subscribe(self)
         self.command_contexts[being.uid] = None
         self.characters.append(being)
-        being.world = self.dungeon
         self.dungeon.add_actor_tiles(being)
 
         # Run on_equip for all equipped items
@@ -123,7 +122,7 @@ class Instance(Manager):
             if equipped is not None:
                 equipped.on_equip(being)
         being.instance = self.identifier
-        being.on_start()
+        being.on_start(self.dungeon)
 
     def unsubscribe(self, node):
         if node not in self.players:
