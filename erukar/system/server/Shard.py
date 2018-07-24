@@ -32,7 +32,7 @@ class Shard(Manager):
 
     def activate(self):
         '''
-        Create all Hub Instances and spin up  
+        Create all Hub Instances and spin up
         '''
         __import__('Templates').configure(self)
         __import__('ServerProperties').configure(self)

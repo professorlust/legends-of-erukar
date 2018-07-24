@@ -122,8 +122,8 @@ class Instance(Manager):
             equipped = getattr(being, equip)
             if equipped is not None:
                 equipped.on_equip(being)
-
         being.instance = self.identifier
+        being.on_start()
 
     def unsubscribe(self, node):
         if node not in self.players:

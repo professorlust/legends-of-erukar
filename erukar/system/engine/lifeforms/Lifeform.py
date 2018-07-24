@@ -130,12 +130,17 @@ class Lifeform(ErukarActor):
     def subscribe(self, instance):
         self.instance = instance.identifier
         self.world = instance.dungeon
+        self.on_start(instance.dungeon)
         self.sector = instance.location.sector.get_coordinates()
         for skill in self.skills:
             if hasattr(skill, 'apply_to'):
                 skill.apply_to(self)
         self.arcane_energy = self.maximum_arcane_energy()
         self.check_for_detectors()
+
+    def on_start(self, dungeon):
+        for item in self.inventory:
+            item.on_start(self.dungeon)
 
     def check_for_detectors(self):
         for lf in self.world.sentient_actors(self):
@@ -149,8 +154,9 @@ class Lifeform(ErukarActor):
             skill.apply_to(self)
 
     def overland_coordinates(self):
-        matches = re.match(r'\(([-+]*\d+),([-+]*\d+),([-+]*\d+)\)', self.sector)
-        if not matches: return self.sector
+        matches = re.match(r'\(([-+]*\d+),([-+]*\d+)\)', self.sector)
+        if not matches:
+            return self.sector
         return tuple(int(x) for x in matches.group()[1:-1].split(','))
 
     def tick(self, cmd):
