@@ -1,47 +1,51 @@
-from erukar.system.engine import EnvironmentProfile, ErukarObject
 from .Sector import Sector
-import operator
+
 
 class OverlandSector(Sector):
     def __init__(self, region=None, econ_seed_fn=None):
         super().__init__(region, econ_seed_fn)
-        self.coordinates = "(0,0,0)"
+        self.coordinates = "(0,0)"
         self.use_day_night_cycle = True
         self.x = 0
-        self.alpha = 0
-        self.beta = 0
+        self.y = 0
+
+    def gamma(self):
+        return -(self.x + self.y)
 
     def alias(self):
         return '{} {}'.format(self.name, self.get_coordinates())
 
     def adjacent(self):
         sectors = self.region.sector_limits
-        if len(sectors) < 2: return
+        if len(sectors) < 2:
+            return
         for neighbor in self.neighbors():
             if neighbor in sectors:
                 yield neighbor
 
     def get_coordinates(self):
-        return (self.x, self.alpha, self.beta)
+        return (self.x, self.y)
 
-    def to_coords(x,alpha,beta):
-        return '({},{},{})'.format(x,alpha,beta)
+    def to_coords(x, y):
+        return '({},{})'.format(x, y)
 
     def set_coordinates(self, coords):
         out = Sector.to_overland(coords)
-        self.x,self.alpha,self.beta = [int(x) for x in out]
+        self.x, self.y = [int(x) for x in out]
 
     def neighbors(self):
         return [
-            (self.x,   self.alpha+1, self.beta-1),
-            (self.x,   self.alpha-1, self.beta+1),
-            (self.x+1, self.alpha,   self.beta-1),
-            (self.x-1, self.alpha,   self.beta+1),
-            (self.x+1, self.alpha-1, self.beta),
-            (self.x-1, self.alpha+1, self.beta),
+            (self.x-1, self.y),
+            (self.x+1, self.y),
+            (self.x, self.y-1),
+            (self.x, self.y+1),
+            (self.x+1, self.y-1),
+            (self.x-1, self.y+1),
         ]
 
     def distance_to(self, sector):
-        '''The sum of all coordinates adds up to zero. By taking the absolute
-        value and summing them, you get twice the total distance between two coords.'''
-        return int(sum([abs(x) for x in tuple(map(operator.sub, self.coordinates(), sector))])/2)
+        return max(
+            abs(self.x - sector.x),
+            abs(self.y - sector.y),
+            abs(self.gamma() - sector.gamma())
+        )

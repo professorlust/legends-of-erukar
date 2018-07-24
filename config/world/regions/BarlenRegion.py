@@ -1,11 +1,16 @@
 import erukar
-from erukar.system.engine import EnvironmentProfile, OverlandSector,  Sector, Region, Location, Chunk, EconomicProfile
+from erukar.system.engine import EnvironmentProfile, OverlandSector,  Sector
+from erukar import Region, Location, Chunk, EconomicProfile
 
 
 def create():
     barlen = Region()
     barlen.name = "Greater Barlen Region"
-    barlen.description = "A fertile area, known best for its vast barley and wheat fields. The seat of this region is a large town known as Barlen whose economy consists mostly on agriculture taxes and exports of the barley harvest."
+    barlen.description = \
+        "A fertile area, known best for its vast barley and '\
+        'wheat fields. The seat of this region is a large town known as '\
+        'Barlen whose economy consists mostly on agriculture taxes and '\
+        'exports of the barley harvest."
     barlen.add_sector(create_barlen_outskirts)
     barlen.add_sector(create_razorwoods_camp)
     barlen.add_sector(create_izeth_terrace)
@@ -16,19 +21,18 @@ def create():
 
     return barlen
 
+
 def acceptable_bounds():
     return [
-        (0, 0, 0),
-        (2, -2, 0),
-        (2, -3, 1),
-        (1, -1, 0),
-        (1, -2, 1),
-        (1, -3, 2),
-        (0, -1, 1),
-        (0, -2, 2),
-        (0, -3, 3),
-        (-1, 0, 1)
+        (0, 3),
+        (0, 2), (1, 2),
+        (0, 1), (1, 1), (2, 1),
+        (0, 0), (1, 0), (2, 0), (3, 0), (4, 0),
+        (1, -1), (2, -1), (4, -1), (5, -1),
+        (1, -2), (2, -2), (6, -2),
+        (2, -3)
     ]
+
 
 def create_barlen_outskirts(region):
     def econ_seed(sector):
@@ -41,13 +45,14 @@ def create_barlen_outskirts(region):
     sector = create_sector_template(region, econ_seed)
     sector.name = 'Barlen Town Outskirts'
     sector.environment_profile = EnvironmentProfile.CityOutdoors()
-    sector.set_coordinates((0,0,0))
+    sector.set_coordinates((0, 0))
     town = Location(sector)
     town.is_named = True
     town.name = 'Barlen Town Outskirts'
     town.dungeon_file_name = 'BarlenOutskirts'
     sector.locations.add(town)
     return sector
+
 
 def create_razorwoods_camp(region):
     def econ_seed(sector):
@@ -59,7 +64,7 @@ def create_razorwoods_camp(region):
         return econ
     sector = create_sector_template(region, econ_seed)
     sector.name = 'Feriden Razorwoods Camp'
-    sector.set_coordinates((0,-3,3))
+    sector.set_coordinates((3, 0))
     sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
 
     camp = Location(sector)
@@ -70,10 +75,11 @@ def create_razorwoods_camp(region):
 
     return sector
 
-def create_izeth_terrace(region):
+
+def create_crypts_of_icamore(region):
     sector = create_sector_template(region)
-    sector.name = 'Izeth Citadel Terrace'
-    sector.set_coordinates((0,-2,2))
+    sector.name = 'Terrace of the Crypts of Icamore'
+    sector.set_coordinates((0, 3))
     sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
 
     terrace = Location(sector)
@@ -83,6 +89,22 @@ def create_izeth_terrace(region):
     sector.locations.add(terrace)
 
     return sector
+
+
+def create_tomb(region):
+    sector = create_sector_template(region)
+    sector.name = 'Terrace of the Tomb of Reastus III'
+    sector.set_coordinates((6, -2))
+    sector.environment_profile = EnvironmentProfile.SnowyWoodlands()
+
+    terrace = Location(sector)
+    terrace.is_named = True
+    terrace.name = 'Tomb of Reastus III Terrace'
+    terrace.chunks = [Chunk()]
+    sector.locations.add(terrace)
+
+    return sector
+
 
 def create_izeth_citadel_1f(region):
     sector = Sector(region)
@@ -96,6 +118,7 @@ def create_izeth_citadel_1f(region):
     sector.locations.add(citadel_1f)
 
     return sector
+
 
 def create_sector_template(region=None, econ_seed_fn=None):
     sector = OverlandSector(region, econ_seed_fn)

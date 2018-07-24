@@ -39,10 +39,11 @@ class Location:
 
     def direction_to(self, direction_to):
         if isinstance(self.coordinates(), str):
-            return 'central'
-        x, y, z = self.coordinates()
-        if direction_to[0] == x:
-            return 'western' if direction_to[1] > y else 'eastern'
-        if direction_to[1] == y:
-            return 'southwestern' if direction_to[0] > x else 'northeastern'
-        return 'southeastern' if direction_to[0] > x else 'northwestern'
+            return 'error'
+        x, y = self.coordinates()
+        x_f, y_f = direction_to
+        if y == y_f:
+            return 'western' if x_f < x else 'eastern'
+        if x == x_f:
+            return 'northeastern' if y_f > y else 'southwestern'
+        return 'northwestern' if y_f > y else 'southeastern'

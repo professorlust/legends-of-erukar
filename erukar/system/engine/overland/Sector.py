@@ -46,8 +46,9 @@ class Sector(ErukarObject):
         return new_loc
 
     def is_overland(coords):
-        if coords is not str: coords = str(coords).replace(' ','')
-        return re.match(r'\(([-+]*\d+),([-+]*\d+),([-+]*\d+)\)', coords) is not None
+        if coords is not str:
+            coords = str(coords).replace(' ', '')
+        return re.match(r'\(([-+]*\d+),([-+]*\d+)\)', coords) is not None
 
     def autocorrect(coord_string):
         if Sector.is_overland(coord_string):
@@ -66,7 +67,7 @@ class Sector(ErukarObject):
         elif not isinstance(coords, tuple) and not isinstance(coords, list):
             raise ValueError('Malformed Overland Coordinates: Unable to parse a non-str non-list non-tuple input (received {})'.format(type(coords)))
 
-        if len(out) != 3:
+        if len(out) != 2:
             raise ValueError('Malformed Overland Coordinates String: Received "{}", which returned "{}"'.format(coords, out))
 
         return tuple(int(x) for x in out)
