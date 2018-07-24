@@ -1,6 +1,7 @@
 from .Move import Move
 from .Attack import Attack
 from ..lifeforms.Enemy import Enemy
+from ..environment import Door
 
 
 class MicroMove(Move):
@@ -40,6 +41,8 @@ class MicroMove(Move):
         player = cmd.args.get('player_lifeform')
         if MicroMove.should_attack(player, coord, cmd):
             return cmd.perform()
+        if MicroMove.should_door(player, coord, cmd):
+            return cmd.perform()
         if not player.provision_movement_points():
             return cmd.fail('Cannot move!')
         player.movement_allowed -= 1
@@ -57,3 +60,11 @@ class MicroMove(Move):
         cmd.args['weapon'] = weapon
         cmd.args['abilityModule'] = Attack.__module__
         return True
+
+    def should_door(player, loc, cmd):
+        door = next(cmd.world.actors_of_type_at(player, loc, Door), None)
+        if not door or door.is_open:
+            return False
+        if door.lock_type:
+            return door.on_unlock(cmd)
+        return door.on_open(cmd)
