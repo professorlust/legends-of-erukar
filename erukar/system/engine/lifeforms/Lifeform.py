@@ -140,7 +140,7 @@ class Lifeform(ErukarActor):
 
     def on_start(self, dungeon):
         for item in self.inventory:
-            item.on_start(self.dungeon)
+            item.on_start(dungeon)
 
     def check_for_detectors(self):
         for lf in self.world.sentient_actors(self):
