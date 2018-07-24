@@ -60,7 +60,11 @@ class Item(ErukarActor):
                 yield {'r': 0, 'g': 0, 'b': 0, 'a': 0}
 
     def durability_coefficient(self):
-        return self.durability / self.total_durability
+        return self.durability / self.total_durability()
+
+    def total_durability(self):
+        mutator_name = 'modify_total_durability'
+        return self.modify_element(mutator_name, self.MaxDurability)
 
     def equipment_slots(self, lifeform):
         return self.EquipmentLocations
@@ -120,12 +124,6 @@ class Item(ErukarActor):
         for modifier in self.modifiers:
             modifier.on_equip(lifeform)
 
-    def durability(self):
-        return self.durability_coefficient * self.max_durability()
-
-    def max_durability(self):
-        return self.material.DurabilityMultiplier * self.MaxDurability
-
     def weight(self):
         mults = [x.WeightMultiplier for x in self.modifiers]
         if hasattr(self, 'material') and self.material:
@@ -145,7 +143,8 @@ class Item(ErukarActor):
 
     def durability_multiplier(self):
         mmdpm = self.material.MinimumDurabilityPriceMultiplier
-        return (1 - mmdpm) * pow(self.durability(), 2) / pow(self.max_durability(), 2)  + mmdpm
+        dur_coeff = pow(self.durability(), 2) / pow(self.total_durability(), 2)
+        return (1 - mmdpm) * dur_coeff  + mmdpm
 
     def alias(self):
         alias = self.name if not self.material else self.material.on_alias(self.name)
@@ -177,7 +176,7 @@ class Item(ErukarActor):
         return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}
 
     def take_damage(self, amount):
-        self.durability_coefficient = max(0, self.durability() - amount) / self.max_durability()
+        self.durability_coefficient = gg
 
     def format(self, with_price=False):
         if not with_price:

@@ -79,7 +79,7 @@ class Inventory(Command):
         if item.material:
             object_output['durability'] = {
                 'current': item.durability,
-                'max': item.max_durability()
+                'max': item.total_durability()
             }
 
         if isinstance(item, Weapon):
