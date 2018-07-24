@@ -33,7 +33,6 @@ class Item(ErukarActor):
         self.name = name
         self.description = Item.generic_description
         self.total_durability = 100
-        self.durability = self.total_durability
 
         # Modifiers
         self.material = None
@@ -90,6 +89,8 @@ class Item(ErukarActor):
     def on_start(self, dungeon):
         for modifier in self.modifiers:
             modifier.on_start(dungeon)
+        if not hasattr(self, 'durability'):
+            self.durability = self.total_durability
 
     def on_take(self, cmd, taker=None):
         self.owner = taker or cmd.args['player_lifeform']

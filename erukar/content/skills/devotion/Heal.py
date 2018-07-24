@@ -34,11 +34,6 @@ class Heal(SidebarAbility):
         item = player.find_in_inventory(HealingTool)
         if not item:
             return cmd.fail('No Healing Tools found!')
+        cmd.args['interaction_target'] = cmd.get('interaction_target', player)
         player.consume_action_points(1)
-        item.consume()
-        gained = Heal.heal_amount(self.level)
-        pre_health = player.health
-        player.health = max(player.max_health, player.health + gained)
-        d_health = player.health - pre_health
-        cmd.append_result(player.uid, self.HealSuccess.format(d_health))
-        return cmd.succeed()
+        return item.on_heal(cmd)

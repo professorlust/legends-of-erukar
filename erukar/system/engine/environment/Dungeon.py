@@ -183,9 +183,8 @@ class Dungeon(ErukarActor):
             yield loc
 
     def is_traversable(self, loc):
-        return loc in self.dungeon_map\
-            and (loc not in self.door_cache
-                 or any(not x.is_open for x in self.door_cache[loc]))
+        return loc in self.dungeon_map \
+            and all(x.is_open for x in self.door_cache.get(loc, []))
 
     def build_door_cache(self):
         self.door_cache = {}

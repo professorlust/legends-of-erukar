@@ -7,7 +7,6 @@ class ArcaneGift(Skill):
     per turn
     '''
     Name = 'Arcane Gift'
-        
     def current_level_description(self):
         return 'Grants {} Arcane Energy to be used as an Arcane Source'.format(self.arcane_energy())
 
