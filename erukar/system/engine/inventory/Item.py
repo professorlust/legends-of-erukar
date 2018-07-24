@@ -32,7 +32,6 @@ class Item(ErukarActor):
         self.owner = None
         self.name = name
         self.description = Item.generic_description
-        self.total_durability = 100
 
         # Modifiers
         self.material = None
