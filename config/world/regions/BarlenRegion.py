@@ -13,7 +13,8 @@ def create():
         'exports of the barley harvest."
     barlen.add_sector(create_barlen_outskirts)
     barlen.add_sector(create_razorwoods_camp)
-    barlen.add_sector(create_izeth_terrace)
+    barlen.add_sector(create_crypts_of_icamore)
+    barlen.add_sector(create_tomb)
     barlen.add_sector(create_izeth_citadel_1f)
 
     barlen.sector_limits = acceptable_bounds()
