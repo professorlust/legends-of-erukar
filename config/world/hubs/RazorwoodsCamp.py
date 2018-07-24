@@ -17,7 +17,7 @@ dungeon.apply_tiles_on_open_space(path, erukar.content.Dirt())
 dungeon.generate_tiles(TileGenerator(dungeon))
 
 '''Spawn Point'''
-transition_piece  = TransitionPiece((0,-3,3), (1, -3, 2))
+transition_piece  = TransitionPiece((3, 0), (2, 1))
 dungeon.add_transition(transition_piece, (4,0))
 dungeon.spawn_coordinates = [(4,0)]
 

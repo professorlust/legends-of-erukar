@@ -53,5 +53,5 @@ dungeon.apply_tiles_on_closed_space(Shapes.rect((6,10),(3,7)), wall_texture)
 ''' Establish Spawn Location and generate Tiles'''
 dungeon.generate_tiles(TileGenerator(dungeon))
 dungeon.spawn_coordinates = [(10,1)]
-transition_piece = TransitionPiece((0,0,0), (0, -1, 1))
+transition_piece = TransitionPiece((0, 0), (1, 0))
 dungeon.add_transition(transition_piece, (10,1))
