@@ -44,10 +44,8 @@ class Potion(StackableItem):
         return {}
 
     def flavor_text(self, player):
-        acu = self.player.acuity
-        sen = self.player.sense
         return ' '.join([
             self.Basic,
-            (self.GoodSense if sen > 10 else self.BadSense),
-            (self.GoodVision if acu > 10 else self.BadVision),
+            (self.GoodSense if player.sense >= 10 else self.BadSense),
+            (self.GoodVision if player.acuity >= 10 else self.BadVision),
             self.Effect])
