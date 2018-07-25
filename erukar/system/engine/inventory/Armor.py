@@ -26,8 +26,8 @@ class Armor(Item):
         super().__init__("armor", name or self.BaseName, modifiers=modifiers)
 
     def protection(self, damage_type):
+        yield (0, 0)
         if self.durability <= 0.0:
-            yield (0, 0)
             return
         yield from self.base_protection(damage_type)
         mod_methodname = '{}_protection'.format(damage_type)
@@ -42,9 +42,3 @@ class Armor(Item):
     def base_protection(self, damage_type):
         if damage_type in self.DamageMitigations:
             yield self.DamageMitigations[damage_type]
-
-    def take_damage(self, amount, damage_type):
-        if not self.material:
-            raise Exception('Armor tried to take damage but has no material')
-        hardness = self.material.damage_absorption(damage_type)
-        self.durability = max(0, self.durability - int(amount * hardness))
