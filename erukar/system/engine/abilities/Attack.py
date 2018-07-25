@@ -28,7 +28,7 @@ class Attack(TargetedAbility):
     DealDamage = 'You deal {final} damage to {target}!'
     TakeDamage = 'You take {total} ({final}) damage.'
     DidNoDamage = 'Your attack deals no damage.'
-    TakeNoDamage = 'Your armor mitigates all damage!'
+    TakeNoDamage = 'You take no damage.'
     CauseDying = '{target} collapses, dying!'
     BecomeDying = 'You collapse and are now dying...'
     SeeDying = 'You see {target} collapse and start dying!'
@@ -270,6 +270,7 @@ class Attack(TargetedAbility):
             return
         cmd.dirty(player)
         cmd.dirty(target)
+        cmd.log(target, strs['mitigated'])
         cmd.log(player, Attack.DealDamage.format(**strs))
         cmd.log(target, Attack.TakeDamage.format(**strs))
 
