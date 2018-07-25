@@ -35,12 +35,16 @@ class Armor(Item):
             if hasattr(modifier, mod_methodname):
                 yield getattr(modifier, mod_methodname)(self)
 
+    def total_protection(self, damage_type):
+        total = list(self.protection(damage_type))
+        return tuple(sum(v) for v in zip(*total))
+
     def base_protection(self, damage_type):
         if damage_type in self.DamageMitigations:
             yield self.DamageMitigations[damage_type]
 
     def take_damage(self, amount, damage_type):
-        protection = list(self.protection(damage_type))
-        mit = sum(x[0] for x in protection)
-        absorbed_damage = amount * mit
-        self.durability = max(0.0, self.durability - absorbed_damage)
+        if not self.material:
+            raise Exception('Armor tried to take damage but has no material')
+        hardness = self.material.damage_absorption(damage_type)
+        self.durability = max(0, self.durability - int(amount * hardness))

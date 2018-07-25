@@ -4,7 +4,6 @@ import erukar
 
 class FoulLiquid(Potion):
     BaseName = "Foul Liquid"
-    BriefDescription = "A murky, tar-like liquid from the depths of Ulgavoth'"
 
     def price(self, econ=None):
         return 15

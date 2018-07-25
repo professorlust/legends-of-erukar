@@ -3,17 +3,20 @@ from sqlalchemy.orm import relationship, joinedload
 from sqlalchemy.dialects.postgresql import JSON
 from .Modifier import Modifier
 
+from .Lifeform import Lifeform
 from ..ErukarBaseModel import ErukarBaseModel, Base
+
 
 class Item(ErukarBaseModel, Base):
     __tablename__ = 'items'
 
-    id              = Column(Integer, primary_key=True)
-    item_type       = Column(String)
-    lifeform_id     = Column(Integer, ForeignKey('lifeforms.id'))
-    lifeform        = relationship("Lifeform", foreign_keys=[lifeform_id])
-    material_type   = Column(String)
-    modifiers       = relationship("Modifier", cascade="all, delete-orphan")
+    id = Column(Integer, primary_key=True)
+    item_type = Column(String)
+    lifeform_id = Column(Integer, ForeignKey('lifeforms.id'))
+    lifeform = relationship("Lifeform", foreign_keys=[lifeform_id])
+    material_type = Column(String)
+    durability = Column(Integer)
+    modifiers = relationship("Modifier", cascade="all, delete-orphan")
     item_attributes = Column(JSON, nullable=True)
 
     SimpleMapParams = []
@@ -51,24 +54,29 @@ class Item(ErukarBaseModel, Base):
         self.add_or_update(session)
 
     def apply_attributes(self, new_object):
-        if not self.item_attributes: return
-        for attribute_name in self.item_attributes:
-            setattr(new_object, attribute_name, self.item_attributes[attribute_name])
+        if not self.item_attributes:
+            return
+        for _att in self.item_attributes:
+            setattr(new_object, _att, self.item_attributes[_att])
 
     def equipment_location(self, equipment):
-        return next((x.equipment_slot for x in equipment if x.item_id == self.id), None)
+        for item in equipment:
+            if item.item_id == self.id:
+                return item.equipment_slot
+        return None
 
     def get(session, id):
         s_model = Lifeform.get_schema_query(session, id).first()
         return s_model.create_new_object()
 
     def create_from_object(session, item):
-        if hasattr(item, 'id'): 
+        if hasattr(item, 'id'):
             schema = Item.get_schema_query(session, item.id).first()
-        else: schema = Item()
-            
+        else:
+            schema = Item()
         if not schema:
-            raise Exception('schema not loaded for item id {}'.format(getattr(item, 'id', -1)))
+            _id = getattr(item, 'id', -1)
+            raise Exception('schema not loaded for item id {}'.format(_id))
         schema.item_type = item.__module__
         schema.copy_from_object(item)
         if item.material:

@@ -287,12 +287,35 @@ class Lifeform(ErukarActor):
         unmitigated = self.apply_mitigation(attacker, weapon, undeflected)
         total_damage = sum(unmitigated[_type] for _type in unmitigated)
         self.take_damage(total_damage, attacker)
+        self.damage_equipment(undeflected, unmitigated)
+        attacker.damage_weapon(weapon, undeflected, unmitigated)
         return {
             'raw': damages,
             'post_deflection': undeflected,
             'post_mitigation': unmitigated,
             'total': int(total_damage)
         }
+
+    def damage_weapon(self, weapon, undeflected, unmitigated):
+        for _type in [*undeflected]:
+            mitigated = undeflected[_type] - unmitigated.get(_type, 0)
+            if mitigated <= 0:
+                continue
+            weapon.take_damage(mitigated, _type)
+
+    def damage_equipment(self, undeflected, unmitigated):
+        for _type in [*undeflected]:
+            mitigated = undeflected[_type] - unmitigated.get(_type, 0)
+            if mitigated <= 0:
+                continue
+            total = self.mitigation(_type)
+            for item in self.equipped_items():
+                if not isinstance(item, Armor):
+                    continue
+                item_mit = item.total_protection(_type)[0]
+                pct = item_mit/total
+                damage = int(mitigated * pct)
+                item.take_damage(damage, _type)
 
     def on_process_damage(self, attack_state, command):
         '''Called after a successful attack'''

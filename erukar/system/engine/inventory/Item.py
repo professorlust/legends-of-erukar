@@ -16,7 +16,7 @@ class Item(ErukarActor):
 
     ModifierPath = ''
     MaxDurability = 100
-    BaseWeight = 0 # In Pounds
+    BaseWeight = 0
     BasePrice = 10
     EquipmentLocations = []
 
@@ -142,7 +142,7 @@ class Item(ErukarActor):
 
     def durability_multiplier(self):
         mmdpm = self.material.MinimumDurabilityPriceMultiplier
-        dur_coeff = pow(self.durability(), 2) / pow(self.total_durability(), 2)
+        dur_coeff = pow(self.durability, 2) / pow(self.total_durability(), 2)
         return (1 - mmdpm) * dur_coeff  + mmdpm
 
     def alias(self):
@@ -171,11 +171,11 @@ class Item(ErukarActor):
         return self.mutate(pre_mutation.strip())
 
     def persistable_attributes(self):
-        '''For use with database; getattrs all attributes defined by persistent_attr dict'''
-        return {pattr: getattr(self, pattr) for pattr in self.PersistentAttributes if hasattr(self, pattr)}
-
-    def take_damage(self, amount):
-        self.durability_coefficient = gg
+        attributes = {}
+        for _attr in self.PersistentAttributes:
+            if hasattr(self, _attr):
+                attributes[_attr] = getattr(self, _attr)
+        return attributes
 
     def format(self, with_price=False):
         if not with_price:
@@ -206,3 +206,9 @@ class Item(ErukarActor):
     def post_missed_attack(self, cmd, attacker, weapon, target):
         for modifier in self.modifiers:
             modifier.post_missed_attack(cmd, attacker, weapon, target)
+
+    def take_damage(self, amount, damage_type):
+        if not self.material:
+            raise Exception('Armor tried to take damage but has no material')
+        hardness = self.material.damage_absorption(damage_type)
+        self.durability = max(0, self.durability - int(amount * hardness))

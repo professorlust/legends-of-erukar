@@ -104,6 +104,7 @@ class Door(ErukarActor):
             cmd.append_result(player.uid, Door.open_success)
             for aura in cmd.world.get_applicable_auras(self.coordinates):
                 aura.needs_rebuilt = True
+            player.observe()
             return cmd.succeed()
         return cmd.fail("Cannot open this door")
 

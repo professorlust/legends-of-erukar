@@ -27,7 +27,7 @@ class MaterialModifier(ItemModifier):
     def mitigation_multiplier_for(self, dtype):
         if dtype in self.MitigationMultipliers:
             return self.MitigationMultipliers[dtype]
-        return (1,1)
+        return (1, 1)
 
     def apply_to_armor(self, entity):
         # Adjust Mitigations and Deflecti
@@ -35,3 +35,6 @@ class MaterialModifier(ItemModifier):
 
     def on_alias(self, current_alias):
         return ' '.join([self.InventoryName, current_alias])
+
+    def damage_absorption(self, damage_type):
+        return 1.0
