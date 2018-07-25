@@ -123,6 +123,7 @@ class Instance(Manager):
                 equipped.on_equip(being)
         being.instance = self.identifier
         being.on_start(self.dungeon)
+        being.observe()
 
     def unsubscribe(self, node):
         if node not in self.players:
