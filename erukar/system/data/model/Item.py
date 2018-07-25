@@ -15,7 +15,6 @@ class Item(ErukarBaseModel, Base):
     lifeform_id = Column(Integer, ForeignKey('lifeforms.id'))
     lifeform = relationship("Lifeform", foreign_keys=[lifeform_id])
     material_type = Column(String)
-    durability = Column(Integer)
     modifiers = relationship("Modifier", cascade="all, delete-orphan")
     item_attributes = Column(JSON, nullable=True)
 
