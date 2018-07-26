@@ -22,7 +22,7 @@ class Npc(Lifeform):
                 if (x,y) in circle:
                     if (x,y) not in inner_circle:
                         yield {'r':0,'g':0,'b':0,'a':1}
-                    else: 
+                    else:
                         yield {'r':0,'g':0,'b':255,'a':1}
                 else: yield {'r':0,'g':0,'b':0,'a':0}
 

@@ -14,5 +14,14 @@ class Conversationalist(NpcTemplate):
             'type': 'Conversation',
             'title': 'Conversation with {}'.format(self.npc.alias()),
             'response': self.conversation.response(for_player),
-            'choices': list(self.conversation.get_choices(for_player))
+            'choices': self.get_choices(for_player)
         }
+
+    def get_choices(self, for_player):
+        choices = []
+        for option in self.conversation.get_choices(for_player):
+            choices.append({
+                'id': option[0],
+                'choice': option[1]
+            })
+        return choices

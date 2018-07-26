@@ -2,6 +2,7 @@ from .ErukarObject import ErukarObject
 from .PlayerNode import PlayerNode
 import uuid
 
+
 class Interaction(ErukarObject):
     '''Base class for all interactions: conversations, shops, etc'''
     def __init__(self):
@@ -13,8 +14,9 @@ class Interaction(ErukarObject):
         self.results = {}
 
     def mark_for_exit(self, participant):
-        try: self.involved.remove(participant)
-        except ValueError: 
+        try:
+            self.involved.remove(participant)
+        except ValueError:
             self.results[participant] = ['You are not in this interaction']
             return
         self.leaving.append(participant)
