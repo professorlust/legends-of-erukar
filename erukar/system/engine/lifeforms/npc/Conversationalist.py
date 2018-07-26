@@ -32,4 +32,4 @@ class Conversationalist(NpcTemplate):
         return choices
 
     def player_stop(self, player):
-        self.conversation.exit(player)
+        self.conversation.exit(player.lifeform())

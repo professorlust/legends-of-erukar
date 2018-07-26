@@ -61,7 +61,7 @@ dungeon.add_transition(transition_piece, (10,1))
 sheriff = Npc(templates=[erukar.Conversationalist])
 conversation = erukar.Conversation()
 start_id, _ = conversation.add_start('Welcome to Iuria.')
-conversation.add_node(
+who_id = conversation.add_node(
     text='Who are you?',
     response='I am {}, Local Sheriff of Barlen. If you find bandits or '
     'any sorts of unsavory types, bring me evidence that they have '
