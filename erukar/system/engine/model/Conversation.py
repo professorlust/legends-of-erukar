@@ -22,6 +22,9 @@ class Conversation:
             if self.structure[poss].conditional(player):
                 yield self.structure[poss]
 
+    def is_conversing(self, player):
+        return player in self.locations
+
     def exit(self, player):
         del self.locations[player]
 

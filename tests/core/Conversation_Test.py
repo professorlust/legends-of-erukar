@@ -141,3 +141,6 @@ class Conversation_Test(unittest.TestCase):
         self.player.strength = 20
         very_strong = self.convo.advance(self.player, choices[0][0])
         self.assertEqual(strong_choice, very_strong[0][1])
+
+        self.convo.advance(self.player, 'exit')
+        self.assertFalse(self.convo.is_conversing(self.player))
