@@ -1,4 +1,5 @@
 from ..TargetedCommand import TargetedCommand
+import erukar
 
 
 class Converse(TargetedCommand):
@@ -8,7 +9,7 @@ class Converse(TargetedCommand):
             return failure
 
         interaction = self.args.get('interaction')
-        conversation = interaction.main_npc.conversation
+        conversation = Converse.get_conversation(interaction)
         player = self.args['player_lifeform']
         choice = self.args.get('choice_id', 'not-a-valid-choice')
 
@@ -19,3 +20,9 @@ class Converse(TargetedCommand):
         if not conversation.is_conversing(player):
             interaction.mark_for_exit(self.player_info)
         return self.succeed()
+
+    def get_conversation(interaction):
+        for template in interaction.main_npc.templates:
+            if isinstance(template, erukar.Conversationalist):
+                return template.conversation
+        return None
