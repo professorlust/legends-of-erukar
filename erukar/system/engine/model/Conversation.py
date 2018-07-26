@@ -37,7 +37,9 @@ class Conversation:
     def add_exit(self, prev_id, text=''):
         node = ConversationNode(text or 'EXIT', '')
         self.exits.append(node.id)
+        self.structure[node.id] = node
         self.structure[prev_id].add_possibility(node)
+        return node.out()
 
     def advance(self, player, next_id=''):
         # Need to begin
