@@ -13,5 +13,6 @@ class Conversationalist(NpcTemplate):
         return {
             'type': 'Conversation',
             'title': 'Conversation with {}'.format(self.npc.alias()),
+            'response': self.conversation.response(for_player),
             'choices': list(self.conversation.get_choices(for_player))
         }

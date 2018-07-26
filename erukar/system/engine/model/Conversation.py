@@ -9,6 +9,10 @@ class Conversation:
         self.locations = {}
         self.start = None
 
+    def response(self, player):
+        _id = self.locations.get(player, self.start.id)
+        return self.structure[_id].response
+
     def get_choices(self, player):
         _id = self.locations.get(player, self.start.id)
         yield from self._get_choices(player, _id)
