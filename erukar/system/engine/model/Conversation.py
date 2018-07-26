@@ -33,6 +33,11 @@ class Conversation:
         if player in self.locations:
             del self.locations[player]
 
+    def add_exit(self, prev_id, text=''):
+        node = ConversationNode(text or 'EXIT', '')
+        node.id = 'exit'
+        self.structure[prev_id].add_possibility(node)
+
     def advance(self, player, next_id=''):
         # Need to begin
         if next_id == 'exit':
