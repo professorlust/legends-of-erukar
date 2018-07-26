@@ -14,7 +14,6 @@ class Conversationalist(NpcTemplate):
             'type': 'Conversation',
             'title': 'Conversation with {}'.format(self.npc.alias()),
             'response': self.conversation.response(for_player),
-            'player': for_player.uid,
             'choices': self.get_choices(for_player)
         }
 
@@ -25,4 +24,9 @@ class Conversationalist(NpcTemplate):
                 'id': option[0],
                 'choice': option[1]
             })
+        if len(choices) == 0:
+            return [{
+                'id': 'exit',
+                'choice': 'EXIT'
+            }]
         return choices
