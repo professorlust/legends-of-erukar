@@ -30,7 +30,8 @@ class Conversation:
         return player in self.locations
 
     def exit(self, player):
-        del self.locations[player]
+        if player in self.locations:
+            del self.locations[player]
 
     def advance(self, player, next_id=''):
         # Need to begin
