@@ -7,6 +7,7 @@ class Conversation:
         self.owner = owner
         self.structure = {}
         self.locations = {}
+        self.exits = []
         self.start = None
 
     def response(self, player):
@@ -35,12 +36,12 @@ class Conversation:
 
     def add_exit(self, prev_id, text=''):
         node = ConversationNode(text or 'EXIT', '')
-        node.id = 'exit'
+        self.exits.append(node.id)
         self.structure[prev_id].add_possibility(node)
 
     def advance(self, player, next_id=''):
         # Need to begin
-        if next_id == 'exit':
+        if next_id == 'exit' or next_id in self.exits:
             self.exit(player)
             return
         if player not in self.locations:
