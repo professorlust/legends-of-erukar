@@ -1,4 +1,4 @@
-from ...TargetedCommand import TargetedCommand
+from ..TargetedCommand import TargetedCommand
 
 
 class Converse(TargetedCommand):
