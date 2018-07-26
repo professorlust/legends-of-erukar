@@ -43,3 +43,7 @@ class Npc(Lifeform):
         if target in self.disposition_modifiers:
             bonus += self.disposition_modifiers[target]
         return bonus
+
+    def player_stop(self, player):
+        for template in self.templates:
+            template.player_stop(player)

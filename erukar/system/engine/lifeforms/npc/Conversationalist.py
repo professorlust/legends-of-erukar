@@ -30,3 +30,6 @@ class Conversationalist(NpcTemplate):
                 'choice': 'EXIT'
             }]
         return choices
+
+    def player_stop(self, player):
+        self.conversation.exit(player)

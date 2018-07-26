@@ -1,5 +1,6 @@
 class NpcTemplate:
     is_interactive = True
+
     def __init__(self, world):
         self.world = world
         self.npc = None
@@ -16,3 +17,6 @@ class NpcTemplate:
 
     def standard_inventory(self):
         return []
+
+    def player_stop(self, player):
+        pass

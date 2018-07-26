@@ -19,6 +19,7 @@ class Interaction(ErukarObject):
         except ValueError:
             self.results[participant] = ['You are not in this interaction']
             return
+        self.main_npc.player_stop(participant)
         self.leaving.append(participant)
         self.results[participant] = ['You have left this interaction']
 
