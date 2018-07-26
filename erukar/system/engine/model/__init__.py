@@ -29,7 +29,6 @@ from .SpellMutator import SpellMutator
 from .Stance import Stance
 from .Tile import Tile
 from .Conversation import Conversation
-from .Conversation import ConversationBuilder
 
 __all__ = [
     "AiModule",
@@ -64,5 +63,4 @@ __all__ = [
     "SidebarAbility",
     "TargetedAbility",
     "Conversation",
-    "ConversationBuilder"
 ]

@@ -42,28 +42,22 @@ class Conversation:
         choices = list(self.get_choices(player))
         return any(choice[0] == _id for choice in choices)
 
-
-class ConversationBuilder:
-    def __init__(self, owner=None):
-        self.owner = owner
-        self.conversation = Conversation(self.owner)
-
     def add_start(self, response):
         node = ConversationNode('', response)
-        self.conversation.start = node
-        self.conversation.structure[node.id] = node
+        self.start = node
+        self.structure[node.id] = node
         return node.out()
 
     def add_node(self, text, response, prev_id):
         node = ConversationNode(text, response)
-        self.conversation.structure[node.id] = node
-        self.conversation.structure[prev_id].add_possibility(node)
+        self.structure[node.id] = node
+        self.structure[prev_id].add_possibility(node)
         return node.out()
 
     def add_conditional_node(self, text, response, prev_id, condition):
         node = ConversationNode(text, response)
-        self.conversation.structure[node.id] = node
-        self.conversation.structure[prev_id].add_possibility(node)
+        self.structure[node.id] = node
+        self.structure[prev_id].add_possibility(node)
         node.conditional = condition
 
 
