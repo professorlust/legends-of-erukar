@@ -70,7 +70,6 @@ class Conversation_Test(unittest.TestCase):
         id_1, _ = self.convo.add_node(choice_1, response_1, start_id)
         id_2, _ = self.convo.add_node(choice_2, response_2, start_id)
         choices = list(self.convo.get_choices(self.player))
-        print(choices)
         self.assertEqual(2, len(choices))
 
     def test__advance(self):

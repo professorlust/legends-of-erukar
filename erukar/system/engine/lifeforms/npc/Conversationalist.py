@@ -14,6 +14,7 @@ class Conversationalist(NpcTemplate):
             'type': 'Conversation',
             'title': 'Conversation with {}'.format(self.npc.alias()),
             'response': self.conversation.response(for_player),
+            'player': for_player.uid,
             'choices': self.get_choices(for_player)
         }
 
