@@ -8,7 +8,7 @@ class Converse(TargetedCommand):
             return failure
 
         interaction = self.args.get('interaction')
-        conversation = interaction.conversation
+        conversation = interaction.main_npc.conversation
         player = self.args['player_lifeform']
         choice = self.args.get('choice_id', 'not-a-valid-choice')
 
