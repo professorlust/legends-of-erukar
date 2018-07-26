@@ -14,7 +14,7 @@ class Converse(TargetedCommand):
         choice = self.args.get('choice_id', 'not-a-valid-choice')
 
         if not conversation.is_valid_choice(player, choice):
-            return self.fail('Choice was note valid!')
+            return self.fail('Choice was not valid!')
 
         conversation.advance(player, choice)
         if not conversation.is_conversing(player):

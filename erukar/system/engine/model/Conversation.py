@@ -46,7 +46,7 @@ class Conversation:
         return choices if len(choices) > 0 else [('exit', 'EXIT')]
 
     def is_valid_choice(self, player, _id):
-        choices = list(self.get_choices(player))
+        choices = list(self.get_choices(player)) + [('exit', 'EXIT')]
         return any(choice[0] == _id for choice in choices)
 
     def add_start(self, response):
