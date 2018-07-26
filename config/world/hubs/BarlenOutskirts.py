@@ -55,3 +55,11 @@ dungeon.generate_tiles(TileGenerator(dungeon))
 dungeon.spawn_coordinates = [(10,1)]
 transition_piece = TransitionPiece((0, 0), (1, 0))
 dungeon.add_transition(transition_piece, (10,1))
+
+
+''' Sheriff '''
+sheriff = Npc(templates=[erukar.Conversationalist])
+conversation = erukar.Conversation()
+conversation.add_start('Welcome to Iuria.')
+sheriff.templates[0].conversation = conversation
+dungeon.add_npc(sheriff, trade_commission)
