@@ -61,5 +61,5 @@ dungeon.add_transition(transition_piece, (10,1))
 sheriff = Npc(templates=[erukar.Conversationalist])
 conversation = erukar.Conversation()
 conversation.add_start('Welcome to Iuria.')
-sheriff.templates[0].conversation = conversation
 dungeon.add_npc(sheriff, trade_commission)
+sheriff.templates[0].conversation = conversation
