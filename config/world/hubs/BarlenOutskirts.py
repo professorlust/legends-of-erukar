@@ -60,6 +60,20 @@ dungeon.add_transition(transition_piece, (10,1))
 ''' Sheriff '''
 sheriff = Npc(templates=[erukar.Conversationalist])
 conversation = erukar.Conversation()
-conversation.add_start('Welcome to Iuria.')
+start_id, _ = conversation.add_start('Welcome to Iuria.')
+conversation.add_node(
+    text='Who are you?',
+    response='I am {}, Local Sheriff of Barlen. If you find bandits or '
+    'any sorts of unsavory types, bring me evidence that they have '
+    'been "taken care of" and I will reward you nicely.'
+    .format(sheriff.alias()),
+    prev_id=start_id)
+conversation.add_node(
+    text='What is there to do here?',
+    response='You can buy all sorts of things here, from weapons and armor '
+    'to alchemical potions. If you head out east, you might stop by the '
+    'Razorwoods Camp. We are in need of lumber for construction and you '
+    'should be able to sell it for a good price.',
+    prev_id=start_id)
 dungeon.add_npc(sheriff, trade_commission)
 sheriff.templates[0].conversation = conversation
