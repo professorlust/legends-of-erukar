@@ -1,4 +1,5 @@
 from erukar.system.engine import Conversation
+import erukar
 
 
 def create(npc):
@@ -26,5 +27,17 @@ def create(npc):
         'time off. Just head east and you can\'t miss it. Make sure to stock '
         'up on supplies before you go; the Razorwoods are a dangerous place.',
         prev_id=what_to_do_id)
+    conversation.add_node(
+        text='I found this strange sword near the Icamore Crypts... (show '
+        'the Will of Acethyrith',
+        response='It smells like clean linen... and sea salt.',
+        prev_id=start_id)
     conversation.add_exit(what_to_do_id)
     return conversation
+
+
+def has_the_will(npc, caller):
+    for item in caller.find_all_in_inventory(erukar.Longsword):
+        if item.alias() == 'The Will of Acethyrith':
+            return True
+    return False
