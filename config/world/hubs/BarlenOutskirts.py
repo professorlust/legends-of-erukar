@@ -60,6 +60,6 @@ dungeon.add_transition(transition_piece, (10,1))
 ''' Sheriff '''
 sheriff = Npc(
     templates=[erukar.Conversationalist],
-    conversation='BarlenSheriff'
+    conversation='barlen/Sheriff'
 )
 dungeon.add_npc(sheriff, trade_commission)
