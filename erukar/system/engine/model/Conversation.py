@@ -3,7 +3,7 @@ import string
 
 
 class Conversation:
-    def __init__(self, owner=None):
+    def __init__(self, owner):
         self.owner = owner
         self.structure = {}
         self.locations = {}
@@ -24,7 +24,7 @@ class Conversation:
 
     def _node_choices(self, player, _id):
         for poss in self.structure[_id].next:
-            if self.structure[poss].conditional(player):
+            if self.structure[poss].conditional(self.owner, player):
                 yield self.structure[poss]
 
     def is_conversing(self, player):
@@ -50,9 +50,14 @@ class Conversation:
             _id = self.locations.get(player, self.start.id)
             self.locations[player] = _id
         if self.is_valid_choice(player, next_id):
+            self.act(player, next_id)
             self.locations[player] = next_id
         choices = list(self.get_choices(player))
         return choices if len(choices) > 0 else [('exit', 'EXIT')]
+
+    def act(self, player, id_at):
+        node = self.structure[id_at]
+        return node.action(self.owner, player)
 
     def is_valid_choice(self, player, _id):
         choices = list(self.get_choices(player)) + [('exit', 'EXIT')]
@@ -64,17 +69,15 @@ class Conversation:
         self.structure[node.id] = node
         return node.out()
 
-    def add_node(self, text, response, prev_id):
+    def add_node(self, text, response, prev_id, condition=None, action=None):
         node = ConversationNode(text, response)
         self.structure[node.id] = node
         self.structure[prev_id].add_possibility(node)
+        if condition:
+            node.conditional = condition
+        if action:
+            node.action = action
         return node.out()
-
-    def add_conditional_node(self, text, response, prev_id, condition):
-        node = ConversationNode(text, response)
-        self.structure[node.id] = node
-        self.structure[prev_id].add_possibility(node)
-        node.conditional = condition
 
 
 class ConversationNode:
@@ -84,7 +87,11 @@ class ConversationNode:
         self.next = possiblities or []
         self.id = ConversationNode.random_id()
 
-    def conditional(self, caller):
+    def action(self, npc, caller):
+        ''' Returns true if successful, False if not'''
+        return False
+
+    def conditional(self, npc, caller):
         return True
 
     def random_id():

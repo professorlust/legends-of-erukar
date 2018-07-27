@@ -104,7 +104,7 @@ class Shard(Manager):
         if player not in self.connected_players:
             self.connected_players.add(player)
         self.establish_playernode(player)
-        
+
     def establish_playernode(self, player):
         player.status = PlayerNode.SelectingCharacter
         # fix this
@@ -191,7 +191,7 @@ class Shard(Manager):
         for info in self.instances:
             if character in info.instance.characters:
                return info
-    
+
     def instance_where_player_was_slain(self, node):
         for info in self.instances:
             if node in info.instance.slain_characters:

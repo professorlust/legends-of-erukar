@@ -15,7 +15,8 @@ class Conversation_Test(unittest.TestCase):
         }
         dungeon.add_actor(self.player, (0, 0))
         self.player.gain_action_points()
-        self.convo = Conversation()
+        self.npc = erukar.Npc()
+        self.convo = Conversation(self.npc)
 
     def test__basic_validity(self):
         start_str = 'This is the start'
@@ -111,10 +112,10 @@ class Conversation_Test(unittest.TestCase):
         self.assertNotIn(self.player, [*self.convo.locations])
 
     def test__test_conditional_node(self):
-        def cond_strong(caller):
+        def cond_strong(npc, caller):
             return caller.strength >= 10
 
-        def cond_weak(caller):
+        def cond_weak(npc, caller):
             return caller.strength < 10
 
         opener = 'Welcome to my shop. There are rats here.'
@@ -130,8 +131,8 @@ class Conversation_Test(unittest.TestCase):
         start_id, _ = self.convo.add_start(opener)
         id_1, _ = self.convo.add_node(choice_1, response_1, start_id)
         self.convo.add_node(choice_2, response_2, start_id)
-        self.convo.add_conditional_node(strong_choice, strong_response, id_1, cond_strong)
-        self.convo.add_conditional_node(weak_choice, weak_resposne, id_1, cond_weak)
+        self.convo.add_node(strong_choice, strong_response, id_1, cond_strong)
+        self.convo.add_node(weak_choice, weak_resposne, id_1, cond_weak)
 
         choices = self.convo.advance(self.player, 'asdf')
 
@@ -141,6 +142,78 @@ class Conversation_Test(unittest.TestCase):
         self.player.strength = 20
         very_strong = self.convo.advance(self.player, choices[0][0])
         self.assertEqual(strong_choice, very_strong[0][1])
+
+        self.convo.advance(self.player, 'exit')
+        self.assertFalse(self.convo.is_conversing(self.player))
+
+    def test__test_action_node(self):
+        def take_sword(npc, caller):
+            item = caller.inventory[0]
+            caller.inventory.remove(item)
+            npc.inventory.append(item)
+            return True
+
+        opener = 'Welcome to my shop. There are rats here.'
+        choice_1 = 'What would you do about that?'
+        response_1 = 'Response to Choice 1'
+        choice_2 = 'Good luck.'
+        response_2 = 'Response to Choice 2'
+        sword_choice = 'Take my sword'
+        sword_response = 'Thank you!'
+
+        sword = erukar.Longsword()
+        self.player.inventory = [sword]
+
+        start_id, _ = self.convo.add_start(opener)
+        id_1, _ = self.convo.add_node(choice_1, response_1, start_id)
+        self.convo.add_node(choice_2, response_2, start_id)
+        self.convo.add_node(sword_choice, sword_response, id_1, action=take_sword)
+
+        choices = self.convo.advance(self.player, 'asdf')
+        choices = self.convo.advance(self.player, choices[0][0])
+        choices = self.convo.advance(self.player, choices[0][0])
+
+        self.assertNotIn(sword, self.player.inventory)
+
+        self.convo.advance(self.player, 'exit')
+        self.assertFalse(self.convo.is_conversing(self.player))
+
+    def test__test_action_condition_node(self):
+        def has_sword(npc, caller):
+            return caller.find_in_inventory(erukar.Longsword) is not None
+
+        def take_sword(npc, caller):
+            sword = caller.find_in_inventory(erukar.Longsword)
+            caller.inventory.remove(sword)
+            npc.inventory.append(sword)
+            return True
+
+        opener = 'Welcome to my shop. There are rats here.'
+        choice_1 = 'What would you do about that?'
+        response_1 = 'Response to Choice 1'
+        choice_2 = 'Good luck.'
+        response_2 = 'Response to Choice 2'
+        sword_choice = 'Take my sword'
+        sword_response = 'Thank you!'
+
+        sword = erukar.Longsword()
+        self.player.inventory = [sword]
+
+        start_id, _ = self.convo.add_start(opener)
+        id_1, _ = self.convo.add_node(choice_1, response_1, start_id)
+        self.convo.add_node(choice_2, response_2, start_id)
+        self.convo.add_node(
+            text=sword_choice,
+            response=sword_response,
+            prev_id=id_1,
+            condition=has_sword,
+            action=take_sword)
+
+        choices = self.convo.advance(self.player, 'asdf')
+        choices = self.convo.advance(self.player, choices[0][0])
+        choices = self.convo.advance(self.player, choices[0][0])
+
+        self.assertNotIn(sword, self.player.inventory)
 
         self.convo.advance(self.player, 'exit')
         self.assertFalse(self.convo.is_conversing(self.player))

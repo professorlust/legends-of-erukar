@@ -17,6 +17,7 @@ config_directories = [
     'world/sovereignties',
     'world/regions',
     'world/hubs',
+    'world/conversations',
     'scripts',
     'server'
 ]

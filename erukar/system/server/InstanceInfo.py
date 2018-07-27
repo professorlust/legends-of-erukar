@@ -1,6 +1,5 @@
 from .Instance import Instance
-from .Interface import Interface
-import multiprocessing
+
 
 class InstanceInfo:
     '''
@@ -18,7 +17,7 @@ class InstanceInfo:
             additional_parameters = {}
         self.instance = instance_type(**additional_parameters)
         self.instance.info = self
-        self.instance.properties = props 
+        self.instance.properties = props
         self.identifier = self.instance.identifier
 
     def launch(self, connector):

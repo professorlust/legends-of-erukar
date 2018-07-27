@@ -2,8 +2,9 @@ from .Lifeform import Lifeform
 from erukar.ext.math.Distance import Distance
 from erukar.ext.math.Namer import Namer
 
+
 class Npc(Lifeform):
-    def __init__(self, templates=[]):
+    def __init__(self, templates=[], conversation=None):
         super().__init__(None, "Npc")
         self.faction = 'iurian'
         self.qualities = []
@@ -11,6 +12,8 @@ class Npc(Lifeform):
         self.name = Namer.random()
         self.inactive_templates = templates
         self.disposition_modifiers = {}
+        if conversation:
+            __import__(conversation).create(self)
 
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
@@ -23,7 +26,7 @@ class Npc(Lifeform):
                     if (x,y) not in inner_circle:
                         yield {'r':0,'g':0,'b':0,'a':1}
                     else:
-                        yield {'r':0,'g':0,'b':255,'a':1}
+                        yield {'r':240,'g':190,'b':0,'a':1}
                 else: yield {'r':0,'g':0,'b':0,'a':0}
 
     def get_state(self, for_player):
@@ -45,5 +48,5 @@ class Npc(Lifeform):
         return bonus
 
     def player_stop(self, player):
-        for template in self.templates:
-            template.player_stop(player)
+        if self.conversation:
+            self.conversation.exit(player.lifeform())

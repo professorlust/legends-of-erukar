@@ -1,5 +1,4 @@
 from ..TargetedCommand import TargetedCommand
-import erukar
 
 
 class Converse(TargetedCommand):
@@ -22,7 +21,4 @@ class Converse(TargetedCommand):
         return self.succeed()
 
     def get_conversation(interaction):
-        for template in interaction.main_npc.templates:
-            if isinstance(template, erukar.Conversationalist):
-                return template.conversation
-        return None
+        return interaction.main_npc.conversation

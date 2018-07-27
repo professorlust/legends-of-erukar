@@ -10,7 +10,7 @@ class HubInstance(Instance):
 
         if isinstance(cmd, TargetedCommand):
             return self.try_execute_targeted_command(node, cmd)
-        
+
         self.execute_and_process(cmd)
 
         # Tell characters
