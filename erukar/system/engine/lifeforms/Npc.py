@@ -5,6 +5,8 @@ from erukar.ext.math.Namer import Namer
 
 class Npc(Lifeform):
     def __init__(self, templates=[], conversation=None):
+        if conversation:
+            self.conversation = __import__(conversation).create(self)
         super().__init__(None, "Npc")
         self.faction = 'iurian'
         self.qualities = []
@@ -12,8 +14,6 @@ class Npc(Lifeform):
         self.name = Namer.random()
         self.inactive_templates = templates
         self.disposition_modifiers = {}
-        if conversation:
-            __import__(conversation).create(self)
 
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
