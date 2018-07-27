@@ -36,7 +36,7 @@ class Npc(Lifeform):
 
     def gradient(point, center):
         x = Navigator.distance(point, center)
-        scalar = 1 / (x/2 + 1)
+        scalar = 1 / (x/8 + 1)
         r = 200 + 50 * scalar
         g = 150 + 50 * scalar
         b = 50 * scalar
