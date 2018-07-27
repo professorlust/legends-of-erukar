@@ -18,16 +18,22 @@ class Npc(Lifeform):
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
         radius = int(w/3)-1
-        circle = list(Distance.points_in_circle(radius, (int(h/2),int(w/2))))
-        inner_circle = list(Distance.points_in_circle(int(w/4)-1, (int(h/2),int(w/2))))
+        circle = list(Distance.points_in_circle(radius, (int(h/2), int(w/2))))
+        inner = list(Distance.points_in_circle(int(w/4)-1, (int(h/2),int(w/2))))
+        center = list(Distance.points_in_circle(int(w/6)-1, (int(h/2),int(w/2))))
+
         for y in range(h):
             for x in range(w):
-                if (x,y) in circle:
-                    if (x,y) not in inner_circle:
-                        yield {'r':0,'g':0,'b':0,'a':1}
-                    else:
-                        yield {'r':240,'g':190,'b':0,'a':1}
-                else: yield {'r':0,'g':0,'b':0,'a':0}
+                yield Npc.get_pixel((x, y), circle, inner, center)
+
+    def get_pixel(point, circle, inner, center):
+        if point in center:
+            return {'r': 240, 'g': 220, 'b': 0, 'a': 1}
+        if point in inner:
+            return {'r': 240, 'g': 190, 'b': 0, 'a': 1}
+        if point in circle:
+            return {'r': 0, 'g': 0, 'b': 0, 'a': 1}
+        return {'r': 0, 'g': 0, 'b': 0, 'a': 0}
 
     def get_state(self, for_player):
         if self.templates:
