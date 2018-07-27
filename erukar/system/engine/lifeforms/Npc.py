@@ -36,10 +36,10 @@ class Npc(Lifeform):
 
     def gradient(point, center):
         x = Navigator.distance(point, center)
-        scalar = 1 / (x/8 + 1)
-        r = 160 + 90 * scalar
-        g = 130 + 70 * scalar
-        b = 50 * scalar
+        scalar = 1 / (x/4 + 1)
+        r = 160 + int(90 * scalar)
+        g = 130 + int(70 * scalar)
+        b = int(50 * scalar)
         return {'r': r, 'g': g, 'b': b, 'a': 1}
 
     def get_state(self, for_player):
