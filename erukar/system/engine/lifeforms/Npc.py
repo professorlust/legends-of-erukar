@@ -1,5 +1,6 @@
 from .Lifeform import Lifeform
 from erukar.ext.math.Distance import Distance
+from erukar.ext.math.Navigator import Navigator
 from erukar.ext.math.Namer import Namer
 
 
@@ -17,23 +18,29 @@ class Npc(Lifeform):
 
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
+        center = (int(h/2) / int(w/2))
         radius = int(w/3)-1
-        circle = list(Distance.points_in_circle(radius, (int(h/2), int(w/2))))
-        inner = list(Distance.points_in_circle(int(w/4)-1, (int(h/2),int(w/2))))
-        center = list(Distance.points_in_circle(int(w/6)-1, (int(h/2),int(w/2))))
+        border = list(Distance.points_in_circle(radius, center))
+        circle = list(Distance.points_in_circle(int(w/4)-1, center))
 
         for y in range(h):
             for x in range(w):
-                yield Npc.get_pixel((x, y), circle, inner, center)
+                yield Npc.get_pixel((x, y), center, circle, border)
 
-    def get_pixel(point, circle, inner, center):
-        if point in center:
-            return {'r': 240, 'g': 220, 'b': 0, 'a': 1}
-        if point in inner:
-            return {'r': 240, 'g': 190, 'b': 0, 'a': 1}
+    def get_pixel(point, center, circle, border):
+        if point not in border:
+            return {'r': 0, 'g': 0, 'b': 0, 'a': 0}
         if point in circle:
-            return {'r': 0, 'g': 0, 'b': 0, 'a': 1}
-        return {'r': 0, 'g': 0, 'b': 0, 'a': 0}
+            return Npc.gradient(point, center)
+        return {'r': 0, 'g': 0, 'b': 0, 'a': 1}
+
+    def gradient(point, center):
+        x = Navigator.distance(point, center)
+        scalar = 1 / (x/2 + 1)
+        r = 200 + 50 * scalar
+        g = 150 + 50 * scalar
+        b = 50 * scalar
+        return {'r': r, 'g': g, 'b': b, 'a': 1}
 
     def get_state(self, for_player):
         if self.templates:
