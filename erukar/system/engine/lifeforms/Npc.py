@@ -18,7 +18,7 @@ class Npc(Lifeform):
 
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
-        center = (int(h/2) / int(w/2))
+        center = (int(h/2), int(w/2))
         radius = int(w/3)-1
         border = list(Distance.points_in_circle(radius, center))
         circle = list(Distance.points_in_circle(int(w/4)-1, center))
