@@ -13,8 +13,9 @@ class Npc(Lifeform):
         self.name = Namer.random()
         self.inactive_templates = templates
         self.disposition_modifiers = {}
-        if conversation:
-            self.conversation = __import__(conversation).create(self)
+        self.conversation = __import__(conversation).create(self)\
+            if conversation\
+            else None
 
     def generate_tile(self, dimensions, tile_id):
         h, w = dimensions
@@ -37,28 +38,37 @@ class Npc(Lifeform):
     def gradient(point, center):
         x = Navigator.distance(point, center)
         scalar = 1 / (x/4 + 1)
-        r = 160 + int(90 * scalar)
-        g = 130 + int(70 * scalar)
-        b = int(50 * scalar)
-        return {'r': r, 'g': g, 'b': b, 'a': 1}
+        return {
+            'r': 160 + int(90 * scalar),
+            'g': 130 + int(70 * scalar),
+            'b': int(50 * scalar),
+            'a': 1
+        }
 
     def get_state(self, for_player):
         if self.templates:
             return self.templates[0].get_state(for_player)
         return {}
 
-    def template(self, template_type):
-        return next((x for x in self.templates if isinstance(x, template_type)), None)
+    def template(self, _type):
+        for template in self.templates:
+            if isinstance(template, _type):
+                return template
 
     def use_standard_inventory(self):
         for template in self.templates:
             self.inventory += template.standard_inventory()
 
     def disposition_for(self, target):
-        bonus = target.disposition_bonuses(self) if isinstance(target, Lifeform) else 0
+        bonus = self.disposition_bonuses(target)
         if target in self.disposition_modifiers:
             bonus += self.disposition_modifiers[target]
         return bonus
+
+    def disposition_bonuses(self, target):
+        if isinstance(target, Lifeform):
+            return target.disposition_bonuses(self)
+        return 0
 
     def player_stop(self, player):
         if self.conversation:

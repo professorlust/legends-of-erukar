@@ -30,5 +30,5 @@ class Chunk:
         dungeon.add_actor(key, (x+1, y+4))
 
         dungeon.add_door(door, (x+1, y+3))
-        to_izeth  = TransitionPiece((0, -2, 2), "IzethCitadel1F")
+        to_izeth  = TransitionPiece((0, -2, 2), "IcamoreCrypts1F")
         dungeon.add_transition(to_izeth, (x, y))

@@ -21,7 +21,7 @@ dungeon.apply_tiles_on_closed_space(closed_space, erukar.content.StoneBricks())
 dungeon.apply_tiles_on_closed_space(columns, erukar.content.StoneWall())
 
 dungeon.spawn_coordinates = [(1,1)]
-transition_piece = TransitionPiece("IzethCitadel1F", (0, 3))
+transition_piece = TransitionPiece("IcamoreCrypts1F", (0, 3))
 dungeon.add_transition(transition_piece, (1,1))
 
 dungeon.generate_tiles(TileGenerator(dungeon))

@@ -85,7 +85,7 @@ def create_crypts_of_icamore(region):
 
     terrace = Location(sector)
     terrace.is_named = True
-    terrace.name = 'Izeth Citadel Terrace'
+    terrace.name = 'Icamore Crypts Terrace'
     terrace.chunks = [Chunk()]
     sector.locations.add(terrace)
 
@@ -109,13 +109,13 @@ def create_tomb(region):
 
 def create_izeth_citadel_1f(region):
     sector = Sector(region)
-    sector.name = 'Izeth Citadel 1F'
-    sector.set_coordinates("IzethCitadel1F")
+    sector.name = 'Icamore Crypts'
+    sector.set_coordinates("IcamoreCrypts1F")
 
     citadel_1f = Location(sector)
     citadel_1f.is_named = True
-    citadel_1f.name = 'Izeth Citadel 1F'
-    citadel_1f.dungeon_file_name = 'IzethCitadel1F'
+    citadel_1f.name = 'Icamore Crypts 1F'
+    citadel_1f.dungeon_file_name = 'IcamoreCrypts1F'
     sector.locations.add(citadel_1f)
 
     return sector
