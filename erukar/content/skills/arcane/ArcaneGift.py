@@ -1,27 +1,20 @@
 from erukar.system.engine import Skill
 
-class ArcaneGift(Skill):
-    '''
-    The player is able to tap into sources of arcane energy. There is no cap on the levels for this
-    skill, but the levels provide diminishing returns. Arcane Energy always regenerates at 5% of max
-    per turn
-    '''
+
+class ArcaneEnergy(Skill):
     Name = 'Arcane Gift'
+    Current = 'Grants {} Arcane Energy to be used as an Arcane Source'
+
     def current_level_description(self):
-        return 'Grants {} Arcane Energy to be used as an Arcane Source'.format(self.arcane_energy())
+        return self.Current.format(self.arcane_energy())
 
     def next_level_description(self):
-        next_level = ArcaneGift.energy_at_level(self.level+1) - self.arcane_energy()
-        return '+{} Arcane Energy'.format(next_level)
+        next_level = ArcaneEnergy.energy_at_level(self.level+1)
+        diff = next_level - self.arcane_energy()
+        return '+{} Arcane Energy'.format(diff)
 
     def arcane_energy(self):
-        '''
-        Level  1 -  4: +25 Arcane Energy
-        Level  5 -  9: +20 Arcane Energy
-        Level 10 - 19: +10 Arcane Energy
-        Level 20+    :  +5 Arcane Energy
-        '''
-        return ArcaneGift.energy_at_level(self.level)
+        return ArcaneEnergy.energy_at_level(self.level)
 
     def energy_at_level(level):
         if level < 5:
@@ -36,5 +29,4 @@ class ArcaneGift(Skill):
         skilled.maximum_arcane_energy = self.maximum_arcane_energy
 
     def maximum_arcane_energy(self):
-        return ArcaneGift.energy_at_level(self.level)
-
+        return ArcaneEnergy.energy_at_level(self.level)
