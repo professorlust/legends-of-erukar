@@ -1,7 +1,7 @@
 from erukar.system.engine import Skill
 
 
-class ArcaneEnergy(Skill):
+class ArcaneGift(Skill):
     Name = 'Arcane Gift'
     Current = 'Grants {} Arcane Energy to be used as an Arcane Source'
 
@@ -9,12 +9,12 @@ class ArcaneEnergy(Skill):
         return self.Current.format(self.arcane_energy())
 
     def next_level_description(self):
-        next_level = ArcaneEnergy.energy_at_level(self.level+1)
+        next_level = ArcaneGift.energy_at_level(self.level+1)
         diff = next_level - self.arcane_energy()
         return '+{} Arcane Energy'.format(diff)
 
     def arcane_energy(self):
-        return ArcaneEnergy.energy_at_level(self.level)
+        return ArcaneGift.energy_at_level(self.level)
 
     def energy_at_level(level):
         if level < 5:
@@ -29,4 +29,4 @@ class ArcaneEnergy(Skill):
         skilled.maximum_arcane_energy = self.maximum_arcane_energy
 
     def maximum_arcane_energy(self):
-        return ArcaneEnergy.energy_at_level(self.level)
+        return ArcaneGift.energy_at_level(self.level)
