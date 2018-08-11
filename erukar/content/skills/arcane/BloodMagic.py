@@ -56,10 +56,6 @@ class BloodMagic(Skill):
             n_pool
         )
 
-    def apply_to(self, skilled):
-        if self not in skilled.secondary_energy_sources:
-            skilled.secondary_energy_sources.append(self)
-
     def create_energy(self, target):
         health = self.health_consumed()
         if health >= target.health:
