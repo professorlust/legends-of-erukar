@@ -176,3 +176,7 @@ class Enemy(Lifeform, Indexer):
     def on_start(self, world):
         self.ai_module.on_start(world)
         super().on_start(world)
+
+    def tick(self, cmd):
+        super().tick(cmd)
+        self.ai_module.tick(cmd)

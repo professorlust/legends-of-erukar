@@ -1,20 +1,14 @@
-from erukar.system.engine.inventory import FinesseWeapon
-import numpy as np
+from erukar.system.engine.inventory import MartialWeapon
 
 
-class Claws(FinesseWeapon):
+class Claws(MartialWeapon):
     IsInteractible = False
     Probability = 0
     BaseName = "Claws"
     EssentialPart = "points"
-
-    # Damage
-    DamageRange = [1, 5]
-    DamageType = "slashing"
-    DamageModifier = "strength"
-
-    # Distribution
-    Distribution = np.random.uniform
-    DistributionProperties = ()
     CannotDrop = True
     AttackRange = 1
+
+    SlashingPercentage = 0.5
+    PiercingPercentage = 0.35
+    BludgeoningPercentage = 0.15

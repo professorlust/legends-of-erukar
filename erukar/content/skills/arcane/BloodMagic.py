@@ -28,14 +28,14 @@ class BloodMagic(Skill):
         return BloodMagic._energy(self.level)
 
     def _health(level):
-        if level <= 10:
-            return 10 - level/2
-        return 5.0
+        return 50
 
     def _energy(level):
-        if level < 10:
-            return (level+1) * 2
-        return 19.75 + level/4
+        if level <= 5:
+            return 0.2*level
+        if level <= 15:
+            return 0.75 + 0.05*level
+        return 1.35 + 0.01*level
 
     def next_level_description(self):
         n_health = BloodMagic._health(self.level + 1)

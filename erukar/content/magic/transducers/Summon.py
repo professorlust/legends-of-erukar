@@ -1,6 +1,6 @@
 from erukar.system.engine import Transducer, SummonAI
-from erukar.content import Skeleton
 from erukar.ext.math import Distance
+import erukar
 import random
 
 
@@ -11,7 +11,7 @@ class Summon(Transducer):
         'deferrence, ready to serve you!'
 
     def transduce(self, instigator, target, cmd, mutator):
-        summon = mutator.get('creature_class', Skeleton)()
+        summon = mutator.get('creature_class', erukar.Skeleton)()
         random_location = self.get_summon_location(instigator, cmd, mutator)
         cmd.added_characters.append(summon)
         cmd.world.add_actor(summon, random_location)
@@ -21,7 +21,7 @@ class Summon(Transducer):
         return mutator
 
     def get_summon_type(self, **kwargs):
-        return Skeleton
+        return erukar.Skeleton
 
     def get_summon_location(self, instigator, cmd, mutator):
         return random.choice(list(Distance.direct_los(

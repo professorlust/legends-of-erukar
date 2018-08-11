@@ -10,6 +10,7 @@ from .modifiers.Pyromorph import Pyromorph
 from .selectors.RadialArea import RadialArea
 
 from .sources.ArcaneEnergySource import ArcaneEnergySource
+from .sources.BloodSource import BloodSource
 from .sources.PotionSource import PotionSource
 from .sources.GreaterPotionSource import GreaterPotionSource
 
@@ -34,6 +35,7 @@ __all__ = [
     'Pyromorph',
     'RadialArea',
     'ArcaneEnergySource',
+    'BloodSource',
     'PotionSource',
     'GreaterPotionSource',
     'AddDeflection',
