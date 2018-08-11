@@ -35,6 +35,7 @@ class MalformedDemon(Enemy):
         self.inventory = [self.left, self.right]
 
     def init_skills(self):
+        self.skills.append(erukar.SpellCasting())
         self.skills.append(erukar.BloodMagic())
 
 
