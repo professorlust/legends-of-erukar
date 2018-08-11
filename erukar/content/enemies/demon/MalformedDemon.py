@@ -20,7 +20,7 @@ class MalformedDemon(Enemy):
         self.acuity = 1
 
     def init_personality(self):
-        self.ai_module = BasicAI(self)
+        self.ai_module = MalformedDemonAi(self)
         self.str_ratio = 0.4
         self.dex_ratio = 0.2
         self.vit_ratio = 0.1
