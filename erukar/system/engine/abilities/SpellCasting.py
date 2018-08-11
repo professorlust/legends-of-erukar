@@ -12,4 +12,4 @@ class SpellCasting(TargetedAbility):
 
     def perform(self, cmd):
         spell = cmd.args.get('spell', None)
-        spell.cmd_execute(self)
+        spell.cmd_execute(cmd)
