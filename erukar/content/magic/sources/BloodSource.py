@@ -10,14 +10,17 @@ class BloodSource(EnergySource):
         '{} damage in the process!'
 
     def source(self, caster, cmd, mutator):
+        target = cmd.args.get('interaction_target', caster)
         if not caster.has_skill(erukar.BloodMagic):
             cmd.log(caster, self.NotSkilled)
+            cmd.log(target, self.NotSkilled)
             return False, None
         bloodmagic = caster.get_skill(erukar.BloodMagic)
         mutator.allocate_energy(caster)
         cost = mutator.allocated / bloodmagic.energy_created()
         if caster.health <= int(cost):
-            cmd.append_result(caster.uid, self.Failed)
+            cmd.log(caster, self.Failed)
+            cmd.log(target, self.Failed)
             return False, None
         caster.take_damage(cost, caster)
         mutator.confirm()
