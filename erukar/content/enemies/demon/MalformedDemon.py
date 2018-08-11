@@ -59,7 +59,8 @@ class MalformedDemonAi(BasicAI):
     def do_pyroblast(self):
         self.pyroblast_cooldown = self.PyroblastCooldown
         spell, kwargs = MalformedDemonAi.pyroblast()
-        for _, enemy in self.check_for_enemies_in_range(self.PyroblastRange):
+        for e_tuple in self.check_for_enemies_in_range(self.PyroblastRange):
+            enemy = e_tuple[-1]
             cmd = self.create_command(ActivateAbility)
             cmd.args['abilityModule'] = SpellCasting.__module__
             cmd.args['interaction_target'] = enemy.uuid
