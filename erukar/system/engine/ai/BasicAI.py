@@ -69,3 +69,6 @@ class BasicAI(AiModule):
 
     def max_move_speed(self):
         return self.puppet.move_speed() * self.puppet.action_points()
+
+    def tick(self, cmd):
+        pass
