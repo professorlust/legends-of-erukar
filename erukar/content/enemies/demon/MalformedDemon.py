@@ -66,6 +66,10 @@ class MalformedDemonAi(BasicAI):
             cmd.args['interaction_target'] = enemy.uuid
             cmd.args['spell'] = spell
             cmd.args['kwargs'] = kwargs
+            cmd.obs(
+                self.puppet.coordinates,
+                'Casting Pyroblast at {}!'.format(enemy.alias())
+            )
             return cmd
 
     def tick(self, *_):
