@@ -40,6 +40,7 @@ class MalformedDemon(Enemy):
 
 class MalformedDemonAi(BasicAI):
     PyroblastCooldown = 3
+    PyroblastRange = 4
 
     def __init__(self, puppet):
         super().__init__(puppet)
