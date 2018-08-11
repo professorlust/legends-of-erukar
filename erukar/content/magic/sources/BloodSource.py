@@ -10,10 +10,10 @@ class BloodSource(EnergySource):
         '{} damage in the process!'
 
     def source(self, caster, cmd, mutator):
-        if not caster.has_skill(erukar.content.skills.arcane.BloodMagic):
+        if not caster.has_skill(erukar.BloodMagic):
             cmd.log(caster, self.NotSkilled)
             return False, None
-        bloodmagic = caster.get_skill(erukar.content.skills.arcane.BloodMagic)
+        bloodmagic = caster.get_skill(erukar.BloodMagic)
         mutator.allocate_energy(caster)
         cost = mutator.allocated / bloodmagic.energy_created()
         if caster.health <= int(cost):

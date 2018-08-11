@@ -2,6 +2,7 @@ from erukar.system.engine import BasicAI, Enemy, SpellInstance
 from erukar.system.engine import SpellCasting, ActivateAbility
 from erukar.content.inventory import Claws
 from erukar.content.magic import BloodSource, Pyromorph, InflictDamage
+import erukar
 
 
 class MalformedDemon(Enemy):
@@ -32,6 +33,9 @@ class MalformedDemon(Enemy):
         self.left = Claws()
         self.right = Claws()
         self.inventory = [self.left, self.right]
+
+    def init_skills(self):
+        self.skills.append(erukar.BloodMagic())
 
 
 class MalformedDemonAi(BasicAI):

@@ -45,8 +45,12 @@ class Enemy(Lifeform, Indexer):
         chars = string.ascii_uppercase + string.digits
         self.uid = ''.join(random.choice(chars) for x in range(128))
         self.init_inventory()
+        self.init_skills()
 
     def init_stats(self):
+        pass
+
+    def init_skills(self):
         pass
 
     def init_personality(self):
