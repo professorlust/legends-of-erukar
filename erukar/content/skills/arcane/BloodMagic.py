@@ -32,7 +32,7 @@ class BloodMagic(Skill):
 
     def _energy(level):
         if level <= 5:
-            return 0.2*level
+            return 0.5 + 0.1*level
         if level <= 15:
             return 0.75 + 0.05*level
         return 1.35 + 0.01*level

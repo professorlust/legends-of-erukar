@@ -36,7 +36,9 @@ class MalformedDemon(Enemy):
 
     def init_skills(self):
         self.skills.append(erukar.SpellCasting())
-        self.skills.append(erukar.BloodMagic())
+        bloodmagic = erukar.BloodMagic()
+        bloodmagic.level = 3
+        self.skills.append(bloodmagic)
 
 
 class MalformedDemonAi(BasicAI):
