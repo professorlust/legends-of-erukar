@@ -16,7 +16,7 @@ class InflictDamage(Transducer):
         return mutator
 
     def append_results(self, cmd, instigator, target, damages):
-        damage = ', '.join('{} {}'.format(*x) for x in damages)
+        damage = ', '.join('{} {}'.format(int(damages[k]), k) for k in damages)
         if instigator is target:
             cmd.log(target.uid, self.SuccessSelf.format(damage))
             return
@@ -26,7 +26,7 @@ class InflictDamage(Transducer):
             target.alias()
         ))
         # Target result
-        cmd.log(target, self.SuccessInstigator.format(
+        cmd.log(target, self.SuccessTarget.format(
             instigator.alias(),
             damage
         ))
