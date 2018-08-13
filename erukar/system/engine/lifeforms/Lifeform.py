@@ -288,7 +288,8 @@ class Lifeform(ErukarActor):
         total_damage = sum(unmitigated[_type] for _type in unmitigated)
         self.take_damage(total_damage, attacker)
         self.damage_equipment(undeflected, unmitigated)
-        attacker.damage_weapon(weapon, undeflected, unmitigated)
+        if weapon:
+            attacker.damage_weapon(weapon, undeflected, unmitigated)
         return {
             'raw': damages,
             'post_deflection': undeflected,
