@@ -10,7 +10,7 @@ class InflictDamage(Transducer):
     def transduce(self, instigator, target, cmd, mutator):
         damage_type = mutator.get('damage_type', 'arcane')
         damage = {}
-        damage[damage_type] = random.uniform(*mutator.power_range(3.5, 6.5))
+        damage[damage_type] = random.uniform(*mutator.power_range(7.5, 15.0))
         result = target.apply_damage(instigator, None, damage)
         self.append_results(cmd, instigator, target, result['post_mitigation'])
         return mutator
