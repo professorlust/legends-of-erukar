@@ -40,6 +40,9 @@ class MalformedDemon(Enemy):
         bloodmagic.level = 3
         self.skills.append(bloodmagic)
 
+    def allocated_arcane_energy(self):
+        return 20
+
 
 class MalformedDemonAi(BasicAI):
     PyroblastCooldown = 3
@@ -61,7 +64,6 @@ class MalformedDemonAi(BasicAI):
 
     def do_pyroblast(self):
         self.pyroblast_cooldown = self.PyroblastCooldown
-        self.puppet.allocated_arcane_energy = 20
         spell, kwargs = MalformedDemonAi.pyroblast()
         for e_tuple in self.check_for_enemies_in_range(self.PyroblastRange):
             enemy = e_tuple[-1]
