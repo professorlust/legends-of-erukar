@@ -5,6 +5,9 @@ class SpellMutator:
         self.args = kwargs
         self.evasion = None
 
+    def append_evasion_results(self, caster, target, cmd, mutator):
+        pass
+
     def allocate_energy(self, caster):
         self.allocated = caster.allocated_arcane_energy()
 

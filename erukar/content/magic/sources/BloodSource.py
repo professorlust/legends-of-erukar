@@ -6,7 +6,7 @@ class BloodSource(EnergySource):
     EnergyToHealthRatio = 2.5
     NotSkilled = 'You do not possess the ability to use blood magic.'
     Failed = 'You are too weak to draw enough blood for this spell!'
-    ConsumeLife = 'You channel energy from your own blood, taking'\
+    ConsumeLife = 'You channel energy from your own blood, taking '\
         '{} damage in the process!'
 
     def source(self, caster, cmd, mutator):
@@ -37,6 +37,6 @@ class BloodSource(EnergySource):
         cmd.log(caster, self.ConsumeLife.format(cost))
         cmd.obs(
             caster.coordinates,
-            self.ConsumeLife.format(cost)
+            self.ConsumeLife.format(int(cost))
         )
         return True, mutator or SpellMutator()

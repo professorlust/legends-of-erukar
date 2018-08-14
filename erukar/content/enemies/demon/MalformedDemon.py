@@ -2,6 +2,7 @@ from erukar.system.engine import BasicAI, Enemy, SpellInstance
 from erukar.system.engine import SpellCasting, ActivateAbility
 from erukar.content.inventory import Claws
 from erukar.content.magic import BloodSource, Pyromorph, InflictDamage
+from erukar.content.magic import BoltProjectile
 import erukar
 
 
@@ -85,6 +86,7 @@ class MalformedDemonAi(BasicAI):
     def pyroblast():
         instance = SpellInstance([
             BloodSource,
+            BoltProjectile,
             Pyromorph,
             InflictDamage
         ])

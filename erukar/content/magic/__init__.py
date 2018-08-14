@@ -8,6 +8,7 @@ from .modifiers.Kinetomorph import Kinetomorph
 from .modifiers.Pyromorph import Pyromorph
 
 from .selectors.RadialArea import RadialArea
+from .selectors.BoltProjectile import BoltProjectile
 
 from .sources.ArcaneEnergySource import ArcaneEnergySource
 from .sources.BloodSource import BloodSource
@@ -33,6 +34,7 @@ __all__ = [
     'Hydromorph',
     'Kinetomorph',
     'Pyromorph',
+    'BoltProjectile',
     'RadialArea',
     'ArcaneEnergySource',
     'BloodSource',

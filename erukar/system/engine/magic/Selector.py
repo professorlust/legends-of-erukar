@@ -7,7 +7,7 @@ class Selector(MagicEffect):
     the spell affect multiple targets.
     '''
     def evasion(self, caster, target, cmd, mutator):
-        return None
+        return True
 
     def applicable_targets(self, caster, cmd, mutator):
         yield mutator.get('target')
