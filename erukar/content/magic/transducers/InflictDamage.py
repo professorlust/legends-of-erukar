@@ -8,7 +8,7 @@ class InflictDamage(Transducer):
     SuccessInstigator = 'You inflict {} damage upon {}!'
 
     def transduce(self, caster, target, cmd, mutator):
-        if target is not caster and not mutator.evasion:
+        if target is not caster and not mutator.was_evaded:
             cmd.log(target, 'No projectile created for this spell!')
             cmd.log(caster, 'No projectile created for this spell!')
             return mutator
