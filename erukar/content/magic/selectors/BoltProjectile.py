@@ -13,7 +13,7 @@ class BoltProjectile(Selector):
     TheyWereHit = 'You fire a bolt of {_type} energy at {target} and '\
         'hit {target_object_pronoun}!'
 
-    def was_evaded(self, caster, target, cmd, mutator):
+    def was_evaded(caster, target, cmd, mutator):
         acu = caster
         adj = 25 - mutator.energy*0.5
         roll = int(random.uniform(*mutator.power_range(5, 25)))
