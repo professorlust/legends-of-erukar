@@ -3,7 +3,7 @@ class SpellMutator:
         self.allocated = 0
         self.energy = 0
         self.args = kwargs
-        self.evasion = None
+        self.was_evaded = None
 
     def append_evasion_results(self, caster, target, cmd, mutator):
         pass
