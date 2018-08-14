@@ -8,6 +8,10 @@ class InflictDamage(Transducer):
     SuccessInstigator = 'You inflict {} damage upon {}!'
 
     def transduce(self, instigator, target, cmd, mutator):
+        if target is not instigator and not mutator.evasion:
+            cmd.log(target, 'No projectile created for this spell!')
+            cmd.log(instigator, 'No projectile created for this spell!')
+            return mutator
         damage_type = mutator.get('damage_type', 'arcane')
         damage = {}
         damage[damage_type] = random.uniform(*mutator.power_range(7.5, 15.0))

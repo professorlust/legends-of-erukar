@@ -3,6 +3,7 @@ class SpellMutator:
         self.allocated = 0
         self.energy = 0
         self.args = kwargs
+        self.evasion = None
 
     def allocate_energy(self, caster):
         self.allocated = caster.allocated_arcane_energy()
