@@ -14,7 +14,7 @@ class BoltProjectile(Selector):
         'hit {target_object_pronoun}!'
 
     def was_evaded(self, mutator, caster, target, cmd):
-        acu = caster
+        acu = caster.acuity
         adj = 25 - mutator.energy*0.5
         roll = int(random.uniform(*mutator.power_range(5, 25)))
         total = roll + adj + acu
