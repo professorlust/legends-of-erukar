@@ -9,12 +9,10 @@ class InflictDamage(Transducer):
 
     def transduce(self, caster, target, cmd, mutator):
         if target is not caster and not mutator.was_evaded:
-            cmd.log(target, 'No projectile created for this spell!')
             cmd.log(caster, 'No projectile created for this spell!')
             return mutator
         evaded = mutator.was_evaded(mutator, caster, target, cmd)
         if evaded:
-            mutator.append_evasion_results(caster, target, cmd, mutator)
             return mutator
         damage_type = mutator.get('damage_type', 'arcane')
         damage = {}

@@ -18,7 +18,11 @@ class BoltProjectile(Selector):
         adj = 25 - mutator.energy*0.5
         roll = int(random.uniform(*mutator.power_range(5, 25)))
         total = roll + adj + acu
-        return total <= target.evasion()
+        evaded = total <= target.evasion()
+        if evaded:
+            BoltProjectile.append_evasion_results(caster, target, cmd, mutator)
+        else:
+            BoltProjectile.append_hit_results(caster, target, cmd, mutator)
 
     def append_evasion_results(caster, target, cmd, mutator):
         damage_type = mutator.get('damage_type', 'arcane')
@@ -32,6 +36,19 @@ class BoltProjectile(Selector):
         }
         cmd.log(caster, BoltProjectile.TheyEvaded.format(**args))
         cmd.log(target, BoltProjectile.YouEvaded.format(**args))
+
+    def append_hit_results(caster, target, cmd, mutator):
+        damage_type = mutator.get('damage_type', 'arcane')
+        args = {
+            'caster': caster.alias(),
+            'target': target.alias(),
+            '_type': damage_type,
+            '_type_descriptor': BoltProjectile.descriptor(damage_type),
+            'target_pronoun': 'he',
+            'target_object_pronoun': 'him'
+        }
+        cmd.log(caster, BoltProjectile.TheyWereHit.format(**args))
+        cmd.log(target, BoltProjectile.YouWereHit.format(**args))
 
     def descriptor(_type):
         if _type == 'fire':
