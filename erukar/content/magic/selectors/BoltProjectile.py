@@ -23,6 +23,7 @@ class BoltProjectile(Selector):
             BoltProjectile.append_evasion_results(caster, target, cmd, mutator)
         else:
             BoltProjectile.append_hit_results(caster, target, cmd, mutator)
+        return evaded
 
     def append_evasion_results(caster, target, cmd, mutator):
         damage_type = mutator.get('damage_type', 'arcane')
