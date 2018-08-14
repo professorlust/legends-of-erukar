@@ -12,7 +12,8 @@ class InflictDamage(Transducer):
             cmd.log(target, 'No projectile created for this spell!')
             cmd.log(caster, 'No projectile created for this spell!')
             return mutator
-        evaded = mutator.was_evaded(caster, target, cmd, mutator)
+        _evaded = mutator.was_evaded
+        evaded = _evaded(caster, target, cmd, mutator)
         if evaded:
             mutator.append_evasion_results(caster, target, cmd, mutator)
             return mutator
