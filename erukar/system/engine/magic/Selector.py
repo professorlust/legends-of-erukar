@@ -10,7 +10,7 @@ class Selector(MagicEffect):
         return True
 
     def applicable_targets(self, caster, cmd, mutator):
-        yield mutator.get('target')
+        yield mutator.get('target', cmd.args.get('interaction_target'))
 
     def adjust_energy(self, num_targets, mutator):
         mutator.energy /= max(1, num_targets)
