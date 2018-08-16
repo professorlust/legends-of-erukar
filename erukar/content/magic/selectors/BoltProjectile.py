@@ -3,51 +3,41 @@ import random
 
 
 class BoltProjectile(Selector):
-    YouEvaded = '{caster} creates a ball of {_type_descriptor} and '\
-        'hurls it at you as a bolt of {_type} energy, but you are '\
-        'able to dodge it just in time.'
-    TheyEvaded = 'You fire a bolt of {_type} energy at {target}, but '\
-        '{target_pronoun} is able to dodge it just in time.'
-    YouWereHit = '{caster} fires a bolt of {_type_descriptor} at you, '\
-        'slamming you with {_type} energy!'
-    TheyWereHit = 'You fire a bolt of {_type} energy at {target} and '\
-        'hit {target_object_pronoun}!'
+    YouBasic = '{caster} channels {source} to fire a bolt of '\
+        '{type} energy at you ({roll} attack).'
+    TheyBasic = 'You channel {source} to fire a bolt of {type} '\
+        'energy at {target} ({roll} attack).'
+    YouWereHit = 'The bolt hits you!'
+    TheyWereHit = 'The bolt hits!'
+    YouEvaded = 'You dodge the bolt!'
+    TheyEvaded = 'It dodges the bolt.'
 
     def was_evaded(self, mutator, caster, target, cmd):
         acu = caster.acuity
         adj = 25 - mutator.energy*0.5
         roll = int(random.uniform(*mutator.power_range(5, 25)))
         total = roll + adj + acu
-        evaded = total <= target.evasion()
-        if evaded:
-            BoltProjectile.append_evasion_results(caster, target, cmd, mutator)
-        else:
-            BoltProjectile.append_hit_results(caster, target, cmd, mutator)
-        return evaded
+        BoltProjectile.append_results(caster, target, cmd, mutator, total)
+        return BoltProjectile._evaded(total, target)
 
-    def append_evasion_results(caster, target, cmd, mutator):
+    def _evaded(total, target):
+        return total <= target.evasion()
+
+    def append_results(caster, target, cmd, mutator, roll):
         damage_type = mutator.get('damage_type', 'arcane')
         args = {
+            'source': 'blood magic',
             'caster': caster.alias(),
             'target': target.alias(),
-            '_type': damage_type,
-            '_type_descriptor': BoltProjectile.descriptor(damage_type),
-            'target_pronoun': 'he',
-            'target_object_pronoun': 'him'
+            'type': damage_type,
+            'roll': roll
         }
-        cmd.log(caster, BoltProjectile.TheyEvaded.format(**args))
-        cmd.log(target, BoltProjectile.YouEvaded.format(**args))
-
-    def append_hit_results(caster, target, cmd, mutator):
-        damage_type = mutator.get('damage_type', 'arcane')
-        args = {
-            'caster': caster.alias(),
-            'target': target.alias(),
-            '_type': damage_type,
-            '_type_descriptor': BoltProjectile.descriptor(damage_type),
-            'target_pronoun': 'he',
-            'target_object_pronoun': 'him'
-        }
+        cmd.log(caster, BoltProjectile.YouBasic.format(**args))
+        cmd.log(target, BoltProjectile.TheyBasic.format(**args))
+        if BoltProjectile._evaded(roll, target):
+            cmd.log(caster, BoltProjectile.TheyEvaded.format(**args))
+            cmd.log(target, BoltProjectile.YouEvaded.format(**args))
+            return
         cmd.log(caster, BoltProjectile.TheyWereHit.format(**args))
         cmd.log(target, BoltProjectile.YouWereHit.format(**args))
 
