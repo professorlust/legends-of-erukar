@@ -3,9 +3,9 @@ import random
 
 
 class BoltProjectile(Selector):
-    YouBasic = '{caster} channels {source} to fire a bolt of '\
+    TheyBasic = '{caster} channels {source} to fire a bolt of '\
         '{type} energy at you ({roll} attack).'
-    TheyBasic = 'You channel {source} to fire a bolt of {type} '\
+    YouBasic = 'You channel {source} to fire a bolt of {type} '\
         'energy at {target} ({roll} attack).'
     YouWereHit = 'The bolt hits you!'
     TheyWereHit = 'The bolt hits!'

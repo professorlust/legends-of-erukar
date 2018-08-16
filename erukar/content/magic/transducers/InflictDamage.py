@@ -3,9 +3,8 @@ import random
 
 
 class InflictDamage(Transducer):
-    SuccessSelf = 'You inflict {} damage to yourself!'
-    SuccessTarget = '{} inflicts {} damage upon you!'
-    SuccessInstigator = 'You inflict {} damage upon {}!'
+    SuccessTarget = 'You take {} damage.'
+    SuccessCaster = '{} takes {} damage.'
 
     def transduce(self, caster, target, cmd, mutator):
         if target is not caster and not mutator.was_evaded:
@@ -23,16 +22,6 @@ class InflictDamage(Transducer):
 
     def append_results(self, cmd, caster, target, damages):
         damage = ', '.join('{} {}'.format(int(damages[k]), k) for k in damages)
-        if caster is target:
-            cmd.log(target.uid, self.SuccessSelf.format(damage))
-            return
-        # Instigator result
-        cmd.log(caster, self.SuccessInstigator.format(
-            damage,
-            target.alias()
-        ))
-        # Target result
-        cmd.log(target, self.SuccessTarget.format(
-            caster.alias(),
-            damage
-        ))
+        if caster is not target:
+            cmd.log(caster, self.SuccessCaster.format(target.alias(), damage))
+        cmd.log(target, self.SuccessTarget.format(caster.alias(), damage))
