@@ -46,7 +46,6 @@ class SpellInstance:
         for target in all_targets:
             mut_copy = mutator.copy()
             mut_copy.was_evaded = selector.was_evaded
-            mut_copy.append_evasion_results = selector.append_evasion_results
             selector.adjust_energy(len(all_targets), mut_copy)
             subinstance = SpellInstance(new_chain)
             subinstance.execute(caster, target, cmd, mut_copy)
