@@ -245,7 +245,7 @@ class Attack(TargetedAbility):
             'attacker': player.alias(),
             'weapon': weapon.alias(),
             'target': target.alias(),
-            'final': Attack.final_damages(result),
+            'final': result['total'],
             'total': Attack.total(result),
             'roll': self.roll,
             'protections': Attack.protections(result)
