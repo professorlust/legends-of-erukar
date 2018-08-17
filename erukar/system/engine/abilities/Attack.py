@@ -219,7 +219,11 @@ class Attack(TargetedAbility):
                 yield _type, (pre - post)
 
     def deflected(result):
-        return '[[deflected]]'
+        for _type in result['raw']:
+            pre = result['raw'][_type]
+            post = result['post_deflection'].get(_type, 0)
+            if post < pre:
+                yield _type, (pre - post)
 
     def total(result):
         return result['total']
@@ -229,7 +233,8 @@ class Attack(TargetedAbility):
         mit = Attack.mitigated(result)
         dfl = '' if not dfl else '{} deflected'.format(dfl)
         mit = '' if not mit else '{} mitigated'.format(mit)
-        return ', '.join(x for x in [dfl, mit] if x)
+        protections = ', '.join(x for x in [dfl, mit] if x)
+        return '' if not protections else ' ({})'.format(protections)
 
     def append_post_damage_strings(self, cmd, player, weapon, target, result):
         strs = {
