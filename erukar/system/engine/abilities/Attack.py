@@ -219,6 +219,10 @@ class Attack(TargetedAbility):
                 yield _type, (pre - post)
 
     def deflected(result):
+        _total = {k: v for k, v in Attack._deflected(result)}
+        return ', '.join(Damage.ordered(_total))
+
+    def _deflected(result):
         for _type in result['raw']:
             pre = result['raw'][_type]
             post = result['post_deflection'].get(_type, 0)
