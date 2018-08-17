@@ -12,33 +12,31 @@ class Attack(TargetedAbility):
     NoAmmo = 'The appropriate ammo for this weapon is not equipped!'
     OutOfRange = 'Target is outside of maximum range!'
     NotEnoughAP = 'Not enough action points!'
-    DidRoll = 'You swing your {weapon} at {target} with an attack roll '\
-        'of {roll}...'
-    RolledAt = '{attacker} swings a {weapon} at you with an attack roll '\
-        'of {roll}...'
-    Missed = '{target} moved too quickly, evading your attack! '\
-        '({evasion} Evasion vs {roll} Attack Roll)'
-    Dodged = 'You move faster than {attacker}\'s {weapon} and evade its '\
-        '{weapon}! ({evasion} Evasion) vs {roll} Attack Roll)'
-    SeeMiss = '{attacker} swings a {weapon} at {target}, but {target} '\
-        'dodges the attack!'
-    DidHit = 'Your attack swings true!'
-    GotHit = 'You can\'t dodge out of the way in time and are hit!'
-    SeeHit = '{attacker} hits {target} with a {weapon}!'
-    DealDamage = 'You deal {final} damage to {target}!'
-    TakeDamage = 'You take {total} ({final}) damage.'
-    DidNoDamage = 'Your attack deals no damage.'
-    TakeNoDamage = 'You take no damage.'
-    CauseDying = '{target} collapses, dying!'
-    BecomeDying = 'You collapse and are now dying...'
-    SeeDying = 'You see {target} collapse and start dying!'
-    KillTarget = 'You have killed {target}!'
-    BecomeKilled = 'You have been slain...'
-    SeeKill = '{target} has been slain!'
-    YouTotallyMitigate = 'Your armor totally mitigated {} damage'
-    YouPartiallyMitigate = 'Your armor partially mitigated {} damage.'
-    YouMixMitigate = 'Your armor totally mitigated {} damage and '\
-        'opartially mitigated {} damage.'
+    YouHit = 'You hit {target} with your {weapon} ({roll} attack), dealing '\
+        '{final} damage.{protections}'
+    YouHitNoDamage = 'You hit {target} with your {weapon} ({roll} attack), '\
+        'but deal no damage.{protections}'
+    YouCauseDying = '{target} slumps to the ground, dying!'
+    YouCauseDead = 'You have killed {target}!'
+    YouMiss = '{target} dodges your {weapon} attack ({roll} attack).'
+    YouAreHit = '{attacker} hits you with its {weapon} ({roll} attack), '\
+        'dealing {final} damage to you.{protections}'
+    YouAreHitNoDamage = '{attacker} hits you with its {weapon} ({roll} '\
+        'attack), but you take no damage.{protections}'
+    YouAreMissed = 'You evade {attacker}\'s {weapon} attack ({roll} attack).'
+    YouAreDying = 'You fall to the ground dying!'
+    YouAreDead = 'You have died...'
+    SeeHit = '{attacker} hits {target} with its {weapon} ({roll} attack), '\
+        'dealing {final} damage.'
+    SeeHitNoDamage = '{attacker} hits {target} with its {weapon} ({roll} '\
+        'attack), but it does no damage.'
+    SeeMiss = '{attacker} misses {target} with its {weapon} ({roll} attack).'
+    SeeDying = '{target} slumps to the ground, dying.'
+    SeeDead = '{target} has died.'
+
+    def __init__(self):
+        super().__init__()
+        self.roll = 0
 
     def valid_at(self, cmd, loc):
         player = cmd.args['player_lifeform']
@@ -105,14 +103,30 @@ class Attack(TargetedAbility):
         return result
 
     def perform_attack(self, cmd, player, weapon, target):
-        roll = self.calc_attack_roll(cmd, player, weapon, target)
-        if not self.attack_succeeded(cmd, player, weapon, target, roll):
+        self.roll = self.calc_attack_roll(cmd, player, weapon, target)
+        if not self.attack_succeeded(cmd, player, weapon, target):
+            self.log_miss(cmd, player, weapon, target)
             for modifier in self.possible_modifiers:
                 modifier.post_missed_attack(cmd, player, weapon, target)
             return cmd.succeed()
         for modifier in self.possible_modifiers:
             modifier.post_successful_attack(cmd, player, weapon, target)
         return cmd.succeed()
+
+    def log_miss(self, cmd, player, weapon, target):
+        args = {
+            'attacker': player.alias(),
+            'target': target.alias(),
+            'weapon': weapon.alias(),
+            'roll': self.roll
+        }
+        cmd.log(player, self.YouMiss.format(**args))
+        cmd.log(target, self.YouAreMissed.format(**args))
+        cmd.obs(
+            target.coordinates,
+            self.SeeMiss.format(**args),
+            exclude=[player, target]
+        )
 
     def post_successful_attack(self, cmd, player, weapon, target):
         self.do_damage(cmd, player, weapon, target)
@@ -171,46 +185,16 @@ class Attack(TargetedAbility):
         for mod in self.possible_modifiers:
             mod_name = 'modify_attack_roll'
             roll = mod.modify_element(mod_name, roll, cmd)
-        strings = {
-            'attacker': player.alias(),
-            'roll': roll,
-            'weapon': weapon.alias(),
-            'target': target.alias()
-        }
-        cmd.log(player, Attack.DidRoll.format(**strings))
-        cmd.log(target, Attack.RolledAt.format(**strings))
         return roll
 
-    def attack_succeeded(self, cmd, player, weapon, target, roll):
-        roll = target.on_check_for_hit(player, weapon, roll)
-        evasion = target.evasion()
-        strings = {
-            'attacker': player.alias(),
-            'target': target.alias(),
-            'weapon': weapon.alias(),
-            'roll': roll,
-            'evasion': evasion,
-        }
-        if roll <= evasion:
-            target.on_successful_dodge(player, weapon, roll)
-            player.on_missed_attack(target, weapon, roll)
-            cmd.log(player, self.Missed.format(**strings))
-            cmd.log(target, self.Dodged.format(**strings))
-            cmd.obs(
-                player.coordinates,
-                self.SeeMiss.format(**strings),
-                exclude=[player, target]
-            )
+    def attack_succeeded(self, cmd, player, weapon, target):
+        self.roll = target.on_check_for_hit(player, weapon, self.roll)
+        if self.roll <= target.evasion():
+            target.on_successful_dodge(player, weapon, self.roll)
+            player.on_missed_attack(target, weapon, self.roll)
             return False
-        target.on_failed_dodge(player, weapon, roll)
-        player.on_successful_attack(target, weapon, roll)
-        cmd.log(player, self.DidHit.format(**strings))
-        cmd.log(target, self.GotHit.format(**strings))
-        cmd.obs(
-            target.coordinates,
-            self.SeeHit.format(**strings),
-            exclude=[player, target]
-        )
+        target.on_failed_dodge(player, weapon, self.roll)
+        player.on_successful_attack(target, weapon, self.roll)
         return True
 
     def do_damage(self, cmd, player, weapon, target):
@@ -218,35 +202,21 @@ class Attack(TargetedAbility):
         for modifier in self.possible_modifiers:
             damage = modifier.modify_element('modify_damage', damage, cmd)
         result = target.apply_damage(player, weapon, damage)
-        Attack.append_post_damage_strings(cmd, player, weapon, target, result)
+        self.append_post_damage_strings(cmd, player, weapon, target, result)
 
     def final_damages(result):
         return ', '.join(Damage.ordered(result['post_mitigation']))
 
     def mitigated(result):
-        _total = {k: v for k, v in Attack._total_mitigation(result)}
-        _partial = {k: v for k, v in Attack._partial_mitigation(result)}
-        total_mit = ', '.join(Damage.ordered(_total))
-        partial_mit = ', '.join(Damage.ordered(_partial))
-        if len(total_mit) > 0:
-            if len(partial_mit) > 0:
-                return Attack.YouMixMitigate.format(total_mit, partial_mit)
-            return Attack.YouTotallyMitigate.format(total_mit)
-        return Attack.YouPartiallyMitigate.format(partial_mit)
+        _total = {k: v for k, v in Attack._mitigation(result)}
+        return ', '.join(Damage.ordered(_total))
 
-    def _total_mitigation(result):
-        mit_list = [*result['post_mitigation']]
+    def _mitigation(result):
         for _type in result['post_deflection']:
-            if _type not in mit_list:
-                amount = result['post_deflection'][_type]
-                yield _type, amount
-
-    def _partial_mitigation(result):
-        for _type in result['post_mitigation']:
-            deflected = result['post_deflection'][_type]
-            mitigated = result['post_mitigation'][_type]
-            if deflected > mitigated:
-                yield _type, deflected - mitigated
+            pre = result['post_deflection'][_type]
+            post = result['post_mitigation'].get(_type, 0)
+            if post < pre:
+                yield _type, (pre - post)
 
     def deflected(result):
         return '[[deflected]]'
@@ -254,25 +224,47 @@ class Attack(TargetedAbility):
     def total(result):
         return result['total']
 
-    def append_post_damage_strings(cmd, player, weapon, target, result):
+    def protections(result):
+        dfl = Attack.deflected(result)
+        mit = Attack.mitigated(result)
+        dfl = '' if not dfl else '{} deflected'.format(dfl)
+        mit = '' if not mit else '{} mitigated'.format(mit)
+        return ', '.join(x for x in [dfl, mit] if x)
+
+    def append_post_damage_strings(self, cmd, player, weapon, target, result):
         strs = {
             'attacker': player.alias(),
             'weapon': weapon.alias(),
             'target': target.alias(),
             'final': Attack.final_damages(result),
-            'mitigated': Attack.mitigated(result),
-            'deflected': Attack.deflected(result),
-            'total': Attack.total(result)
+            'total': Attack.total(result),
+            'roll': self.roll,
+            'protections': Attack.protections(result)
         }
         if Attack.total(result) <= 0:
-            cmd.log(player, Attack.DidNoDamage.format(**strs))
-            cmd.log(target, Attack.TakeNoDamage.format(**strs))
+            Attack.log_no_damage(cmd, player, target, strs)
             return
         cmd.dirty(player)
         cmd.dirty(target)
-        cmd.log(target, strs['mitigated'])
-        cmd.log(player, Attack.DealDamage.format(**strs))
-        cmd.log(target, Attack.TakeDamage.format(**strs))
+        Attack.log_damage(cmd, player, target, strs)
+
+    def log_no_damage(cmd, player, target, args):
+        cmd.log(player, Attack.YouHitNoDamage.format(**args))
+        cmd.log(target, Attack.YouAreHitNoDamage.format(**args))
+        cmd.obs(
+            target.coordinates,
+            Attack.SeeHitNoDamage.format(**args),
+            exclude=[player, target]
+        )
+
+    def log_damage(cmd, player, target, args):
+        cmd.log(player, Attack.YouHit.format(**args))
+        cmd.log(target, Attack.YouAreHit.format(**args))
+        cmd.obs(
+            target.coordinates,
+            Attack.SeeHit.format(**args),
+            exclude=[player, target]
+        )
 
     def check_for_kill(self, cmd, player, weapon, target):
         strs = {
@@ -281,8 +273,8 @@ class Attack(TargetedAbility):
             'target': target.alias(),
         }
         if target.has_condition(Dying):
-            cmd.log(player, Attack.CauseDying.format(**strs))
-            cmd.log(target, Attack.BecomeDying.format(**strs))
+            cmd.log(player, Attack.YouCauseDying.format(**strs))
+            cmd.log(target, Attack.YouAreDying.format(**strs))
             cmd.obs(
                 target.coordinates,
                 self.SeeDying.format(**strs),
@@ -290,11 +282,11 @@ class Attack(TargetedAbility):
             )
             return
         if target.has_condition(Dead):
-            cmd.log(player, Attack.KillTarget.format(**strs))
-            cmd.log(target, Attack.BecomeKilled.format(**strs))
+            cmd.log(player, Attack.YouCauseDead.format(**strs))
+            cmd.log(target, Attack.YouAreDead.format(**strs))
             cmd.obs(
                 target.coordinates,
-                self.SeeKill.format(**strs),
+                self.SeeDead.format(**strs),
                 exclude=[player, target]
             )
             Attack.corpsify(cmd, player, target)

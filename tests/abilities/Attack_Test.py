@@ -112,7 +112,7 @@ class Attack_Test(unittest.TestCase):
         target = Enemy()
         erukar.Dying(target)
         Attack().check_for_kill(cmd, self.player, weapon, target)
-        res = Attack.CauseDying.format(target=target.alias())
+        res = Attack.YouCauseDying.format(target=target.alias())
         self.assertEqual(cmd.results['test'][0], res)
 
     def test__check_for_kill__is_valid_for_dead(self):
@@ -122,7 +122,7 @@ class Attack_Test(unittest.TestCase):
         target = Enemy()
         erukar.Dead(target)
         Attack().check_for_kill(cmd, self.player, weapon, target)
-        res = Attack.KillTarget.format(target=target.alias())
+        res = Attack.YouCauseDead.format(target=target.alias())
         self.assertEqual(cmd.results['test'][0], res)
         self.assertGreater(self.player.experience, pre_xp)
 
@@ -132,7 +132,7 @@ class Attack_Test(unittest.TestCase):
         weapon = erukar.LightCrossbow()
         target = Enemy()
         Attack().check_for_kill(cmd, self.player, weapon, target)
-        Attack.KillTarget.format(target=target.alias())
+        Attack.YouCauseDead.format(target=target.alias())
         self.assertTrue('test' not in cmd.results)
         self.assertEqual(pre_xp, self.player.experience)
 
@@ -143,7 +143,9 @@ class Attack_Test(unittest.TestCase):
         weapon = erukar.LightCrossbow()
         target = Enemy()
         target.evasion = mock_evasion
-        res = Attack().attack_succeeded(cmd, self.player, weapon, target, 1)
+        attack = Attack()
+        attack.roll = 1
+        res = attack.attack_succeeded(cmd, self.player, weapon, target)
         self.assertFalse(res)
 
     def test__attack_succeeded__succeeds_if_roll_is_higher(self):
@@ -153,7 +155,9 @@ class Attack_Test(unittest.TestCase):
         weapon = erukar.LightCrossbow()
         target = Enemy()
         target.evasion = mock_evasion
-        res = Attack().attack_succeeded(cmd, self.player, weapon, target, 100)
+        attack = Attack()
+        attack.roll = 100
+        res = attack.attack_succeeded(cmd, self.player, weapon, target)
         self.assertTrue(res)
 
     def test__is_in_valid_range__fails_if_weapon_range_is_less(self):
@@ -273,38 +277,27 @@ class Attack_Test(unittest.TestCase):
             '10 fire, 10 ice'
         )
 
-    def test__total_mitigation__yields_correctly(self):
+    def test__mitigation__yields_correctly(self):
         damages = {
             'post_deflection': {
                 'fire': 15,
-                'ice': 10
+                'ice': 10,
+                'electric': 10
             },
             'post_mitigation': {
                 'fire': 15,
+                'electric': 5
             }
         }
-        mitigations = list(Attack._total_mitigation(damages))
-        self.assertEqual(len(mitigations), 1)
+        mitigations = list(Attack._mitigation(damages))
+        self.assertEqual(len(mitigations), 2)
         self.assertEqual(
             mitigations[0],
             ('ice', 10)
         )
-
-    def test__partial_mitigation__yields_correctly(self):
-        damages = {
-            'post_deflection': {
-                'fire': 15,
-                'ice': 10
-            },
-            'post_mitigation': {
-                'fire': 10,
-            }
-        }
-        mitigations = list(Attack._partial_mitigation(damages))
-        self.assertEqual(len(mitigations), 1)
         self.assertEqual(
-            mitigations[0],
-            ('fire', 5)
+            mitigations[1],
+            ('electric', 5)
         )
 
     def test__integration__deal_damage(self):
@@ -330,12 +323,8 @@ class Attack_Test(unittest.TestCase):
         attack.validate = validate
         res = attack.perform(cmd)
         self.assertEqual(
-            res.results['test'][-1][:9],
-            'You deal '
-        )
-        self.assertEqual(
-            res.results['test'][-1][-17:],
-            ' damage to ERROR!'
+            res.results['test'][-1][:8],
+            'You hit '
         )
 
     def test__integration__energy_burn_mod_deal_damage(self):
@@ -367,10 +356,6 @@ class Attack_Test(unittest.TestCase):
         attack.validate = validate
         res = attack.perform(cmd).results['test']
         self.assertEqual(
-            res[-1][:9],
-            'You deal '
-        )
-        self.assertEqual(
-            res[-1][-17:],
-            ' damage to ERROR!'
+            res[-1][:8],
+            'You hit '
         )
