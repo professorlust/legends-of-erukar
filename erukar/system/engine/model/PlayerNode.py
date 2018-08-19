@@ -1,8 +1,5 @@
 from .Indexer import Indexer
 
-'''
-The Player Node is maintained on the 
-'''
 
 class PlayerNode(Indexer):
     Disconnected       =-1  # Default State
@@ -23,6 +20,10 @@ class PlayerNode(Indexer):
         self.sid = None
         self.clear()
         self.previous_location = None
+        self.establish_configuration_settings()
+
+    def establish_configuration_settings(self):
+        self.verbose_log = False
 
     def clear(self):
         self.dungeon_map = {}
@@ -42,22 +43,22 @@ class PlayerNode(Indexer):
             self.dungeon_map[coordinates] = room
 
     def has_condition(self, type_of):
-        if self.character is None: return False
-
-        return self.character.has_condition(type_of)
+        if self.character:
+            return self.character.has_condition(type_of)
+        return False
 
     def begin_turn(self, cmd):
-        if self.character is not None:
+        if self.character:
             return self.character.begin_turn(cmd)
         return ''
 
     def end_turn(self, cmd):
-        if self.character is not None:
+        if self.character:
             return self.character.end_turn(cmd)
         return ''
 
     def is_incapacitated(self):
-        if self.character is not None:
+        if self.character:
             return self.character.is_incapacitated()
         return True
 

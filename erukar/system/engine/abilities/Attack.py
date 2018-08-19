@@ -1,4 +1,4 @@
-from erukar.system.engine import TargetedAbility, Weapon
+from erukar.system.engine import TargetedAbility, Weapon, PlayerNode
 from erukar.system.engine import Corpse, Dying, Dead, Damage
 from erukar.ext.math import Navigator
 
@@ -13,14 +13,14 @@ class Attack(TargetedAbility):
     OutOfRange = 'Target is outside of maximum range!'
     NotEnoughAP = 'Not enough action points!'
     YouHit = 'You hit {target} with your {weapon} ({roll} attack), dealing '\
-        '{final} damage.{protections}'
+        '{report}'
     YouHitNoDamage = 'You hit {target} with your {weapon} ({roll} attack), '\
         'but deal no damage.{protections}'
     YouCauseDying = '{target} slumps to the ground, dying!'
     YouCauseDead = 'You have killed {target}!'
     YouMiss = '{target} dodges your {weapon} attack ({roll} attack).'
     YouAreHit = '{attacker} hits you with its {weapon} ({roll} attack), '\
-        'dealing {final} damage to you.{protections}'
+        'dealing {report}'
     YouAreHitNoDamage = '{attacker} hits you with its {weapon} ({roll} '\
         'attack), but you take no damage.{protections}'
     YouAreMissed = 'You evade {attacker}\'s {weapon} attack ({roll} attack).'
@@ -33,6 +33,9 @@ class Attack(TargetedAbility):
     SeeMiss = '{attacker} misses {target} with its {weapon} ({roll} attack).'
     SeeDying = '{target} slumps to the ground, dying.'
     SeeDead = '{target} has died.'
+    VerboseDamageFormat = '{deflected}/{mitigated}/{final} {_type}'
+    VerboseDamageReport = '{total} damage ({verbose_report})'
+    ShortDamageReport = '{total} damage'
 
     def __init__(self):
         super().__init__()
@@ -248,7 +251,8 @@ class Attack(TargetedAbility):
             'final': result['total'],
             'total': Attack.total(result),
             'roll': self.roll,
-            'protections': Attack.protections(result)
+            'protections': Attack.protections(result),
+            'report': Attack.assemble_report(player, result)
         }
         if Attack.total(result) <= 0:
             Attack.log_no_damage(cmd, player, target, strs)
@@ -256,6 +260,25 @@ class Attack(TargetedAbility):
         cmd.dirty(player)
         cmd.dirty(target)
         Attack.log_damage(cmd, player, target, strs)
+
+    def assemble_report(player, result):
+        args = {'final': result['total']}
+        if not isinstance(player, PlayerNode) or not player.verbose_log:
+            return Attack.ShortDamageReport.format(*args)
+        reports = []
+        for _type in [*result['raw']]:
+            final = int(result['post_mitigation'].get(_type, 0))
+            mit = int(result['post_deflection'].get(_type, 0) - final)
+            dfl = int(result['raw'].get(_type, 0) - mit)
+            _report = Attack.VerboseDamageFormat.format(
+                deflected=dfl,
+                mitigated=mit,
+                final=final,
+                _type=_type
+            )
+            reports.append(_report)
+        args['report'] = ', '.join(reports)
+        return Attack.VerboseDamageReport.format(**args)
 
     def log_no_damage(cmd, player, target, args):
         cmd.log(player, Attack.YouHitNoDamage.format(**args))
