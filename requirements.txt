@@ -34,3 +34,4 @@ urllib3==1.21.1
 websockets==3.3
 Werkzeug==0.12.2
 zope.interface==4.4.1
+jose
