@@ -35,4 +35,3 @@ websockets==3.3
 Werkzeug==0.12.2
 zope.interface==4.4.1
 python-jose-cryptodome
-six
