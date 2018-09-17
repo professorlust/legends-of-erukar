@@ -9,6 +9,7 @@ from flask import Flask
 from flask import request, jsonify, abort
 from socketio import Middleware
 from flask_socketio import SocketIO, emit, send
+from .auth import AuthError, requires_auth
 import erukar
 
 logger = logging.getLogger('debug')
@@ -45,9 +46,12 @@ def get_shard_contents():
         } for sector in shard.regions[0].sectors})
 
 @app.route('/api/ping')
+@cross_origin(headers=['Content-Type', 'Authorization'])
+@requires_auth
 def do_ping():
     return jsonify({
-        'name': shard.properties.Name,
+        #'name': shard.properties.Name,
+        'name': request.auth0sub,
         'url': shard.properties.Url,
         'players': shard.active_players(),
         'maxPlayers': shard.properties.MaxPlayers,
@@ -251,3 +255,9 @@ def on_command_receipt(cmd, *_):
 @socketio.on('send interaction')
 def on_interaction_command_receipt(cmd, *_):
     shard.consume_command(request, cmd)
+    @app.errorhandler(AuthError)
+
+def handle_auth_error(ex):
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
