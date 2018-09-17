@@ -9,7 +9,7 @@ from flask import Flask
 from flask import request, jsonify, abort
 from socketio import Middleware
 from flask_socketio import SocketIO, emit, send
-from .auth import AuthError, requires_auth
+from auth import AuthError, requires_auth
 import erukar
 
 logger = logging.getLogger('debug')
