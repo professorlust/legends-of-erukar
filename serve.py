@@ -255,8 +255,8 @@ def on_command_receipt(cmd, *_):
 @socketio.on('send interaction')
 def on_interaction_command_receipt(cmd, *_):
     shard.consume_command(request, cmd)
-    @app.errorhandler(AuthError)
 
+@app.errorhandler(AuthError)
 def handle_auth_error(ex):
     response = jsonify(ex.error)
     response.status_code = ex.status_code
