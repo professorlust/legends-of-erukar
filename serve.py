@@ -143,6 +143,7 @@ def on_connect():
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
     shard.update_connection(request)
+    con.tell('connection')
 
 @socketio.on('disconnect')
 def on_disconnect():
