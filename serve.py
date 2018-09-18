@@ -139,7 +139,7 @@ def get_regions():
 
 @socketio.on('connect')
 def on_connect():
-    jwt = request.argst .get('jwt')
+    jwt = request.args.get('jwt')
     if not jwt:
         raise Exception("No JWT")
     addr = request.environ['REMOTE_ADDR']
