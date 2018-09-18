@@ -139,9 +139,9 @@ def get_regions():
 
 @requires_auth_wss
 @socketio.on('connect')
-def on_connect(sub):
-    if sub:
-        raise Exception(sub)
+def on_connect():
+    if request.auth0sub:
+        raise Exception(request.auth0sub)
     addr = request.environ['REMOTE_ADDR']
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
