@@ -142,6 +142,7 @@ def on_connect():
     jwt = request.args.get('jwt')
     if not jwt:
         raise Exception("No JWT")
+    raise Exception("JWT exists")
     addr = request.environ['REMOTE_ADDR']
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
