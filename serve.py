@@ -140,12 +140,28 @@ def get_regions():
 @socketio.on('connect')
 @requires_auth_wss
 def on_connect():
-    if request.auth0sub:
-        raise Exception(request.auth0sub)
-    addr = request.environ['REMOTE_ADDR']
-    if addr in blacklist:
-        print('{} was found in the blacklist and was rejected'.format(addr))
-    shard.update_connection(request)
+    if not request.auth0sub:
+        return
+    uid = request.auth0sub
+    if uid in blacklist:
+        print('{} was found in the blacklist and was rejected'.format(uid))
+    con = shard.update_connection(request)
+    player_schema = erukar.data.model.Player.get(shard.session, uid)
+    if player_schema:
+        return login(player_schema, con)
+    return register(player_schema, con)
+
+def login(player_schema, con):
+    con.playernode = player_schema.create_new_object()
+    return [Shard.format_character_for_list(x) for x in player_schema.characters]
+
+def register(player_schema, con):
+    con = shard.update_connection(request)
+    con.playernode = PlayerNode(player_schema.uid, None)
+    con.playernode.name = player_schema.uid
+    player_schema = erukar.data.model.Player.add(shard.session, con.playernode)
+    return [Shard.format_character_for_list(x) for x in player_schema.characters]
+
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -159,20 +175,6 @@ def ws_login():
         return 'Could not find specified UID'
 
     con.playernode = player_schema.create_new_object()
-    return [Shard.format_character_for_list(x) for x in player_schema.characters]
-
-@socketio.on('register')
-def ws_register(raw_creds):
-    credentials = json.loads(raw_creds)
-    if 'uid' not in credentials: return "Malformed request received"
-
-    con = shard.update_connection(request)
-    if erukar.data.model.Player.get(shard.session, credentials['uid']):
-        return 'UID {} already exists'.format(credentials['uid'])
-
-    con.playernode = PlayerNode(credentials['uid'],None)
-    con.playernode.name = credentials['uid']
-    player_schema = erukar.data.model.Player.add(shard.session, con.playernode)
     return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
 @socketio.on('launch')
