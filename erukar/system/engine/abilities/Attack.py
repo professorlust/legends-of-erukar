@@ -262,8 +262,9 @@ class Attack(TargetedAbility):
         Attack.log_damage(cmd, player, target, strs)
 
     def assemble_report(player, result):
+        args = {'total': result['total']}
         if not isinstance(player, PlayerNode) or not player.verbose_log:
-            return Attack.ShortDamageReport.format(total=result['total'])
+            return Attack.ShortDamageReport.format(**args)
         reports = []
         for _type in [*result['raw']]:
             final = int(result['post_mitigation'].get(_type, 0))

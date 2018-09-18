@@ -94,8 +94,8 @@ class Map(Command):
 
     def get_lighting_at(self, x, y):
         if (x, y) in self.player_zones().fog_of_war:
-            return Tile.rgba(0, 0, 0, self.world.lighting_at((x, y)))
-        return Tile.rgba(0, 0, 0, 0.2)
+            return Tile.rgba(0, 0, 0, 1)
+        return Tile.rgba(0, 0, 0, 1)
 
     def wall_overlays_at(self, x, y):
         return self.world.get_wall_overlay((x, y))
