@@ -150,16 +150,13 @@ def on_disconnect():
 
 @socketio.on('login')
 def ws_login(jwt):
-    '''
     con = shard.update_connection(request)
-    player_schema = erukar.data.model.Player.get(shard.session, uid)
+    player_schema = erukar.data.model.Player.get(shard.session, jwt)
     if player_schema is None:
         return 'Could not find specified UID'
 
     con.playernode = player_schema.create_new_object()
     return [Shard.format_character_for_list(x) for x in player_schema.characters]
-    '''
-    pass
 
 @socketio.on('register')
 def ws_register(raw_creds):
