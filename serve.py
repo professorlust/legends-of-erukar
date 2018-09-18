@@ -149,16 +149,18 @@ def on_connect():
     player_schema = erukar.data.model.Player.get(shard.session, uid)
     if player_schema:
         return login(player_schema, con)
-    return register(player_schema, con)
+    return register(uid, con)
 
 def login(player_schema, con):
     con.playernode = player_schema.create_new_object()
     return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
-def register(player_schema, con):
+def register(uid, con):
+    if False:
+        return "You cannot register for this server"
     con = shard.update_connection(request)
-    con.playernode = PlayerNode(player_schema.uid, None)
-    con.playernode.name = player_schema.uid
+    con.playernode = PlayerNode(uid, None)
+    con.playernode.name = uid
     player_schema = erukar.data.model.Player.add(shard.session, con.playernode)
     return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
