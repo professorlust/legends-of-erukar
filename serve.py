@@ -138,7 +138,7 @@ def get_regions():
 '''Websocket Endpoints'''
 
 @socketio.on('connect')
-def on_connect(jwt):
+def on_connect():
     addr = request.environ['REMOTE_ADDR']
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
@@ -149,12 +149,8 @@ def on_disconnect():
     shard.disconnect(request)
 
 @socketio.on('login')
-def ws_login(raw_creds):
-    credentials = json.loads(raw_creds)
-    if 'uid' not in credentials:
-        return 'Malformed request received'
-    uid = credentials['uid']
-
+def ws_login(jwt):
+    '''
     con = shard.update_connection(request)
     player_schema = erukar.data.model.Player.get(shard.session, uid)
     if player_schema is None:
@@ -162,6 +158,8 @@ def ws_login(raw_creds):
 
     con.playernode = player_schema.create_new_object()
     return [Shard.format_character_for_list(x) for x in player_schema.characters]
+    '''
+    pass
 
 @socketio.on('register')
 def ws_register(raw_creds):
