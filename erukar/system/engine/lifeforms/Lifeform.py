@@ -52,10 +52,8 @@ class Lifeform(ErukarActor):
         self.initialize_effects()
         self.movement_allowed = 0
 
-    def build_from_payloads(stats, bio):
+    def build_from_payloads(bio):
         out = Lifeform(None)
-        for stat in stats:
-            setattr(out, stat, stats[stat])
         out.name = bio['name']
         out.instance = 'TutorialDungeon'
         return out

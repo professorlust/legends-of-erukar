@@ -220,7 +220,7 @@ def on_finish_character_creation(raw_data):
 
     uid = request.auth0sub
 
-    built = Lifeform.build_from_payloads(data['stats'], data['bio'])
+    built = Lifeform.build_from_payloads(data['bio'])
     player_schema = erukar.data.model.Player.get(shard.session, uid)
     schema = erukar.data.model.Character.create_from_object(shard.session, built, player_schema)
     if 'template' in data:
