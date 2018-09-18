@@ -138,21 +138,22 @@ def get_regions():
 '''Websocket Endpoints'''
 
 @socketio.on('connect')
-def on_connect():
+def on_connect(jwt):
+    if not jwt:
+        return
     addr = request.environ['REMOTE_ADDR']
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
     shard.update_connection(request)
-    con.tell('connection')
 
 @socketio.on('disconnect')
 def on_disconnect():
     shard.disconnect(request)
 
 @socketio.on('login')
-def ws_login(jwt):
+def ws_login():
     con = shard.update_connection(request)
-    player_schema = erukar.data.model.Player.get(shard.session, jwt)
+    player_schema = erukar.data.model.Player.get(shard.session, None)
     if player_schema is None:
         return 'Could not find specified UID'
 
@@ -181,7 +182,6 @@ def on_launch(*_):
         return
     con.playernode.update_socket(con)
     shard.start_playing(con.playernode, con.character)
-    con.tell('launch success' ,'')
 
 @socketio.on('request state')
 def on_request_state():
