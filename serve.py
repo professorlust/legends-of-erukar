@@ -154,7 +154,7 @@ def on_connect():
 def login(player_schema, con):
     con.playernode = player_schema.create_new_object()
     characters = [Shard.format_character_for_list(x) for x in player_schema.characters]
-    return characters
+    con.tell('received characters', characters)
 
 def register(uid, con):
     if False:
@@ -164,22 +164,12 @@ def register(uid, con):
     con.playernode.name = uid
     player_schema = erukar.data.model.Player.add(shard.session, con.playernode)
     characters = [Shard.format_character_for_list(x) for x in player_schema.characters]
-    return characters
+    con.tell('received characters', characters)
 
 
 @socketio.on('disconnect')
 def on_disconnect():
     shard.disconnect(request)
-
-@socketio.on('login')
-def ws_login():
-    con = shard.update_connection(request)
-    player_schema = erukar.data.model.Player.get(shard.session, None)
-    if player_schema is None:
-        return 'Could not find specified UID'
-
-    con.playernode = player_schema.create_new_object()
-    return [Shard.format_character_for_list(x) for x in player_schema.characters]
 
 @socketio.on('launch')
 def on_launch(*_):
