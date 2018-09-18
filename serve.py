@@ -3,7 +3,7 @@ from flask import Flask
 from flask import request, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS, cross_origin
-from auth import AuthError, requires_auth
+from auth import AuthError, requires_auth, requires_auth_wss
 import erukar
 import json
 import os
@@ -137,12 +137,11 @@ def get_regions():
 
 '''Websocket Endpoints'''
 
+@requires_auth_wss
 @socketio.on('connect')
-def on_connect():
-    jwt = request.args.get('jwt')
-    if not jwt:
-        raise Exception("No JWT")
-    raise Exception("JWT exists")
+def on_connect(sub):
+    if sub:
+        raise Exception(sub)
     addr = request.environ['REMOTE_ADDR']
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
