@@ -137,8 +137,8 @@ def get_regions():
 
 '''Websocket Endpoints'''
 
-@requires_auth_wss
 @socketio.on('connect')
+@requires_auth_wss
 def on_connect():
     if request.auth0sub:
         raise Exception(request.auth0sub)

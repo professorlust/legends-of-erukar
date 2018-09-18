@@ -198,7 +198,8 @@ def requires_auth_wss(f):
                                     " token."}, 400)
 
             _app_ctx_stack.top.current_user = payload
-            return f(payload['sub'], *args, **kwargs)
+            setattr(request, 'auth0sub', payload['sub'])
+            return f(*args, **kwargs)
         raise AuthError({"code": "invalid_header",
                         "description": "Unable to find appropriate key"}, 400)
     return decorated
