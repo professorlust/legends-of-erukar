@@ -58,7 +58,6 @@ def do_ping():
         'description': shard.properties.Description,
         'permadeath': shard.properties.PermaDeath,
     })
-#request.auth0sub
 
 @app.route('/api/details')
 @cross_origin(headers=['Content-Type', 'Authorization'])
