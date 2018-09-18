@@ -153,7 +153,8 @@ def on_connect():
 
 def login(player_schema, con):
     con.playernode = player_schema.create_new_object()
-    return [Shard.format_character_for_list(x) for x in player_schema.characters]
+    characters = [Shard.format_character_for_list(x) for x in player_schema.characters]
+    return characters
 
 def register(uid, con):
     if False:
@@ -162,7 +163,8 @@ def register(uid, con):
     con.playernode = PlayerNode(uid, None)
     con.playernode.name = uid
     player_schema = erukar.data.model.Player.add(shard.session, con.playernode)
-    return [Shard.format_character_for_list(x) for x in player_schema.characters]
+    characters = [Shard.format_character_for_list(x) for x in player_schema.characters]
+    return characters
 
 
 @socketio.on('disconnect')
