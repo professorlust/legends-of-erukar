@@ -212,22 +212,23 @@ def on_add_character(*_):
     return 'Cannot add character -- Not logged in'
 
 @socketio.on('finalize new character')
+@requires_auth_wss
 def on_finish_character_creation(raw_data):
     data = json.loads(raw_data)
-    if 'stats' not in data or 'bio' not in data:
+    if 'bio' not in data:
         return 'invalid payload'
 
-    con = shard.get_client(request)
-    if con is None: return 'Client is not logged in'
+    uid = request.auth0sub
 
     built = Lifeform.build_from_payloads(data['stats'], data['bio'])
-    player_schema = erukar.data.model.Player.get(shard.session, con.playernode.uid)
+    player_schema = erukar.data.model.Player.get(shard.session, uid)
     schema = erukar.data.model.Character.create_from_object(shard.session, built, player_schema)
     if 'template' in data:
         schema.apply_template(data['template'])
     schema.add_or_update(shard.session)
 
-    character = erukar.data.model.Character.select(shard.session, schema.id, con.playernode.uid)
+    character = erukar.data.model.Character.select(shard.session, schema.id, uid)
+    con = shard.update_connection(request)
     if character is not None:
         con.character = character.create_new_object()
         return 'Successfully selected {}'.format(con.character.name)
