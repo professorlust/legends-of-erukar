@@ -138,9 +138,10 @@ def get_regions():
 '''Websocket Endpoints'''
 
 @socketio.on('connect')
-def on_connect(jwt):
+def on_connect():
+    jwt = request.argst .get('jwt')
     if not jwt:
-        return
+        raise Exception("No JWT")
     addr = request.environ['REMOTE_ADDR']
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
