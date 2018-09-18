@@ -1,17 +1,17 @@
-from erukar.system import Shard, PlayerNode, Player, Lifeform
-import asyncio, websockets, json, os, sys, datetime
-import logging
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-from concurrent.futures import ProcessPoolExecutor
-
+from erukar.system import Shard, PlayerNode, Lifeform
 from flask import Flask
-from flask import request, jsonify, abort
-from socketio import Middleware
-from flask_socketio import SocketIO, emit, send
+from flask import request, jsonify
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS, cross_origin
 from auth import AuthError, requires_auth
 import erukar
+import json
+import os
+import sys
+import logging
 
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 logger = logging.getLogger('debug')
 
 config_directories = [
@@ -27,7 +27,6 @@ for cd in config_directories:
     sys.path.append(os.getcwd() + '/config/' + cd)
 
 app = Flask(__name__)
-from flask_cors import CORS, cross_origin
 CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app)
@@ -38,6 +37,8 @@ shard = Shard(emit)
 shard.activate()
 
 @app.route('/api/shard')
+@cross_origin(headers=['Content-Type', 'Authorization'])
+@requires_auth
 def get_shard_contents():
     return jsonify({
         str(sector): {
@@ -50,16 +51,18 @@ def get_shard_contents():
 @requires_auth
 def do_ping():
     return jsonify({
-        #'name': shard.properties.Name,
-        'name': request.auth0sub,
+        'name': shard.properties.Name,
         'url': shard.properties.Url,
         'players': shard.active_players(),
         'maxPlayers': shard.properties.MaxPlayers,
         'description': shard.properties.Description,
         'permadeath': shard.properties.PermaDeath,
     })
+#request.auth0sub
 
 @app.route('/api/details')
+@cross_origin(headers=['Content-Type', 'Authorization'])
+@requires_auth
 def get_details():
     active_players = [{
         'name': c.playernode.name,
@@ -77,22 +80,9 @@ def get_details():
         'version': shard.ErukarVersion,
     })
 
-@app.route('/validate', methods=['POST'])
-def validation():
-    return jsonify('ok')
-#   con = shard.get_client(request)
-#   if con is None: abort(401)
-#   if con.playernode.status != PlayerNode.CreatingCharacter: abort(403)
-
-#   data = request.get_json(force=True)
-#   if 'step' not in data: abort(400)
-#   
-#   if data['step'] == 'bio':
-#       print(data)
-#       return "success"
-#   return jsonify(message="Validation Errors occurred.")
-
 @app.route('/api/templates')
+@cross_origin(headers=['Content-Type', 'Authorization'])
+@requires_auth
 def get_templates():
     def format_template(template):
         return {
@@ -111,7 +101,7 @@ def format_item_for_template(item, template):
         'name': item.alias(),
         'type': item.__module__
     }
-    if item.material: 
+    if item.material:
         formatted['material'] = item.material.__module__
     equipment_slot = next((slot for slot in template.equipment_types if item == getattr(template, slot, None)), None)
     if equipment_slot:
@@ -128,6 +118,8 @@ def format_skill_for_template(skill, template):
 
 
 @app.route('/api/regions')
+@cross_origin(headers=['Content-Type', 'Authorization'])
+@requires_auth
 def get_regions():
     def format(info):
         region = info.instance.dungeon
@@ -146,7 +138,7 @@ def get_regions():
 '''Websocket Endpoints'''
 
 @socketio.on('connect')
-def on_connect():
+def on_connect(jwt):
     addr = request.environ['REMOTE_ADDR']
     if addr in blacklist:
         print('{} was found in the blacklist and was rejected'.format(addr))
